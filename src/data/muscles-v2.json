@@ -1,0 +1,2874 @@
+[
+  {
+    "id": "rectus_femoris",
+    "name": "m. rectus femoris",
+    "latinName": "musculus rectus femoris",
+    "view": "ventral",
+    "originText": "spina iliaca anterior inferior (SIAI)",
+    "insertionText": "tuberositas tibiae via patellapees",
+    "primaryMovements": [
+      {
+        "joint": "art. coxae",
+        "movement": "anteflexie"
+      },
+      {
+        "joint": "art. genus",
+        "movement": "extensie"
+      }
+    ],
+    "otherFunctions": "Bi-articulaire spier; stabiliseert het heup- en kniegewricht tijdens de standfase; actieve heupheffer bij rennen en traplopen.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.535,
+            "y": 0.45
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.52,
+            "y": 0.67
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.535,
+            "y": 0.45
+          },
+          {
+            "x": 0.528,
+            "y": 0.56
+          },
+          {
+            "x": 0.52,
+            "y": 0.67
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.465,
+            "y": 0.45
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.48,
+            "y": 0.67
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.465,
+            "y": 0.45
+          },
+          {
+            "x": 0.472,
+            "y": 0.56
+          },
+          {
+            "x": 0.48,
+            "y": 0.67
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "vastus_lateralis",
+    "name": "m. vastus lateralis",
+    "latinName": "musculus vastus lateralis",
+    "view": "ventral",
+    "originText": "laterale zijde corpus femoris en linea aspera",
+    "insertionText": "tuberositas tibiae via patellapees",
+    "primaryMovements": [
+      {
+        "joint": "art. genus",
+        "movement": "extensie"
+      }
+    ],
+    "otherFunctions": "Grootste onderdeel van de m. quadriceps femoris; begeleidt de patellare spoorvorming naar lateraal en levert grote strekkracht bij gewichtdragen.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.56,
+            "y": 0.52
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.52,
+            "y": 0.67
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.56,
+            "y": 0.52
+          },
+          {
+            "x": 0.545,
+            "y": 0.6
+          },
+          {
+            "x": 0.52,
+            "y": 0.67
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.44,
+            "y": 0.52
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.48,
+            "y": 0.67
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.44,
+            "y": 0.52
+          },
+          {
+            "x": 0.455,
+            "y": 0.6
+          },
+          {
+            "x": 0.48,
+            "y": 0.67
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "vastus_intermedius",
+    "name": "m. vastus intermedius",
+    "latinName": "musculus vastus intermedius",
+    "view": "ventral",
+    "originText": "ventrale zijde corpus femoris",
+    "insertionText": "tuberositas tibiae via patellapees",
+    "primaryMovements": [
+      {
+        "joint": "art. genus",
+        "movement": "extensie"
+      }
+    ],
+    "otherFunctions": "Ligt diep onder de m. rectus femoris; zorgt voor directe axiale strekkracht op de patella en trekt het gewrichtskapsel van de knie omhoog bij extensie.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.535,
+            "y": 0.51
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.52,
+            "y": 0.67
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.535,
+            "y": 0.51
+          },
+          {
+            "x": 0.528,
+            "y": 0.59
+          },
+          {
+            "x": 0.52,
+            "y": 0.67
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.465,
+            "y": 0.51
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.48,
+            "y": 0.67
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.465,
+            "y": 0.51
+          },
+          {
+            "x": 0.472,
+            "y": 0.59
+          },
+          {
+            "x": 0.48,
+            "y": 0.67
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "vastus_medialis",
+    "name": "m. vastus medialis",
+    "latinName": "musculus vastus medialis",
+    "view": "ventral",
+    "originText": "mediale zijde corpus femoris en linea aspera",
+    "insertionText": "tuberositas tibiae via patellapees",
+    "primaryMovements": [
+      {
+        "joint": "art. genus",
+        "movement": "extensie"
+      }
+    ],
+    "otherFunctions": "Cruciaal voor de laatste 15 graden kniestrekking; voorkomt dat de patella naar lateraal ontspoort (patellastabilisatie).",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.525,
+            "y": 0.54
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.52,
+            "y": 0.67
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.525,
+            "y": 0.54
+          },
+          {
+            "x": 0.522,
+            "y": 0.61
+          },
+          {
+            "x": 0.52,
+            "y": 0.67
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.475,
+            "y": 0.54
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.48,
+            "y": 0.67
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.475,
+            "y": 0.54
+          },
+          {
+            "x": 0.478,
+            "y": 0.61
+          },
+          {
+            "x": 0.48,
+            "y": 0.67
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "biceps_femoris",
+    "name": "m. biceps femoris",
+    "latinName": "musculus biceps femoris",
+    "view": "dorsal",
+    "originText": "caput longum: tuber ischiadicum | caput breve: linea aspera femoris",
+    "insertionText": "caput fibulae",
+    "primaryMovements": [
+      {
+        "joint": "art. coxae",
+        "movement": "retroflexie (caput longum)"
+      },
+      {
+        "joint": "art. genus",
+        "movement": "flexie"
+      },
+      {
+        "joint": "art. genus",
+        "movement": "exorotatie (bij gebogen knie)"
+      }
+    ],
+    "otherFunctions": "Onderdeel van de hamstrings; stabiliseert het bekken in het sagittale vlak en biedt posteriolaterale kniestabiliteit.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.53,
+            "y": 0.47
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.54,
+            "y": 0.66
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.53,
+            "y": 0.47
+          },
+          {
+            "x": 0.535,
+            "y": 0.565
+          },
+          {
+            "x": 0.54,
+            "y": 0.66
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.47,
+            "y": 0.47
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.46,
+            "y": 0.66
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.47,
+            "y": 0.47
+          },
+          {
+            "x": 0.465,
+            "y": 0.565
+          },
+          {
+            "x": 0.46,
+            "y": 0.66
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "semimembranosus",
+    "name": "m. semimembranosus",
+    "latinName": "musculus semimembranosus",
+    "view": "dorsal",
+    "originText": "tuber ischiadicum",
+    "insertionText": "condylus medialis tibiae",
+    "primaryMovements": [
+      {
+        "joint": "art. coxae",
+        "movement": "retroflexie"
+      },
+      {
+        "joint": "art. genus",
+        "movement": "flexie"
+      },
+      {
+        "joint": "art. genus",
+        "movement": "endorotatie (bij gebogen knie)"
+      }
+    ],
+    "otherFunctions": "Mediale hamstring; versterkt het posteriomediale kniekapsel en helpt het bekken achterover te kantelen.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.525,
+            "y": 0.47
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.518,
+            "y": 0.665
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.525,
+            "y": 0.47
+          },
+          {
+            "x": 0.522,
+            "y": 0.568
+          },
+          {
+            "x": 0.518,
+            "y": 0.665
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.475,
+            "y": 0.47
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.482,
+            "y": 0.665
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.475,
+            "y": 0.47
+          },
+          {
+            "x": 0.478,
+            "y": 0.568
+          },
+          {
+            "x": 0.482,
+            "y": 0.665
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "semitendinosus",
+    "name": "m. semitendinosus",
+    "latinName": "musculus semitendinosus",
+    "view": "dorsal",
+    "originText": "tuber ischiadicum",
+    "insertionText": "condylus medialis tibiae (pes anserinus)",
+    "primaryMovements": [
+      {
+        "joint": "art. coxae",
+        "movement": "retroflexie"
+      },
+      {
+        "joint": "art. genus",
+        "movement": "flexie"
+      },
+      {
+        "joint": "art. genus",
+        "movement": "endorotatie (bij gebogen knie)"
+      }
+    ],
+    "otherFunctions": "Onderdeel van de pes anserinus superficialis; actieve dynamische stabilisator tegen valgusbelasting op het kniegewricht.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.52,
+            "y": 0.47
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.515,
+            "y": 0.67
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.52,
+            "y": 0.47
+          },
+          {
+            "x": 0.518,
+            "y": 0.57
+          },
+          {
+            "x": 0.515,
+            "y": 0.67
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.48,
+            "y": 0.47
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.485,
+            "y": 0.67
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.48,
+            "y": 0.47
+          },
+          {
+            "x": 0.482,
+            "y": 0.57
+          },
+          {
+            "x": 0.485,
+            "y": 0.67
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "tensor_fasciae_latae",
+    "name": "m. tensor fasciae latae",
+    "latinName": "musculus tensor fasciae latae",
+    "view": "ventral",
+    "originText": "spina iliaca anterior superior (SIAS)",
+    "insertionText": "condylus lateralis tibiae via tractus iliotibialis",
+    "primaryMovements": [
+      {
+        "joint": "art. coxae",
+        "movement": "abductie"
+      },
+      {
+        "joint": "art. coxae",
+        "movement": "anteflexie"
+      },
+      {
+        "joint": "art. coxae",
+        "movement": "endorotatie"
+      }
+    ],
+    "otherFunctions": "Spant de tractus iliotibialis aan; ondersteunt de laterale band van de knie en stabiliseert het bekken tijdens het lopen.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.55,
+            "y": 0.42
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.54,
+            "y": 0.66
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.55,
+            "y": 0.42
+          },
+          {
+            "x": 0.565,
+            "y": 0.54
+          },
+          {
+            "x": 0.54,
+            "y": 0.66
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.45,
+            "y": 0.42
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.46,
+            "y": 0.66
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.45,
+            "y": 0.42
+          },
+          {
+            "x": 0.435,
+            "y": 0.54
+          },
+          {
+            "x": 0.46,
+            "y": 0.66
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "iliopsoas",
+    "name": "m. iliopsoas",
+    "latinName": "musculus iliopsoas",
+    "view": "ventral",
+    "originText": "corpora/processus transversi T12-L5 & fossa iliaca",
+    "insertionText": "trochanter minor femoris",
+    "primaryMovements": [
+      {
+        "joint": "art. coxae",
+        "movement": "anteflexie"
+      },
+      {
+        "joint": "art. coxae",
+        "movement": "exorotatie"
+      }
+    ],
+    "otherFunctions": "Belangrijkste en krachtigste heupbuiger; regelt de lumbale lordose en stabiliseert de wervelkolom en het bekken in rechtopstaande houding.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.515,
+            "y": 0.36
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.53,
+            "y": 0.47
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.515,
+            "y": 0.36
+          },
+          {
+            "x": 0.522,
+            "y": 0.415
+          },
+          {
+            "x": 0.53,
+            "y": 0.47
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.485,
+            "y": 0.36
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.47,
+            "y": 0.47
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.485,
+            "y": 0.36
+          },
+          {
+            "x": 0.478,
+            "y": 0.415
+          },
+          {
+            "x": 0.47,
+            "y": 0.47
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gluteus_medius",
+    "name": "m. gluteus medius",
+    "latinName": "musculus gluteus medius",
+    "view": "dorsal",
+    "originText": "dorso-lateraal op os ilium (crista iliaca)",
+    "insertionText": "trochanter major femoris",
+    "primaryMovements": [
+      {
+        "joint": "art. coxae",
+        "movement": "abductie"
+      },
+      {
+        "joint": "art. coxae",
+        "movement": "endorotatie (voorste vezels)"
+      },
+      {
+        "joint": "art. coxae",
+        "movement": "exorotatie (achterste vezels)"
+      }
+    ],
+    "otherFunctions": "Essentiële bekkenstabilisator in het frontale vlak tijdens eenbeenstand (voorkomt inzakken van het bekken aan de niet-belaste zijde / Trendelenburg).",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.545,
+            "y": 0.42
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.56,
+            "y": 0.465
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.545,
+            "y": 0.42
+          },
+          {
+            "x": 0.552,
+            "y": 0.442
+          },
+          {
+            "x": 0.56,
+            "y": 0.465
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.455,
+            "y": 0.42
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.44,
+            "y": 0.465
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.455,
+            "y": 0.42
+          },
+          {
+            "x": 0.448,
+            "y": 0.442
+          },
+          {
+            "x": 0.44,
+            "y": 0.465
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "adductor_longus",
+    "name": "m. adductor longus",
+    "latinName": "musculus adductor longus",
+    "view": "ventral",
+    "originText": "ramus superior ossis pubis",
+    "insertionText": "linea aspera femoris",
+    "primaryMovements": [
+      {
+        "joint": "art. coxae",
+        "movement": "adductie"
+      },
+      {
+        "joint": "art. coxae",
+        "movement": "anteflexie"
+      }
+    ],
+    "otherFunctions": "Stabiliseert het heupgewricht en het bekken bij enkel- en dubbelzijdige belastingen.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.51,
+            "y": 0.46
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.535,
+            "y": 0.54
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.51,
+            "y": 0.46
+          },
+          {
+            "x": 0.522,
+            "y": 0.5
+          },
+          {
+            "x": 0.535,
+            "y": 0.54
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.49,
+            "y": 0.46
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.465,
+            "y": 0.54
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.49,
+            "y": 0.46
+          },
+          {
+            "x": 0.478,
+            "y": 0.5
+          },
+          {
+            "x": 0.465,
+            "y": 0.54
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "adductor_brevis",
+    "name": "m. adductor brevis",
+    "latinName": "musculus adductor brevis",
+    "view": "ventral",
+    "originText": "ramus inferior ossis pubis",
+    "insertionText": "linea aspera femoris (proximaal)",
+    "primaryMovements": [
+      {
+        "joint": "art. coxae",
+        "movement": "adductie"
+      },
+      {
+        "joint": "art. coxae",
+        "movement": "anteflexie"
+      }
+    ],
+    "otherFunctions": "Ligt diep onder de m. adductor longus; ondersteunt heupadductie en stabilisatie.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.512,
+            "y": 0.465
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.53,
+            "y": 0.515
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.512,
+            "y": 0.465
+          },
+          {
+            "x": 0.521,
+            "y": 0.49
+          },
+          {
+            "x": 0.53,
+            "y": 0.515
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.488,
+            "y": 0.465
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.47,
+            "y": 0.515
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.488,
+            "y": 0.465
+          },
+          {
+            "x": 0.479,
+            "y": 0.49
+          },
+          {
+            "x": 0.47,
+            "y": 0.515
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "adductor_magnus",
+    "name": "m. adductor magnus",
+    "latinName": "musculus adductor magnus",
+    "view": "ventral",
+    "originText": "ramus inferior ossis pubis & tuber ischiadicum",
+    "insertionText": "linea aspera & tuberculum adductorium femoris",
+    "primaryMovements": [
+      {
+        "joint": "art. coxae",
+        "movement": "adductie"
+      },
+      {
+        "joint": "art. coxae",
+        "movement": "retroflexie (dorsale deel)"
+      },
+      {
+        "joint": "art. coxae",
+        "movement": "anteflexie (ventrale deel)"
+      }
+    ],
+    "otherFunctions": "Grootste en krachtigste adductor van de heup; fungeert ook als een krachtige heupstrekker vanuit gebogen stand.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.515,
+            "y": 0.47
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.53,
+            "y": 0.59
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.515,
+            "y": 0.47
+          },
+          {
+            "x": 0.522,
+            "y": 0.53
+          },
+          {
+            "x": 0.53,
+            "y": 0.59
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.485,
+            "y": 0.47
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.47,
+            "y": 0.59
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.485,
+            "y": 0.47
+          },
+          {
+            "x": 0.478,
+            "y": 0.53
+          },
+          {
+            "x": 0.47,
+            "y": 0.59
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gracilis",
+    "name": "m. gracilis",
+    "latinName": "musculus gracilis",
+    "view": "ventral",
+    "originText": "ramus inferior ossis pubis",
+    "insertionText": "condylus medialis tibiae (pes anserinus)",
+    "primaryMovements": [
+      {
+        "joint": "art. coxae",
+        "movement": "adductie"
+      },
+      {
+        "joint": "art. genus",
+        "movement": "flexie"
+      },
+      {
+        "joint": "art. genus",
+        "movement": "endorotatie (bij gebogen knie)"
+      }
+    ],
+    "otherFunctions": "Meest mediaal gelegen spier van het bovenbeen; maakt deel uit van de pes anserinus en stabiliseert het kniegewricht aan de mediale zijde.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.505,
+            "y": 0.468
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.515,
+            "y": 0.67
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.505,
+            "y": 0.468
+          },
+          {
+            "x": 0.51,
+            "y": 0.57
+          },
+          {
+            "x": 0.515,
+            "y": 0.67
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.495,
+            "y": 0.468
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.485,
+            "y": 0.67
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.495,
+            "y": 0.468
+          },
+          {
+            "x": 0.49,
+            "y": 0.57
+          },
+          {
+            "x": 0.485,
+            "y": 0.67
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gluteus_maximus",
+    "name": "m. gluteus maximus",
+    "latinName": "musculus gluteus maximus",
+    "view": "dorsal",
+    "originText": "crista iliaca, SIPS, os sacrum, os coccygis",
+    "insertionText": "tuberositas glutea femoris & tractus iliotibialis",
+    "primaryMovements": [
+      {
+        "joint": "art. coxae",
+        "movement": "retroflexie"
+      },
+      {
+        "joint": "art. coxae",
+        "movement": "exorotatie"
+      },
+      {
+        "joint": "art. coxae",
+        "movement": "abductie (bovenste vezels)"
+      },
+      {
+        "joint": "art. coxae",
+        "movement": "adductie (onderste vezels)"
+      }
+    ],
+    "otherFunctions": "Krachtigste heupstrekker; onmisbaar bij opstaan uit zit, traplopen, sprinten en het rechtop houden van het menselijk lichaam.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.52,
+            "y": 0.43
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.555,
+            "y": 0.5
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.52,
+            "y": 0.43
+          },
+          {
+            "x": 0.538,
+            "y": 0.465
+          },
+          {
+            "x": 0.555,
+            "y": 0.5
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.48,
+            "y": 0.43
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.445,
+            "y": 0.5
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.48,
+            "y": 0.43
+          },
+          {
+            "x": 0.462,
+            "y": 0.465
+          },
+          {
+            "x": 0.445,
+            "y": 0.5
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "tibialis_anterior",
+    "name": "m. tibialis anterior",
+    "latinName": "musculus tibialis anterior",
+    "view": "ventral",
+    "originText": "condylus lateralis et facies lateralis tibiae",
+    "insertionText": "os cuneiforme mediale en os metatarsale I",
+    "primaryMovements": [
+      {
+        "joint": "art. talocruralis",
+        "movement": "dorsaalflexie"
+      },
+      {
+        "joint": "OSG",
+        "movement": "inversie"
+      }
+    ],
+    "otherFunctions": "Heft de voet tijdens de zwaaifase van het lopen (voorkomt struikelen); remt excentrisch de plantairflexie af direct na de hiellanding (voorkomt klapvoet); ondersteunt het mediale lengtegewelf van de voet.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.525,
+            "y": 0.7
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.515,
+            "y": 0.88
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.525,
+            "y": 0.7
+          },
+          {
+            "x": 0.52,
+            "y": 0.79
+          },
+          {
+            "x": 0.515,
+            "y": 0.88
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.475,
+            "y": 0.7
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.485,
+            "y": 0.88
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.475,
+            "y": 0.7
+          },
+          {
+            "x": 0.48,
+            "y": 0.79
+          },
+          {
+            "x": 0.485,
+            "y": 0.88
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "fibularis_brevis",
+    "name": "m. fibularis brevis",
+    "latinName": "musculus fibularis brevis",
+    "view": "ventral",
+    "originText": "laterale vlak corpus fibulae",
+    "insertionText": "os metatarsale V",
+    "primaryMovements": [
+      {
+        "joint": "OSG",
+        "movement": "eversie"
+      },
+      {
+        "joint": "art. talocruralis",
+        "movement": "plantairflexie"
+      }
+    ],
+    "otherFunctions": "Actieve dynamische beschermer tegen inversietrauma's (verzwikking van de enkel); stabiliseert de laterale zijde van de voet.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.545,
+            "y": 0.76
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.54,
+            "y": 0.885
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.545,
+            "y": 0.76
+          },
+          {
+            "x": 0.542,
+            "y": 0.82
+          },
+          {
+            "x": 0.54,
+            "y": 0.885
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.455,
+            "y": 0.76
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.46,
+            "y": 0.885
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.455,
+            "y": 0.76
+          },
+          {
+            "x": 0.458,
+            "y": 0.82
+          },
+          {
+            "x": 0.46,
+            "y": 0.885
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "fibularis_longus",
+    "name": "m. fibularis longus",
+    "latinName": "musculus fibularis longus",
+    "view": "ventral",
+    "originText": "caput & proximale 2/3 deel fibulae",
+    "insertionText": "os cuneiforme mediale & os metatarsale I (loopt onder de voet door)",
+    "primaryMovements": [
+      {
+        "joint": "OSG",
+        "movement": "eversie"
+      },
+      {
+        "joint": "art. talocruralis",
+        "movement": "plantairflexie"
+      }
+    ],
+    "otherFunctions": "Drukt de eerste straal (os metatarsale I) naar beneden tegen de grond; vervult een sleutelrol in de instandhouding van het transversale dwarsgewelf van de voet.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.545,
+            "y": 0.7
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.515,
+            "y": 0.89
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.545,
+            "y": 0.7
+          },
+          {
+            "x": 0.54,
+            "y": 0.81
+          },
+          {
+            "x": 0.515,
+            "y": 0.89
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.455,
+            "y": 0.7
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.485,
+            "y": 0.89
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.455,
+            "y": 0.7
+          },
+          {
+            "x": 0.46,
+            "y": 0.81
+          },
+          {
+            "x": 0.485,
+            "y": 0.89
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "gastrocnemius",
+    "name": "m. gastrocnemius",
+    "latinName": "musculus gastrocnemius",
+    "view": "dorsal",
+    "originText": "epicondylus medialis et lateralis femoris",
+    "insertionText": "tuber calcanei via achillespees",
+    "primaryMovements": [
+      {
+        "joint": "art. talocruralis",
+        "movement": "plantairflexie"
+      },
+      {
+        "joint": "art. genus",
+        "movement": "flexie"
+      }
+    ],
+    "otherFunctions": "Bi-articulaire spier; voornaamste explosieve motor bij de afzetfase van lopen, rennen en springen; helpt knieoverstrekking te voorkomen.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.525,
+            "y": 0.64
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.52,
+            "y": 0.87
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.525,
+            "y": 0.64
+          },
+          {
+            "x": 0.53,
+            "y": 0.74
+          },
+          {
+            "x": 0.52,
+            "y": 0.87
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.475,
+            "y": 0.64
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.48,
+            "y": 0.87
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.475,
+            "y": 0.64
+          },
+          {
+            "x": 0.47,
+            "y": 0.74
+          },
+          {
+            "x": 0.48,
+            "y": 0.87
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "soleus",
+    "name": "m. soleus",
+    "latinName": "musculus soleus",
+    "view": "dorsal",
+    "originText": "caput fibulae & linea m. solei tibiae",
+    "insertionText": "tuber calcanei via achillespees",
+    "primaryMovements": [
+      {
+        "joint": "art. talocruralis",
+        "movement": "plantairflexie"
+      }
+    ],
+    "otherFunctions": "Belangrijkste posturale (houdings-) spier van het onderbeen; voorkomt dat het lichaam naar voren valt tijdens stilstaan; fungeert als spierpomp voor de veneuze bloedterugstroom naar het hart.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.53,
+            "y": 0.71
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.52,
+            "y": 0.87
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.53,
+            "y": 0.71
+          },
+          {
+            "x": 0.525,
+            "y": 0.79
+          },
+          {
+            "x": 0.52,
+            "y": 0.87
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.47,
+            "y": 0.71
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.48,
+            "y": 0.87
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.47,
+            "y": 0.71
+          },
+          {
+            "x": 0.475,
+            "y": 0.79
+          },
+          {
+            "x": 0.48,
+            "y": 0.87
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "biceps_brachii",
+    "name": "m. biceps brachii",
+    "latinName": "musculus biceps brachii",
+    "view": "ventral",
+    "originText": "tuberculum supraglenoidale (caput longum) & processus coracoideus (caput breve)",
+    "insertionText": "tuberositas radii",
+    "primaryMovements": [
+      {
+        "joint": "art. cubiti",
+        "movement": "flexie"
+      },
+      {
+        "joint": "art. cubiti",
+        "movement": "supinatie"
+      },
+      {
+        "joint": "art. humeri",
+        "movement": "anteflexie"
+      }
+    ],
+    "otherFunctions": "Krachtigste supinator bij gebogen elleboog; caput longum stabiliseert de humeruskop superieur in de cavitas glenoïdalis.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.61,
+            "y": 0.22
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.64,
+            "y": 0.35
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.61,
+            "y": 0.22
+          },
+          {
+            "x": 0.625,
+            "y": 0.285
+          },
+          {
+            "x": 0.64,
+            "y": 0.35
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.39,
+            "y": 0.22
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.36,
+            "y": 0.35
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.39,
+            "y": 0.22
+          },
+          {
+            "x": 0.375,
+            "y": 0.285
+          },
+          {
+            "x": 0.36,
+            "y": 0.35
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "brachialis",
+    "name": "m. brachialis",
+    "latinName": "musculus brachialis",
+    "view": "ventral",
+    "originText": "distale helft ventrale zijde humerus",
+    "insertionText": "tuberositas ulnae",
+    "primaryMovements": [
+      {
+        "joint": "art. cubiti",
+        "movement": "flexie"
+      }
+    ],
+    "otherFunctions": "Zuivere elleboogbuiger; werkt onafhankelijk van de pronatie- of supinatiestand van de onderarm (het 'werkpaard' van de elleboogflexie).",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.625,
+            "y": 0.28
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.635,
+            "y": 0.355
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.625,
+            "y": 0.28
+          },
+          {
+            "x": 0.63,
+            "y": 0.318
+          },
+          {
+            "x": 0.635,
+            "y": 0.355
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.375,
+            "y": 0.28
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.365,
+            "y": 0.355
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.375,
+            "y": 0.28
+          },
+          {
+            "x": 0.37,
+            "y": 0.318
+          },
+          {
+            "x": 0.365,
+            "y": 0.355
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "triceps_brachii",
+    "name": "m. triceps brachii",
+    "latinName": "musculus triceps brachii",
+    "view": "dorsal",
+    "originText": "tuberculum infraglenoidale scapulae & dorsale humerus",
+    "insertionText": "olecranon ulnae",
+    "primaryMovements": [
+      {
+        "joint": "art. cubiti",
+        "movement": "extensie"
+      },
+      {
+        "joint": "art. humeri",
+        "movement": "retroflexie (caput longum)"
+      },
+      {
+        "joint": "art. humeri",
+        "movement": "adductie (caput longum)"
+      }
+    ],
+    "otherFunctions": "Enige strekker van de elleboog; caput longum ondersteunt de gewrichtsstabilisatie van de schouder aan de onderzijde.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.605,
+            "y": 0.22
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.635,
+            "y": 0.345
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.605,
+            "y": 0.22
+          },
+          {
+            "x": 0.62,
+            "y": 0.28
+          },
+          {
+            "x": 0.635,
+            "y": 0.345
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.395,
+            "y": 0.22
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.365,
+            "y": 0.345
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.395,
+            "y": 0.22
+          },
+          {
+            "x": 0.38,
+            "y": 0.28
+          },
+          {
+            "x": 0.365,
+            "y": 0.345
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "deltoideus",
+    "name": "m. deltoideus",
+    "latinName": "musculus deltoideus",
+    "view": "ventral",
+    "originText": "clavicula, acromion, spina scapulae",
+    "insertionText": "tuberositas deltoidea humeri",
+    "primaryMovements": [
+      {
+        "joint": "art. humeri",
+        "movement": "abductie (pars acromialis)"
+      },
+      {
+        "joint": "art. humeri",
+        "movement": "anteflexie & endorotatie (pars clavicularis)"
+      },
+      {
+        "joint": "art. humeri",
+        "movement": "retroflexie & exorotatie (pars spinalis)"
+      }
+    ],
+    "otherFunctions": "Bepaalt de ronde vorm van de schouder; drukt de humeruskop krachtig tegen de gewrichtskom tijdens armheffing.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.58,
+            "y": 0.18
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.62,
+            "y": 0.26
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.58,
+            "y": 0.18
+          },
+          {
+            "x": 0.61,
+            "y": 0.22
+          },
+          {
+            "x": 0.62,
+            "y": 0.26
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.42,
+            "y": 0.18
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.38,
+            "y": 0.26
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.42,
+            "y": 0.18
+          },
+          {
+            "x": 0.39,
+            "y": 0.22
+          },
+          {
+            "x": 0.38,
+            "y": 0.26
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "pectoralis_major",
+    "name": "m. pectoralis major",
+    "latinName": "musculus pectoralis major",
+    "view": "ventral",
+    "originText": "clavicula, sternum, cartilago costalis II-VI",
+    "insertionText": "crista tuberculi majoris humeri",
+    "primaryMovements": [
+      {
+        "joint": "art. humeri",
+        "movement": "adductie"
+      },
+      {
+        "joint": "art. humeri",
+        "movement": "anteflexie"
+      },
+      {
+        "joint": "art. humeri",
+        "movement": "endorotatie"
+      },
+      {
+        "joint": "cingulum pectorale",
+        "movement": "protractie"
+      }
+    ],
+    "otherFunctions": "Hulpademhalingsspier bij gefixeerde armen; krachtige spier bij duwbewegingen (bijv. opdrukken) en omhelzen.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.51,
+            "y": 0.2
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.605,
+            "y": 0.23
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.51,
+            "y": 0.2
+          },
+          {
+            "x": 0.555,
+            "y": 0.215
+          },
+          {
+            "x": 0.605,
+            "y": 0.23
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.49,
+            "y": 0.2
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.395,
+            "y": 0.23
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.49,
+            "y": 0.2
+          },
+          {
+            "x": 0.445,
+            "y": 0.215
+          },
+          {
+            "x": 0.395,
+            "y": 0.23
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "latissimus_dorsi",
+    "name": "m. latissimus dorsi",
+    "latinName": "musculus latissimus dorsi",
+    "view": "dorsal",
+    "originText": "processus spinosus T7-L5, crista iliaca, costae IX-XII",
+    "insertionText": "crista tuberculi minoris humeri",
+    "primaryMovements": [
+      {
+        "joint": "art. humeri",
+        "movement": "adductie"
+      },
+      {
+        "joint": "art. humeri",
+        "movement": "retroflexie"
+      },
+      {
+        "joint": "art. humeri",
+        "movement": "endorotatie"
+      },
+      {
+        "joint": "cingulum pectorale",
+        "movement": "depressie"
+      }
+    ],
+    "otherFunctions": "Grootste spier qua oppervlakte; 'klimspier' (trekt de romp omhoog bij geheven armen); ondersteunt krachtige uitademing en hoesten.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.515,
+            "y": 0.32
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.6,
+            "y": 0.24
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.515,
+            "y": 0.32
+          },
+          {
+            "x": 0.55,
+            "y": 0.28
+          },
+          {
+            "x": 0.6,
+            "y": 0.24
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.485,
+            "y": 0.32
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.4,
+            "y": 0.24
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.485,
+            "y": 0.32
+          },
+          {
+            "x": 0.45,
+            "y": 0.28
+          },
+          {
+            "x": 0.4,
+            "y": 0.24
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "teres_major",
+    "name": "m. teres major",
+    "latinName": "musculus teres major",
+    "view": "dorsal",
+    "originText": "angulus inferior scapulae",
+    "insertionText": "crista tuberculi minoris humeri",
+    "primaryMovements": [
+      {
+        "joint": "art. humeri",
+        "movement": "adductie"
+      },
+      {
+        "joint": "art. humeri",
+        "movement": "endorotatie"
+      },
+      {
+        "joint": "art. humeri",
+        "movement": "retroflexie"
+      }
+    ],
+    "otherFunctions": "Werkt nauw samen met de m. latissimus dorsi ('kleine broertje'); helpt de humeruskop in het gewricht te fixeren.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.57,
+            "y": 0.27
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.6,
+            "y": 0.24
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.57,
+            "y": 0.27
+          },
+          {
+            "x": 0.585,
+            "y": 0.255
+          },
+          {
+            "x": 0.6,
+            "y": 0.24
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.43,
+            "y": 0.27
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.4,
+            "y": 0.24
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.43,
+            "y": 0.27
+          },
+          {
+            "x": 0.415,
+            "y": 0.255
+          },
+          {
+            "x": 0.4,
+            "y": 0.24
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "teres_minor",
+    "name": "m. teres minor",
+    "latinName": "musculus teres minor",
+    "view": "dorsal",
+    "originText": "margo lateralis scapulae",
+    "insertionText": "tuberculum majus humeri",
+    "primaryMovements": [
+      {
+        "joint": "art. humeri",
+        "movement": "exorotatie"
+      },
+      {
+        "joint": "art. humeri",
+        "movement": "adductie"
+      }
+    ],
+    "otherFunctions": "Onderdeel van de rotator cuff; stabiliseert de humeruskop dorsaal in de cavitas glenoïdalis bij armbewegingen.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.575,
+            "y": 0.25
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.61,
+            "y": 0.225
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.575,
+            "y": 0.25
+          },
+          {
+            "x": 0.592,
+            "y": 0.238
+          },
+          {
+            "x": 0.61,
+            "y": 0.225
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.425,
+            "y": 0.25
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.39,
+            "y": 0.225
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.425,
+            "y": 0.25
+          },
+          {
+            "x": 0.408,
+            "y": 0.238
+          },
+          {
+            "x": 0.39,
+            "y": 0.225
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "trapezius",
+    "name": "m. trapezius",
+    "latinName": "musculus trapezius",
+    "view": "dorsal",
+    "originText": "os occipitale, processus spinosus C1-T12",
+    "insertionText": "clavicula, acromion, spina scapulae",
+    "primaryMovements": [
+      {
+        "joint": "cingulum pectorale",
+        "movement": "elevatie (pars descendens)"
+      },
+      {
+        "joint": "cingulum pectorale",
+        "movement": "retractie (pars transversa)"
+      },
+      {
+        "joint": "cingulum pectorale",
+        "movement": "depressie (pars ascendens)"
+      },
+      {
+        "joint": "cingulum pectorale",
+        "movement": "laterorotatie (descendens + ascendens)"
+      }
+    ],
+    "otherFunctions": "Belangrijkste standbepaler van de scapula; stabiliseert het acromioclaviculaire gewricht; ondersteunt nekextensie.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.505,
+            "y": 0.14
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.575,
+            "y": 0.185
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.505,
+            "y": 0.14
+          },
+          {
+            "x": 0.54,
+            "y": 0.16
+          },
+          {
+            "x": 0.575,
+            "y": 0.185
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.495,
+            "y": 0.14
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.425,
+            "y": 0.185
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.495,
+            "y": 0.14
+          },
+          {
+            "x": 0.46,
+            "y": 0.16
+          },
+          {
+            "x": 0.425,
+            "y": 0.185
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "levator_scapulae",
+    "name": "m. levator scapulae",
+    "latinName": "musculus levator scapulae",
+    "view": "dorsal",
+    "originText": "processus transversus C1-C4",
+    "insertionText": "angulus superior scapulae",
+    "primaryMovements": [
+      {
+        "joint": "cingulum pectorale",
+        "movement": "elevatie"
+      },
+      {
+        "joint": "cingulum pectorale",
+        "movement": "mediorotatie"
+      }
+    ],
+    "otherFunctions": "Trekt het schouderblad omhoog en naar binnen; kantelt de nek naar de betreffende zijde bij gefixeerde scapula.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.515,
+            "y": 0.15
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.55,
+            "y": 0.2
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.515,
+            "y": 0.15
+          },
+          {
+            "x": 0.532,
+            "y": 0.175
+          },
+          {
+            "x": 0.55,
+            "y": 0.2
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.485,
+            "y": 0.15
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.45,
+            "y": 0.2
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.485,
+            "y": 0.15
+          },
+          {
+            "x": 0.468,
+            "y": 0.175
+          },
+          {
+            "x": 0.45,
+            "y": 0.2
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "serratus_anterior",
+    "name": "m. serratus anterior",
+    "latinName": "musculus serratus anterior",
+    "view": "ventral",
+    "originText": "costae I-IX",
+    "insertionText": "margo medialis scapulae",
+    "primaryMovements": [
+      {
+        "joint": "cingulum pectorale",
+        "movement": "protractie"
+      },
+      {
+        "joint": "cingulum pectorale",
+        "movement": "laterorotatie"
+      }
+    ],
+    "otherFunctions": "Houdt de scapula strak tegen de borstkas aan (voorkomt 'scapula alata'); essentiële motor bij heffen van de arm boven de schouderhoogte (90°).",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.55,
+            "y": 0.26
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.57,
+            "y": 0.22
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.55,
+            "y": 0.26
+          },
+          {
+            "x": 0.56,
+            "y": 0.24
+          },
+          {
+            "x": 0.57,
+            "y": 0.22
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.45,
+            "y": 0.26
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.43,
+            "y": 0.22
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.45,
+            "y": 0.26
+          },
+          {
+            "x": 0.44,
+            "y": 0.24
+          },
+          {
+            "x": 0.43,
+            "y": 0.22
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "rhomboidei",
+    "name": "mm. rhomboidei",
+    "latinName": "musculi rhomboidei",
+    "view": "dorsal",
+    "originText": "processus spinosus C7-T5",
+    "insertionText": "margo medialis scapulae",
+    "primaryMovements": [
+      {
+        "joint": "cingulum pectorale",
+        "movement": "retractie"
+      },
+      {
+        "joint": "cingulum pectorale",
+        "movement": "elevatie"
+      },
+      {
+        "joint": "cingulum pectorale",
+        "movement": "mediorotatie"
+      }
+    ],
+    "otherFunctions": "Fixeert de scapula mediaal tegen de wervelkolom; trekt het schouderblad krachtig naar de wervelkolom toe.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.505,
+            "y": 0.19
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.555,
+            "y": 0.22
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.505,
+            "y": 0.19
+          },
+          {
+            "x": 0.53,
+            "y": 0.205
+          },
+          {
+            "x": 0.555,
+            "y": 0.22
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.495,
+            "y": 0.19
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.445,
+            "y": 0.22
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.495,
+            "y": 0.19
+          },
+          {
+            "x": 0.47,
+            "y": 0.205
+          },
+          {
+            "x": 0.445,
+            "y": 0.22
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "rectus_abdominis",
+    "name": "m. rectus abdominis",
+    "latinName": "musculus rectus abdominis",
+    "view": "ventral",
+    "originText": "os pubis",
+    "insertionText": "cartilago costalis V-VII & processus xiphoideus",
+    "primaryMovements": [
+      {
+        "joint": "wervelkolom",
+        "movement": "flexie"
+      }
+    ],
+    "otherFunctions": "Kantelt het bekken achterover (retroversie); verhoogt de intra-abdominale druk (buikpers) bij hoesten, persen en ademhaling.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.51,
+            "y": 0.43
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.515,
+            "y": 0.26
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.51,
+            "y": 0.43
+          },
+          {
+            "x": 0.512,
+            "y": 0.345
+          },
+          {
+            "x": 0.515,
+            "y": 0.26
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.49,
+            "y": 0.43
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.485,
+            "y": 0.26
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.49,
+            "y": 0.43
+          },
+          {
+            "x": 0.488,
+            "y": 0.345
+          },
+          {
+            "x": 0.485,
+            "y": 0.26
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "obliquus_externus_abdominis",
+    "name": "m. obliquus externus abdominis",
+    "latinName": "musculus obliquus externus abdominis",
+    "view": "ventral",
+    "originText": "costae V-XII",
+    "insertionText": "crista iliaca, linea alba & os pubis",
+    "primaryMovements": [
+      {
+        "joint": "wervelkolom",
+        "movement": "lateroflexie (homolateraal)"
+      },
+      {
+        "joint": "wervelkolom",
+        "movement": "rotatie (heterolateraal / tegengestelde zijde)"
+      },
+      {
+        "joint": "wervelkolom",
+        "movement": "flexie (bilateraal)"
+      }
+    ],
+    "otherFunctions": "Buitenste schuine buikspier; stabiliseert de buikwand en de lumbale wervelkolom; ondersteunt buikpers en uitademing.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.545,
+            "y": 0.27
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.52,
+            "y": 0.42
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.545,
+            "y": 0.27
+          },
+          {
+            "x": 0.535,
+            "y": 0.345
+          },
+          {
+            "x": 0.52,
+            "y": 0.42
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.455,
+            "y": 0.27
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.48,
+            "y": 0.42
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.455,
+            "y": 0.27
+          },
+          {
+            "x": 0.465,
+            "y": 0.345
+          },
+          {
+            "x": 0.48,
+            "y": 0.42
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "obliquus_internus_abdominis",
+    "name": "m. obliquus internus abdominis",
+    "latinName": "musculus obliquus internus abdominis",
+    "view": "ventral",
+    "originText": "crista iliaca, SIAS, fascia thoracolumbalis",
+    "insertionText": "cartilago costalis X-XII, linea alba & os pubis",
+    "primaryMovements": [
+      {
+        "joint": "wervelkolom",
+        "movement": "lateroflexie (homolateraal)"
+      },
+      {
+        "joint": "wervelkolom",
+        "movement": "rotatie (homolateraal / zelfde zijde)"
+      },
+      {
+        "joint": "wervelkolom",
+        "movement": "flexie (bilateraal)"
+      }
+    ],
+    "otherFunctions": "Binnenste schuine buikspier; ligt diep onder de m. obliquus externus; werkt samen met de heterolaterale externus voor romprotatie.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.53,
+            "y": 0.4
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.515,
+            "y": 0.3
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.53,
+            "y": 0.4
+          },
+          {
+            "x": 0.522,
+            "y": 0.35
+          },
+          {
+            "x": 0.515,
+            "y": 0.3
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.47,
+            "y": 0.4
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.485,
+            "y": 0.3
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.47,
+            "y": 0.4
+          },
+          {
+            "x": 0.478,
+            "y": 0.35
+          },
+          {
+            "x": 0.485,
+            "y": 0.3
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "erector_spinae",
+    "name": "m. erector spinae",
+    "latinName": "musculus erector spinae",
+    "view": "dorsal",
+    "originText": "os sacrum, crista iliaca, processus spinosi L1-L5",
+    "insertionText": "processus spinosi & transversi wervels, costae",
+    "primaryMovements": [
+      {
+        "joint": "wervelkolom",
+        "movement": "extensie (bilateraal)"
+      },
+      {
+        "joint": "wervelkolom",
+        "movement": "lateroflexie (unilateraal)"
+      }
+    ],
+    "otherFunctions": "Voornaamste rugstrekker en houdingsspier; stabiliseert de gehele wervelkolom tegen de zwaartekracht in.",
+    "symmetryType": "bilateral",
+    "visuals": {
+      "left": {
+        "origins": [
+          {
+            "x": 0.515,
+            "y": 0.43
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.52,
+            "y": 0.18
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.515,
+            "y": 0.43
+          },
+          {
+            "x": 0.518,
+            "y": 0.305
+          },
+          {
+            "x": 0.52,
+            "y": 0.18
+          }
+        ]
+      },
+      "right": {
+        "origins": [
+          {
+            "x": 0.485,
+            "y": 0.43
+          }
+        ],
+        "insertions": [
+          {
+            "x": 0.48,
+            "y": 0.18
+          }
+        ],
+        "musclePath": [
+          {
+            "x": 0.485,
+            "y": 0.43
+          },
+          {
+            "x": 0.482,
+            "y": 0.305
+          },
+          {
+            "x": 0.48,
+            "y": 0.18
+          }
+        ]
+      }
+    }
+  }
+]
