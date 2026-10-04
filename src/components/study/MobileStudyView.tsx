@@ -3,7 +3,7 @@ import { useMuscles } from '../../context/MuscleContext';
 import { JOINT_CATEGORIES } from '../../data/jointCategories';
 import { SkeletonViewer } from '../skeleton/SkeletonViewer';
 import { MuscleDetail } from './MuscleDetail';
-import { RotateCcw, Search, X, ChevronUp, ChevronDown, CheckSquare, Square } from 'lucide-react';
+import { RotateCcw, Search, X, ChevronUp, ChevronDown, CheckSquare, Square, RefreshCcw, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export const MobileStudyView: React.FC = () => {
   const { 
@@ -214,15 +214,44 @@ export const MobileStudyView: React.FC = () => {
           className="w-full h-14 px-4 flex items-center justify-between cursor-grab active:cursor-grabbing touch-none select-none shrink-0"
         >
           {/* Links: Geselecteerde spiernaam of aantal geselecteerde spieren */}
-          <div className="flex items-center gap-2 min-w-0 flex-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0 shadow-xs" />
-            <span className="text-xs font-black text-clinical-900 truncate">
-              {selectedMuscles.length > 1
-                ? `${selectedMuscles.length} spieren geselecteerd`
-                : selectedMuscle
-                ? selectedMuscle.name
-                : 'Selecteer een spier'}
-            </span>
+          <div className="flex items-center gap-2 min-w-0 flex-1 items-center">
+  <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0 shadow-xs" />
+  {selectedMuscle ? (
+    <>
+      <button
+        type="button"
+        onClick={() => {
+          const idx = filteredMuscles.findIndex(m => m.id === selectedMuscle.id);
+          const prev = filteredMuscles[(idx - 1 + filteredMuscles.length) % filteredMuscles.length];
+          selectMuscle(prev.id, true);
+        }}
+        className="p-1 text-clinical-600 hover:text-clinical-900"
+      >
+        <ChevronLeft className="w-4 h-4" />
+      </button>
+      <span className="text-xs font-black text-clinical-900 truncate">
+        {selectedMuscle.name}
+      </span>
+      <button
+        type="button"
+        onClick={() => {
+          const idx = filteredMuscles.findIndex(m => m.id === selectedMuscle.id);
+          const next = filteredMuscles[(idx + 1) % filteredMuscles.length];
+          selectMuscle(next.id, true);
+        }}
+        className="p-1 text-clinical-600 hover:text-clinical-900"
+      >
+        <ChevronRight className="w-4 h-4" />
+      </button>
+      <span className="ml-2 text-xs text-clinical-700">
+        {selectedMuscle.originText} → {selectedMuscle.insertionText}
+      </span>
+    </>
+  ) : (
+    <span className="text-xs font-black text-clinical-900 truncate">Selecteer een spier</span>
+  )}
+</div>
+
           </div>
 
           {/* Midden: Sleeppil (-) */}
@@ -248,40 +277,15 @@ export const MobileStudyView: React.FC = () => {
         {isDrawerOpen && (
           <div className="p-4 pt-1 space-y-4 overflow-y-auto custom-scrollbar pb-8 animate-in fade-in duration-200">
             
-            {/* A. VENTRAAL EN DORSAAL KNOPPEN ONDER DE AFBEELDING */}
+            {/* A. VIEW SWITCH BUTTON (VENTRAL / DORSAL) */}
             <div className="flex items-center justify-center pb-3 border-b border-clinical-100">
-              <div className="flex items-center bg-clinical-100 p-1 rounded-2xl border border-clinical-200 w-full max-w-xs shadow-xs">
-                <button
-                  type="button"
-                  onClick={() => setCurrentView('ventral')}
-                  className={`flex-1 h-8 px-3.5 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
-                    currentView === 'ventral'
-                      ? 'bg-white text-clinical-900 shadow-sm font-black'
-                      : 'text-clinical-600 hover:text-clinical-900'
-                  }`}
-                >
-                  <RotateCcw className="w-3 h-3 text-blue-600" />
-                  <span>Ventraal</span>
-                  {selectedMuscle?.view === 'ventral' && currentView !== 'ventral' && (
-                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping ml-0.5" />
-                  )}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCurrentView('dorsal')}
-                  className={`flex-1 h-8 px-3.5 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
-                    currentView === 'dorsal'
-                      ? 'bg-white text-clinical-900 shadow-sm font-black'
-                      : 'text-clinical-600 hover:text-clinical-900'
-                  }`}
-                >
-                  <RotateCcw className="w-3 h-3 text-indigo-600" />
-                  <span>Dorsaal</span>
-                  {selectedMuscle?.view === 'dorsal' && currentView !== 'dorsal' && (
-                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping ml-0.5" />
-                  )}
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => setCurrentView(prev => (prev === 'ventral' ? 'dorsal' : 'ventral'))}
+                className="flex h-8 px-3.5 rounded-xl bg-clinical-100 text-clinical-900 hover:bg-clinical-200 transition flex items-center justify-center gap-1.5"
+              >
+                <RefreshCcw className="w-4 h-4 text-blue-600" />
+              </button>
             </div>
 
             {/* B. SPECIFIEKE SPIER SELECTEREN OP NAAM */}
