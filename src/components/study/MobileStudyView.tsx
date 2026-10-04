@@ -375,6 +375,6 @@ export const MobileStudyView: React.FC = () => {
         )}
       </div>
 
-    </div>
+
   );
 };
