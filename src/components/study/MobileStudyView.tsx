@@ -3,7 +3,7 @@ import { useMuscles } from '../../context/MuscleContext';
 import { JOINT_CATEGORIES } from '../../data/jointCategories';
 import { SkeletonViewer } from '../skeleton/SkeletonViewer';
 import { MuscleDetail } from './MuscleDetail';
-import { RotateCcw, Search, X, ChevronUp, ChevronDown, CheckSquare, Square, RefreshCcw, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, X, ChevronUp, ChevronDown, CheckSquare, Square, RefreshCcw, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export const MobileStudyView: React.FC = () => {
   const { 
@@ -281,7 +281,7 @@ export const MobileStudyView: React.FC = () => {
             <div className="flex items-center justify-center pb-3 border-b border-clinical-100">
               <button
                 type="button"
-                onClick={() => setCurrentView(prev => (prev === 'ventral' ? 'dorsal' : 'ventral'))}
+                onClick={() => setCurrentView(currentView === 'ventral' ? 'dorsal' : 'ventral')}
                 className="flex h-8 px-3.5 rounded-xl bg-clinical-100 text-clinical-900 hover:bg-clinical-200 transition flex items-center justify-center gap-1.5"
               >
                 <RefreshCcw className="w-4 h-4 text-blue-600" />
