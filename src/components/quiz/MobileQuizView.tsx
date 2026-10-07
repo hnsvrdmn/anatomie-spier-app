@@ -11,6 +11,7 @@ import {
 import { JOINT_CATEGORIES } from '../../data/jointCategories';
 import { MovementIcon } from '../common/MovementIcon';
 import { AnswerValidationResult } from '../../utils/answerMatching';
+import { useMuscles } from '../../context/MuscleContext';
 import { 
   Check, 
   CheckCircle2, 
@@ -114,6 +115,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
   handleOpenAnswerSubmit,
   openAnswerFeedback,
 }) => {
+  const { jointPracticeType, setJointPracticeType } = useMuscles();
   const [isPanelExpanded, setIsPanelExpanded] = useState(false);
   const dragStartYRef = useRef<number | null>(null);
   const isDraggingRef = useRef<boolean>(false);
@@ -350,7 +352,39 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                     ))}
                   </select>
 
-                  <div className="flex items-center justify-between px-1 pt-1">
+                  {/* Keuze tussen Aanhechtingspunten of Bewegingen oefenen */}
+                  <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-200/80 rounded-xl">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setJointPracticeType('attachments');
+                        setIsPanelExpanded(false);
+                      }}
+                      className={`py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 ${
+                        jointPracticeType === 'attachments'
+                          ? 'bg-blue-600 text-white shadow-xs'
+                          : 'text-slate-700 hover:text-slate-900'
+                      }`}
+                    >
+                      <span>📌 Origo & Insertie</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setJointPracticeType('movements');
+                        setIsPanelExpanded(false);
+                      }}
+                      className={`py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 ${
+                        jointPracticeType === 'movements'
+                          ? 'bg-blue-600 text-white shadow-xs'
+                          : 'text-slate-700 hover:text-slate-900'
+                      }`}
+                    >
+                      <span>⚡ Bewegingen</span>
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between px-1 pt-0.5">
                     <span className="text-xs text-slate-600 font-medium">Volgorde husselen:</span>
                     <button
                       type="button"
@@ -395,9 +429,9 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
               >
                 <span>
                   {selectedJointId === 'all' && practiceMode === 'joint'
-                    ? `Origo & Insertie • ${jointMuscleIndex + 1}/${jointMusclesCount}`
+                    ? `${jointPracticeType === 'movements' ? 'Bewegingen' : 'Origo & Insertie'} • ${jointMuscleIndex + 1}/${jointMusclesCount}`
                     : practiceMode === 'joint'
-                    ? `${jointCategoryName} • ${jointMuscleIndex + 1}/${jointMusclesCount}`
+                    ? `${jointCategoryName} • ${jointPracticeType === 'movements' ? 'Bewegingen' : 'Origo/Insertie'} • ${jointMuscleIndex + 1}/${jointMusclesCount}`
                     : freeQuizType === 'multiple_choice'
                     ? 'Meerkeuze Toets'
                     : freeQuizType === 'open_question'
@@ -433,7 +467,9 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                   </h2>
                 ) : type === 'movements' ? (
                   <h2 className="text-xs sm:text-sm font-black text-slate-900 leading-snug">
-                    Vink alle bewegingen aan van de {muscle.name}:
+                    {practiceMode === 'joint'
+                      ? `Welke bewegingen in dit gewricht: ${muscle.name}`
+                      : `Vink alle bewegingen aan van de ${muscle.name}:`}
                   </h2>
                 ) : type === 'landmark' ? (
                   <div>

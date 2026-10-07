@@ -1,6 +1,5 @@
 import React from 'react';
 import { useMuscles } from '../../context/MuscleContext';
-import { AppMode } from '../../types/anatomy';
 import { BookOpen, GraduationCap, Edit3, ListChecks, Activity } from 'lucide-react';
 import { useIsMobile } from '../../hooks/useIsMobile';
 
@@ -8,18 +7,18 @@ export const Header: React.FC = () => {
   const { appMode, setAppMode, quizPracticeMode, setQuizPracticeMode } = useMuscles();
   const isMobile = useIsMobile();
 
-  // Mobiele navigatie: Studeer, Beweging, Oefen, Toets
+  // Mobiele navigatie: Spieren, Bewegingen, Oefen, Toets
   const mobileNavItems = [
     {
       id: 'study',
-      label: 'Studeer',
+      label: 'Spieren',
       icon: <BookOpen className="w-3.5 h-3.5" />,
       isActive: appMode === 'study',
       onClick: () => setAppMode('study'),
     },
     {
       id: 'movements',
-      label: 'Beweging',
+      label: 'Bewegingen',
       icon: <Activity className="w-3.5 h-3.5" />,
       isActive: appMode === 'movements',
       onClick: () => setAppMode('movements'),
@@ -46,26 +45,48 @@ export const Header: React.FC = () => {
     },
   ];
 
-  const desktopNavItems: { mode: AppMode; label: string; icon: React.ReactNode }[] = [
+  // Desktop navigatie: Spieren, Bewegingen, Oefenen, Toetsen, Bewerken
+  const desktopNavItems = [
     {
-      mode: 'study',
-      label: 'Studiemodus',
+      id: 'study',
+      label: 'Spieren',
       icon: <BookOpen className="w-4 h-4" />,
+      isActive: appMode === 'study',
+      onClick: () => setAppMode('study'),
     },
     {
-      mode: 'movements',
-      label: 'Bewegingen & Gewrichten',
+      id: 'movements',
+      label: 'Bewegingen',
       icon: <Activity className="w-4 h-4" />,
+      isActive: appMode === 'movements',
+      onClick: () => setAppMode('movements'),
     },
     {
-      mode: 'quiz',
-      label: 'Toetsmodus',
+      id: 'quiz-joint',
+      label: 'Oefenen',
       icon: <GraduationCap className="w-4 h-4" />,
+      isActive: appMode === 'quiz' && quizPracticeMode === 'joint',
+      onClick: () => {
+        setAppMode('quiz');
+        setQuizPracticeMode('joint');
+      },
     },
     {
-      mode: 'editor',
-      label: 'Bewerkmodus',
+      id: 'quiz-free',
+      label: 'Toetsen',
+      icon: <ListChecks className="w-4 h-4" />,
+      isActive: appMode === 'quiz' && quizPracticeMode === 'free',
+      onClick: () => {
+        setAppMode('quiz');
+        setQuizPracticeMode('free');
+      },
+    },
+    {
+      id: 'editor',
+      label: 'Bewerken',
       icon: <Edit3 className="w-4 h-4" />,
+      isActive: appMode === 'editor',
+      onClick: () => setAppMode('editor'),
     },
   ];
 
@@ -91,23 +112,20 @@ export const Header: React.FC = () => {
                 </button>
               ))
             ) : (
-              desktopNavItems.map((item) => {
-                const isActive = appMode === item.mode;
-                return (
-                  <button
-                    key={item.mode}
-                    onClick={() => setAppMode(item.mode)}
-                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
-                      isActive
-                        ? 'bg-blue-600 text-white shadow-sm ring-1 ring-blue-400'
-                        : 'text-clinical-400 hover:text-white hover:bg-clinical-800/60'
-                    }`}
-                  >
-                    {item.icon}
-                    <span>{item.label}</span>
-                  </button>
-                );
-              })
+              desktopNavItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={item.onClick}
+                  className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
+                    item.isActive
+                      ? 'bg-blue-600 text-white shadow-sm ring-1 ring-blue-400'
+                      : 'text-clinical-400 hover:text-white hover:bg-clinical-800/60'
+                  }`}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </button>
+              ))
             )}
           </nav>
         </div>

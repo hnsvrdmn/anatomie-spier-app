@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import confetti from 'canvas-confetti';
 import { useMuscles } from '../../context/MuscleContext';
 import { SkeletonViewer } from '../skeleton/SkeletonViewer';
-import { ViewToggle } from '../common/ViewToggle';
+import { ViewToggle, ViewLayoutMode } from '../common/ViewToggle';
 import { QuizStats } from './QuizStats';
 import { QuizFeedback } from './QuizFeedback';
 import { 
@@ -15,10 +15,11 @@ import {
   MuscleVisualData
 } from '../../types/anatomy';
 import { JOINT_CATEGORIES, getJointCategory } from '../../data/jointCategories';
-import { getMovementQuestionOptions } from '../../data/muscleMovements';
+import { getMovementQuestionOptions, ALL_MOVEMENT_OPTIONS } from '../../data/muscleMovements';
+import { JOINTS_LEARNING_DATA } from '../../data/jointTypesData';
 import { evaluatePointSet, distanceToSegment, projectToSegment, getAccuracy } from '../../utils/coordinates';
 import { validateAnatomicalAnswer, AnswerValidationResult } from '../../utils/answerMatching';
-import { RefreshCw, Check, Award, CheckCircle2, Shuffle, Square, CheckSquare } from 'lucide-react';
+import { RefreshCw, Check, Award, CheckCircle2, Shuffle, Square, CheckSquare, GraduationCap, ListChecks } from 'lucide-react';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { MobileQuizView } from './MobileQuizView';
 
@@ -39,7 +40,9 @@ export const QuizView: React.FC = () => {
     setCurrentView, 
     showToast,
     quizPracticeMode,
-    setQuizPracticeMode
+    setQuizPracticeMode,
+    jointPracticeType,
+    setJointPracticeType
   } = useMuscles();
 
   // Hoofdmodus binnen de quiz: 'joint' (Oefenen per gewricht) of 'free' (Vrije toets)
@@ -88,6 +91,36 @@ export const QuizView: React.FC = () => {
   const [matchResults, setMatchResults] = useState<MatchResult[]>([]);
   const [showReferenceGhost, setShowReferenceGhost] = useState(false);
   const [evaluatedSide, setEvaluatedSide] = useState<'left' | 'right' | 'midline'>('left');
+
+  // Desktop weergavemodus: 'both' is verplicht de standaard op desktop!
+  const [viewLayout, setViewLayout] = useState<ViewLayoutMode>('both');
+
+  // Punten gescheiden per aanzicht voor de tweeledige (side-by-side) desktopweergave
+  const ventralOrigins = useMemo(
+    () => userOrigins.filter((p) => (p.view || currentView) === 'ventral'),
+    [userOrigins, currentView]
+  );
+  const ventralInsertions = useMemo(
+    () => userInsertions.filter((p) => (p.view || currentView) === 'ventral'),
+    [userInsertions, currentView]
+  );
+  const dorsalOrigins = useMemo(
+    () => userOrigins.filter((p) => (p.view || currentView) === 'dorsal'),
+    [userOrigins, currentView]
+  );
+  const dorsalInsertions = useMemo(
+    () => userInsertions.filter((p) => (p.view || currentView) === 'dorsal'),
+    [userInsertions, currentView]
+  );
+
+  const ventralMatches = useMemo(
+    () => matchResults.filter((m) => (m.userPoint.view || currentView) === 'ventral'),
+    [matchResults, currentView]
+  );
+  const dorsalMatches = useMemo(
+    () => matchResults.filter((m) => (m.userPoint.view || currentView) === 'dorsal'),
+    [matchResults, currentView]
+  );
 
   // Sessie statistieken per toetstype individueel bijgehouden
   const [statsByType, setStatsByType] = useState<Record<string, QuizStatsData>>({
@@ -201,6 +234,61 @@ export const QuizView: React.FC = () => {
     const muscle = jointMuscles[mIndex];
     if (!muscle) return;
 
+    if (jointPracticeType === 'movements') {
+      let correctMovements: string[] = [];
+      let movementOptions: string[] = [];
+
+      const jointData = JOINTS_LEARNING_DATA[selectedJointId];
+      if (jointData && selectedJointId !== 'all') {
+        correctMovements = jointData.movements
+          .filter((m) => m.muscleIds.includes(muscle.id))
+          .map((m) => m.movement);
+        const allJointMovs = jointData.movements.map((m) => m.movement);
+        const distractors = ALL_MOVEMENT_OPTIONS.filter(
+          (opt) => !correctMovements.includes(opt) && !allJointMovs.includes(opt)
+        );
+        const needed = Math.max(0, 6 - allJointMovs.length);
+        const shuffledDistractors = [...distractors].sort(() => 0.5 - Math.random()).slice(needed > 0 ? needed : 0);
+        movementOptions = Array.from(new Set([...allJointMovs, ...shuffledDistractors])).sort(() => 0.5 - Math.random());
+      } else {
+        const movData = getMovementQuestionOptions(muscle.id, 8);
+        correctMovements = movData.correctMovements;
+        movementOptions = movData.options;
+      }
+
+      setCurrentQuestion({
+        id: `joint-mov-${selectedJointId}-${muscle.id}-${Date.now()}`,
+        muscle,
+        type: 'movements',
+        side: 'left',
+        jointId: selectedJointId,
+        jointIndex: mIndex + 1,
+        jointTotal: jointMuscles.length,
+        movementOptions,
+        correctMovements,
+      });
+
+      setUserOrigins([]);
+      setUserInsertions([]);
+      setUserOpenAnswer('');
+      setOpenAnswerFeedback(null);
+      setActiveQuizTool('origin');
+      setSelectedMultipleChoiceId(null);
+      setSelectedMovements([]);
+      setIsMultipleChoiceSuccess(false);
+      setIsMovementSuccess(false);
+      setIsEvaluated(false);
+      setIsPlacementSuccess(false);
+      setMatchResults([]);
+      setShowReferenceGhost(false);
+      setEvaluatedSide('left');
+      setHasScaledForOrigins(false);
+      setIsScalingInsertion(false);
+
+      setCurrentView(muscle.view);
+      return;
+    }
+
     setCurrentQuestion({
       id: `joint-${selectedJointId}-${muscle.id}-${Date.now()}`,
       muscle,
@@ -225,7 +313,7 @@ export const QuizView: React.FC = () => {
     setEvaluatedSide('left');
     setHasScaledForOrigins(false);
     setIsScalingInsertion(false);
-  }, [jointMuscles, selectedJointId, setCurrentView]);
+  }, [jointMuscles, selectedJointId, jointPracticeType, setCurrentView]);
 
   // Helper om een bondige werking/functie beschrijving te genereren ZONDER gewrichtsnamen (puur beweging en functie)
   const getMuscleFunctionDescription = useCallback((m: Muscle): string => {
@@ -414,7 +502,7 @@ export const QuizView: React.FC = () => {
     } else {
       generateNewFreeQuestion(freeQuizType);
     }
-  }, [practiceMode, selectedJointId, jointMuscleIndex, loadJointQuestion, freeQuizType]);
+  }, [practiceMode, selectedJointId, jointPracticeType, jointMuscleIndex, loadJointQuestion, freeQuizType]);
 
   // Volgende vraag handler
   const handleNextQuestion = () => {
@@ -448,6 +536,39 @@ export const QuizView: React.FC = () => {
     const muscle = currentQuestion.muscle;
     const isMidline = muscle.symmetryType === 'midline';
 
+    // Aanzichtvalidatie: controleer of getekende punten op het juiste aanzicht staan!
+    // Punten die op het verkeerde skelet zijn getekend (bijv. ventraal getekend voor een dorsale spier)
+    // worden NOOIT goed gerekend.
+    const wrongViewOrigins = originsToEval.filter((p) => p.view && p.view !== muscle.view);
+    const wrongViewInsertions = insertionsToEval.filter((p) => p.view && p.view !== muscle.view);
+
+    const validOrigins = originsToEval.filter((p) => !p.view || p.view === muscle.view);
+    const validInsertions = insertionsToEval.filter((p) => !p.view || p.view === muscle.view);
+
+    const wrongViewMatches: MatchResult[] = [
+      ...wrongViewOrigins.map((p) => ({
+        userPoint: p,
+        targetPoint: { x: p.x, y: p.y },
+        distance: 1.0,
+        accuracy: 'incorrect' as const,
+        targetType: 'origin' as const,
+      })),
+      ...wrongViewInsertions.map((p) => ({
+        userPoint: p,
+        targetPoint: { x: p.x, y: p.y },
+        distance: 1.0,
+        accuracy: 'incorrect' as const,
+        targetType: 'insertion' as const,
+      })),
+    ];
+
+    if (wrongViewMatches.length > 0) {
+      showToast(
+        `Let op: ${muscle.name} ligt aan het ${muscle.view === 'ventral' ? 'ventrale' : 'dorsale'} aanzicht!`,
+        'error'
+      );
+    }
+
     // Bepaal welke zijden getest moeten worden: student mag ALTIJD links OF rechts intekenen!
     const sidesToTest: ('left' | 'right' | 'midline')[] = isMidline ? ['midline'] : ['left', 'right'];
 
@@ -472,7 +593,7 @@ export const QuizView: React.FC = () => {
         // M. erector spinae: wervelkolomlijn evaluatie voor afzonderlijke origo/insertie vraag
         const spineTop = targetInsertions[0] || { x: testSide === 'right' ? 0.48 : 0.52, y: 0.18 };
         const spineBottom = targetOrigins[0] || { x: testSide === 'right' ? 0.485 : 0.515, y: 0.45 };
-        const pts = currentQuestion.type === 'origins' ? originsToEval : insertionsToEval;
+        const pts = currentQuestion.type === 'origins' ? validOrigins : validInsertions;
         const targetType = currentQuestion.type === 'origins' ? 'origin' : 'insertion';
         const matches: MatchResult[] = pts.map((p) => {
           const dist = distanceToSegment(p, spineTop, spineBottom);
@@ -492,7 +613,7 @@ export const QuizView: React.FC = () => {
         const targetPts = currentQuestion.type === 'landmark'
           ? [targetOrigins[currentQuestion.targetLandmarkIndex ?? 0] || targetOrigins[0]].filter(Boolean)
           : targetOrigins;
-        const res = evaluatePointSet(originsToEval, targetPts, 'origin', toleranceValue, vis.attachmentLines || []);
+        const res = evaluatePointSet(validOrigins, targetPts, 'origin', toleranceValue, vis.attachmentLines || []);
         sideMatches = res.matches;
         sideRequired = res.requiredCount;
         sideCorrect = res.correctCount;
@@ -501,7 +622,7 @@ export const QuizView: React.FC = () => {
         const targetPts = currentQuestion.type === 'landmark'
           ? [targetInsertions[currentQuestion.targetLandmarkIndex ?? 0] || targetInsertions[0]].filter(Boolean)
           : targetInsertions;
-        const res = evaluatePointSet(insertionsToEval, targetPts, 'insertion', toleranceValue, vis.attachmentLines || []);
+        const res = evaluatePointSet(validInsertions, targetPts, 'insertion', toleranceValue, vis.attachmentLines || []);
         sideMatches = res.matches;
         sideRequired = res.requiredCount;
         sideCorrect = res.correctCount;
@@ -535,20 +656,26 @@ export const QuizView: React.FC = () => {
           };
         };
 
-        const resOrig = evalPointOnSpine(originsToEval, 'origin');
-        const resIns = evalPointOnSpine(insertionsToEval, 'insertion');
+        const resOrig = evalPointOnSpine(validOrigins, 'origin');
+        const resIns = evalPointOnSpine(validInsertions, 'insertion');
         sideMatches = [...resOrig.matches, ...resIns.matches];
         sideRequired = 2;
         sideCorrect = resOrig.correctCount + resIns.correctCount;
         sidePassed = resOrig.isPassed && resIns.isPassed;
       } else {
         // 'full' of 'joint': match origo's en inserties afzonderlijk tegen hun doelen (inclusief aanhechtingslijnen/zones)
-        const resOrig = evaluatePointSet(originsToEval, targetOrigins, 'origin', toleranceValue, vis.attachmentLines || []);
-        const resIns = evaluatePointSet(insertionsToEval, targetInsertions, 'insertion', toleranceValue, vis.attachmentLines || []);
+        const resOrig = evaluatePointSet(validOrigins, targetOrigins, 'origin', toleranceValue, vis.attachmentLines || []);
+        const resIns = evaluatePointSet(validInsertions, targetInsertions, 'insertion', toleranceValue, vis.attachmentLines || []);
         sideMatches = [...resOrig.matches, ...resIns.matches];
         sideRequired = resOrig.requiredCount + resIns.requiredCount;
         sideCorrect = resOrig.correctCount + resIns.correctCount;
         sidePassed = resOrig.isPassed && resIns.isPassed;
+      }
+
+      // Voeg eventuele matches op het verkeerde aanzicht toe en blokkeer goedkeuring
+      sideMatches = [...sideMatches, ...wrongViewMatches];
+      if (wrongViewMatches.length > 0) {
+        sidePassed = false;
       }
 
       const distSum = sideMatches.reduce((acc, m) => acc + m.distance, 0);
@@ -570,7 +697,7 @@ export const QuizView: React.FC = () => {
     setIsPlacementSuccess(bestPassed);
 
     // Zodra het antwoord gecontroleerd is, toon het juiste aanzicht van de spier voor duidelijke visuele feedback
-    if (muscle && currentView !== muscle.view) {
+    if (muscle && currentView !== muscle.view && viewLayout !== 'both') {
       setCurrentView(muscle.view);
     }
 
@@ -620,8 +747,8 @@ export const QuizView: React.FC = () => {
     if (isEvaluated || !currentQuestion) return;
     if (currentQuestion.type === 'multiple_choice' || currentQuestion.type === 'movements' || currentQuestion.type === 'function') return;
 
-    // Aanzichtvalidatie
-    if (currentView !== currentQuestion.muscle.view) {
+    // Aanzichtvalidatie in single-view modus
+    if (viewLayout !== 'both' && currentView !== currentQuestion.muscle.view) {
       const sideName = currentQuestion.muscle.view === 'ventral' ? 'ventrale' : 'dorsale';
       showToast(
         `Let op het aanzicht! Dit onderdeel bevindt zich aan de ${sideName}zijde. Wissel eerst van aanzicht.`,
@@ -977,12 +1104,15 @@ export const QuizView: React.FC = () => {
           {/* Linkerzijde: flex spacer zodat ViewToggle gecentreerd blijft */}
           <div className="flex-1 min-w-0" />
 
-          {/* Midden: Aanzichtschakelaar [Ventraal] [Dorsaal] */}
+          {/* Midden: Aanzichtschakelaar [Ventraal] [Dorsaal] [Naast elkaar] */}
           <div className="shrink-0">
             <ViewToggle
               currentView={currentView}
               onViewChange={setCurrentView}
               recommendedView={muscle.view}
+              showBothOption={true}
+              activeLayout={viewLayout}
+              onLayoutChange={setViewLayout}
             />
           </div>
 
@@ -1034,23 +1164,75 @@ export const QuizView: React.FC = () => {
             </div>
           )}
 
-          <SkeletonViewer
-            currentView={currentView}
-            activeMuscle={
-              type === 'multiple_choice' || type === 'movements' || type === 'function' || type === 'open_question' || isEvaluated
-                ? muscle
-                : undefined
-            }
-            activeSide={evaluatedSide}
-            interactive={!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question'}
-            onSkeletonClick={handleSkeletonClick}
-            onUpdateUserPoint={handleUpdateUserPoint}
-            onDeleteUserPoint={handleDeleteUserPoint}
-            quizMatches={matchResults}
-            showReferenceGhost={showReferenceGhost}
-            userOrigins={userOrigins}
-            userInsertions={userInsertions}
-          />
+          {viewLayout === 'both' ? (
+            <div className="w-full h-full grid grid-cols-2 gap-4">
+              {/* Ventraal skelet links */}
+              <div className="relative w-full h-full flex flex-col items-center justify-center border-r border-slate-100 pr-2">
+                <span className="absolute top-2 left-2 text-[10px] font-black uppercase tracking-wider text-slate-500 bg-slate-100/90 px-2 py-0.5 rounded-md z-10 shadow-2xs">
+                  Ventraal
+                </span>
+                <SkeletonViewer
+                  currentView="ventral"
+                  activeMuscle={
+                    (type === 'multiple_choice' || type === 'movements' || type === 'function' || type === 'open_question' || isEvaluated) && muscle.view === 'ventral'
+                      ? muscle
+                      : undefined
+                  }
+                  activeSide={evaluatedSide}
+                  interactive={!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question'}
+                  onSkeletonClick={(pt, isRight) => handleSkeletonClick({ ...pt, view: 'ventral' }, isRight)}
+                  onUpdateUserPoint={handleUpdateUserPoint}
+                  onDeleteUserPoint={handleDeleteUserPoint}
+                  quizMatches={ventralMatches}
+                  showReferenceGhost={showReferenceGhost && muscle.view === 'ventral'}
+                  userOrigins={ventralOrigins}
+                  userInsertions={ventralInsertions}
+                />
+              </div>
+
+              {/* Dorsaal skelet rechts */}
+              <div className="relative w-full h-full flex flex-col items-center justify-center pl-2">
+                <span className="absolute top-2 left-2 text-[10px] font-black uppercase tracking-wider text-slate-500 bg-slate-100/90 px-2 py-0.5 rounded-md z-10 shadow-2xs">
+                  Dorsaal
+                </span>
+                <SkeletonViewer
+                  currentView="dorsal"
+                  activeMuscle={
+                    (type === 'multiple_choice' || type === 'movements' || type === 'function' || type === 'open_question' || isEvaluated) && muscle.view === 'dorsal'
+                      ? muscle
+                      : undefined
+                  }
+                  activeSide={evaluatedSide}
+                  interactive={!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question'}
+                  onSkeletonClick={(pt, isRight) => handleSkeletonClick({ ...pt, view: 'dorsal' }, isRight)}
+                  onUpdateUserPoint={handleUpdateUserPoint}
+                  onDeleteUserPoint={handleDeleteUserPoint}
+                  quizMatches={dorsalMatches}
+                  showReferenceGhost={showReferenceGhost && muscle.view === 'dorsal'}
+                  userOrigins={dorsalOrigins}
+                  userInsertions={dorsalInsertions}
+                />
+              </div>
+            </div>
+          ) : (
+            <SkeletonViewer
+              currentView={currentView}
+              activeMuscle={
+                type === 'multiple_choice' || type === 'movements' || type === 'function' || type === 'open_question' || isEvaluated
+                  ? muscle
+                  : undefined
+              }
+              activeSide={evaluatedSide}
+              interactive={!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question'}
+              onSkeletonClick={(pt, isRight) => handleSkeletonClick({ ...pt, view: currentView }, isRight)}
+              onUpdateUserPoint={handleUpdateUserPoint}
+              onDeleteUserPoint={handleDeleteUserPoint}
+              quizMatches={matchResults}
+              showReferenceGhost={showReferenceGhost}
+              userOrigins={userOrigins}
+              userInsertions={userInsertions}
+            />
+          )}
         </div>
 
         {/* Onderbalk met status & instructies (vaste h-8) */}
@@ -1090,11 +1272,43 @@ export const QuizView: React.FC = () => {
 
       {/* Rechter Zijpaneel: Modus, Vraag & Voortgang */}
       <div className="w-full lg:w-96 flex flex-col space-y-4 shrink-0">
-        {/* Enkele Toetstype Selector */}
+        {/* Modus Kiezer: Oefenen per gewricht OF Toetsen (alle spieren) */}
         <div className="bg-white p-4 rounded-2xl border border-clinical-200/90 shadow-sm space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="grid grid-cols-2 gap-1.5 p-1 bg-clinical-100 rounded-xl border border-clinical-200">
+            <button
+              type="button"
+              onClick={() => {
+                setPracticeMode('joint');
+                setJointSessionFinished(false);
+              }}
+              className={`py-2 px-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+                practiceMode === 'joint'
+                  ? 'bg-blue-600 text-white shadow-xs ring-1 ring-blue-400'
+                  : 'text-clinical-700 hover:text-clinical-950 hover:bg-white/60'
+              }`}
+            >
+              <GraduationCap className="w-3.5 h-3.5" />
+              <span>Oefenen</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setPracticeMode('free');
+              }}
+              className={`py-2 px-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+                practiceMode === 'free'
+                  ? 'bg-blue-600 text-white shadow-xs ring-1 ring-blue-400'
+                  : 'text-clinical-700 hover:text-clinical-950 hover:bg-white/60'
+              }`}
+            >
+              <ListChecks className="w-3.5 h-3.5" />
+              <span>Toetsen</span>
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between pt-1 border-t border-clinical-100">
             <label className="text-[11px] font-bold text-clinical-700 uppercase tracking-wider">
-              Kies Toetstype
+              {practiceMode === 'joint' ? 'Selecteer Gewricht' : 'Selecteer Toetstype'}
             </label>
             {practiceMode === 'joint' && (
               <div className="flex items-center gap-2">
@@ -1124,22 +1338,56 @@ export const QuizView: React.FC = () => {
           </div>
 
           {practiceMode === 'joint' ? (
-            <select
-              value={selectedJointId}
-              onChange={(e) => {
-                setSelectedJointId(e.target.value);
-                setShuffleCounter((prev) => prev + 1);
-                setJointMuscleIndex(0);
-                setJointSessionFinished(false);
-              }}
-              className="w-full px-3 py-2 bg-clinical-50 border border-clinical-200 rounded-xl text-xs sm:text-sm font-semibold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-            >
-              {JOINT_CATEGORIES.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.title} ({cat.muscleIds.length} spieren)
-                </option>
-              ))}
-            </select>
+            <div className="space-y-2">
+              <select
+                value={selectedJointId}
+                onChange={(e) => {
+                  setSelectedJointId(e.target.value);
+                  setShuffleCounter((prev) => prev + 1);
+                  setJointMuscleIndex(0);
+                  setJointSessionFinished(false);
+                }}
+                className="w-full px-3 py-2 bg-clinical-50 border border-clinical-200 rounded-xl text-xs sm:text-sm font-semibold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+              >
+                {JOINT_CATEGORIES.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.title} ({cat.muscleIds.length} spieren)
+                  </option>
+                ))}
+              </select>
+
+              {/* Submodus: Aanhechtingen of Bewegingen oefenen */}
+              <div className="grid grid-cols-2 gap-1.5 p-1 bg-clinical-100/80 rounded-xl border border-clinical-200">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setJointPracticeType('attachments');
+                    setJointSessionFinished(false);
+                  }}
+                  className={`py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+                    jointPracticeType === 'attachments'
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'text-clinical-700 hover:text-clinical-950 hover:bg-white/60'
+                  }`}
+                >
+                  <span>📌 Origo & Insertie</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setJointPracticeType('movements');
+                    setJointSessionFinished(false);
+                  }}
+                  className={`py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+                    jointPracticeType === 'movements'
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'text-clinical-700 hover:text-clinical-950 hover:bg-white/60'
+                  }`}
+                >
+                  <span>⚡ Bewegingen</span>
+                </button>
+              </div>
+            </div>
           ) : (
             <select
               value={freeQuizType}
@@ -1274,7 +1522,7 @@ export const QuizView: React.FC = () => {
 
             {/* Vraagtekst met duidelijke hiërarchie (Spiernaam direct in het oog springend) */}
             <div>
-              {practiceMode === 'joint' || (type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'landmark' && type !== 'open_question') ? (
+              {type === 'joint' || (practiceMode === 'joint' && jointPracticeType === 'attachments') || (type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'landmark' && type !== 'open_question') ? (
                 <div>
                   <div className="text-xs font-semibold text-clinical-500 uppercase tracking-wider mb-1">
                     Plaats de origo en insertie van:
@@ -1298,13 +1546,15 @@ export const QuizView: React.FC = () => {
               ) : type === 'movements' ? (
                 <div>
                   <div className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1">
-                    Bewegingen & functies
+                    {practiceMode === 'joint' ? `Beweging in ${activeJointCategory.title}` : 'Bewegingen & functies'}
                   </div>
                   <h3 className="text-xl sm:text-2xl font-black text-blue-950 tracking-tight mb-1.5">
                     {muscle.name}
                   </h3>
                   <p className="text-xs text-clinical-600">
-                    Welke bewegingen verzorgt deze spier? Vink alle juiste opties aan (meerdere antwoorden mogelijk).
+                    {practiceMode === 'joint'
+                      ? `Welke beweging(en) verzorgt de ${muscle.name} in dit gewricht? Vink alle juiste opties aan.`
+                      : 'Welke bewegingen verzorgt deze spier? Vink alle juiste opties aan (meerdere antwoorden mogelijk).'}
                   </p>
                 </div>
               ) : type === 'multiple_choice' ? (

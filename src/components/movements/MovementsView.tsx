@@ -1,12 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useMuscles } from '../../context/MuscleContext';
 import { SkeletonViewer } from '../skeleton/SkeletonViewer';
-import { ViewToggle } from '../common/ViewToggle';
+import { ViewToggle, ViewLayoutMode } from '../common/ViewToggle';
+import { MovementIcon } from '../common/MovementIcon';
 import { JOINTS_LEARNING_DATA } from '../../data/jointTypesData';
-import { SynovialTypesModal } from './SynovialTypesModal';
 import { MobileMovementsView } from './MobileMovementsView';
 import { useIsMobile } from '../../hooks/useIsMobile';
-import { BookOpen, Layers } from 'lucide-react';
+import { Layers } from 'lucide-react';
 
 export const MovementsView: React.FC = () => {
   const isMobile = useIsMobile();
@@ -14,7 +14,7 @@ export const MovementsView: React.FC = () => {
 
   const [selectedJointId, setSelectedJointId] = useState<string>('coxae');
   const [activeMovementName, setActiveMovementName] = useState<string>('Anteflexie');
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [viewLayout, setViewLayout] = useState<ViewLayoutMode>('both');
 
   const activeJoint = JOINTS_LEARNING_DATA[selectedJointId] || JOINTS_LEARNING_DATA.coxae;
 
@@ -53,11 +53,11 @@ export const MovementsView: React.FC = () => {
       {/* LINKER/MIDDEN KOLOM: SKELET MET ONDERIN DE BEWEGINGSKNOPPEN */}
       <div className="w-full lg:flex-1 lg:sticky lg:top-4 flex flex-col items-center justify-between bg-white rounded-3xl p-4 sm:p-5 border border-clinical-200/90 shadow-sm relative h-[92vh] min-h-[760px] max-h-[1020px]">
         
-        {/* Bovenbalk met aanzichtwissel en Modal knop voor 6 gewrichtstypen */}
+        {/* Bovenbalk met gewrichtsnaam en aanzichtwissel */}
         <div className="w-full h-12 shrink-0 flex items-center justify-between pb-2 border-b border-clinical-100 px-1">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-black text-slate-400 uppercase tracking-wider">
-              {activeJoint.dutchName}
+            <span className="text-xs font-black text-slate-500 uppercase tracking-wider">
+              {activeJoint.dutchName} ({activeJoint.latinName})
             </span>
           </div>
 
@@ -66,28 +66,49 @@ export const MovementsView: React.FC = () => {
               currentView={currentView}
               onViewChange={setCurrentView}
               recommendedView={activeJoint.defaultView}
+              showBothOption={true}
+              activeLayout={viewLayout}
+              onLayoutChange={setViewLayout}
             />
           </div>
-
-          <button
-            type="button"
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 font-bold text-xs transition shadow-2xs"
-          >
-            <BookOpen className="w-3.5 h-3.5" />
-            <span>6 Gewrichtstypen (p. 27)</span>
-          </button>
         </div>
 
         {/* Skeletweergave: toont precies de actieve spieren voor deze beweging */}
-        <div className="flex-1 min-h-0 w-full h-full flex items-center justify-center py-2 overflow-hidden">
-          <SkeletonViewer
-            currentView={currentView}
-            activeMuscles={selectedMuscles}
-            activeSide="both"
-            interactive={false}
-          />
-        </div>
+        {viewLayout === 'both' ? (
+          <div className="flex-1 min-h-0 w-full h-full grid grid-cols-2 gap-4 py-2 overflow-hidden">
+            <div className="relative w-full h-full flex flex-col items-center justify-center border-r border-slate-100 pr-2">
+              <span className="absolute top-1 left-2 text-[10px] font-black uppercase tracking-wider text-slate-500 bg-slate-100/90 px-2 py-0.5 rounded-md z-10 shadow-2xs">
+                Ventraal
+              </span>
+              <SkeletonViewer
+                currentView="ventral"
+                activeMuscles={selectedMuscles}
+                activeSide="both"
+                interactive={false}
+              />
+            </div>
+            <div className="relative w-full h-full flex flex-col items-center justify-center pl-2">
+              <span className="absolute top-1 left-2 text-[10px] font-black uppercase tracking-wider text-slate-500 bg-slate-100/90 px-2 py-0.5 rounded-md z-10 shadow-2xs">
+                Dorsaal
+              </span>
+              <SkeletonViewer
+                currentView="dorsal"
+                activeMuscles={selectedMuscles}
+                activeSide="both"
+                interactive={false}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="flex-1 min-h-0 w-full h-full flex items-center justify-center py-2 overflow-hidden">
+            <SkeletonViewer
+              currentView={currentView}
+              activeMuscles={selectedMuscles}
+              activeSide="both"
+              interactive={false}
+            />
+          </div>
+        )}
 
         {/* ONDERIN KNOPPEN VAN DE BEWEGINGEN (Flexie, Extensie etc.) */}
         <div className="w-full shrink-0 pt-3 border-t border-clinical-100 flex flex-col space-y-2">
@@ -114,6 +135,7 @@ export const MovementsView: React.FC = () => {
                       : 'bg-clinical-50 hover:bg-clinical-100 border border-clinical-200 text-slate-800'
                   }`}
                 >
+                  <MovementIcon movement={mov.movement} className={`w-4 h-4 ${isActive ? 'text-white' : 'text-blue-600'}`} />
                   <span>{mov.movement}</span>
                   <span
                     className={`text-xs px-2 py-0.5 rounded-full font-bold ${
@@ -130,7 +152,7 @@ export const MovementsView: React.FC = () => {
       </div>
 
       {/* RECHTER ZIJPANEEL: GEWRICHT KIEZEN + GEWRICHTSTYPE INFORMATIE & SPIERDETAILS */}
-      <div className="w-full lg:w-96 flex flex-col space-y-4 shrink-0">
+      <div className="w-full lg:w-[450px] xl:w-[470px] max-h-[92vh] overflow-y-auto custom-scrollbar pr-1 flex flex-col space-y-4 shrink-0">
         
         {/* 1. Gewrichtskeuze Dropdown */}
         <div className="bg-white p-4 rounded-2xl border border-clinical-200/90 shadow-sm space-y-2">
@@ -222,7 +244,7 @@ export const MovementsView: React.FC = () => {
 
           {activeMovementInfo?.note && (
             <p className="text-xs text-slate-600 font-medium bg-slate-50 p-2.5 rounded-xl border border-slate-200/60 leading-relaxed">
-              💡 {activeMovementInfo.note}
+              {activeMovementInfo.note}
             </p>
           )}
 
@@ -230,23 +252,27 @@ export const MovementsView: React.FC = () => {
             <span className="text-xs font-bold text-slate-700 block">
               Betrokken spieren in {activeJoint.dutchName}:
             </span>
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               {selectedMuscles.map((muscle) => (
                 <div
                   key={muscle.id}
                   onClick={() => selectMuscle(muscle.id, true)}
-                  className="p-2.5 rounded-xl bg-slate-50 hover:bg-emerald-50/70 border border-slate-200/80 hover:border-emerald-300 transition cursor-pointer"
+                  className="p-3 rounded-xl bg-slate-50 hover:bg-emerald-50/70 border border-slate-200/80 hover:border-emerald-300 transition cursor-pointer"
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="font-black text-xs text-slate-900">{muscle.name}</span>
-                    <span className="text-[10px] text-slate-500 font-medium capitalize">{muscle.view}</span>
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className="font-black text-xs sm:text-sm text-slate-900">{muscle.name}</span>
+                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider px-2 py-0.5 bg-white rounded border border-slate-200 shrink-0">
+                      {muscle.view}
+                    </span>
                   </div>
-                  <div className="mt-1 space-y-0.5 text-[11px] text-slate-600">
-                    <div className="truncate">
-                      <span className="font-bold text-blue-700">O: </span>{muscle.originText}
+                  <div className="mt-1 space-y-1 text-xs text-slate-700 leading-relaxed font-medium">
+                    <div className="break-words">
+                      <span className="font-bold text-blue-700">Origo: </span>
+                      {muscle.originText}
                     </div>
-                    <div className="truncate">
-                      <span className="font-bold text-rose-600">I: </span>{muscle.insertionText}
+                    <div className="break-words">
+                      <span className="font-bold text-rose-600">Insertie: </span>
+                      {muscle.insertionText}
                     </div>
                   </div>
                 </div>
@@ -256,12 +282,6 @@ export const MovementsView: React.FC = () => {
         </div>
 
       </div>
-
-      {/* Modal voor de 6 algemene typen synoviale gewrichten (p. 27 moduulboek) */}
-      <SynovialTypesModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
     </div>
   );
 };

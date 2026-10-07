@@ -2,15 +2,14 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useMuscles } from '../../context/MuscleContext';
 import { SkeletonViewer } from '../skeleton/SkeletonViewer';
 import { JOINTS_LEARNING_DATA } from '../../data/jointTypesData';
-import { SynovialTypesModal } from './SynovialTypesModal';
-import { RotateCw, Info, ChevronDown } from 'lucide-react';
+import { MovementIcon } from '../common/MovementIcon';
+import { RotateCw, ChevronDown } from 'lucide-react';
 
 export const MobileMovementsView: React.FC = () => {
   const { muscles, currentView, setCurrentView } = useMuscles();
 
   const [selectedJointId, setSelectedJointId] = useState<string>('coxae');
   const [activeMovementName, setActiveMovementName] = useState<string>('Anteflexie');
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [showSubJoints, setShowSubJoints] = useState<boolean>(false);
 
   const activeJoint = JOINTS_LEARNING_DATA[selectedJointId] || JOINTS_LEARNING_DATA.coxae;
@@ -43,7 +42,7 @@ export const MobileMovementsView: React.FC = () => {
     <div className="relative w-full h-[calc(100dvh-3.5rem)] flex flex-col bg-slate-900 overflow-hidden select-none">
       
       {/* 1. COMPACTE BOVENBALK: GEWRICHT KIEZEN */}
-      <div className="w-full px-3 py-2 bg-slate-950/90 backdrop-blur-md border-b border-slate-800 z-30 shrink-0">
+      <div className="w-full px-3 py-2 bg-slate-950/90 backdrop-blur-md border-b border-slate-800 z-20 shrink-0">
         <select
           value={selectedJointId}
           onChange={(e) => setSelectedJointId(e.target.value)}
@@ -59,8 +58,8 @@ export const MobileMovementsView: React.FC = () => {
         </select>
       </div>
 
-      {/* 2. HET SKELET (Geoptimaliseerde ruimte boven het frame) */}
-      <div className="flex-1 w-full h-full pb-44 pt-0 flex items-center justify-center relative overflow-hidden bg-slate-900">
+      {/* 2. HET SKELET (Vult automatisch de overgebleven ruimte boven het frame) */}
+      <div className="flex-1 min-h-0 w-full flex items-center justify-center relative overflow-hidden bg-slate-900">
         {/* Draaiknop met draai-icoontje linksboven op de afbeelding */}
         <button
           type="button"
@@ -82,9 +81,9 @@ export const MobileMovementsView: React.FC = () => {
         />
       </div>
 
-      {/* 3. VASTE ONDERKAART: MINIMALISTISCH MET GEWRICHTSTYPE & BEWEGINGSKNOPPEN */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-8px_30px_rgba(0,0,0,0.2)] rounded-t-3xl px-3.5 pt-2.5 pb-4 pointer-events-auto flex flex-col space-y-2">
-        {/* Bovenste regel van het frame: Gewrichtstype aanduiding + 6 Typen info knop */}
+      {/* 3. ONDERSTE FRAME: PAST ZICH DYNAMISCH AAN IN HOOGTE ZODAT ALLE SPIEREN PASSEN */}
+      <div className="w-full shrink-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-8px_30px_rgba(0,0,0,0.2)] rounded-t-3xl px-3.5 pt-2.5 pb-4 pointer-events-auto flex flex-col space-y-2">
+        {/* Bovenste regel van het frame: Gewrichtstype aanduiding + Deelgewrichten indien aanwezig */}
         <div className="flex items-center justify-between gap-2 w-full">
           <div className="flex items-center gap-1.5 min-w-0 flex-1">
             <span className="text-[10px] uppercase font-black tracking-wider text-slate-400 shrink-0">
@@ -98,30 +97,16 @@ export const MobileMovementsView: React.FC = () => {
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 shrink-0">
-            {/* Info knop voor de 6 typen synoviale gewrichten (p. 27 moduulboek) */}
+          {activeJoint.subJoints && activeJoint.subJoints.length > 0 && (
             <button
               type="button"
-              onClick={() => setIsModalOpen(true)}
-              className="text-[10px] font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-2 py-0.5 rounded-lg flex items-center gap-1 transition shrink-0 active:scale-95 shadow-2xs"
-              title="Bekijk de 6 algemene typen synoviale gewrichten (p. 27)"
+              onClick={() => setShowSubJoints(!showSubJoints)}
+              className="text-[10px] font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 px-2 py-0.5 rounded-lg flex items-center gap-1 transition shrink-0 active:scale-95"
             >
-              <Info className="w-3 h-3 text-blue-600" />
-              <span>6 Typen</span>
+              <span>Deelgewrichten</span>
+              <ChevronDown className={`w-3 h-3 transition-transform ${showSubJoints ? 'rotate-180' : ''}`} />
             </button>
-
-            {/* Sub-gewrichten knopje indien samengesteld gewricht (bijv. pedis of cubiti) */}
-            {activeJoint.subJoints && activeJoint.subJoints.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setShowSubJoints(!showSubJoints)}
-                className="text-[10px] font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 px-2 py-0.5 rounded-lg flex items-center gap-1 transition shrink-0 active:scale-95"
-              >
-                <span>Deel</span>
-                <ChevronDown className={`w-3 h-3 transition-transform ${showSubJoints ? 'rotate-180' : ''}`} />
-              </button>
-            )}
-          </div>
+          )}
         </div>
 
         {/* Uitklapbare sub-gewrichten indien opengeklikt */}
@@ -155,6 +140,7 @@ export const MobileMovementsView: React.FC = () => {
                       : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
                   }`}
                 >
+                  <MovementIcon movement={mov.movement} className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-blue-600'}`} />
                   <span>{mov.movement}</span>
                   <span
                     className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
@@ -169,7 +155,7 @@ export const MobileMovementsView: React.FC = () => {
           </div>
         </div>
 
-        {/* GESELECTEERDE SPIEREN DIE BIJ DEZE BEWEGING HOREN */}
+        {/* GESELECTEERDE SPIEREN DIE BIJ DEZE BEWEGING HOREN (Geen scrollbar: frame past zich aan) */}
         <div className="pt-1 border-t border-slate-100">
           <div className="flex items-center justify-between text-[11px] mb-1">
             <span className="font-bold text-slate-800">
@@ -181,7 +167,7 @@ export const MobileMovementsView: React.FC = () => {
               </span>
             )}
           </div>
-          <div className="flex items-center gap-1.5 flex-wrap max-h-16 overflow-y-auto custom-scrollbar">
+          <div className="flex items-center gap-1.5 flex-wrap">
             {selectedMuscles.map((muscle) => (
               <span
                 key={muscle.id}
@@ -193,12 +179,6 @@ export const MobileMovementsView: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* 4. MODAL VOOR DE 6 SYNOVIALE GEWRICHTSTYPEN (p. 27 MODUULBOEK) */}
-      <SynovialTypesModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
     </div>
   );
 };

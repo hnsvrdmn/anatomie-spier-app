@@ -34,6 +34,8 @@ interface MuscleContextType {
   appMode: AppMode;
   quizPracticeMode: 'joint' | 'free';
   setQuizPracticeMode: (mode: 'joint' | 'free') => void;
+  jointPracticeType: 'attachments' | 'movements';
+  setJointPracticeType: (type: 'attachments' | 'movements') => void;
   toast: ToastMessage | null;
   selectMuscle: (id: string, autoSwitchView?: boolean) => void;
   toggleMuscleSelection: (id: string) => void;
@@ -121,6 +123,7 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return () => window.removeEventListener('hashchange', handleHash);
   }, []);
   const [quizPracticeMode, setQuizPracticeMode] = useState<'joint' | 'free'>('joint');
+  const [jointPracticeType, setJointPracticeType] = useState<'attachments' | 'movements'>('attachments');
   const [toast, setToast] = useState<ToastMessage | null>(null);
 
   const selectedMuscle = useMemo(() => {
@@ -582,6 +585,8 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         appMode,
         quizPracticeMode,
         setQuizPracticeMode,
+        jointPracticeType,
+        setJointPracticeType,
         toast,
         selectMuscle,
         toggleMuscleSelection,
