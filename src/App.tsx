@@ -3,6 +3,7 @@ import { MuscleProvider, useMuscles } from './context/MuscleContext';
 import { Header } from './components/common/Header';
 import { Toast } from './components/common/Toast';
 import { StudyView } from './components/study/StudyView';
+import { MovementsView } from './components/movements/MovementsView';
 import { QuizView } from './components/quiz/QuizView';
 import { EditorView } from './components/editor/EditorView';
 
@@ -17,6 +18,7 @@ const AppContent: React.FC = () => {
       {/* Hoofdsectie per geselecteerde modus */}
       <main className="flex-1 flex flex-col">
         {appMode === 'study' && <StudyView />}
+        {appMode === 'movements' && <MovementsView />}
         {appMode === 'quiz' && <QuizView />}
         {appMode === 'editor' && <EditorView />}
       </main>

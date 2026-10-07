@@ -1,14 +1,14 @@
 import React from 'react';
 import { useMuscles } from '../../context/MuscleContext';
 import { AppMode } from '../../types/anatomy';
-import { BookOpen, GraduationCap, Edit3, ListChecks } from 'lucide-react';
+import { BookOpen, GraduationCap, Edit3, ListChecks, Activity } from 'lucide-react';
 import { useIsMobile } from '../../hooks/useIsMobile';
 
 export const Header: React.FC = () => {
   const { appMode, setAppMode, quizPracticeMode, setQuizPracticeMode } = useMuscles();
   const isMobile = useIsMobile();
 
-  // Mobiele navigatie: Studeer, Oefen, Toets
+  // Mobiele navigatie: Studeer, Beweging, Oefen, Toets
   const mobileNavItems = [
     {
       id: 'study',
@@ -16,6 +16,13 @@ export const Header: React.FC = () => {
       icon: <BookOpen className="w-3.5 h-3.5" />,
       isActive: appMode === 'study',
       onClick: () => setAppMode('study'),
+    },
+    {
+      id: 'movements',
+      label: 'Beweging',
+      icon: <Activity className="w-3.5 h-3.5" />,
+      isActive: appMode === 'movements',
+      onClick: () => setAppMode('movements'),
     },
     {
       id: 'quiz-joint',
@@ -44,6 +51,11 @@ export const Header: React.FC = () => {
       mode: 'study',
       label: 'Studiemodus',
       icon: <BookOpen className="w-4 h-4" />,
+    },
+    {
+      mode: 'movements',
+      label: 'Bewegingen & Gewrichten',
+      icon: <Activity className="w-4 h-4" />,
     },
     {
       mode: 'quiz',

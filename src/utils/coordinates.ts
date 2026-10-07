@@ -1,8 +1,8 @@
 import { Point2D, MatchAccuracy, MatchResult, AttachmentLine } from '../types/anatomy';
 
-// Toleranties volgens PMT-specificaties
-export const TOLERANCE_CORRECT = 0.035;
-export const TOLERANCE_CLOSE = 0.070;
+// Toleranties volgens PMT-specificaties (hooguit ~2.5 cm afwijking op een 170 cm skelet)
+export const TOLERANCE_CORRECT = 0.015; // 0.015 * 170 cm = 2.55 cm
+export const TOLERANCE_CLOSE = 0.028;   // 0.028 * 170 cm = 4.76 cm
 
 // Skelet rasterafbeelding verhouding (skeleton_ventral en skeleton_dorsal zijn 542 x 1287)
 export const SKELETON_WIDTH = 542;
@@ -219,7 +219,6 @@ export function evaluatePointSet(
   toleranceCorrect: number = TOLERANCE_CORRECT,
   attachmentLines?: AttachmentLine[]
 ): EvaluationSetResult {
-  const toleranceClose = toleranceCorrect * 2;
   const matchingLines = (attachmentLines || []).filter(
     (l) => l.type === targetType && l.points && l.points.length >= 2
   );
@@ -311,10 +310,6 @@ export function evaluatePointSet(
   let correctCount = 0;
   let closeCount = 0;
 
-  const sortedTargets = [...targetPoints].sort((a, b) => a.y - b.y);
-  const topTarget = sortedTargets[0];
-  const bottomTarget = sortedTargets[sortedTargets.length - 1];
-
   for (const match of greedyResult.matches) {
     if (match.accuracy === 'correct') {
       matches.push(match);
@@ -357,33 +352,6 @@ export function evaluatePointSet(
       }
 
       if (lineMatched) continue;
-
-      // 2. Controleer of dit punt op het span-traject tussen boven- en ondergrens ligt
-      if (targetPoints.length >= 2) {
-        const distToSpan = distanceToSegment(match.userPoint, topTarget, bottomTarget);
-        const proj = projectToSegment(match.userPoint, topTarget, bottomTarget);
-        if (distToSpan < toleranceCorrect) {
-          matches.push({
-            userPoint: match.userPoint,
-            targetPoint: proj,
-            distance: distToSpan,
-            accuracy: 'correct',
-            targetType,
-          });
-          correctCount++;
-          continue;
-        } else if (distToSpan <= toleranceClose) {
-          matches.push({
-            userPoint: match.userPoint,
-            targetPoint: proj,
-            distance: distToSpan,
-            accuracy: 'close',
-            targetType,
-          });
-          closeCount++;
-          continue;
-        }
-      }
 
       matches.push(match);
     }

@@ -4,6 +4,9 @@ import { SKELETON_REAL_HEIGHT_CM } from '../../utils/coordinates';
 import { AnswerValidationResult } from '../../utils/answerMatching';
 import { CheckCircle, AlertTriangle, XCircle, ArrowRight, Info, Activity } from 'lucide-react';
 
+import { MovementIcon } from '../common/MovementIcon';
+import { MUSCLE_MOVEMENTS } from '../../data/muscleMovements';
+
 interface QuizFeedbackProps {
   muscle: Muscle;
   matches: MatchResult[];
@@ -77,7 +80,12 @@ export const QuizFeedback: React.FC<QuizFeedbackProps> = ({
   const showMovementCard =
     isMovements ||
     (isMultipleChoice && mcKind === 'function') ||
-    quizType === 'function';
+    quizType === 'function' ||
+    quizType === 'joint' ||
+    quizType === 'full' ||
+    ((isMultipleChoice || isOpenQuestion) && mcKind === 'muscle');
+
+  const muscleMovementsList = MUSCLE_MOVEMENTS[muscle.id];
 
   return (
     <div className="bg-white p-4 sm:p-5 rounded-2xl border border-clinical-200/90 shadow-sm space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
@@ -160,46 +168,7 @@ export const QuizFeedback: React.FC<QuizFeedbackProps> = ({
         </div>
       )}
 
-      {/* 2. Bewegingen Test Feedback: Overzichtelijke losse blokken zoals in studiemodus */}
-      {showMovementCard && (
-        <div className="space-y-2 pt-1 border-t border-clinical-100">
-          <div className="font-bold text-xs text-clinical-800 uppercase tracking-wide flex items-center gap-1.5">
-            <Activity className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Juiste bewegingen van de {muscle.name}:</span>
-          </div>
-
-          {muscle.primaryMovements && muscle.primaryMovements.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {muscle.primaryMovements.map((pm, idx) => (
-                <div key={idx} className="bg-emerald-50/90 border border-emerald-200/90 rounded-xl p-3 shadow-xs">
-                  <span className="font-bold text-emerald-900 capitalize block text-[11px] tracking-wide">
-                    {pm.joint}
-                  </span>
-                  <span className="text-emerald-950 font-black text-sm block mt-0.5">
-                    {pm.movement}
-                  </span>
-                </div>
-              ))}
-            </div>
-          ) : correctMovements && correctMovements.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {correctMovements.map((mov, idx) => (
-                <div key={idx} className="bg-emerald-50/90 border border-emerald-200/90 rounded-xl p-3 shadow-xs">
-                  <span className="text-emerald-950 font-black text-sm capitalize block">
-                    {mov}
-                  </span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="p-3 bg-emerald-50/90 border border-emerald-200 rounded-xl text-xs font-bold text-emerald-950">
-              {correctMovementsText || muscle.functionText || 'Geen specifieke functie'}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* 3. Relevante Origo & Insertie kaarten (alleen getoond indien relevant voor het toetstype) */}
+      {/* 2. Relevante Origo & Insertie kaarten */}
       {(showOriginCard || showInsertionCard) && (
         <div className="space-y-2 pt-1 border-t border-clinical-100">
           <div className="font-bold text-xs text-clinical-800 uppercase tracking-wide flex items-center gap-1.5">
@@ -231,6 +200,61 @@ export const QuizFeedback: React.FC<QuizFeedbackProps> = ({
                 {muscle.insertionText}
               </p>
             </div>
+          )}
+        </div>
+      )}
+
+      {/* 3. Bewegingen Box (Groene box onder Origo & Insertie) */}
+      {showMovementCard && (
+        <div className="space-y-2 pt-1 border-t border-clinical-100">
+          <div className="font-bold text-xs text-clinical-800 uppercase tracking-wide flex items-center gap-1.5">
+            <Activity className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Bewegingen van de {muscle.name}:</span>
+          </div>
+
+          {muscle.primaryMovements && muscle.primaryMovements.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {muscle.primaryMovements.map((pm, idx) => (
+                <div key={idx} className="bg-emerald-50/90 border border-emerald-200/90 rounded-xl p-3 shadow-xs">
+                  <span className="font-bold text-emerald-900 capitalize block text-[11px] tracking-wide">
+                    {pm.joint}
+                  </span>
+                  <span className="text-emerald-950 font-black text-sm block mt-0.5">
+                    {pm.movement}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : correctMovements && correctMovements.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {correctMovements.map((mov, idx) => (
+                <div key={idx} className="bg-emerald-50/90 border border-emerald-200/90 rounded-xl p-3 shadow-xs">
+                  <span className="text-emerald-950 font-black text-sm capitalize block">
+                    {mov}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : muscleMovementsList && muscleMovementsList.length > 0 ? (
+            <div className="flex flex-wrap gap-1.5">
+              {muscleMovementsList.map((mov, idx) => (
+                <span key={idx} className="px-2.5 py-1 rounded-lg bg-emerald-100/90 border border-emerald-200 text-emerald-950 font-bold text-xs shadow-2xs flex items-center gap-1.5">
+                  <MovementIcon movement={mov} className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                  <span>{mov}</span>
+                </span>
+              ))}
+            </div>
+          ) : (
+            <div className="p-3 bg-emerald-50/90 border border-emerald-200 rounded-xl text-xs font-bold text-emerald-950">
+              {correctMovementsText || muscle.functionText || 'Geen specifieke functie'}
+            </div>
+          )}
+
+          {/* Extra functietekst indien aanwezig en afwijkend van losse tags */}
+          {muscle.functionText && (muscle.primaryMovements?.length || correctMovements?.length || muscleMovementsList?.length) && (
+            <p className="text-xs text-emerald-950 font-medium pl-1 leading-relaxed">
+              {muscle.functionText}
+            </p>
           )}
         </div>
       )}

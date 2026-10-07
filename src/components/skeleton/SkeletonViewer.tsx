@@ -213,15 +213,16 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
         const centerY = (minY + maxY) / 2;
         const spanY = maxY - minY;
 
-        // Bepaal zoomniveau: grotere zoom voor compacte spieren, gematigde zoom voor lange spieren
-        const targetZoom = Math.max(1.4, Math.min(2.1, 0.45 / Math.max(spanY, 0.10)));
+        // Bepaal zoomniveau: comfortabele zoom waarbij de hele spier en marges ruim in beeld blijven
+        const targetZoom = Math.max(1.25, Math.min(1.8, 0.36 / Math.max(spanY, 0.12)));
         const container = containerRef.current;
         const W = container?.clientWidth || 250;
         const H = container?.clientHeight || 600;
 
-        // Positioneer spier in bovenste helft (rond 38%-42%) zodat de vraagkaart eronder niets afdekt
+        // Positioneer spier veilig in het bovenste deel (rond 28%-32%) zodat de uitschuifbare lade onderin er NOOIT overheen valt
+        const desiredScreenY = spanY > 0.28 ? 0.32 : 0.28;
         const targetPanX = (0.5 - centerX) * W * targetZoom;
-        const targetPanY = (0.40 - centerY) * H * targetZoom;
+        const targetPanY = (desiredScreenY - 0.5) * H - (centerY - 0.5) * H * targetZoom;
 
         setZoom(Number(targetZoom.toFixed(2)));
         setPan({ x: Math.round(targetPanX), y: Math.round(targetPanY) });
@@ -359,13 +360,16 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
     onSkeletonClick(normalized, true);
   };
 
-  // Pan slepen wanneer panMode actief is of middelmuisknop/spatiebalk
+  // Pan slepen wanneer panMode actief is, met muis op PC, of via middelmuisknop/spatiebalk
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    const isPanIntent = panMode || e.button === 1 || isSpaceDownRef.current;
-    if (!isPanIntent && zoom <= 1) return;
+    // Touch events op mobiel worden exclusief door handleTouchStart (2-vinger pan) afgehandeld
+    if (e.pointerType === 'touch') return;
 
-    if (isPanIntent || (zoom > 1 && !interactive && !onUpdateUserPoint)) {
-      e.preventDefault();
+    const isMouse = e.pointerType === 'mouse';
+    const isPanIntent = panMode || e.button === 1 || e.button === 2 || isSpaceDownRef.current;
+
+    // Muis kan altijd slepen om te pannen wanneer ingezoomd (zoom > 1) of wanneer pan gewenst is
+    if (isMouse && (zoom > 1 || isPanIntent)) {
       hasMovedRef.current = false;
       const startX = e.clientX;
       const startY = e.clientY;
@@ -375,13 +379,13 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
       const handlePointerMove = (moveEv: PointerEvent) => {
         const dx = moveEv.clientX - startX;
         const dy = moveEv.clientY - startY;
-        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+        if (Math.hypot(dx, dy) > 4) {
           hasMovedRef.current = true;
+          setPan({
+            x: startPanX + dx,
+            y: startPanY + dy,
+          });
         }
-        setPan({
-          x: startPanX + dx,
-          y: startPanY + dy,
-        });
       };
 
       const handlePointerUp = () => {
@@ -389,7 +393,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
         window.removeEventListener('pointerup', handlePointerUp);
         setTimeout(() => {
           hasMovedRef.current = false;
-        }, 50);
+        }, 60);
       };
 
       window.addEventListener('pointermove', handlePointerMove);

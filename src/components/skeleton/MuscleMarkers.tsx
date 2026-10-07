@@ -6,7 +6,6 @@ import { useZoom } from './SkeletonViewer';
 interface MuscleMarkersProps {
   muscle: Muscle;
   activeSide: 'left' | 'right' | 'both' | 'midline';
-  showLabels?: boolean;
   highlightedPoint?: Point2D | null;
   // Optionele quizresultaten
   quizMatches?: MatchResult[];
@@ -39,7 +38,6 @@ export const MULTI_MUSCLE_COLORS = [
 export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
   muscle,
   activeSide,
-  showLabels = false,
   highlightedPoint = null,
   quizMatches,
   showReferenceGhost = false,
@@ -271,15 +269,27 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
               }}
             >
               <title>{`${muscle.name} (Origo: ${origName})`}</title>
-              {/* Buitenste cirkel (statisch) */}
+              {/* Buitenste pulserende ring wanneer het juiste antwoord getoond wordt */}
+              {showReferenceGhost && (
+                <circle
+                  cx={cx}
+                  cy={cy}
+                  r={26 / zoom}
+                  fill="rgba(37, 99, 235, 0.25)"
+                  stroke="#3b82f6"
+                  strokeWidth={2.5 / zoom}
+                  className="animate-pulse"
+                />
+              )}
+              {/* Buitenste cirkel */}
               <circle
                 cx={cx}
                 cy={cy}
-                r={(isHighlighted ? 18 : 14) / zoom}
-                fill={showReferenceGhost ? 'rgba(37, 99, 235, 0.4)' : markerColor}
+                r={(isHighlighted || showReferenceGhost ? 18 : 14) / zoom}
+                fill={showReferenceGhost ? '#2563eb' : markerColor}
                 fillOpacity={isOppositeView ? 0.75 : 1.0}
                 stroke="#ffffff"
-                strokeWidth={(isOppositeView ? 2.5 : 3.5) / zoom}
+                strokeWidth={(isOppositeView ? 2.5 : (showReferenceGhost ? 4 : 3.5)) / zoom}
                 strokeDasharray={isOppositeView ? "4 2" : "none"}
               />
 
@@ -290,38 +300,12 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fill="#ffffff"
-                fontSize={Math.round(11 / zoom)}
+                fontSize={Math.round((showReferenceGhost ? 12 : 11) / zoom)}
                 fontWeight="black"
                 className="select-none pointer-events-none"
               >
                 O
               </text>
-
-              {/* Optioneel label */}
-              {showLabels && (
-                <g className="pointer-events-none">
-                  <rect
-                    x={cx + 18}
-                    y={cy - 16}
-                    width="70"
-                    height="24"
-                    rx="6"
-                    fill="#1e293b"
-                    opacity="0.9"
-                  />
-                  <text
-                    x={cx + 53}
-                    y={cy}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fill="#ffffff"
-                    fontSize="12"
-                    fontWeight="bold"
-                  >
-                    Origo
-                  </text>
-                </g>
-              )}
             </g>
           );
         });
@@ -362,15 +346,27 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
               }}
             >
               <title>{`${muscle.name} (Insertie: ${insName})`}</title>
-              {/* Buitenste cirkel (statisch) */}
+              {/* Buitenste pulserende ring wanneer het juiste antwoord getoond wordt */}
+              {showReferenceGhost && (
+                <circle
+                  cx={cx}
+                  cy={cy}
+                  r={26 / zoom}
+                  fill="rgba(220, 38, 38, 0.25)"
+                  stroke="#ef4444"
+                  strokeWidth={2.5 / zoom}
+                  className="animate-pulse"
+                />
+              )}
+              {/* Buitenste cirkel */}
               <circle
                 cx={cx}
                 cy={cy}
-                r={(isHighlighted ? 18 : 14) / zoom}
-                fill={showReferenceGhost ? 'rgba(239, 68, 68, 0.4)' : markerColor}
+                r={(isHighlighted || showReferenceGhost ? 18 : 14) / zoom}
+                fill={showReferenceGhost ? '#dc2626' : markerColor}
                 fillOpacity={isOppositeView ? 0.75 : 1.0}
                 stroke="#ffffff"
-                strokeWidth={(isOppositeView ? 2.5 : 3.5) / zoom}
+                strokeWidth={(isOppositeView ? 2.5 : (showReferenceGhost ? 4 : 3.5)) / zoom}
                 strokeDasharray={isOppositeView ? "4 2" : "none"}
               />
 
@@ -381,38 +377,12 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fill="#ffffff"
-                fontSize={Math.round(11 / zoom)}
+                fontSize={Math.round((showReferenceGhost ? 12 : 11) / zoom)}
                 fontWeight="black"
                 className="select-none pointer-events-none"
               >
                 I
               </text>
-
-              {/* Optioneel label */}
-              {showLabels && (
-                <g className="pointer-events-none">
-                  <rect
-                    x={cx + 18}
-                    y={cy - 16}
-                    width="75"
-                    height="24"
-                    rx="6"
-                    fill="#1e293b"
-                    opacity="0.9"
-                  />
-                  <text
-                    x={cx + 55}
-                    y={cy}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fill="#ffffff"
-                    fontSize="12"
-                    fontWeight="bold"
-                  >
-                    Insertie
-                  </text>
-                </g>
-              )}
             </g>
           );
         });

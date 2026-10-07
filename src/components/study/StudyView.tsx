@@ -11,18 +11,18 @@ export const StudyView: React.FC = () => {
   const isMobile = useIsMobile();
   const { muscles, currentView, setCurrentView, selectedMuscle, selectedMuscles, symmetrySide, selectMuscle } = useMuscles();
 
-  // Mobiele weergave: geoptimaliseerde layout met gewrichtsdropdown boven afbeelding,
-  // ventraal/dorsaal eronder, spierselectie daaronder en vergrootglas verwijderd
-  if (isMobile) {
-    return <MobileStudyView />;
-  }
-
   // Automatisch wisselen naar het juiste aanzicht van de geselecteerde spier in studiemodus
   useEffect(() => {
     if (selectedMuscle && currentView !== selectedMuscle.view) {
       setCurrentView(selectedMuscle.view);
     }
   }, [selectedMuscle?.id, selectedMuscle?.view, setCurrentView]);
+
+  // Mobiele weergave: geoptimaliseerde layout met gewrichtsdropdown boven afbeelding,
+  // ventraal/dorsaal eronder, spierselectie daaronder en vergrootglas verwijderd
+  if (isMobile) {
+    return <MobileStudyView />;
+  }
 
   return (
     <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col lg:flex-row gap-6 items-start">

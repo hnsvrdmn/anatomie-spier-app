@@ -9,9 +9,9 @@
       "humeri",
       "cingulum"
     ],
-    "originText": "processus spinosus 7e-12e thoracale wervels, processus spinosus alle lumbale wervels, dorsale zijde crista iliaca",
+    "originText": "processus spinosus 7e-12 thoracale wervels, processus spinosus alle lumbale wervels, dorsale zijde crista iliaca",
     "insertionText": "tuberculum minus (pees komt van dorsaal en hecht aan de ventrale zijde van de humerus aan)",
-    "functionText": "Adductie, Endorotatie, Retroflexie (art. humeri) / Detractie schoudergordel, Adductie, endorotatie en retroflexie art. humeri (cingulum pectorale)",
+    "functionText": "Adductie, Endorotatie, Retroflexie (art. humeri) / Detractie schoudergordel (cingulum pectorale)",
     "visuals": {
       "right": {
         "origins": [
@@ -270,7 +270,7 @@
       "humeri",
       "cingulum"
     ],
-    "originText": "mediale deel clavicula, sternum, kraakbeen van 2e-6e rib",
+    "originText": "mediale ⅓ deel clavicula, sternum, kraakbeen van 2e-6e rib",
     "insertionText": "tuberculum majus",
     "functionText": "Adductie, Endorotatie",
     "visuals": {
@@ -953,8 +953,8 @@
       "humeri"
     ],
     "originText": "caput breve: processus coracoideus (= op schouderblad) | caput longum: net boven gewrichtskom schoudergewricht (= op schouderblad)",
-    "insertionText": "tuberositas radii",
-    "functionText": "(2x art. cubiti, 1x(!) art. humeri) Flexie en supinatie art. cubiti, abductie in art. humeri",
+    "insertionText": "tuberositas radii (2x art. cubiti, 1x(!) art. humeri)",
+    "functionText": "Flexie en supinatie art. cubiti, abductie in art. humeri",
     "visuals": {
       "right": {
         "origins": [
@@ -1100,8 +1100,8 @@
       "humeri"
     ],
     "originText": "caput longum: net onder gewrichtskom schoudergewricht (= op schouderblad) | caput mediale: mediaal op dorsale vlak van os humerus | caput laterale: lateraal op dorsale vlak van os humerus",
-    "insertionText": "olecranon",
-    "functionText": "(1x art. cubiti, 1x art. humeri) Extensie art. cubiti, Retroflexie art. humeri (caput longum)",
+    "insertionText": "olecranon (1x art. cubiti, 1x art. humeri)",
+    "functionText": "Extensie art. cubiti, Retroflexie art. humeri (caput longum)",
     "visuals": {
       "left": {
         "origins": [
@@ -1182,7 +1182,7 @@
     "jointCategories": [
       "romp"
     ],
-    "originText": "5-7 costa, processus xiphoideus",
+    "originText": "5e - 7e costa, processus xiphoideus",
     "insertionText": "os pubis",
     "functionText": "Flexie van de wervelkolom",
     "visuals": {
@@ -1646,8 +1646,8 @@
       "coxae",
       "romp"
     ],
-    "originText": "12e vertebra thoracalis, 1e-5e vertebrae lumbales, ventrale vlak os ilium",
-    "insertionText": "trochanter minor",
+    "originText": "12e vertebra thoracalis, 1e-5e vertebrae lumbales, ventrale vlak os ilium / Laatste thoracale en lumbale vertebrae, Binnenzijde os ilium",
+    "insertionText": "trochanter minor / trochanter minor femoris",
     "functionText": "Flexie van de wervelkolom & Anteflexie en exorotatie van art. coxae",
     "visuals": {
       "left": {
@@ -2672,7 +2672,7 @@
   },
   {
     "id": "fibularis_brevis",
-    "name": "m. fibularis brevis",
+    "name": "m. fibularis brevis (MP: peronaeus brevis)",
     "latinName": "m. peronaeus brevis",
     "view": "ventral",
     "symmetryType": "bilateral",
@@ -2756,7 +2756,7 @@
   },
   {
     "id": "fibularis_longus",
-    "name": "m. fibularis longus",
+    "name": "m. fibularis longus (MP: peronaeus longus)",
     "latinName": "m. peronaeus longus",
     "view": "ventral",
     "symmetryType": "bilateral",

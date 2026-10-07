@@ -3,7 +3,8 @@ import { useMuscles } from '../../context/MuscleContext';
 import { JOINT_CATEGORIES } from '../../data/jointCategories';
 import { SkeletonViewer } from '../skeleton/SkeletonViewer';
 import { MuscleDetail } from './MuscleDetail';
-import { Search, X, ChevronUp, ChevronDown, CheckSquare, Square, RefreshCcw, ChevronLeft, ChevronRight } from 'lucide-react';
+import { RotateCw, ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MUSCLE_MOVEMENTS } from '../../data/muscleMovements';
 
 export const MobileStudyView: React.FC = () => {
   const { 
@@ -13,15 +14,12 @@ export const MobileStudyView: React.FC = () => {
     selectedMuscle, 
     selectedMuscles, 
     selectedMuscleIds,
-    toggleMuscleSelection,
-    clearSelectedMuscles,
     symmetrySide, 
     selectMuscle,
     setMultipleMuscles
   } = useMuscles();
 
   const [selectedJointId, setSelectedJointId] = useState<string>('all');
-  const [searchTerm, setSearchTerm] = useState<string>('');
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
   // Drag handling voor de uitschuifbare lade onderin
@@ -88,59 +86,68 @@ export const MobileStudyView: React.FC = () => {
     }
   }, [selectedMuscle?.id, selectedMuscle?.view, setCurrentView]);
 
-  // Gefilterde spieren op basis van gewricht en zoekterm
+  // Gefilterde spieren op basis van gekozen gewricht
   const filteredMuscles = useMemo(() => {
-    return muscles.filter((m) => {
-      // 1. Zoekfilter
-      const matchesSearch =
-        !searchTerm.trim() ||
-        m.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        m.originText.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        m.insertionText.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (m.functionText && m.functionText.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (m.otherFunctions && m.otherFunctions.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (m.primaryMovements && m.primaryMovements.some((p) => `${p.joint} ${p.movement}`.toLowerCase().includes(searchTerm.toLowerCase())));
+    if (selectedJointId === 'all') return muscles;
+    return muscles.filter(m => m.jointCategories && m.jointCategories.includes(selectedJointId));
+  }, [muscles, selectedJointId]);
 
-      if (!matchesSearch) return false;
+  // De spier die op dit moment actief is
+  const activeMuscle = selectedMuscle || selectedMuscles[0] || filteredMuscles[0] || muscles[0];
 
-      // 2. Gewricht filter
-      if (selectedJointId === 'all') return true;
-      return m.jointCategories && m.jointCategories.includes(selectedJointId);
-    });
-  }, [muscles, searchTerm, selectedJointId]);
-
-  // Wissel van gewricht: selecteer automatisch ALLE spieren uit dat gewricht
-  const handleJointChange = (jointId: string) => {
-    setSelectedJointId(jointId);
-    if (jointId === 'all') {
-      if (muscles.length > 0) {
-        setMultipleMuscles(muscles.map(m => m.id));
+  // Wissel dropdown keuze: kan een gewrichtsgroep zijn of een specifieke spier
+  const handleDropdownChange = (value: string) => {
+    if (value.startsWith('joint:')) {
+      const jointId = value.replace('joint:', '');
+      setSelectedJointId(jointId);
+      if (jointId === 'all') {
+        if (muscles.length > 0) {
+          setMultipleMuscles(muscles.map(m => m.id));
+          selectMuscle(muscles[0].id, true);
+        }
+      } else {
+        const jointMuscles = muscles.filter(m => m.jointCategories?.includes(jointId));
+        if (jointMuscles.length > 0) {
+          setMultipleMuscles(jointMuscles.map(m => m.id));
+          selectMuscle(jointMuscles[0].id, true);
+        }
       }
-    } else {
-      const jointMuscles = muscles.filter(m => m.jointCategories?.includes(jointId));
-      if (jointMuscles.length > 0) {
-        setMultipleMuscles(jointMuscles.map(m => m.id));
-      }
+    } else if (value.startsWith('muscle:')) {
+      const muscleId = value.replace('muscle:', '');
+      selectMuscle(muscleId, true);
     }
   };
 
-  // Status van meervoudige selectie binnen het huidige filter
-  const areAllFilteredSelected = filteredMuscles.length > 0 && filteredMuscles.every(m => selectedMuscleIds.includes(m.id));
-  const hasMultipleSelected = selectedMuscleIds.length > 1;
+  // Vorige / Volgende spier skippen (< en >)
+  const handlePrevMuscle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const list = selectedJointId !== 'all' && filteredMuscles.length > 0 ? filteredMuscles : muscles;
+    if (list.length === 0) return;
+    const currentId = activeMuscle?.id;
+    const idx = list.findIndex(m => m.id === currentId);
+    const prevIdx = (idx - 1 + list.length) % list.length;
+    selectMuscle(list[prevIdx].id, true);
+  };
 
-  const handleClearSelection = () => {
-    if (filteredMuscles.length > 0) {
-      selectMuscle(filteredMuscles[0].id, true);
-    } else {
-      clearSelectedMuscles();
+  const handleNextMuscle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const list = selectedJointId !== 'all' && filteredMuscles.length > 0 ? filteredMuscles : muscles;
+    if (list.length === 0) return;
+    const currentId = activeMuscle?.id;
+    const idx = list.findIndex(m => m.id === currentId);
+    const nextIdx = (idx + 1) % list.length;
+    selectMuscle(list[nextIdx].id, true);
+  };
+
+  // Bepaal de huidige waarde van het menuutje bovenin
+  const currentDropdownValue = useMemo(() => {
+    if (selectedMuscleIds.length === 1 && activeMuscle) {
+      return `muscle:${activeMuscle.id}`;
     }
-  };
+    return `joint:${selectedJointId}`;
+  }, [selectedMuscleIds.length, activeMuscle?.id, selectedJointId]);
 
-  const handleSelectAll = () => {
-    setMultipleMuscles(filteredMuscles.map(m => m.id));
-  };
-
-  // Bij initialisatie van studiemodus: automatisch alle spieren van het gewricht selecteren
+  // Bij initialisatie: alle spieren van gekozen gewricht selecteren
   useEffect(() => {
     if (selectedJointId === 'all') {
       if (muscles.length > 0 && selectedMuscles.length <= 1) {
@@ -157,26 +164,43 @@ export const MobileStudyView: React.FC = () => {
   return (
     <div className="relative w-full h-[calc(100dvh-3.5rem)] bg-white flex flex-col overflow-hidden select-none">
       
-      {/* 1. GEWRICHT SELECTEREN IN DROPDOWN BOVEN DE AFBEELDING (PAST PRECIES OP HET SCHERM) */}
+      {/* 1. MENUUTJE BOVENIN: GEWRICHT OF SPECIFIEKE SPIER KIEZEN */}
       <div className="w-full px-3 py-2 bg-white/95 backdrop-blur-md border-b border-clinical-200 shrink-0 relative z-50 shadow-xs pointer-events-auto box-border">
         <select
-          value={selectedJointId}
-          onChange={(e) => handleJointChange(e.target.value)}
-          className="w-full min-w-0 max-w-full px-3 py-2 bg-clinical-50 hover:bg-clinical-100 border border-clinical-300 rounded-xl text-xs font-bold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-xs transition cursor-pointer truncate"
+          value={currentDropdownValue}
+          onChange={(e) => handleDropdownChange(e.target.value)}
+          className="w-full min-w-0 max-w-full px-3 py-1.5 bg-clinical-50 hover:bg-clinical-100 border border-clinical-300 rounded-xl text-xs font-bold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-xs transition cursor-pointer truncate"
         >
-          <option value="all">Alle gewrichten ({muscles.length} spieren)</option>
-          <optgroup label="Per gewricht">
+          <optgroup label="Gewrichten">
             {JOINT_CATEGORIES.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.title} ({cat.muscleIds.length} spieren)
+              <option key={cat.id} value={`joint:${cat.id}`}>
+                {cat.name.replace('ARTICULATIO ', 'Art. ').replace('ARTICULATIONES ', 'Art. ')} ({cat.muscleIds.length})
+              </option>
+            ))}
+          </optgroup>
+          <optgroup label="Spieren">
+            {muscles.map((m) => (
+              <option key={m.id} value={`muscle:${m.id}`}>
+                {m.name}
               </option>
             ))}
           </optgroup>
         </select>
       </div>
 
-      {/* 2. DE GROTE AFBEELDING MET WITTE ACHTERGROND (VOLLEDIG SCHERM, ZONDER VERGROOTGLAS) */}
-      <div className="flex-1 w-full h-full bg-white relative flex items-center justify-center overflow-hidden pb-14">
+      {/* 2. DE GROTE AFBEELDING MET WITTE ACHTERGROND */}
+      <div className="flex-1 w-full h-full bg-white relative flex items-center justify-center overflow-hidden pb-8">
+        {/* Minimalistische draaiknop met ALLEEN het draai-icoontje linksboven op de skeletafbeelding */}
+        <button
+          type="button"
+          onClick={() => setCurrentView(currentView === 'ventral' ? 'dorsal' : 'ventral')}
+          className="absolute top-2.5 left-2.5 z-30 w-9 h-9 rounded-full bg-white/95 backdrop-blur-md border border-clinical-200 shadow-sm flex items-center justify-center text-clinical-700 active:scale-90 hover:text-clinical-950 transition pointer-events-auto"
+          title={`Draai skelet (${currentView === 'ventral' ? 'Dorsaal' : 'Ventraal'})`}
+          aria-label="Draai aanzicht"
+        >
+          <RotateCw className="w-4 h-4 text-clinical-700" />
+        </button>
+
         <SkeletonViewer
           currentView={currentView}
           activeMuscle={selectedMuscle}
@@ -195,13 +219,13 @@ export const MobileStudyView: React.FC = () => {
         />
       </div>
 
-      {/* 3. UITSCHUIFBARE LADE ONDERIN: KLAPT UIT TOT IETS ONDER DE DROPDOWN ZODAT DEZE VOLLEDIG BEREIKBAAR BLIJFT */}
+      {/* 3. UITSCHUIFBARE LADE ONDERIN: INGEVOUWEN MET GROTERE NAAM EN VOLLEDIGE LEESBARE ORIGO & INSERTIE */}
       <div 
         className={`fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-clinical-200 shadow-[0_-8px_30px_rgba(0,0,0,0.15)] rounded-t-3xl transition-all duration-300 pointer-events-auto flex flex-col ${
-          isDrawerOpen ? 'max-h-[calc(100dvh-7.5rem)]' : 'max-h-14'
+          isDrawerOpen ? 'max-h-[calc(100dvh-7.5rem)]' : 'h-auto max-h-[220px]'
         }`}
       >
-        {/* SLEEPHENDEL & PIJL: Tik of sleep omhoog om het paneel te openen */}
+        {/* SLEEPHENDEL & HEADER MET ACTIEVE SPIER, ORIGO, INSERTIE & < > KNOPPEN */}
         <div 
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
@@ -211,170 +235,102 @@ export const MobileStudyView: React.FC = () => {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
           onClick={() => setIsDrawerOpen(prev => !prev)}
-          className="w-full h-14 px-4 flex items-center justify-between cursor-grab active:cursor-grabbing touch-none select-none shrink-0"
+          className="w-full px-3.5 py-2.5 cursor-grab active:cursor-grabbing touch-none select-none shrink-0 border-b border-clinical-100 flex flex-col justify-center"
         >
-          {/* Links: Geselecteerde spiernaam of aantal geselecteerde spieren */}
-          <div className="flex items-center gap-2 min-w-0 flex-1 items-center">
-  <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0 shadow-xs" />
-  {selectedMuscle ? (
-    <>
-      <button
-        type="button"
-        onClick={() => {
-          const idx = filteredMuscles.findIndex(m => m.id === selectedMuscle.id);
-          const prev = filteredMuscles[(idx - 1 + filteredMuscles.length) % filteredMuscles.length];
-          selectMuscle(prev.id, true);
-        }}
-        className="p-1 text-clinical-600 hover:text-clinical-900"
-      >
-        <ChevronLeft className="w-4 h-4" />
-      </button>
-      <span className="text-xs font-black text-clinical-900 truncate">
-        {selectedMuscle.name}
-      </span>
-      <button
-        type="button"
-        onClick={() => {
-          const idx = filteredMuscles.findIndex(m => m.id === selectedMuscle.id);
-          const next = filteredMuscles[(idx + 1) % filteredMuscles.length];
-          selectMuscle(next.id, true);
-        }}
-        className="p-1 text-clinical-600 hover:text-clinical-900"
-      >
-        <ChevronRight className="w-4 h-4" />
-      </button>
-      <span className="ml-2 text-xs text-clinical-700">
-        {selectedMuscle.originText} → {selectedMuscle.insertionText}
-      </span>
-    </>
-  ) : (
-    <span className="text-xs font-black text-clinical-900 truncate">Selecteer een spier</span>
-  )}
-</div>
+          {/* Midden: klein subtiel sleeppilletje (-) */}
+          <div className="w-8 h-1 bg-slate-300 rounded-full mx-auto mb-1.5 shrink-0" />
 
+          {/* Bovenste rij: [<] Actieve Spiernaam [>] + open/dicht pijl */}
+          <div className="flex items-center justify-between gap-1 w-full">
+            <button
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePrevMuscle(e);
+              }}
+              className="p-1.5 -ml-1 rounded-xl hover:bg-slate-100 active:bg-slate-200 text-clinical-700 transition pointer-events-auto"
+              title="Vorige spier"
+              aria-label="Vorige spier"
+            >
+              <ChevronLeft className="w-5 h-5 text-clinical-700" />
+            </button>
+
+            <div className="flex-1 min-w-0 text-center px-1">
+              <span className="font-black text-sm sm:text-base text-clinical-950 truncate block tracking-tight">
+                {activeMuscle ? activeMuscle.name : 'Geen spier geselecteerd'}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNextMuscle(e);
+              }}
+              className="p-1.5 rounded-xl hover:bg-slate-100 active:bg-slate-200 text-clinical-700 transition pointer-events-auto"
+              title="Volgende spier"
+              aria-label="Volgende spier"
+            >
+              <ChevronRight className="w-5 h-5 text-clinical-700" />
+            </button>
+
+            <button
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsDrawerOpen(prev => !prev);
+              }}
+              className="flex items-center text-blue-600 font-bold p-1 ml-0.5 shrink-0 pointer-events-auto"
+              title={isDrawerOpen ? "Sluit details" : "Open details"}
+            >
+              {isDrawerOpen ? (
+                <ChevronDown className="w-4 h-4 text-slate-500" />
+              ) : (
+                <ChevronUp className="w-4 h-4 text-blue-600" />
+              )}
+            </button>
           </div>
 
-          {/* Midden: Sleeppil (-) */}
-          <div className="w-12 h-1.5 bg-slate-300 rounded-full shrink-0" />
-
-          {/* Rechts: Pijl die open/dicht aangeeft */}
-          <div className="flex items-center justify-end flex-1 pl-2 text-blue-600 font-bold">
-            {isDrawerOpen ? (
-              <div className="flex items-center gap-1 text-[11px] text-slate-500">
-                <ChevronDown className="w-4 h-4 text-slate-600" />
-                <span>Sluit</span>
+          {/* Onderste regels: Volledige Origo (O), Insertie (I) en Bewegingen (ALLEEN zichtbaar wanneer lade ingeklapt is!) */}
+          {!isDrawerOpen && activeMuscle && (
+            <div className="mt-2 space-y-1 text-xs leading-snug px-1">
+              <div className="flex items-start gap-1.5 text-slate-800">
+                <span className="font-bold text-blue-700 text-xs shrink-0 mt-0.5">O:</span>
+                <span className="text-slate-700 font-medium break-words leading-tight">{activeMuscle.originText}</span>
               </div>
-            ) : (
-              <div className="flex items-center gap-1 text-[11px] text-blue-600">
-                <span>Details</span>
-                <ChevronUp className="w-4 h-4" />
+              <div className="flex items-start gap-1.5 text-slate-800">
+                <span className="font-bold text-rose-600 text-xs shrink-0 mt-0.5">I:</span>
+                <span className="text-slate-700 font-medium break-words leading-tight">{activeMuscle.insertionText}</span>
               </div>
-            )}
-          </div>
+              {(() => {
+                const movs = MUSCLE_MOVEMENTS[activeMuscle.id] || [];
+                const movText = movs.length > 0 ? movs.join(', ') : (activeMuscle.functionText || '');
+                if (!movText) return null;
+                return (
+                  <div className="flex items-start gap-1.5 text-slate-800 pt-0.5">
+                    <span className="font-bold text-emerald-700 text-xs shrink-0 mt-0.5">Bewegingen:</span>
+                    <span className="text-slate-700 font-medium break-words leading-tight">{movText}</span>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
         </div>
 
-        {/* INHOUD VAN DE LADE: PAS ZICHTBAAR NA OMHOOG SLEPEN / AANTIKKEN */}
+        {/* INHOUD VAN DE LADE (UITGESCHOVEN): VOLLEDIGE SPIERDETAILS INCLUSIEF DE GROENE BEWEGINGENBOX */}
         {isDrawerOpen && (
-          <div className="p-4 pt-1 space-y-4 overflow-y-auto custom-scrollbar pb-8 animate-in fade-in duration-200">
-            
-            {/* A. VIEW SWITCH BUTTON (VENTRAL / DORSAL) */}
-            <div className="flex items-center justify-center pb-3 border-b border-clinical-100">
-              <button
-                type="button"
-                onClick={() => setCurrentView(currentView === 'ventral' ? 'dorsal' : 'ventral')}
-                className="flex h-8 px-3.5 rounded-xl bg-clinical-100 text-clinical-900 hover:bg-clinical-200 transition flex items-center justify-center gap-1.5"
-              >
-                <RefreshCcw className="w-4 h-4 text-blue-600" />
-              </button>
-            </div>
-
-            {/* B. SPECIFIEKE SPIER SELECTEREN OP NAAM */}
-            <div className="space-y-2">
-              <div className="relative">
-                <Search className="w-4 h-4 text-clinical-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Zoek spier op naam..."
-                  className="w-full pl-9 pr-8 py-2 bg-clinical-50 border border-clinical-200 rounded-xl text-xs font-bold text-clinical-900 placeholder:text-clinical-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
-                />
-                {searchTerm && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchTerm('')}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-clinical-400 hover:text-clinical-700"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
-
-              {/* Spierknoppen met checkboxes (volledig binnen kader, geen horizontaal scrollen) */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between pb-0.5">
-                  <span className="text-[10px] font-bold text-clinical-500 uppercase tracking-wider">
-                    Spieren ({filteredMuscles.length})
-                  </span>
-                  <div className="flex items-center gap-2.5">
-                    {!areAllFilteredSelected && (
-                      <button
-                        type="button"
-                        onClick={handleSelectAll}
-                        className="text-[11px] font-bold text-blue-600 hover:text-blue-800"
-                      >
-                        Selecteer alle ({filteredMuscles.length})
-                      </button>
-                    )}
-                    {hasMultipleSelected && (
-                      <button
-                        type="button"
-                        onClick={handleClearSelection}
-                        className="text-[11px] font-bold text-rose-600 hover:text-rose-800 underline transition"
-                        title="Wis meervoudige selectie"
-                      >
-                        Wis selectie
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap gap-1.5">
-                  {filteredMuscles.map((m) => {
-                    const isChecked = selectedMuscleIds.includes(m.id);
-                    return (
-                      <button
-                        key={m.id}
-                        type="button"
-                        onClick={() => toggleMuscleSelection(m.id)}
-                        className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border shadow-2xs ${
-                          isChecked
-                            ? 'bg-blue-50 border-blue-400 text-blue-950 font-black ring-1 ring-blue-300'
-                            : 'bg-clinical-50 border-clinical-200 text-clinical-700 hover:bg-clinical-100'
-                        }`}
-                      >
-                        {isChecked ? (
-                          <CheckSquare className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                        ) : (
-                          <Square className="w-3.5 h-3.5 text-clinical-400 shrink-0" />
-                        )}
-                        <span className="text-left">{m.name}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-
-            {/* C. SPIERDETAILS: ORIGO, INSERTIE & FUNCTIE */}
-            <div className="pt-2 border-t border-clinical-100">
-              <MuscleDetail />
-            </div>
-
+          <div className="p-3 pt-2 space-y-3 overflow-y-auto custom-scrollbar pb-8 animate-in fade-in duration-200">
+            <MuscleDetail />
           </div>
         )}
       </div>
 
-
+    </div>
   );
 };

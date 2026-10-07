@@ -84,7 +84,42 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const [currentView, setCurrentView] = useState<AnatomicalView>('ventral');
   const [symmetrySide, setSymmetrySide] = useState<SymmetrySide>('both');
-  const [appMode, setAppMode] = useState<AppMode>('study');
+  const [appMode, setAppModeState] = useState<AppMode>(() => {
+    try {
+      const h = window.location.hash.replace('#', '') as AppMode;
+      if (h && ['study', 'movements', 'quiz', 'editor'].includes(h)) return h;
+      const p = new URLSearchParams(window.location.search);
+      const m = p.get('mode') as AppMode;
+      if (m && ['study', 'movements', 'quiz', 'editor'].includes(m)) return m;
+    } catch {
+      // fallback
+    }
+    return 'study';
+  });
+
+  const setAppMode = useCallback((mode: AppMode) => {
+    setAppModeState(mode);
+    try {
+      window.location.hash = mode;
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleHash = () => {
+      try {
+        const h = window.location.hash.replace('#', '') as AppMode;
+        if (h && ['study', 'movements', 'quiz', 'editor'].includes(h)) {
+          setAppModeState(h);
+        }
+      } catch {
+        // fallback
+      }
+    };
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
   const [quizPracticeMode, setQuizPracticeMode] = useState<'joint' | 'free'>('joint');
   const [toast, setToast] = useState<ToastMessage | null>(null);
 

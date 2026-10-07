@@ -57,8 +57,8 @@ export const QuizView: React.FC = () => {
   const [toleranceMode, setToleranceMode] = useState<'normal' | 'strict' | 'expert'>('normal');
   const toleranceValue = toleranceMode === 'expert' ? 0.015 : toleranceMode === 'strict' ? 0.025 : 0.035;
 
-  // Voor 'free' modus: welk quiztype? 'full' is verwijderd (dubbelop met oefenen per gewricht)
-  const [freeQuizType, setFreeQuizType] = useState<QuizType | 'all'>('landmark');
+  // Voor 'free' modus: welk quiztype? 'full' (Origo én insertie plaatsen over alle spieren) is de standaard!
+  const [freeQuizType, setFreeQuizType] = useState<QuizType | 'all'>('full');
 
   // Actieve vraag
   const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
@@ -244,7 +244,7 @@ export const QuizView: React.FC = () => {
 
     const targetType = typeOverride !== undefined ? typeOverride : freeQuizType;
     let randMuscle = muscles[Math.floor(Math.random() * muscles.length)];
-    let type: QuizType = 'landmark';
+    let type: QuizType = 'full';
 
     if (targetType === 'all') {
       const types: QuizType[] = ['full', 'landmark', 'multiple_choice', 'movements', 'open_question'];
@@ -402,11 +402,8 @@ export const QuizView: React.FC = () => {
     setHasScaledForOrigins(false);
     setIsScalingInsertion(false);
 
-    // Meerkeuze, open vraag en bewegingentoets: schakel automatisch over naar het aanzicht van de spier
-    // zodat de student de getoonde spier op het skelet kan bestuderen
-    if (type === 'multiple_choice' || type === 'movements' || type === 'function' || type === 'open_question') {
-      setCurrentView(randMuscle.view);
-    }
+    // Schakel automatisch over naar het juiste aanzicht van de spier
+    setCurrentView(randMuscle.view);
   }, [muscles, freeQuizType, getMuscleFunctionDescription, setCurrentView]);
 
   // Initialisatie effect
@@ -417,7 +414,7 @@ export const QuizView: React.FC = () => {
     } else {
       generateNewFreeQuestion(freeQuizType);
     }
-  }, [practiceMode, selectedJointId, jointMuscleIndex, loadJointQuestion]);
+  }, [practiceMode, selectedJointId, jointMuscleIndex, loadJointQuestion, freeQuizType]);
 
   // Volgende vraag handler
   const handleNextQuestion = () => {
@@ -1093,37 +1090,13 @@ export const QuizView: React.FC = () => {
 
       {/* Rechter Zijpaneel: Modus, Vraag & Voortgang */}
       <div className="w-full lg:w-96 flex flex-col space-y-4 shrink-0">
-        {/* Modus Selectie Knoppen: [Per Gewricht Oefenen] / [Vrije Toets] */}
-        <div className="bg-white p-2 rounded-2xl border border-clinical-200/90 shadow-sm flex items-center gap-1">
-          <button
-            onClick={() => setPracticeMode('joint')}
-            className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all ${
-              practiceMode === 'joint'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'text-clinical-600 hover:bg-clinical-50'
-            }`}
-          >
-            Oefenen per gewricht
-          </button>
-          <button
-            onClick={() => setPracticeMode('free')}
-            className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all ${
-              practiceMode === 'free'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'text-clinical-600 hover:bg-clinical-50'
-            }`}
-          >
-            Vrije Toets
-          </button>
-        </div>
-
-        {/* 1. Modus: Oefenen per gewricht selector met Shuffle */}
-        {practiceMode === 'joint' ? (
-          <div className="bg-white p-4 rounded-2xl border border-clinical-200/90 shadow-sm space-y-3">
-            <div className="flex items-center justify-between">
-              <label className="text-[11px] font-bold text-clinical-700 uppercase tracking-wider">
-                Kies Gewricht
-              </label>
+        {/* Enkele Toetstype Selector */}
+        <div className="bg-white p-4 rounded-2xl border border-clinical-200/90 shadow-sm space-y-3">
+          <div className="flex items-center justify-between">
+            <label className="text-[11px] font-bold text-clinical-700 uppercase tracking-wider">
+              Kies Toetstype
+            </label>
+            {practiceMode === 'joint' && (
               <div className="flex items-center gap-2">
                 <button
                   type="button"
@@ -1138,7 +1111,7 @@ export const QuizView: React.FC = () => {
                       ? 'bg-blue-50 border-blue-300 text-blue-700'
                       : 'bg-white border-clinical-200 text-clinical-600 hover:bg-clinical-50'
                   }`}
-                  title="Schud de vragen van dit gewricht in willekeurige volgorde"
+                  title="Schud de vragen in willekeurige volgorde"
                 >
                   <Shuffle className="w-3 h-3" />
                   <span>Shuffle {isShuffled ? 'Aan' : 'Uit'}</span>
@@ -1147,35 +1120,46 @@ export const QuizView: React.FC = () => {
                   {jointMuscleIndex + 1} / {jointMuscles.length}
                 </span>
               </div>
-            </div>
+            )}
+          </div>
 
+          {practiceMode === 'joint' ? (
             <select
               value={selectedJointId}
               onChange={(e) => {
-                const val = e.target.value;
-                setSelectedJointId(val);
-                if (val === 'all') {
-                  setIsShuffled(true);
-                }
+                setSelectedJointId(e.target.value);
                 setShuffleCounter((prev) => prev + 1);
                 setJointMuscleIndex(0);
                 setJointSessionFinished(false);
               }}
-              className="w-full px-3 py-2 bg-clinical-50 border border-clinical-200 rounded-xl text-xs sm:text-sm font-semibold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-clinical-50 border border-clinical-200 rounded-xl text-xs sm:text-sm font-semibold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
             >
-              <option value="all">
-                Alle spieren (door elkaar)
-              </option>
-              <optgroup label="Per gewricht">
-                {JOINT_CATEGORIES.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.title}
-                  </option>
-                ))}
-              </optgroup>
+              {JOINT_CATEGORIES.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.title} ({cat.muscleIds.length} spieren)
+                </option>
+              ))}
             </select>
+          ) : (
+            <select
+              value={freeQuizType}
+              onChange={(e) => {
+                const nextType = e.target.value as QuizType;
+                setFreeQuizType(nextType);
+                generateNewFreeQuestion(nextType);
+              }}
+              className="w-full px-3 py-2 bg-clinical-50 border border-clinical-200 rounded-xl text-xs sm:text-sm font-semibold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+            >
+              <option value="full">Origo én insertie plaatsen (alle spieren)</option>
+              <option value="landmark">Vind aanhechtingspunt (origo / insertie)</option>
+              <option value="multiple_choice">Meerkeuze toets (MC)</option>
+              <option value="open_question">Open invultoets</option>
+              <option value="movements">Bewegingen per spier</option>
+            </select>
+          )}
 
-            {/* Voortgangsbalk van dit gewricht */}
+          {/* Voortgangsbalk bij joint of full_all */}
+          {practiceMode === 'joint' && (
             <div className="space-y-1">
               <div className="w-full bg-clinical-100 rounded-full h-2 overflow-hidden">
                 <div
@@ -1186,30 +1170,8 @@ export const QuizView: React.FC = () => {
                 />
               </div>
             </div>
-          </div>
-        ) : (
-          /* 2. Modus: Vrije toets type selector */
-          <div className="bg-white p-3.5 rounded-2xl border border-clinical-200/90 shadow-sm space-y-2">
-            <label className="text-[11px] font-bold text-clinical-600 uppercase tracking-wider">
-              Toets Type
-            </label>
-            <select
-              value={freeQuizType}
-              onChange={(e) => {
-                const nextType = e.target.value as QuizType | 'all';
-                setFreeQuizType(nextType);
-                generateNewFreeQuestion(nextType);
-              }}
-              className="w-full px-3 py-2 bg-clinical-50 border border-clinical-200 rounded-xl text-xs font-semibold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="landmark">Vind aanhechtingspunt (origo / insertie)</option>
-              <option value="multiple_choice">Meerkeuze toets (identificatie, origo/insertie & functie)</option>
-              <option value="open_question">Open invultoets (typ zelf het antwoord)</option>
-              <option value="movements">Bewegingen per spier (selecteer alle juiste)</option>
-              <option value="all">Willekeurig gemengd</option>
-            </select>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Nauwkeurigheid tolerantie selector - alleen relevant bij tekenvragen */}
         {type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question' && (
