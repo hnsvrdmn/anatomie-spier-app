@@ -3,7 +3,7 @@ import { useMuscles } from '../../context/MuscleContext';
 import { JOINT_CATEGORIES } from '../../data/jointCategories';
 import { SkeletonViewer } from '../skeleton/SkeletonViewer';
 import { MuscleDetail } from './MuscleDetail';
-import { RotateCw, ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { RotateCw, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Search, X } from 'lucide-react';
 import { MUSCLE_MOVEMENTS } from '../../data/muscleMovements';
 
 export const MobileStudyView: React.FC = () => {
@@ -21,6 +21,10 @@ export const MobileStudyView: React.FC = () => {
 
   const [selectedJointId, setSelectedJointId] = useState<string>('all');
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const prevMuscleIdRef = useRef<string | undefined>(undefined);
 
   // Drag handling voor de uitschuifbare lade onderin
   const dragStartYRef = useRef<number | null>(null);
@@ -79,13 +83,6 @@ export const MobileStudyView: React.FC = () => {
     dragStartYRef.current = null;
   };
 
-  // Automatisch wisselen naar het juiste aanzicht van de geselecteerde spier
-  useEffect(() => {
-    if (selectedMuscle && currentView !== selectedMuscle.view) {
-      setCurrentView(selectedMuscle.view);
-    }
-  }, [selectedMuscle?.id, selectedMuscle?.view, setCurrentView]);
-
   // Gefilterde spieren op basis van gekozen gewricht
   const filteredMuscles = useMemo(() => {
     if (selectedJointId === 'all') return muscles;
@@ -95,7 +92,19 @@ export const MobileStudyView: React.FC = () => {
   // De spier die op dit moment actief is
   const activeMuscle = selectedMuscle || selectedMuscles[0] || filteredMuscles[0] || muscles[0];
 
-  // Wissel dropdown keuze: kan een gewrichtsgroep zijn of een specifieke spier
+  // Automatisch wisselen naar het juiste aanzicht van de geselecteerde spier
+  // ALLEEN wanneer er daadwerkelijk een nieuwe spier geselecteerd wordt. Hierna is de gebruiker vrij zelf te wisselen.
+  useEffect(() => {
+    const currentId = activeMuscle?.id;
+    if (currentId && currentId !== prevMuscleIdRef.current) {
+      prevMuscleIdRef.current = currentId;
+      if (activeMuscle.view) {
+        setCurrentView(activeMuscle.view);
+      }
+    }
+  }, [activeMuscle?.id, activeMuscle?.view, setCurrentView]);
+
+  // Wissel dropdown keuze: kan alle spieren, een gewrichtsgroep zijn of een specifieke spier
   const handleDropdownChange = (value: string) => {
     if (value.startsWith('joint:')) {
       const jointId = value.replace('joint:', '');
@@ -114,6 +123,8 @@ export const MobileStudyView: React.FC = () => {
       }
     } else if (value.startsWith('muscle:')) {
       const muscleId = value.replace('muscle:', '');
+      setSelectedJointId('all');
+      setMultipleMuscles([muscleId]);
       selectMuscle(muscleId, true);
     }
   };
@@ -141,11 +152,26 @@ export const MobileStudyView: React.FC = () => {
 
   // Bepaal de huidige waarde van het menuutje bovenin
   const currentDropdownValue = useMemo(() => {
+    if (selectedJointId === 'all' && selectedMuscleIds.length > 1) {
+      return 'joint:all';
+    }
     if (selectedMuscleIds.length === 1 && activeMuscle) {
       return `muscle:${activeMuscle.id}`;
     }
     return `joint:${selectedJointId}`;
   }, [selectedMuscleIds.length, activeMuscle?.id, selectedJointId]);
+
+  // Gefilterde spieren voor zoekfunctie
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) return muscles;
+    const q = searchQuery.toLowerCase().trim();
+    return muscles.filter(m => 
+      m.name.toLowerCase().includes(q) ||
+      m.originText?.toLowerCase().includes(q) ||
+      m.insertionText?.toLowerCase().includes(q) ||
+      m.functionText?.toLowerCase().includes(q)
+    );
+  }, [muscles, searchQuery]);
 
   // Bij initialisatie: alle spieren van gekozen gewricht selecteren
   useEffect(() => {
@@ -164,28 +190,133 @@ export const MobileStudyView: React.FC = () => {
   return (
     <div className="relative w-full h-[calc(100dvh-3.5rem)] bg-white flex flex-col overflow-hidden select-none">
       
-      {/* 1. MENUUTJE BOVENIN: GEWRICHT OF SPECIFIEKE SPIER KIEZEN */}
+      {/* 1. MENUUTJE BOVENIN: GEWRICHT OF SPECIFIEKE SPIER KIEZEN MET SUBTIEL ZOEKICOONTJE */}
       <div className="w-full px-3 py-2 bg-white/95 backdrop-blur-md border-b border-clinical-200 shrink-0 relative z-50 shadow-xs pointer-events-auto box-border">
-        <select
-          value={currentDropdownValue}
-          onChange={(e) => handleDropdownChange(e.target.value)}
-          className="w-full min-w-0 max-w-full px-3 py-1.5 bg-clinical-50 hover:bg-clinical-100 border border-clinical-300 rounded-xl text-xs font-bold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-xs transition cursor-pointer truncate"
-        >
-          <optgroup label="Gewrichten">
-            {JOINT_CATEGORIES.map((cat) => (
-              <option key={cat.id} value={`joint:${cat.id}`}>
-                {cat.name.replace('ARTICULATIO ', 'Art. ').replace('ARTICULATIONES ', 'Art. ')} ({cat.muscleIds.length})
-              </option>
-            ))}
-          </optgroup>
-          <optgroup label="Spieren">
-            {muscles.map((m) => (
-              <option key={m.id} value={`muscle:${m.id}`}>
-                {m.name}
-              </option>
-            ))}
-          </optgroup>
-        </select>
+        {!isSearching ? (
+          <div className="flex items-center gap-2 w-full">
+            <select
+              value={currentDropdownValue}
+              onChange={(e) => handleDropdownChange(e.target.value)}
+              className="flex-1 min-w-0 max-w-full px-3 py-1.5 bg-clinical-50 hover:bg-clinical-100 border border-clinical-300 rounded-xl text-xs font-bold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-xs transition cursor-pointer truncate"
+            >
+              <option value="joint:all">Alle Spieren</option>
+              <optgroup label="Gewrichten">
+                {JOINT_CATEGORIES.map((cat) => (
+                  <option key={cat.id} value={`joint:${cat.id}`}>
+                    {cat.name.replace('ARTICULATIO ', 'Art. ').replace('ARTICULATIONES ', 'Art. ')} ({cat.muscleIds.length})
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="Spieren">
+                {muscles.map((m) => (
+                  <option key={m.id} value={`muscle:${m.id}`}>
+                    {m.name}
+                  </option>
+                ))}
+              </optgroup>
+            </select>
+
+            <button
+              type="button"
+              onClick={() => {
+                setIsSearching(true);
+                setTimeout(() => searchInputRef.current?.focus(), 50);
+              }}
+              className="shrink-0 p-1.5 rounded-xl bg-clinical-50 hover:bg-clinical-100 border border-clinical-300 text-clinical-700 hover:text-blue-600 transition shadow-xs flex items-center justify-center active:scale-95"
+              title="Zoek spier"
+              aria-label="Zoek spier"
+            >
+              <Search className="w-4 h-4 text-clinical-700" />
+            </button>
+          </div>
+        ) : (
+          <div className="relative flex items-center gap-2 w-full">
+            <div className="relative flex-1 min-w-0">
+              <Search className="w-3.5 h-3.5 text-clinical-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Zoek spier (bijv. rectus, biceps)..."
+                className="w-full pl-8 pr-7 py-1.5 bg-clinical-50 border border-clinical-300 rounded-xl text-xs font-semibold text-clinical-900 placeholder:text-clinical-400 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-xs"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-clinical-400 hover:text-clinical-700 p-0.5"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setIsSearching(false);
+                setSearchQuery('');
+              }}
+              className="shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-bold text-clinical-600 hover:text-clinical-900 hover:bg-clinical-100 transition active:scale-95"
+            >
+              Sluit
+            </button>
+          </div>
+        )}
+
+        {/* Backdrop voor zoekresultaten om te sluiten bij tikken buiten het menu */}
+        {isSearching && (
+          <div 
+            className="fixed inset-0 z-40 bg-black/15 backdrop-blur-[1px]" 
+            onClick={() => {
+              setIsSearching(false);
+              setSearchQuery('');
+            }}
+          />
+        )}
+
+        {/* Zoekresultaten dropdown lijst */}
+        {isSearching && (
+          <div className="absolute top-full left-0 right-0 mt-1 mx-3 bg-white/98 backdrop-blur-md border border-clinical-200 rounded-2xl shadow-xl max-h-64 overflow-y-auto z-50 p-1 divide-y divide-clinical-100 custom-scrollbar animate-in fade-in slide-in-from-top-1 duration-150">
+            {searchResults.length === 0 ? (
+              <div className="py-3 px-3 text-center text-xs text-clinical-400 italic">
+                Geen spieren gevonden voor "{searchQuery}"
+              </div>
+            ) : (
+              searchResults.map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedJointId('all');
+                    setMultipleMuscles([m.id]);
+                    selectMuscle(m.id, true);
+                    setIsSearching(false);
+                    setSearchQuery('');
+                  }}
+                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-blue-50 flex items-center justify-between text-xs transition-colors group cursor-pointer"
+                >
+                  <div className="min-w-0 pr-2">
+                    <div className="font-bold text-clinical-900 group-hover:text-blue-600 truncate">
+                      {m.name}
+                    </div>
+                    {m.originText && (
+                      <div className="text-[10px] text-clinical-500 truncate mt-0.5">
+                        O: {m.originText}
+                      </div>
+                    )}
+                  </div>
+                  <span className={`shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded-md ${
+                    m.view === 'ventral' ? 'bg-blue-100 text-blue-700' : 'bg-indigo-100 text-indigo-700'
+                  }`}>
+                    {m.view === 'ventral' ? 'Ventraal' : 'Dorsaal'}
+                  </span>
+                </button>
+              ))
+            )}
+          </div>
+        )}
       </div>
 
       {/* 2. DE GROTE AFBEELDING MET WITTE ACHTERGROND */}

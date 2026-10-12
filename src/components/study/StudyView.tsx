@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useMuscles } from '../../context/MuscleContext';
 import { SkeletonViewer } from '../skeleton/SkeletonViewer';
 import { ViewToggle, ViewLayoutMode } from '../common/ViewToggle';
@@ -11,13 +11,18 @@ export const StudyView: React.FC = () => {
   const isMobile = useIsMobile();
   const { muscles, currentView, setCurrentView, selectedMuscle, selectedMuscles, symmetrySide, selectMuscle } = useMuscles();
   const [viewLayout, setViewLayout] = useState<ViewLayoutMode>('ventral');
+  const prevMuscleIdRef = useRef<string | undefined>(undefined);
 
   // Automatisch wisselen naar het juiste aanzicht van de geselecteerde spier in studiemodus
+  // Alleen wanneer er daadwerkelijk een nieuwe spier geselecteerd wordt. Hierna is de gebruiker vrij zelf te wisselen.
   useEffect(() => {
-    if (selectedMuscle && currentView !== selectedMuscle.view && viewLayout !== 'both') {
-      setCurrentView(selectedMuscle.view);
+    if (selectedMuscle && selectedMuscle.id !== prevMuscleIdRef.current) {
+      prevMuscleIdRef.current = selectedMuscle.id;
+      if (viewLayout !== 'both') {
+        setCurrentView(selectedMuscle.view);
+      }
     }
-  }, [selectedMuscle?.id, selectedMuscle?.view, currentView, setCurrentView, viewLayout]);
+  }, [selectedMuscle?.id, selectedMuscle?.view, viewLayout, setCurrentView]);
 
   // Mobiele weergave: geoptimaliseerde layout met gewrichtsdropdown boven afbeelding,
   // ventraal/dorsaal eronder, spierselectie daaronder en vergrootglas verwijderd
