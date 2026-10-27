@@ -44,8 +44,6 @@ export const MUSCLE_MOVEMENTS: Record<string, string[]> = {
   biceps_femoris: ['Retroflexie', 'Flexie', 'Exorotatie'],
   semimembranosus: ['Retroflexie', 'Flexie', 'Endorotatie'],
   semitendinosus: ['Retroflexie', 'Flexie', 'Endorotatie'],
-  tensor_fasciae_latae: ['Abductie'],
-  gluteus_medius: ['Abductie'],
   adductores: ['Adductie'],
   gluteus_maximus: ['Retroflexie', 'Exorotatie'],
   vastus_lateralis: ['Extensie'],

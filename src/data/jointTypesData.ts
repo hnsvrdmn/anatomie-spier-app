@@ -102,11 +102,6 @@ export const JOINTS_LEARNING_DATA: Record<string, JointDetail> = {
         note: 'Strekking naar achteren in de heup',
       },
       {
-        movement: 'Abductie',
-        muscleIds: ['gluteus_medius', 'tensor_fasciae_latae'],
-        note: 'Zijwaarts heffen van het been',
-      },
-      {
         movement: 'Adductie',
         muscleIds: ['adductores'],
         note: 'Naar binnen bewegen van het been',

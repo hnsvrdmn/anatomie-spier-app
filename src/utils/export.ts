@@ -2,7 +2,7 @@ import { Muscle } from '../types/anatomy';
 import { mirrorPoints } from './coordinates';
 import initialMusclesData from '../data/muscles.json';
 
-const LOCAL_STORAGE_KEY = 'pmt_anatomie_muscles_dataset_v10';
+const LOCAL_STORAGE_KEY = 'pmt_anatomie_muscles_dataset_v11';
 
 /**
  * Downloadt de actuele spieren dataset als muscles.json
@@ -57,12 +57,20 @@ export function saveMusclesToLocalStorage(muscles: Muscle[]): void {
  */
 export function loadMusclesFromLocalStorage(): Muscle[] | null {
   try {
+    // Schoon eventuele oude v10 key op
+    try {
+      localStorage.removeItem('pmt_anatomie_muscles_dataset_v10');
+    } catch {}
+
     const data = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!data) return null;
     const parsed = JSON.parse(data);
     if (Array.isArray(parsed) && parsed.length > 0) {
+      const filtered = (parsed as Muscle[]).filter(
+        (m) => m.id !== 'tensor_fasciae_latae' && m.id !== 'gluteus_medius'
+      );
       const baseMap = new Map((initialMusclesData as unknown as Muscle[]).map(m => [m.id, m]));
-      return (parsed as Muscle[]).map((m) => {
+      return filtered.map((m) => {
         let name = m.name;
         if (m.id === 'fibularis_brevis') name = 'm. fibularis brevis';
         if (m.id === 'fibularis_longus') name = 'm. fibularis longus';

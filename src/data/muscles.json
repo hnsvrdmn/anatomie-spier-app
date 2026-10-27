@@ -1901,46 +1901,45 @@
       "right": {
         "origins": [
           {
-            "x": 0.5543,
-            "y": 0.5121,
+            "x": 0.5664,
+            "y": 0.5134,
             "name": "tuber ischiadicum"
           }
         ],
         "insertions": [
           {
-            "x": 0.5543,
-            "y": 0.7479,
+            "x": 0.5691,
+            "y": 0.7355,
             "name": "condylus medialis tibiae"
           }
         ],
         "musclePath": [
           {
-            "x": 0.486,
-            "y": 0.6976,
+            "x": 0.4949,
+            "y": 0.6987,
             "name": "bocht condylus medialis"
           }
-        ],
-        "attachmentLines": []
+        ]
       },
       "left": {
         "origins": [
           {
-            "x": 0.4457,
-            "y": 0.5121,
+            "x": 0.4336,
+            "y": 0.5134,
             "name": "tuber ischiadicum"
           }
         ],
         "insertions": [
           {
-            "x": 0.4457,
-            "y": 0.7479,
+            "x": 0.4309,
+            "y": 0.7355,
             "name": "condylus medialis tibiae"
           }
         ],
         "musclePath": [
           {
-            "x": 0.514,
-            "y": 0.6976,
+            "x": 0.5051,
+            "y": 0.6987,
             "name": "bocht condylus medialis"
           }
         ],
@@ -1966,15 +1965,15 @@
       "right": {
         "origins": [
           {
-            "x": 0.5339,
-            "y": 0.5132,
+            "x": 0.5664,
+            "y": 0.5134,
             "name": "tuber ischiadicum"
           }
         ],
         "insertions": [
           {
-            "x": 0.5484,
-            "y": 0.749,
+            "x": 0.5691,
+            "y": 0.7355,
             "name": "condylus medialis tibiae"
           }
         ],
@@ -1984,21 +1983,20 @@
             "y": 0.67,
             "name": "verloop naar pes anserinus"
           }
-        ],
-        "attachmentLines": []
+        ]
       },
       "left": {
         "origins": [
           {
-            "x": 0.4661,
-            "y": 0.5132,
+            "x": 0.4336,
+            "y": 0.5134,
             "name": "tuber ischiadicum"
           }
         ],
         "insertions": [
           {
-            "x": 0.4516,
-            "y": 0.749,
+            "x": 0.4309,
+            "y": 0.7355,
             "name": "condylus medialis tibiae"
           }
         ],
