@@ -49,7 +49,19 @@ export const BoneProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       localStorage.setItem(BONES_LOCAL_STORAGE_KEY, JSON.stringify(newBones));
     } catch (e) {
-      console.error('Fout bij opslaan botten:', e);
+      console.error('Fout bij opslaan botten in localStorage:', e);
+    }
+    // Slaat direct permanent op naar het bronbestand src/data/bonesData.ts
+    try {
+      fetch('/api/save-bones', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newBones),
+      }).catch(() => {
+        // Negeer als dev server offline is
+      });
+    } catch {
+      // ignore
     }
   }, []);
 
@@ -93,6 +105,15 @@ export const BoneProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // ignore
     }
     setBones(READER_BONES);
+    try {
+      fetch('/api/save-bones', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(READER_BONES),
+      }).catch(() => {});
+    } catch {
+      // ignore
+    }
   }, []);
 
   const exportBonesJson = useCallback(() => {

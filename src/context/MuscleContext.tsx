@@ -421,6 +421,7 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       });
 
       saveMusclesToLocalStorage(updated);
+      saveMusclesToDisk(updated);
       return updated;
     });
   }, []);
@@ -430,6 +431,7 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setMuscles(prev => {
       const updated = prev.map(m => m.id === muscleId ? { ...m, ...updates } : m);
       saveMusclesToLocalStorage(updated);
+      saveMusclesToDisk(updated);
       return updated;
     });
   }, []);
@@ -462,6 +464,7 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         };
       });
       saveMusclesToLocalStorage(updated);
+      saveMusclesToDisk(updated);
       return updated;
     });
     showToast(`Punten succesvol gespiegeld van ${fromSide === 'left' ? 'links' : 'rechts'} naar ${toSide === 'left' ? 'links' : 'rechts'}!`, 'success');
@@ -505,6 +508,7 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setMuscles((prev) => {
       const updated = [...prev, newMuscle];
       saveMusclesToLocalStorage(updated);
+      saveMusclesToDisk(updated);
       return updated;
     });
     setSelectedMuscleIds([id]);
@@ -519,6 +523,7 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const name = target ? target.name : 'Spier';
       const updated = prev.filter((m) => m.id !== muscleId);
       saveMusclesToLocalStorage(updated);
+      saveMusclesToDisk(updated);
       showToast(`${name} succesvol verwijderd`, 'info');
       return updated;
     });
