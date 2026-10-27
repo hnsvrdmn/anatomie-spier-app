@@ -1,13 +1,13 @@
 import React from 'react';
 import { useMuscles } from '../../context/MuscleContext';
-import { BookOpen, GraduationCap, Edit3, ListChecks, Activity } from 'lucide-react';
+import { BookOpen, GraduationCap, Edit3, ListChecks, Activity, Bone } from 'lucide-react';
 import { useIsMobile } from '../../hooks/useIsMobile';
 
 export const Header: React.FC = () => {
   const { appMode, setAppMode, quizPracticeMode, setQuizPracticeMode } = useMuscles();
   const isMobile = useIsMobile();
 
-  // Mobiele navigatie: Spieren, Bewegingen, Oefen, Toets
+  // Mobiele navigatie: Spieren, Botten, Bewegingen, Oefen, Toets
   const mobileNavItems = [
     {
       id: 'study',
@@ -15,6 +15,13 @@ export const Header: React.FC = () => {
       icon: <BookOpen className="w-3.5 h-3.5" />,
       isActive: appMode === 'study',
       onClick: () => setAppMode('study'),
+    },
+    {
+      id: 'bones',
+      label: 'Botten',
+      icon: <Bone className="w-3.5 h-3.5" />,
+      isActive: appMode === 'bones',
+      onClick: () => setAppMode('bones'),
     },
     {
       id: 'movements',
@@ -45,7 +52,7 @@ export const Header: React.FC = () => {
     },
   ];
 
-  // Desktop navigatie: Spieren, Bewegingen, Oefenen, Toetsen, Bewerken
+  // Desktop navigatie: Spieren, Botten, Bewegingen, Oefenen, Toetsen, Bewerken
   const desktopNavItems = [
     {
       id: 'study',
@@ -53,6 +60,13 @@ export const Header: React.FC = () => {
       icon: <BookOpen className="w-4 h-4" />,
       isActive: appMode === 'study',
       onClick: () => setAppMode('study'),
+    },
+    {
+      id: 'bones',
+      label: 'Botten',
+      icon: <Bone className="w-4 h-4" />,
+      isActive: appMode === 'bones',
+      onClick: () => setAppMode('bones'),
     },
     {
       id: 'movements',

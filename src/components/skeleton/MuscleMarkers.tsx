@@ -68,11 +68,15 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
     ? `${muscle.name} (klik om te draaien)\nOrigo: ${muscle.originText}\nInsertie: ${muscle.insertionText}`
     : `${muscle.name}\nOrigo: ${muscle.originText}\nInsertie: ${muscle.insertionText}`;
 
+  // Bepaal of deze specifieke spier niet geselecteerd is en aan de achterkant/andere kant ligt
+  const isOppositeUnselected = isDimmed && isOppositeView;
+
   // Bepaal de effectieve groep-opacity:
-  // Als de spier op het andere aanzicht ligt, geven we hem een subtiele doorschijnende opacity (0.42)
+  // Niet-geselecteerde spieren in het actieve aanzicht zijn gekleurd en iets transparant (0.42).
+  // Niet-geselecteerde spieren aan de andere kant zijn grijs en nog iets transparanter (0.24).
   const effectiveGroupOpacity = isDimmed
-    ? (isOppositeView ? 0.16 : 0.22)
-    : (isOppositeView ? 0.45 : (opacity !== undefined ? opacity : 1.0));
+    ? (isOppositeView ? 0.24 : 0.42)
+    : (isOppositeView ? 0.55 : (opacity !== undefined ? opacity : 1.0));
 
   return (
     <g className={`muscle-markers-group ${isInteractive ? 'pointer-events-auto' : 'pointer-events-none'} transition-opacity duration-300`} opacity={effectiveGroupOpacity}>
@@ -87,7 +91,9 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
 
           const pts = isOppositeView ? rawPts.map(mirrorPoint) : rawPts;
           const isOrigin = line.type === 'origin';
-          const strokeColor = isOrigin ? '#2563eb' : '#dc2626';
+          const strokeColor = isOppositeUnselected
+            ? '#94a3b8'
+            : (isOrigin ? '#2563eb' : '#dc2626');
 
           const pathD = `M ${toSvgX(pts[0].x)} ${toSvgY(pts[0].y)} ` +
             pts.slice(1).map(p => `L ${toSvgX(p.x)} ${toSvgY(p.y)}`).join(' ');
@@ -105,7 +111,7 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                 opacity={isOppositeView ? 0.45 : 0.85}
                 className="pointer-events-none"
               />
-              {/* Rode of blauwe stippellijn */}
+              {/* Rode of blauwe stippellijn (of grijs indien niet-geselecteerd op ander aanzicht) */}
               <path
                 d={pathD}
                 fill="none"
@@ -204,7 +210,7 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                     key={`line-${side}-${oIdx}-${iIdx}`}
                     d={pathD}
                     fill="none"
-                    stroke={color || '#e11d48'}
+                    stroke={isOppositeUnselected ? '#94a3b8' : (color || '#e11d48')}
                     strokeWidth={(isOppositeView ? 4.5 : 6) / zoom}
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -248,7 +254,7 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
           const cy = toSvgY(origin.y);
           const isHighlighted = highlightedPoint?.x === origin.x && highlightedPoint?.y === origin.y;
           const origName = origin.name || muscle.originText;
-          const markerColor = color || '#2563eb';
+          const markerColor = isOppositeUnselected ? '#94a3b8' : (color || '#2563eb');
 
           return (
             <g
@@ -325,7 +331,7 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
           const cy = toSvgY(insertion.y);
           const isHighlighted = highlightedPoint?.x === insertion.x && highlightedPoint?.y === insertion.y;
           const insName = insertion.name || muscle.insertionText;
-          const markerColor = color || '#dc2626';
+          const markerColor = isOppositeUnselected ? '#94a3b8' : (color || '#dc2626');
 
           return (
             <g

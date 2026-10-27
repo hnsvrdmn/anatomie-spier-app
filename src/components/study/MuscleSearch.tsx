@@ -77,28 +77,31 @@ export const MuscleSearch: React.FC = () => {
               : 'bg-clinical-100 text-clinical-600 hover:bg-clinical-200'
           }`}
         >
-          Alle Gewrichten
+          Alle Gewrichten ({muscles.length})
         </button>
-        {JOINT_CATEGORIES.map((cat) => (
-          <button
-            key={cat.id}
-            onClick={() => {
-              setSelectedJointId(cat.id);
-              const jointMuscles = muscles.filter(m => m.jointCategories?.includes(cat.id));
-              if (jointMuscles.length > 0) {
-                setMultipleMuscles(jointMuscles.map(m => m.id));
-              }
-            }}
-            title={cat.title}
-            className={`px-2 py-1 rounded-lg text-[11px] font-semibold transition-all ${
-              selectedJointId === cat.id
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'bg-clinical-100 text-clinical-700 hover:bg-clinical-200'
-            }`}
-          >
-            {cat.name.replace('ARTICULATIO ', 'Art. ').replace('ARTICULATIONES ', 'Art. ')}
-          </button>
-        ))}
+        {JOINT_CATEGORIES.map((cat) => {
+          const count = muscles.filter(m => m.jointCategories?.includes(cat.id)).length;
+          return (
+            <button
+              key={cat.id}
+              onClick={() => {
+                setSelectedJointId(cat.id);
+                const jointMuscles = muscles.filter(m => m.jointCategories?.includes(cat.id));
+                if (jointMuscles.length > 0) {
+                  setMultipleMuscles(jointMuscles.map(m => m.id));
+                }
+              }}
+              title={cat.title}
+              className={`px-2 py-1 rounded-lg text-[11px] font-semibold transition-all ${
+                selectedJointId === cat.id
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'bg-clinical-100 text-clinical-700 hover:bg-clinical-200'
+              }`}
+            >
+              {cat.name.replace('ARTICULATIO ', 'Art. ').replace('ARTICULATIONES ', 'Art. ')} ({count})
+            </button>
+          );
+        })}
       </div>
 
       {/* Werkbalk: Wis selectie zodra > 1 spier is geselecteerd, anders Selecteer alles */}

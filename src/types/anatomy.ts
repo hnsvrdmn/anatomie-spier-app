@@ -65,7 +65,7 @@ export interface Muscle {
 }
 
 
-export type AppMode = 'study' | 'movements' | 'quiz' | 'editor';
+export type AppMode = 'study' | 'movements' | 'bones' | 'quiz' | 'editor';
 
 export type EditorTool = 'origin' | 'insertion' | 'origin_line' | 'insertion_line' | 'path' | 'select';
 

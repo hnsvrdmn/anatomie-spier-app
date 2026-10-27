@@ -13,7 +13,6 @@ export const MobileStudyView: React.FC = () => {
     setCurrentView, 
     selectedMuscle, 
     selectedMuscles, 
-    selectedMuscleIds,
     symmetrySide, 
     selectMuscle,
     setMultipleMuscles
@@ -104,35 +103,36 @@ export const MobileStudyView: React.FC = () => {
     }
   }, [activeMuscle?.id, activeMuscle?.view, setCurrentView]);
 
-  // Wissel dropdown keuze: kan alle spieren, een gewrichtsgroep zijn of een specifieke spier
-  const handleDropdownChange = (value: string) => {
-    if (value.startsWith('joint:')) {
-      const jointId = value.replace('joint:', '');
-      setSelectedJointId(jointId);
-      if (jointId === 'all') {
-        if (muscles.length > 0) {
-          setMultipleMuscles(muscles.map(m => m.id));
-          selectMuscle(muscles[0].id, true);
-        }
-      } else {
-        const jointMuscles = muscles.filter(m => m.jointCategories?.includes(jointId));
-        if (jointMuscles.length > 0) {
-          setMultipleMuscles(jointMuscles.map(m => m.id));
-          selectMuscle(jointMuscles[0].id, true);
-        }
+  // Nauwkeurige spiertelling per gewricht
+  const jointCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    JOINT_CATEGORIES.forEach(cat => {
+      counts[cat.id] = muscles.filter(m => m.jointCategories && m.jointCategories.includes(cat.id)).length;
+    });
+    return counts;
+  }, [muscles]);
+
+  // Wissel gewrichtskeuze
+  const handleJointChange = (jointId: string) => {
+    setSelectedJointId(jointId);
+    if (jointId === 'all') {
+      if (muscles.length > 0) {
+        setMultipleMuscles(muscles.map(m => m.id));
+        selectMuscle(muscles[0].id, true);
       }
-    } else if (value.startsWith('muscle:')) {
-      const muscleId = value.replace('muscle:', '');
-      setSelectedJointId('all');
-      setMultipleMuscles([muscleId]);
-      selectMuscle(muscleId, true);
+    } else {
+      const jointMuscles = muscles.filter(m => m.jointCategories?.includes(jointId));
+      if (jointMuscles.length > 0) {
+        setMultipleMuscles(jointMuscles.map(m => m.id));
+        selectMuscle(jointMuscles[0].id, true);
+      }
     }
   };
 
   // Vorige / Volgende spier skippen (< en >)
   const handlePrevMuscle = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const list = selectedJointId !== 'all' && filteredMuscles.length > 0 ? filteredMuscles : muscles;
+    const list = filteredMuscles.length > 0 ? filteredMuscles : muscles;
     if (list.length === 0) return;
     const currentId = activeMuscle?.id;
     const idx = list.findIndex(m => m.id === currentId);
@@ -142,24 +142,13 @@ export const MobileStudyView: React.FC = () => {
 
   const handleNextMuscle = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const list = selectedJointId !== 'all' && filteredMuscles.length > 0 ? filteredMuscles : muscles;
+    const list = filteredMuscles.length > 0 ? filteredMuscles : muscles;
     if (list.length === 0) return;
     const currentId = activeMuscle?.id;
     const idx = list.findIndex(m => m.id === currentId);
     const nextIdx = (idx + 1) % list.length;
     selectMuscle(list[nextIdx].id, true);
   };
-
-  // Bepaal de huidige waarde van het menuutje bovenin
-  const currentDropdownValue = useMemo(() => {
-    if (selectedJointId === 'all' && selectedMuscleIds.length > 1) {
-      return 'joint:all';
-    }
-    if (selectedMuscleIds.length === 1 && activeMuscle) {
-      return `muscle:${activeMuscle.id}`;
-    }
-    return `joint:${selectedJointId}`;
-  }, [selectedMuscleIds.length, activeMuscle?.id, selectedJointId]);
 
   // Gefilterde spieren voor zoekfunctie
   const searchResults = useMemo(() => {
@@ -190,45 +179,54 @@ export const MobileStudyView: React.FC = () => {
   return (
     <div className="relative w-full h-[calc(100dvh-3.5rem)] bg-white flex flex-col overflow-hidden select-none">
       
-      {/* 1. MENUUTJE BOVENIN: GEWRICHT OF SPECIFIEKE SPIER KIEZEN MET SUBTIEL ZOEKICOONTJE */}
-      <div className="w-full px-3 py-2 bg-white/95 backdrop-blur-md border-b border-clinical-200 shrink-0 relative z-50 shadow-xs pointer-events-auto box-border">
+      {/* 1. MENUUTJE BOVENIN: 2 DROPDOWNS (GEWRICHT + DAARONDER SPIEREN DIE BIJ DAT GEWRICHT HOREN) */}
+      <div className="w-full px-3 py-2 bg-white/95 backdrop-blur-md border-b border-clinical-200 shrink-0 relative z-50 shadow-xs pointer-events-auto box-border space-y-1.5">
         {!isSearching ? (
-          <div className="flex items-center gap-2 w-full">
-            <select
-              value={currentDropdownValue}
-              onChange={(e) => handleDropdownChange(e.target.value)}
-              className="flex-1 min-w-0 max-w-full px-3 py-1.5 bg-clinical-50 hover:bg-clinical-100 border border-clinical-300 rounded-xl text-xs font-bold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-xs transition cursor-pointer truncate"
-            >
-              <option value="joint:all">Alle Spieren</option>
-              <optgroup label="Gewrichten">
+          <>
+            {/* Bovenste dropdown: Gewricht kiezen met correct aantal spieren */}
+            <div className="flex items-center gap-2 w-full">
+              <select
+                value={selectedJointId}
+                onChange={(e) => handleJointChange(e.target.value)}
+                className="flex-1 min-w-0 max-w-full px-3 py-1.5 bg-clinical-50 hover:bg-clinical-100 border border-clinical-300 rounded-xl text-xs font-bold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-xs transition cursor-pointer truncate"
+              >
+                <option value="all">Alle Gewrichten ({muscles.length})</option>
                 {JOINT_CATEGORIES.map((cat) => (
-                  <option key={cat.id} value={`joint:${cat.id}`}>
-                    {cat.name.replace('ARTICULATIO ', 'Art. ').replace('ARTICULATIONES ', 'Art. ')} ({cat.muscleIds.length})
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name.replace('ARTICULATIO ', 'Art. ').replace('ARTICULATIONES ', 'Art. ')} ({jointCounts[cat.id] || 0})
                   </option>
                 ))}
-              </optgroup>
-              <optgroup label="Spieren">
-                {muscles.map((m) => (
-                  <option key={m.id} value={`muscle:${m.id}`}>
+              </select>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSearching(true);
+                  setTimeout(() => searchInputRef.current?.focus(), 50);
+                }}
+                className="shrink-0 p-1.5 rounded-xl bg-clinical-50 hover:bg-clinical-100 border border-clinical-300 text-clinical-700 hover:text-blue-600 transition shadow-xs flex items-center justify-center active:scale-95"
+                title="Zoek spier"
+                aria-label="Zoek spier"
+              >
+                <Search className="w-4 h-4 text-clinical-700" />
+              </button>
+            </div>
+
+            {/* Onderste dropdown: Spieren behorend bij het gekozen gewricht */}
+            <div className="flex items-center gap-2 w-full">
+              <select
+                value={activeMuscle?.id || ''}
+                onChange={(e) => selectMuscle(e.target.value, true)}
+                className="w-full min-w-0 max-w-full px-3 py-1.5 bg-blue-50/70 hover:bg-blue-100/70 border border-blue-200 rounded-xl text-xs font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-xs transition cursor-pointer truncate"
+              >
+                {filteredMuscles.map((m) => (
+                  <option key={m.id} value={m.id}>
                     {m.name}
                   </option>
                 ))}
-              </optgroup>
-            </select>
-
-            <button
-              type="button"
-              onClick={() => {
-                setIsSearching(true);
-                setTimeout(() => searchInputRef.current?.focus(), 50);
-              }}
-              className="shrink-0 p-1.5 rounded-xl bg-clinical-50 hover:bg-clinical-100 border border-clinical-300 text-clinical-700 hover:text-blue-600 transition shadow-xs flex items-center justify-center active:scale-95"
-              title="Zoek spier"
-              aria-label="Zoek spier"
-            >
-              <Search className="w-4 h-4 text-clinical-700" />
-            </button>
-          </div>
+              </select>
+            </div>
+          </>
         ) : (
           <div className="relative flex items-center gap-2 w-full">
             <div className="relative flex-1 min-w-0">
@@ -289,8 +287,16 @@ export const MobileStudyView: React.FC = () => {
                   key={m.id}
                   type="button"
                   onClick={() => {
-                    setSelectedJointId('all');
-                    setMultipleMuscles([m.id]);
+                    const targetJoint = selectedJointId !== 'all' && m.jointCategories?.includes(selectedJointId)
+                      ? selectedJointId
+                      : (m.jointCategories?.[0] || 'all');
+                    setSelectedJointId(targetJoint);
+                    if (targetJoint === 'all') {
+                      setMultipleMuscles(muscles.map(x => x.id));
+                    } else {
+                      const jMuscles = muscles.filter(x => x.jointCategories?.includes(targetJoint));
+                      setMultipleMuscles(jMuscles.map(x => x.id));
+                    }
                     selectMuscle(m.id, true);
                     setIsSearching(false);
                     setSearchQuery('');

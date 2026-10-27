@@ -48,13 +48,13 @@ export const MobileMovementsView: React.FC = () => {
           onChange={(e) => setSelectedJointId(e.target.value)}
           className="w-full px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-xl text-xs font-bold text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer truncate"
         >
-          <option value="coxae">Art. COXAE (Heup)</option>
-          <option value="genus">Art. GENUS (Knie)</option>
-          <option value="pedis">Art. PEDIS (Enkel/Voet)</option>
-          <option value="cubiti">Art. CUBITI (Elleboog)</option>
-          <option value="humeri">Art. HUMERI (Schouder)</option>
-          <option value="cingulum">Cingulum (Schoudergordel)</option>
-          <option value="romp">Romp / Wervelkolom</option>
+          <option value="coxae">Art. COXAE</option>
+          <option value="genus">Art. GENUS</option>
+          <option value="pedis">Art. PEDIS</option>
+          <option value="cubiti">Art. CUBITI</option>
+          <option value="humeri">Art. HUMERI</option>
+          <option value="cingulum">CINGULUM PECTORALE</option>
+          <option value="romp">ROMP / WERVELKOLOM</option>
         </select>
       </div>
 
@@ -115,7 +115,7 @@ export const MobileMovementsView: React.FC = () => {
             {activeJoint.subJoints.map((sub) => (
               <div key={sub.name} className="leading-tight">
                 <span className="font-bold text-slate-900">{sub.name}: </span>
-                <span className="text-slate-600">{sub.dutchName || sub.description}</span>
+                <span className="text-slate-600">{sub.description || sub.name}</span>
               </div>
             ))}
           </div>

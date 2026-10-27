@@ -57,7 +57,7 @@ export const MovementsView: React.FC = () => {
         <div className="w-full h-12 shrink-0 flex items-center justify-between pb-2 border-b border-clinical-100 px-1">
           <div className="flex items-center gap-2">
             <span className="text-xs font-black text-slate-500 uppercase tracking-wider">
-              {activeJoint.dutchName} ({activeJoint.latinName})
+              {activeJoint.latinName}
             </span>
           </div>
 
@@ -164,12 +164,12 @@ export const MovementsView: React.FC = () => {
             onChange={(e) => setSelectedJointId(e.target.value)}
             className="w-full px-3.5 py-2.5 bg-clinical-50 border border-clinical-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
           >
-            <option value="coxae">Art. COXAE (Heupgewricht)</option>
-            <option value="genus">Art. GENUS (Kniegewricht)</option>
-            <option value="pedis">Art. PEDIS (Enkel- & Voetgewrichten)</option>
-            <option value="cubiti">Art. CUBITI (Ellebooggewricht)</option>
-            <option value="humeri">Art. HUMERI (Schoudergewricht)</option>
-            <option value="cingulum">CINGULUM PECTORALE (Schoudergordel)</option>
+            <option value="coxae">Art. COXAE</option>
+            <option value="genus">Art. GENUS</option>
+            <option value="pedis">Art. PEDIS</option>
+            <option value="cubiti">Art. CUBITI</option>
+            <option value="humeri">Art. HUMERI</option>
+            <option value="cingulum">CINGULUM PECTORALE</option>
             <option value="romp">ROMP / WERVELKOLOM</option>
           </select>
         </div>
@@ -183,7 +183,6 @@ export const MovementsView: React.FC = () => {
             <h3 className="text-lg font-black text-slate-900 leading-tight">
               {activeJoint.latinName}
             </h3>
-            <p className="text-xs text-slate-500 font-semibold">{activeJoint.dutchName}</p>
           </div>
 
           {/* Gewrichtstype Badge */}
@@ -213,9 +212,6 @@ export const MovementsView: React.FC = () => {
                 {activeJoint.subJoints.map((sub) => (
                   <div key={sub.name} className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 text-xs">
                     <span className="font-black text-slate-900 block">{sub.name}</span>
-                    {sub.dutchName && (
-                      <span className="text-[11px] font-bold text-blue-700 block">{sub.dutchName}</span>
-                    )}
                     {sub.description && (
                       <span className="text-[11px] text-slate-600 font-medium block pt-0.5">{sub.description}</span>
                     )}
@@ -250,7 +246,7 @@ export const MovementsView: React.FC = () => {
 
           <div className="space-y-2">
             <span className="text-xs font-bold text-slate-700 block">
-              Betrokken spieren in {activeJoint.dutchName}:
+              Betrokken spieren in {activeJoint.latinName}:
             </span>
             <div className="space-y-2">
               {selectedMuscles.map((muscle) => (

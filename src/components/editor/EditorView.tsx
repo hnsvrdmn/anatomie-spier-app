@@ -4,12 +4,14 @@ import { SkeletonViewer } from '../skeleton/SkeletonViewer';
 import { EditorOverlay } from '../skeleton/EditorOverlay';
 import { ViewToggle } from '../common/ViewToggle';
 import { EditorControls } from './EditorControls';
+import { BoneEditorView } from './BoneEditorView';
 import { 
   EditorTool, 
   EditSymmetrySide, 
   Point2D, 
   MuscleVisualData 
 } from '../../types/anatomy';
+import { Activity, Bone as BoneIcon } from 'lucide-react';
 
 export const EditorView: React.FC = () => {
   const { 
@@ -19,6 +21,9 @@ export const EditorView: React.FC = () => {
     updateMuscleVisuals,
     showToast
   } = useMuscles();
+
+  // Schakelaar tussen Spieren bewerken en Botten bewerken
+  const [editorTab, setEditorTab] = useState<'muscles' | 'bones'>('muscles');
 
   // Automatisch wisselen naar het juiste aanzicht van de geselecteerde spier in bewerkmodus
   useEffect(() => {
@@ -206,30 +211,62 @@ export const EditorView: React.FC = () => {
     showToast('Inserties gewist', 'info');
   };
 
-  if (!selectedMuscle) {
-    return (
-      <div className="p-10 text-center text-clinical-400">
-        Selecteer eerst een spier om te bewerken.
-      </div>
-    );
-  }
-
   return (
-    <div className="flex-1 w-full max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-3 sm:py-6 flex flex-col lg:flex-row gap-4 lg:gap-6 items-stretch">
-      {/* Linker/Midden kolom: Skelet met Vaste Hoogte (exact gelijk aan studie- en toetsmodus) */}
-      <div className="w-full lg:flex-1 flex flex-col items-center justify-between bg-white rounded-3xl p-3 sm:p-4 border border-clinical-200/90 shadow-sm relative h-[92vh] min-h-[760px] max-h-[1020px]">
-        {/* Bovenbalk: Aanzichtschakelaar mooi gecentreerd (vaste hoogte h-12) */}
-        <div className="w-full h-12 shrink-0 flex items-center justify-between pb-2 border-b border-clinical-100 px-1">
-          <div className="flex-1 min-w-0" />
-          <div className="shrink-0">
-            <ViewToggle
-              currentView={currentView}
-              onViewChange={setCurrentView}
-              recommendedView={selectedMuscle.view}
-            />
-          </div>
-          <div className="flex-1 min-w-0" />
+    <div className="flex-1 w-full flex flex-col">
+      {/* Modusschakelaar: Spieren bewerken vs Botten bewerken */}
+      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-3 pb-1 flex justify-center">
+        <div className="flex items-center gap-1.5 bg-clinical-100 p-1.5 rounded-2xl border border-clinical-200">
+          <button
+            type="button"
+            onClick={() => setEditorTab('muscles')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+              editorTab === 'muscles'
+                ? 'bg-white text-clinical-950 shadow-sm border border-clinical-200/80'
+                : 'text-clinical-600 hover:text-clinical-900 hover:bg-white/60'
+            }`}
+          >
+            <Activity className="w-4 h-4 text-rose-600" />
+            <span>Spieren bewerken</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setEditorTab('bones')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+              editorTab === 'bones'
+                ? 'bg-white text-clinical-950 shadow-sm border border-clinical-200/80'
+                : 'text-clinical-600 hover:text-clinical-900 hover:bg-white/60'
+            }`}
+          >
+            <BoneIcon className="w-4 h-4 text-sky-600" />
+            <span>Botten bewerken</span>
+          </button>
         </div>
+      </div>
+
+      {/* Inhoud op basis van de gekozen tab */}
+      {editorTab === 'bones' ? (
+        <BoneEditorView />
+      ) : !selectedMuscle ? (
+        <div className="p-10 text-center text-clinical-400">
+          Selecteer eerst een spier om te bewerken.
+        </div>
+      ) : (
+        <div className="flex-1 w-full max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-3 sm:py-6 flex flex-col lg:flex-row gap-4 lg:gap-6 items-stretch">
+          {/* Linker/Midden kolom: Skelet met Vaste Hoogte (exact gelijk aan studie- en toetsmodus) */}
+          <div className="w-full lg:flex-1 flex flex-col items-center justify-between bg-white rounded-3xl p-3 sm:p-4 border border-clinical-200/90 shadow-sm relative h-[92vh] min-h-[760px] max-h-[1020px]">
+            {/* Bovenbalk: Aanzichtschakelaar mooi gecentreerd (vaste hoogte h-12) */}
+            <div className="w-full h-12 shrink-0 flex items-center justify-between pb-2 border-b border-clinical-100 px-1">
+              <div className="flex-1 min-w-0" />
+              <div className="shrink-0">
+                <ViewToggle
+                  currentView={currentView}
+                  onViewChange={setCurrentView}
+                  recommendedView={selectedMuscle.view}
+                />
+              </div>
+              <div className="flex-1 min-w-0" />
+            </div>
 
         {/* Skelet & Overlay Container */}
         <div className="flex-1 min-h-0 w-full h-full flex items-center justify-center py-1 overflow-hidden">
@@ -294,5 +331,7 @@ export const EditorView: React.FC = () => {
         />
       </div>
     </div>
-  );
+  )}
+</div>
+);
 };

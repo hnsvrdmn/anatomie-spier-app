@@ -267,8 +267,7 @@
     "view": "ventral",
     "symmetryType": "bilateral",
     "jointCategories": [
-      "humeri",
-      "cingulum"
+      "humeri"
     ],
     "originText": "mediale ⅓ deel clavicula, sternum, kraakbeen van 2e-6e rib",
     "insertionText": "tuberculum majus",
@@ -2021,9 +2020,7 @@
     "latinName": "m. tensor fascia latae",
     "view": "ventral",
     "symmetryType": "bilateral",
-    "jointCategories": [
-      "coxae"
-    ],
+    "jointCategories": [],
     "originText": "SIAS",
     "insertionText": "condylus lateralis tibiae (via tractus iliotibialis)",
     "functionText": "Abductie art. coxae",
@@ -2085,9 +2082,7 @@
     "latinName": "m. gluteus medius",
     "view": "dorsal",
     "symmetryType": "bilateral",
-    "jointCategories": [
-      "coxae"
-    ],
+    "jointCategories": [],
     "originText": "dorso-lateraal op os ilium",
     "insertionText": "trochanter major",
     "functionText": "Abductie art. coxae",
@@ -2855,8 +2850,7 @@
     "view": "dorsal",
     "symmetryType": "bilateral",
     "jointCategories": [
-      "pedis",
-      "genus"
+      "pedis"
     ],
     "originText": "Condylus medialis/lateralis femoris",
     "insertionText": "Via achillespees aan tuber calcanei",

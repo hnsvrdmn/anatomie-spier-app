@@ -12,9 +12,7 @@ export const JOINT_CATEGORIES: JointCategory[] = [
       'biceps_femoris',
       'semimembranosus',
       'semitendinosus',
-      'tensor_fasciae_latae',
       'iliopsoas',
-      'gluteus_medius',
       'adductores',
       'gluteus_maximus'
     ]
@@ -72,7 +70,9 @@ export const JOINT_CATEGORIES: JointCategory[] = [
       'deltoideus',
       'pectoralis_major',
       'teres_major',
-      'teres_minor'
+      'teres_minor',
+      'biceps_brachii',
+      'triceps_brachii'
     ]
   },
   {

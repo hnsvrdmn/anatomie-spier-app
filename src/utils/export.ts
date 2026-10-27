@@ -2,7 +2,7 @@ import { Muscle } from '../types/anatomy';
 import { mirrorPoints } from './coordinates';
 import initialMusclesData from '../data/muscles.json';
 
-const LOCAL_STORAGE_KEY = 'pmt_anatomie_muscles_dataset_v8';
+const LOCAL_STORAGE_KEY = 'pmt_anatomie_muscles_dataset_v10';
 
 /**
  * Downloadt de actuele spieren dataset als muscles.json
@@ -68,6 +68,7 @@ export function loadMusclesFromLocalStorage(): Muscle[] | null {
         if (m.id === 'fibularis_longus') name = 'm. fibularis longus';
 
         const base = baseMap.get(m.id);
+        const jointCategories = base?.jointCategories ?? m.jointCategories;
         const leftLines = (base?.visuals?.left?.attachmentLines?.length)
           ? base.visuals.left.attachmentLines
           : (m.visuals?.left?.attachmentLines || []);
@@ -80,6 +81,7 @@ export function loadMusclesFromLocalStorage(): Muscle[] | null {
           return {
             ...m,
             name,
+            jointCategories,
             visuals: {
               ...m.visuals,
               left: {
@@ -102,6 +104,7 @@ export function loadMusclesFromLocalStorage(): Muscle[] | null {
         return {
           ...m,
           name,
+          jointCategories,
           visuals: {
             ...m.visuals,
             left: { ...(m.visuals?.left || { origins: [], insertions: [], musclePath: [] }), attachmentLines: leftLines },

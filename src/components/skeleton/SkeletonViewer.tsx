@@ -42,6 +42,7 @@ interface SkeletonViewerProps {
   hideZoomToolbar?: boolean;
   isMobile?: boolean;
   autoCenterMuscle?: boolean;
+  resetOnMuscleChange?: boolean;
 }
 
 export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
@@ -67,6 +68,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
   hideZoomToolbar = false,
   isMobile = false,
   autoCenterMuscle = false,
+  resetOnMuscleChange = false,
 }) => {
   const localContainerRef = useRef<HTMLDivElement>(null);
   const containerRef = innerRef || localContainerRef;
@@ -234,6 +236,18 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
       setPan({ x: 0, y: 0 });
     }
   }, [autoCenterMuscle, activeMuscle?.id, activeSide, currentView]);
+
+  // Herstel zoom en positie naar volledig skelet wanneer een andere spier geselecteerd wordt (bijv. in studiemodus)
+  const prevSelectedMuscleIdRef = useRef<string | undefined>(activeMuscle?.id);
+  useEffect(() => {
+    if (activeMuscle?.id && activeMuscle.id !== prevSelectedMuscleIdRef.current) {
+      prevSelectedMuscleIdRef.current = activeMuscle.id;
+      if (resetOnMuscleChange) {
+        setZoom(1);
+        setPan({ x: 0, y: 0 });
+      }
+    }
+  }, [activeMuscle?.id, resetOnMuscleChange]);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (Date.now() - lastTouchHandledTimeRef.current < 500) return; // Voorkom dubbele trigger door gesynthetiseerde muiskliks op touch
@@ -532,7 +546,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
               const hasMultiple = (activeMuscles?.length || 0) > 1;
               const isFocused = activeMuscle?.id === m.id;
               const isOppositeView = m.view !== currentView;
-              const isDimmed = hasMultiple && !!activeMuscle && !isFocused && !isOppositeView;
+              const isDimmed = hasMultiple && !!activeMuscle && !isFocused;
               
               // Behoud consistente kleuring op basis van de index in de originele selectielijst
               const originalIndex = activeMuscles ? activeMuscles.findIndex(x => x.id === m.id) : mIdx;

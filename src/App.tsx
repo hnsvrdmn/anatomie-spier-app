@@ -5,7 +5,9 @@ import { Toast } from './components/common/Toast';
 import { StudyView } from './components/study/StudyView';
 import { MovementsView } from './components/movements/MovementsView';
 import { QuizView } from './components/quiz/QuizView';
+import { BonesView } from './components/bones/BonesView';
 import { EditorView } from './components/editor/EditorView';
+import { BoneProvider } from './context/BoneContext';
 
 const AppContent: React.FC = () => {
   const { appMode } = useMuscles();
@@ -18,6 +20,7 @@ const AppContent: React.FC = () => {
       {/* Hoofdsectie per geselecteerde modus */}
       <main className="flex-1 flex flex-col">
         {appMode === 'study' && <StudyView />}
+        {appMode === 'bones' && <BonesView />}
         {appMode === 'movements' && <MovementsView />}
         {appMode === 'quiz' && <QuizView />}
         {appMode === 'editor' && <EditorView />}
@@ -32,7 +35,9 @@ const AppContent: React.FC = () => {
 export function App() {
   return (
     <MuscleProvider>
-      <AppContent />
+      <BoneProvider>
+        <AppContent />
+      </BoneProvider>
     </MuscleProvider>
   );
 }

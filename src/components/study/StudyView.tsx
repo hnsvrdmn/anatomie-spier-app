@@ -64,6 +64,7 @@ export const StudyView: React.FC = () => {
                 activeSide={symmetrySide}
                 interactive={false}
                 onSelectMuscle={(id) => selectMuscle(id, true)}
+                resetOnMuscleChange={true}
               />
             </div>
             <div className="relative w-full h-full flex flex-col items-center justify-center pl-2">
@@ -77,6 +78,7 @@ export const StudyView: React.FC = () => {
                 activeSide={symmetrySide}
                 interactive={false}
                 onSelectMuscle={(id) => selectMuscle(id, true)}
+                resetOnMuscleChange={true}
               />
             </div>
           </div>
@@ -88,6 +90,7 @@ export const StudyView: React.FC = () => {
               activeMuscles={selectedMuscles}
               activeSide={symmetrySide}
               interactive={false}
+              resetOnMuscleChange={true}
               onSelectMuscle={(id) => {
                 const target = muscles.find(m => m.id === id);
                 if (target && currentView !== target.view) {
