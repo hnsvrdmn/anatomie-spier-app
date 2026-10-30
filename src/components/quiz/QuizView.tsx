@@ -21,6 +21,7 @@ import { getRandomJointQuestion, getJointMCOptions, JointQuizItem } from '../../
 import { evaluatePointSet, distanceToSegment, projectToSegment, getAccuracy } from '../../utils/coordinates';
 import { validateAnatomicalAnswer, AnswerValidationResult } from '../../utils/answerMatching';
 import { isForbiddenMuscle } from '../../utils/export';
+import { MovementIcon } from '../common/MovementIcon';
 import { RefreshCw, Check, Award, CheckCircle2, Shuffle, Square, CheckSquare, GraduationCap, ListChecks } from 'lucide-react';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { MobileQuizView } from './MobileQuizView';
@@ -1821,6 +1822,13 @@ export const QuizView: React.FC = () => {
                         <span className="w-6 h-6 rounded-lg bg-white border border-clinical-200 text-clinical-700 font-bold text-xs flex items-center justify-center shrink-0">
                           {letters[idx] || (idx + 1)}
                         </span>
+                        {currentQuestion.mcKind === 'function' && (
+                          <div className="flex items-center gap-1 shrink-0">
+                            {optText.split('|').map((part, pIdx) => (
+                              <MovementIcon key={pIdx} movement={part.trim()} className="w-4 h-4 text-blue-600 shrink-0" />
+                            ))}
+                          </div>
+                        )}
                         <span className="font-semibold leading-relaxed">{optText}</span>
                       </div>
                       {isEvaluated && isCorrect && (
@@ -1872,6 +1880,7 @@ export const QuizView: React.FC = () => {
                             <Square className="w-4 h-4 text-clinical-400" />
                           )}
                         </div>
+                        <MovementIcon movement={mov} className="w-4 h-4 text-slate-700 shrink-0" />
                         <span className="capitalize font-semibold">{mov}</span>
                       </button>
                     );

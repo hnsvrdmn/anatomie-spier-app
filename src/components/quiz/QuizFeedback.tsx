@@ -241,20 +241,24 @@ export const QuizFeedback: React.FC<QuizFeedbackProps> = ({
           {muscle.primaryMovements && muscle.primaryMovements.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {muscle.primaryMovements.map((pm, idx) => (
-                <div key={idx} className="bg-emerald-50/90 border border-emerald-200/90 rounded-xl p-3 shadow-xs">
-                  <span className="font-bold text-emerald-900 capitalize block text-[11px] tracking-wide">
-                    {pm.joint}
-                  </span>
-                  <span className="text-emerald-950 font-black text-sm block mt-0.5">
-                    {pm.movement}
-                  </span>
+                <div key={idx} className="bg-emerald-50/90 border border-emerald-200/90 rounded-xl p-3 shadow-xs flex items-center gap-2.5">
+                  <MovementIcon movement={pm.movement} className="w-5 h-5 text-emerald-700 shrink-0" />
+                  <div>
+                    <span className="font-bold text-emerald-900 capitalize block text-[11px] tracking-wide">
+                      {pm.joint}
+                    </span>
+                    <span className="text-emerald-950 font-black text-sm block mt-0.5">
+                      {pm.movement}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
           ) : correctMovements && correctMovements.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {correctMovements.map((mov, idx) => (
-                <div key={idx} className="bg-emerald-50/90 border border-emerald-200/90 rounded-xl p-3 shadow-xs">
+                <div key={idx} className="bg-emerald-50/90 border border-emerald-200/90 rounded-xl p-3 shadow-xs flex items-center gap-2.5">
+                  <MovementIcon movement={mov} className="w-5 h-5 text-emerald-700 shrink-0" />
                   <span className="text-emerald-950 font-black text-sm capitalize block">
                     {mov}
                   </span>

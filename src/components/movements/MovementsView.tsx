@@ -229,8 +229,9 @@ export const MovementsView: React.FC = () => {
               <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 block">
                 Actieve Beweging
               </span>
-              <h4 className="text-base font-black text-slate-900">
-                {activeMovementName}
+              <h4 className="text-base font-black text-slate-900 flex items-center gap-2">
+                <MovementIcon movement={activeMovementName} className="w-5 h-5 text-emerald-600 shrink-0" />
+                <span>{activeMovementName}</span>
               </h4>
             </div>
             <span className="px-2.5 py-1 rounded-xl bg-emerald-100 text-emerald-900 font-black text-xs">
@@ -261,6 +262,16 @@ export const MovementsView: React.FC = () => {
                       {muscle.view}
                     </span>
                   </div>
+                  {muscle.primaryMovements && muscle.primaryMovements.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 my-1.5">
+                      {muscle.primaryMovements.map((pm, i) => (
+                        <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-blue-900 text-[11px] font-bold border border-blue-200/60">
+                          <MovementIcon movement={pm.movement} className="w-3 h-3 text-blue-600 shrink-0" />
+                          <span>{pm.movement}</span>
+                        </span>
+                      ))}
+                    </div>
+                  )}
                   <div className="mt-1 space-y-1 text-xs text-slate-700 leading-relaxed font-medium">
                     <div className="break-words">
                       <span className="font-bold text-blue-700">Origo: </span>
