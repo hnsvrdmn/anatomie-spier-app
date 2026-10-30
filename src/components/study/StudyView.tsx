@@ -11,11 +11,17 @@ export const StudyView: React.FC = () => {
   const isMobile = useIsMobile();
   const { muscles, currentView, setCurrentView, selectedMuscle, selectedMuscles, symmetrySide, selectMuscle } = useMuscles();
   const [viewLayout, setViewLayout] = useState<ViewLayoutMode>('ventral');
-  const prevMuscleIdRef = useRef<string | undefined>(undefined);
+  const prevMuscleIdRef = useRef<string | undefined>(selectedMuscle?.id);
+  const isFirstMount = useRef(true);
 
   // Automatisch wisselen naar het juiste aanzicht van de geselecteerde spier in studiemodus
   // Alleen wanneer er daadwerkelijk een nieuwe spier geselecteerd wordt. Hierna is de gebruiker vrij zelf te wisselen.
   useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      prevMuscleIdRef.current = selectedMuscle?.id;
+      return;
+    }
     if (selectedMuscle && selectedMuscle.id !== prevMuscleIdRef.current) {
       prevMuscleIdRef.current = selectedMuscle.id;
       if (viewLayout !== 'both') {

@@ -93,11 +93,17 @@ export const MobileStudyView: React.FC = () => {
 
   // Automatisch wisselen naar het juiste aanzicht van de geselecteerde spier
   // ALLEEN wanneer er daadwerkelijk een nieuwe spier geselecteerd wordt. Hierna is de gebruiker vrij zelf te wisselen.
+  const isFirstMount = useRef(true);
   useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      prevMuscleIdRef.current = activeMuscle?.id;
+      return;
+    }
     const currentId = activeMuscle?.id;
     if (currentId && currentId !== prevMuscleIdRef.current) {
       prevMuscleIdRef.current = currentId;
-      if (activeMuscle.view) {
+      if (activeMuscle?.view) {
         setCurrentView(activeMuscle.view);
       }
     }

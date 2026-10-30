@@ -76,12 +76,16 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   });
 
   const [selectedMuscleIds, setSelectedMuscleIds] = useState<string[]>(() => {
-    const firstId = initialMusclesData[0]?.id;
-    return firstId ? [firstId] : [];
+    const saved = loadMusclesFromLocalStorage();
+    const source = (saved || (initialMusclesData as unknown as Muscle[])).filter((m) => !isForbiddenMuscle(m));
+    return source.map((m) => m.id);
   });
 
   const [focusedMuscleId, setFocusedMuscleId] = useState<string>(() => {
-    return initialMusclesData[0]?.id || '';
+    const saved = loadMusclesFromLocalStorage();
+    const source = (saved || (initialMusclesData as unknown as Muscle[])).filter((m) => !isForbiddenMuscle(m));
+    const ventral = source.find((m) => m.view === 'ventral');
+    return ventral?.id || source[0]?.id || '';
   });
 
   const selectedMuscleId = (selectedMuscleIds.includes(focusedMuscleId) ? focusedMuscleId : selectedMuscleIds[selectedMuscleIds.length - 1]) || '';
@@ -226,12 +230,16 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }, [muscles, currentView]);
 
-  // Selectie wissen (terugzetten naar de eerste spier)
+  // Selectie wissen (terugzetten naar de huidige gefocuste spier of eerste ventrale spier)
   const clearSelectedMuscles = useCallback(() => {
-    if (muscles.length > 0) {
-      setSelectedMuscleIds([muscles[0].id]);
+    if (selectedMuscleId) {
+      setSelectedMuscleIds([selectedMuscleId]);
+    } else if (muscles.length > 0) {
+      const ventral = muscles.find(m => m.view === 'ventral') || muscles[0];
+      setSelectedMuscleIds([ventral.id]);
+      setFocusedMuscleId(ventral.id);
     }
-  }, [muscles]);
+  }, [muscles, selectedMuscleId]);
 
   // Navigatie: volgende spier
   const nextMuscle = useCallback(() => {
