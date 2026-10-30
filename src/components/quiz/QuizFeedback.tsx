@@ -195,7 +195,7 @@ export const QuizFeedback: React.FC<QuizFeedbackProps> = ({
       )}
 
       {/* 2. Relevante Origo & Insertie kaarten */}
-      {(showOriginCard || showInsertionCard) && (
+      {(showOriginCard || showInsertionCard) && muscle && (
         <div className="space-y-2 pt-1 border-t border-clinical-100">
           <div className="font-bold text-xs text-clinical-800 uppercase tracking-wide flex items-center gap-1.5">
             <Info className="w-3.5 h-3.5 text-blue-500" />
@@ -231,7 +231,7 @@ export const QuizFeedback: React.FC<QuizFeedbackProps> = ({
       )}
 
       {/* 3. Bewegingen Box (Groene box onder Origo & Insertie) */}
-      {showMovementCard && (
+      {showMovementCard && muscle && (
         <div className="space-y-2 pt-1 border-t border-clinical-100">
           <div className="font-bold text-xs text-clinical-800 uppercase tracking-wide flex items-center gap-1.5">
             <Activity className="w-3.5 h-3.5 text-emerald-600" />

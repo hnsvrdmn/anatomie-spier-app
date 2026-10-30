@@ -17,7 +17,7 @@ import {
 import { JOINT_CATEGORIES, getJointCategory } from '../../data/jointCategories';
 import { getMovementQuestionOptions, MUSCLE_MOVEMENTS } from '../../data/muscleMovements';
 import { READER_BONES } from '../../data/bonesData';
-import { getRandomJointQuestion, getJointMCOptions, JointQuizItem } from '../../data/jointQuestions';
+import { getRandomJointQuestion, getJointMCOptions, JointQuizItem, getJointLocation } from '../../data/jointQuestions';
 import { evaluatePointSet, distanceToSegment, projectToSegment, getAccuracy } from '../../utils/coordinates';
 import { validateAnatomicalAnswer, AnswerValidationResult } from '../../utils/answerMatching';
 import { isForbiddenMuscle } from '../../utils/export';
@@ -599,9 +599,16 @@ export const QuizView: React.FC = () => {
       }
     }
 
+    const isJointQuestion = (type as string) === 'joints' || 
+                            (type === 'multiple_choice' && mcKind === 'joint') || 
+                            (type === 'open_question' && openKind === 'joint');
+
+    const questionMuscle = isJointQuestion ? undefined : randMuscle;
+    const jointLoc = isJointQuestion ? getJointLocation(jointQuizItem) : null;
+
     setCurrentQuestion({
-      id: `${randMuscle.id}-${Date.now()}`,
-      muscle: randMuscle,
+      id: isJointQuestion ? `joint-${jointQuizItem?.id || Date.now()}` : `${randMuscle.id}-${Date.now()}`,
+      muscle: questionMuscle,
       type,
       side: 'left',
       options,
@@ -618,6 +625,7 @@ export const QuizView: React.FC = () => {
       correctOpenAnswer,
       acceptableAnswers,
       jointQuizItem,
+      targetFocusPoint: jointLoc || undefined,
     });
 
     setUserOrigins([]);
@@ -637,8 +645,16 @@ export const QuizView: React.FC = () => {
     setHasScaledForOrigins(false);
     setIsScalingInsertion(false);
 
-    // Schakel automatisch over naar het juiste aanzicht van de spier
-    setCurrentView(randMuscle.view);
+    // Schakel automatisch over naar het juiste aanzicht
+    if (isJointQuestion) {
+      if (jointLoc) {
+        setCurrentView(jointLoc.view);
+      } else {
+        setCurrentView('ventral');
+      }
+    } else {
+      setCurrentView(randMuscle.view);
+    }
   }, [cleanMuscles, freeQuizType, getMuscleFunctionDescription, setCurrentView]);
 
   // Initialisatie effect
@@ -1320,72 +1336,83 @@ export const QuizView: React.FC = () => {
             </div>
           )}
 
-          {viewLayout === 'both' ? (
-            <div className="w-full h-full grid grid-cols-2 gap-4">
-              {/* Ventraal skelet links */}
-              <div className="relative w-full h-full flex flex-col items-center justify-center border-r border-slate-100 pr-2">
-                <SkeletonViewer
-                  currentView="ventral"
-                  activeMuscle={
-                    (type === 'multiple_choice' || type === 'movements' || type === 'function' || type === 'open_question' || isEvaluated) && muscle?.view === 'ventral'
-                      ? muscle
-                      : undefined
-                  }
-                  activeSide={evaluatedSide}
-                  interactive={!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question' && type !== 'bone'}
-                  onSkeletonClick={(pt, isRight) => handleSkeletonClick({ ...pt, view: 'ventral' }, isRight)}
-                  onUpdateUserPoint={handleUpdateUserPoint}
-                  onDeleteUserPoint={handleDeleteUserPoint}
-                  quizMatches={ventralMatches}
-                  showReferenceGhost={showReferenceGhost && muscle?.view === 'ventral'}
-                  userOrigins={ventralOrigins}
-                  userInsertions={ventralInsertions}
-                  targetBoneMarker={currentQuestion?.targetBoneMarker}
-                />
-              </div>
+          {(() => {
+            const isJointQuestion = type === 'joints' || 
+                                    currentQuestion.mcKind === 'joint' || 
+                                    currentQuestion.openKind === 'joint' || 
+                                    Boolean(currentQuestion.jointQuizItem);
+            const shouldShowMuscle = !isJointQuestion && type !== 'bone' && !!muscle;
+            const jointFocusPoint = isJointQuestion ? (currentQuestion.targetFocusPoint || getJointLocation(currentQuestion.jointQuizItem)) : null;
 
-              {/* Dorsaal skelet rechts */}
-              <div className="relative w-full h-full flex flex-col items-center justify-center pl-2">
-                <SkeletonViewer
-                  currentView="dorsal"
-                  activeMuscle={
-                    (type === 'multiple_choice' || type === 'movements' || type === 'function' || type === 'open_question' || isEvaluated) && muscle?.view === 'dorsal'
-                      ? muscle
-                      : undefined
-                  }
-                  activeSide={evaluatedSide}
-                  interactive={!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question' && type !== 'bone'}
-                  onSkeletonClick={(pt, isRight) => handleSkeletonClick({ ...pt, view: 'dorsal' }, isRight)}
-                  onUpdateUserPoint={handleUpdateUserPoint}
-                  onDeleteUserPoint={handleDeleteUserPoint}
-                  quizMatches={dorsalMatches}
-                  showReferenceGhost={showReferenceGhost && muscle?.view === 'dorsal'}
-                  userOrigins={dorsalOrigins}
-                  userInsertions={dorsalInsertions}
-                  targetBoneMarker={currentQuestion?.targetBoneMarker}
-                />
+            return viewLayout === 'both' ? (
+              <div className="w-full h-full grid grid-cols-2 gap-4">
+                {/* Ventraal skelet links */}
+                <div className="relative w-full h-full flex flex-col items-center justify-center border-r border-slate-100 pr-2">
+                  <SkeletonViewer
+                    currentView="ventral"
+                    activeMuscle={
+                      shouldShowMuscle && muscle?.view === 'ventral'
+                        ? muscle
+                        : undefined
+                    }
+                    activeSide={evaluatedSide}
+                    interactive={!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question' && type !== 'bone'}
+                    onSkeletonClick={(pt, isRight) => handleSkeletonClick({ ...pt, view: 'ventral' }, isRight)}
+                    onUpdateUserPoint={handleUpdateUserPoint}
+                    onDeleteUserPoint={handleDeleteUserPoint}
+                    quizMatches={ventralMatches}
+                    showReferenceGhost={showReferenceGhost && shouldShowMuscle && muscle?.view === 'ventral'}
+                    userOrigins={ventralOrigins}
+                    userInsertions={ventralInsertions}
+                    targetBoneMarker={currentQuestion?.targetBoneMarker}
+                    targetFocusPoint={jointFocusPoint?.view === 'ventral' ? jointFocusPoint : null}
+                    autoCenterMuscle={shouldShowMuscle || (jointFocusPoint?.view === 'ventral') || type === 'bone'}
+                  />
+                </div>
+
+                {/* Dorsaal skelet rechts */}
+                <div className="relative w-full h-full flex flex-col items-center justify-center pl-2">
+                  <SkeletonViewer
+                    currentView="dorsal"
+                    activeMuscle={
+                      shouldShowMuscle && muscle?.view === 'dorsal'
+                        ? muscle
+                        : undefined
+                    }
+                    activeSide={evaluatedSide}
+                    interactive={!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question' && type !== 'bone'}
+                    onSkeletonClick={(pt, isRight) => handleSkeletonClick({ ...pt, view: 'dorsal' }, isRight)}
+                    onUpdateUserPoint={handleUpdateUserPoint}
+                    onDeleteUserPoint={handleDeleteUserPoint}
+                    quizMatches={dorsalMatches}
+                    showReferenceGhost={showReferenceGhost && shouldShowMuscle && muscle?.view === 'dorsal'}
+                    userOrigins={dorsalOrigins}
+                    userInsertions={dorsalInsertions}
+                    targetBoneMarker={currentQuestion?.targetBoneMarker}
+                    targetFocusPoint={jointFocusPoint?.view === 'dorsal' ? jointFocusPoint : null}
+                    autoCenterMuscle={shouldShowMuscle || (jointFocusPoint?.view === 'dorsal') || type === 'bone'}
+                  />
+                </div>
               </div>
-            </div>
-          ) : (
-            <SkeletonViewer
-              currentView={currentView}
-              activeMuscle={
-                (type === 'multiple_choice' || type === 'movements' || type === 'function' || type === 'open_question' || isEvaluated)
-                  ? muscle
-                  : undefined
-              }
-              activeSide={evaluatedSide}
-              interactive={!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question' && type !== 'bone'}
-              onSkeletonClick={(pt, isRight) => handleSkeletonClick({ ...pt, view: currentView }, isRight)}
-              onUpdateUserPoint={handleUpdateUserPoint}
-              onDeleteUserPoint={handleDeleteUserPoint}
-              quizMatches={matchResults}
-              showReferenceGhost={showReferenceGhost}
-              userOrigins={userOrigins}
-              userInsertions={userInsertions}
-              targetBoneMarker={currentQuestion?.targetBoneMarker}
-            />
-          )}
+            ) : (
+              <SkeletonViewer
+                currentView={currentView}
+                activeMuscle={shouldShowMuscle ? muscle : undefined}
+                activeSide={evaluatedSide}
+                interactive={!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question' && type !== 'bone'}
+                onSkeletonClick={(pt, isRight) => handleSkeletonClick({ ...pt, view: currentView }, isRight)}
+                onUpdateUserPoint={handleUpdateUserPoint}
+                onDeleteUserPoint={handleDeleteUserPoint}
+                quizMatches={matchResults}
+                showReferenceGhost={showReferenceGhost && shouldShowMuscle}
+                userOrigins={userOrigins}
+                userInsertions={userInsertions}
+                targetBoneMarker={currentQuestion?.targetBoneMarker}
+                targetFocusPoint={jointFocusPoint}
+                autoCenterMuscle={shouldShowMuscle || !!jointFocusPoint || type === 'bone'}
+              />
+            );
+          })()}
         </div>
 
         {/* Onderbalk met status & instructies (vaste h-8) */}

@@ -124,6 +124,7 @@ export interface QuizQuestion {
   bone?: any; // Bone object
   boneMarker?: any; // BoneMarker object
   targetBoneMarker?: Point2D;
+  targetFocusPoint?: Point2D & { zoom?: number };
   jointQuizItem?: JointQuizItem;
 }
 

@@ -9,6 +9,7 @@ import {
   QuizType 
 } from '../../types/anatomy';
 import { JOINT_CATEGORIES } from '../../data/jointCategories';
+import { getJointLocation } from '../../data/jointQuestions';
 import { MovementIcon } from '../common/MovementIcon';
 import { AnswerValidationResult } from '../../utils/answerMatching';
 import { 
@@ -295,27 +296,35 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
           </div>
         )}
 
-        <SkeletonViewer
-          currentView={currentView}
-          activeMuscle={
-            (type === 'multiple_choice' || type === 'movements' || type === 'function' || type === 'open_question' || isEvaluated)
-              ? muscle
-              : undefined
-          }
-          activeSide={evaluatedSide}
-          interactive={!isEvaluated && isDrawingType}
-          onSkeletonClick={handleSkeletonClick}
-          onUpdateUserPoint={handleUpdateUserPoint}
-          onDeleteUserPoint={handleDeleteUserPoint}
-          quizMatches={matchResults}
-          showReferenceGhost={(showReferenceGhost || isEvaluated) && type !== 'bone'}
-          userOrigins={userOrigins}
-          userInsertions={userInsertions}
-          targetBoneMarker={currentQuestion?.targetBoneMarker}
-          hideZoomToolbar={true}
-          isMobile={true}
-          autoCenterMuscle={type !== 'bone'}
-        />
+        {(() => {
+          const isJointQuestion = type === 'joints' || 
+                                  currentQuestion.mcKind === 'joint' || 
+                                  currentQuestion.openKind === 'joint' || 
+                                  Boolean(currentQuestion.jointQuizItem);
+          const shouldShowMuscle = !isJointQuestion && type !== 'bone' && !!muscle;
+          const jointFocusPoint = isJointQuestion ? (currentQuestion.targetFocusPoint || getJointLocation(currentQuestion.jointQuizItem)) : null;
+
+          return (
+            <SkeletonViewer
+              currentView={currentView}
+              activeMuscle={shouldShowMuscle ? muscle : undefined}
+              activeSide={evaluatedSide}
+              interactive={!isEvaluated && isDrawingType}
+              onSkeletonClick={handleSkeletonClick}
+              onUpdateUserPoint={handleUpdateUserPoint}
+              onDeleteUserPoint={handleDeleteUserPoint}
+              quizMatches={matchResults}
+              showReferenceGhost={(showReferenceGhost || isEvaluated) && shouldShowMuscle}
+              userOrigins={userOrigins}
+              userInsertions={userInsertions}
+              targetBoneMarker={currentQuestion?.targetBoneMarker}
+              targetFocusPoint={jointFocusPoint}
+              hideZoomToolbar={true}
+              isMobile={true}
+              autoCenterMuscle={shouldShowMuscle || !!jointFocusPoint || type === 'bone'}
+            />
+          );
+        })()}
       </div>
 
       {/* 2. VASTE ONDERKAART: COMPACT EN NAAR BENEDEN TE SCHUIVEN */}

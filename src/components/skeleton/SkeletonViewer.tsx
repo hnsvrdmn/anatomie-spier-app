@@ -31,6 +31,7 @@ interface SkeletonViewerProps {
   userOrigins?: Point2D[];
   userInsertions?: Point2D[];
   targetBoneMarker?: Point2D;
+  targetFocusPoint?: { x: number; y: number; view?: 'ventral' | 'dorsal'; zoom?: number } | null;
   // Extra interactieve selectie (bijv. in Studiemodus)
   onSelectMuscle?: (muscleId: string) => void;
   // Extra overlay kinderen (bijv. EditorOverlay)
@@ -63,6 +64,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
   userOrigins,
   userInsertions,
   targetBoneMarker,
+  targetFocusPoint,
   children,
   innerRef,
   showTooltip: externalShowTooltip,
@@ -232,12 +234,25 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
         setPan({ x: Math.round(targetPanX), y: Math.round(targetPanY) });
         return;
       }
+    } else if (targetFocusPoint) {
+      // Inzoomen op een specifiek gewricht of focusregio (zonder spieren!)
+      const targetZoom = Math.max(1.2, Math.min(1.8, targetFocusPoint.zoom || 1.5));
+      const container = containerRef.current;
+      const W = container?.clientWidth || 250;
+      const H = container?.clientHeight || 600;
+      const desiredScreenY = 0.32;
+      const targetPanX = (0.5 - targetFocusPoint.x) * W * targetZoom;
+      const targetPanY = (desiredScreenY - 0.5) * H - (targetFocusPoint.y - 0.5) * H * targetZoom;
+
+      setZoom(Number(targetZoom.toFixed(2)));
+      setPan({ x: Math.round(targetPanX), y: Math.round(targetPanY) });
+      return;
     } else {
-      // Geen actieve spier (bijv. leeg canvas voor handmatig tekenen): herstel volledig skelet
+      // Geen actieve spier of focuspunt: herstel volledig skelet
       setZoom(1);
       setPan({ x: 0, y: 0 });
     }
-  }, [autoCenterMuscle, activeMuscle?.id, activeSide, currentView]);
+  }, [autoCenterMuscle, activeMuscle?.id, activeSide, currentView, targetFocusPoint?.x, targetFocusPoint?.y, targetFocusPoint?.zoom]);
 
   // Herstel zoom en positie naar volledig skelet wanneer een andere spier geselecteerd wordt (bijv. in studiemodus)
   const prevSelectedMuscleIdRef = useRef<string | undefined>(activeMuscle?.id);

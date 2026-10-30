@@ -998,3 +998,55 @@ export function getJointMCOptions(item: JointQuizItem): string[] {
   const options = [item.correctAnswer, ...item.distractors];
   return options.sort(() => 0.5 - Math.random());
 }
+
+export interface JointLocation {
+  x: number;
+  y: number;
+  view: 'ventral' | 'dorsal';
+  zoom: number;
+}
+
+export const JOINT_LOCATIONS: Record<string, JointLocation> = {
+  cingulum: { x: 0.50, y: 0.19, view: 'ventral', zoom: 1.55 },
+  humeri: { x: 0.68, y: 0.23, view: 'ventral', zoom: 1.55 },
+  cubiti: { x: 0.73, y: 0.38, view: 'ventral', zoom: 1.55 },
+  coxae: { x: 0.44, y: 0.46, view: 'ventral', zoom: 1.55 },
+  genus: { x: 0.44, y: 0.69, view: 'ventral', zoom: 1.55 },
+  pedis: { x: 0.44, y: 0.88, view: 'ventral', zoom: 1.6 },
+  romp: { x: 0.50, y: 0.34, view: 'dorsal', zoom: 1.45 },
+};
+
+/**
+ * Bepaal de anatomische locatie en het juiste aanzicht van een gewrichtsvraag,
+ * zodat de skeletviewer op de juiste plek inzoomt (of terugvalt op volledig beeld).
+ */
+export function getJointLocation(jointItem?: JointQuizItem): JointLocation | null {
+  if (!jointItem) return null;
+
+  let jId = jointItem.jointId?.toLowerCase();
+
+  if (!jId) {
+    const text = `${jointItem.question} ${jointItem.topic} ${jointItem.shortPrompt || ''}`.toLowerCase();
+    if (text.includes('wervel') || text.includes('intervertebr') || text.includes('zygapophys') || text.includes('wervelkolom') || text.includes('wervelboog')) {
+      jId = 'romp';
+    } else if (text.includes('cubiti') || text.includes('elleboog') || text.includes('humero-ulnar') || text.includes('humero-radial') || text.includes('radio-ulnar')) {
+      jId = 'cubiti';
+    } else if (text.includes('genus') || text.includes('knie') || text.includes('meniscus') || text.includes('cruciat')) {
+      jId = 'genus';
+    } else if (text.includes('coxae') || text.includes('heup') || text.includes('acetabul') || text.includes('femurkop')) {
+      jId = 'coxae';
+    } else if (text.includes('pedis') || text.includes('sprong') || text.includes('talocrural') || text.includes('subtalar') || text.includes('calcaneo') || text.includes('osg') || text.includes('bsg') || text.includes('enkel')) {
+      jId = 'pedis';
+    } else if (text.includes('humeri') || text.includes('schoudergewricht') || text.includes('glenohumer')) {
+      jId = 'humeri';
+    } else if (text.includes('cingulum') || text.includes('schoudergordel') || text.includes('sterno-clavicul') || text.includes('acromio-clavicul') || text.includes('sc-gewricht') || text.includes('ac-gewricht')) {
+      jId = 'cingulum';
+    }
+  }
+
+  if (jId && JOINT_LOCATIONS[jId]) {
+    return JOINT_LOCATIONS[jId];
+  }
+
+  return null;
+}
