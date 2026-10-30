@@ -46,9 +46,9 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
         location: 'Tuber ischiadicum (zitbeenknobbel)',
       },
       {
-        muscleId: 'adductores',
-        muscleName: 'm. adductores (groep)',
-        location: 'Ramus ossis pubis (schaambeen) en ramus ossis ischii',
+        muscleId: 'adductor_magnus',
+        muscleName: 'm. adductor longus, brevis & magnus',
+        location: 'Os pubis (schaambeen) en ramus van het os ischium',
       },
       {
         muscleId: 'iliopsoas',
@@ -122,9 +122,9 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
         location: 'Tuberositas glutea femoris (onder trochanter major)',
       },
       {
-        muscleId: 'adductores',
-        muscleName: 'm. adductores (groep)',
-        location: 'Linea aspera en tuberculum adductorium femoris',
+        muscleId: 'adductor_magnus',
+        muscleName: 'm. adductor longus, brevis & magnus',
+        location: 'Linea aspera van het corpus femoris',
       },
     ],
   },
@@ -240,7 +240,7 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
   os_naviculare: {
     origins: [],
     insertions: [],
-    note: 'Deel van het mediale longitudinale voetgewelf. Vormt het gewricht met de taluskop (art. talonavicularis); de m. tibialis anterior loopt er vlak langs naar het os cuneiforme mediale.',
+    note: 'Onderdeel van het voorste deel van het onderste spronggewricht (articulatio talo-calcaneo-navicularis) samen met de talus en het calcaneus.',
   },
 
   os_humerus: {
@@ -298,13 +298,13 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
         muscleId: 'biceps_brachii',
         muscleName: 'm. biceps brachii',
         part: 'Caput breve & Caput longum',
-        location: 'Processus coracoideus (kort) en tuberculum supraglenoidale (lang)',
+        location: 'Processus coracoïdeus (kort) en bovenzijde cavitas glenoidalis (lang)',
       },
       {
         muscleId: 'triceps_brachii',
         muscleName: 'm. triceps brachii',
         part: 'Caput longum',
-        location: 'Tuberculum infraglenoidale scapulae',
+        location: 'Onderzijde cavitas glenoidalis van de scapula',
       },
       {
         muscleId: 'teres_major',
@@ -377,7 +377,7 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'brachialis',
         muscleName: 'm. brachialis',
-        location: 'Tuberositas ulnae en processus coronoideus',
+        location: 'Tuberositas ulnae',
       },
     ],
   },

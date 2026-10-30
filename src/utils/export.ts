@@ -2,7 +2,7 @@ import { Muscle } from '../types/anatomy';
 import { mirrorPoints } from './coordinates';
 import initialMusclesData from '../data/muscles.json';
 
-const LOCAL_STORAGE_KEY = 'pmt_anatomie_muscles_dataset_v12';
+const LOCAL_STORAGE_KEY = 'pmt_anatomie_muscles_dataset_v13';
 
 /**
  * Filtert spieren die niet in het PMT-curriculum / de reader horen
@@ -82,6 +82,7 @@ export function loadMusclesFromLocalStorage(): Muscle[] | null {
       localStorage.removeItem('pmt_anatomie_muscles_dataset');
       localStorage.removeItem('pmt_anatomie_muscles_dataset_v10');
       localStorage.removeItem('pmt_anatomie_muscles_dataset_v11');
+      localStorage.removeItem('pmt_anatomie_muscles_dataset_v12');
     } catch {}
 
     const data = localStorage.getItem(LOCAL_STORAGE_KEY);

@@ -172,8 +172,8 @@ export const MovementIcon: React.FC<MovementIconProps> = ({ movement, className 
     );
   }
 
-  // 17. Detractie (schouder omlaag duwen, dubbele pijl omlaag)
-  if (norm.startsWith('detractie')) {
+  // 17. Depressie / Detractie (schouder omlaag duwen, dubbele pijl omlaag)
+  if (norm.startsWith('depressie') || norm.startsWith('detractie')) {
     return (
       <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="7 7 12 12 17 7" />

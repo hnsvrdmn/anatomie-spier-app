@@ -11,7 +11,7 @@
     ],
     "originText": "processus spinosus 7e-12 thoracale wervels, processus spinosus alle lumbale wervels, dorsale zijde crista iliaca",
     "insertionText": "tuberculum minus (pees komt van dorsaal en hecht aan de ventrale zijde van de humerus aan)",
-    "functionText": "Adductie, Endorotatie, Retroflexie (art. humeri) / Detractie schoudergordel (cingulum pectorale)",
+    "functionText": "Adductie en endorotatie in het art. humeri",
     "visuals": {
       "right": {
         "origins": [
@@ -124,7 +124,7 @@
         ]
       }
     },
-    "otherFunctions": "Detractie schoudergordel; krachtige hoestspier ('coughing muscle'); hecht via brede fascia thoracolumbalis aan."
+    "otherFunctions": "Krachtige hoestspier ('coughing muscle'); hecht via brede fascia thoracolumbalis aan."
   },
   {
     "id": "deltoideus",
@@ -395,7 +395,7 @@
     ],
     "originText": "Angulus inferior scapula",
     "insertionText": "Proximaal ventraal op humerus",
-    "functionText": "Endorotatie, Retroflexie",
+    "functionText": "Endorotatie en adductie in het art. humeri",
     "visuals": {
       "left": {
         "origins": [
@@ -446,7 +446,7 @@
     ],
     "originText": "Margo lateralis scapula",
     "insertionText": "Dorsale gedeelte tuberculum majus",
-    "functionText": "Exorotatie, Retroflexie",
+    "functionText": "Exorotatie in het art. humeri",
     "visuals": {
       "left": {
         "origins": [
@@ -498,7 +498,7 @@
     ],
     "originText": "Pars descendens (dalend): dorsaal onderzijde schedel, processus spinosus van 1e tot 6e vertebra cervicales | Pars transversa (dwars): processus spinosus 7e vertebra cervicales en 1e tot 3e vertebra thoracales | Pars ascendens (stijgend): processus spinosus van de 3e tot 12e vertebra thoracales",
     "insertionText": "Pars descendens: laterale 1/3 deel van clavicula | Pars transversa: acromion | Pars ascendens: spina scapula",
-    "functionText": "Elevatie os scapula (descendens), Retractie os scapula (transversa), Detractie os scapula (ascendens)",
+    "functionText": "Retractie, elevatie en depressie van de scapula",
     "visuals": {
       "right": {
         "origins": [
@@ -953,7 +953,7 @@
     ],
     "originText": "caput breve: processus coracoideus (= op schouderblad) | caput longum: net boven gewrichtskom schoudergewricht (= op schouderblad)",
     "insertionText": "tuberositas radii (2x art. cubiti, 1x(!) art. humeri)",
-    "functionText": "Flexie en supinatie art. cubiti, abductie in art. humeri",
+    "functionText": "Flexie en supinatie in het art. cubiti",
     "visuals": {
       "right": {
         "origins": [
@@ -1100,7 +1100,7 @@
     ],
     "originText": "caput longum: net onder gewrichtskom schoudergewricht (= op schouderblad) | caput mediale: mediaal op dorsale vlak van os humerus | caput laterale: lateraal op dorsale vlak van os humerus",
     "insertionText": "olecranon (1x art. cubiti, 1x art. humeri)",
-    "functionText": "Extensie art. cubiti, Retroflexie art. humeri (caput longum)",
+    "functionText": "Adductie in het art. humeri (caput longum) en extensie in het art. cubiti",
     "visuals": {
       "left": {
         "origins": [
@@ -1896,7 +1896,7 @@
     ],
     "originText": "tuber ischiadicum",
     "insertionText": "condylus medialis tibiae",
-    "functionText": "(retroflexie art. coxae), flexie art. genus, endorotatie art. genus",
+    "functionText": "Endorotatie in het art. coxae en flexie in het art. genus",
     "visuals": {
       "right": {
         "origins": [
@@ -1960,7 +1960,7 @@
     ],
     "originText": "tuber ischiadicum",
     "insertionText": "condylus medialis tibiae",
-    "functionText": "(retroflexie art. coxae), flexie art. genus, endorotatie art. genus",
+    "functionText": "Endorotatie in het art. coxae en flexie in het art. genus",
     "visuals": {
       "right": {
         "origins": [

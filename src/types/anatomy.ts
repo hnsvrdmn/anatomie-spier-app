@@ -83,7 +83,8 @@ export type QuizType =
   | 'bone'            // Bot benoemen: punt staat op skelet zonder tekst, student typt naam van het bot
   | 'joints'          // Gewrichten test: typen, deelgewrichten, assen en bewegingen
   | 'function'        // (voor backwards compatibiliteit)
-  | 'movements';      // Bewegingen per spier (selecteer alle bijbehorende bewegingen via checkboxes)
+  | 'movements'       // Bewegingen per spier (selecteer alle bijbehorende bewegingen via checkboxes)
+  | 'mixed';          // Gemengde toets: wisselt willekeurig af tussen alle verschillende testtypen
 
 export type MatchAccuracy = 'correct' | 'close' | 'incorrect';
 

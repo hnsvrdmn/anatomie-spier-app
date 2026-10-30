@@ -345,6 +345,29 @@ export const BonesView: React.FC = () => {
                     {selectedBone.description}
                   </p>
 
+                  {/* Relevante botstructuren uit de reader */}
+                  {selectedBone.structures && selectedBone.structures.length > 0 && (
+                    <div className="space-y-2 pt-2 border-t border-clinical-100">
+                      <div className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center justify-between">
+                        <span>Relevante botstructuren (Reader):</span>
+                        <span className="text-[10px] text-sky-700 bg-sky-50 border border-sky-200/80 px-2 py-0.5 rounded-full font-bold">
+                          {selectedBone.structures.length} {selectedBone.structures.length === 1 ? 'structuur' : 'structuren'}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-1 gap-1.5">
+                        {selectedBone.structures.map((struct, idx) => (
+                          <div
+                            key={idx}
+                            className="text-xs font-semibold text-slate-800 bg-slate-50/90 border border-slate-200/90 rounded-xl px-2.5 py-1.5 flex items-center gap-2"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
+                            <span>{struct}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Aanhechtende origo's en inserties */}
                   <BoneAttachmentsCard
                     boneId={selectedBone.id}
@@ -453,6 +476,29 @@ export const BonesView: React.FC = () => {
             <p className="text-xs sm:text-sm leading-relaxed text-slate-700">
               {selectedBone.description}
             </p>
+
+            {/* Relevante botstructuren uit de reader */}
+            {selectedBone.structures && selectedBone.structures.length > 0 && (
+              <div className="space-y-2 pt-2 border-t border-clinical-100">
+                <div className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center justify-between">
+                  <span>Relevante botstructuren (Reader):</span>
+                  <span className="text-[10px] text-sky-700 bg-sky-50 border border-sky-200/80 px-2 py-0.5 rounded-full font-bold">
+                    {selectedBone.structures.length} {selectedBone.structures.length === 1 ? 'structuur' : 'structuren'}
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 gap-1.5">
+                  {selectedBone.structures.map((struct, idx) => (
+                    <div
+                      key={idx}
+                      className="text-xs font-semibold text-slate-800 bg-slate-50/90 border border-slate-200/90 rounded-xl px-2.5 py-1.5 flex items-center gap-2"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
+                      <span>{struct}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Aanhechtende origo's en inserties */}
             <BoneAttachmentsCard

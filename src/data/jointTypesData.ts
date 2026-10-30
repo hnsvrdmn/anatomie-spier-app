@@ -98,7 +98,7 @@ export const JOINTS_LEARNING_DATA: Record<string, JointDetail> = {
       },
       {
         movement: 'Retroflexie',
-        muscleIds: ['gluteus_maximus', 'biceps_femoris', 'semimembranosus', 'semitendinosus'],
+        muscleIds: ['gluteus_maximus', 'biceps_femoris'],
         note: 'Strekking naar achteren in de heup',
       },
       {
@@ -107,9 +107,14 @@ export const JOINTS_LEARNING_DATA: Record<string, JointDetail> = {
         note: 'Naar binnen bewegen van het been',
       },
       {
+        movement: 'Endorotatie',
+        muscleIds: ['semimembranosus', 'semitendinosus'],
+        note: 'Binnenwaartse draaiing van het dijbeen in het art. coxae',
+      },
+      {
         movement: 'Exorotatie',
-        muscleIds: ['gluteus_maximus', 'iliopsoas', 'biceps_femoris'],
-        note: 'Buitenwaartse draaiing van het dijbeen',
+        muscleIds: ['gluteus_maximus', 'iliopsoas'],
+        note: 'Buitenwaartse draaiing van het dijbeen in het art. coxae',
       },
     ],
   },
@@ -250,12 +255,12 @@ export const JOINTS_LEARNING_DATA: Record<string, JointDetail> = {
     movements: [
       {
         movement: 'Abductie',
-        muscleIds: ['deltoideus', 'biceps_brachii'],
-        note: 'Zijwaarts heffen van de arm (tot 90° in art. humeri)',
+        muscleIds: ['deltoideus'],
+        note: 'Zijwaarts heffen van de arm (tot 90° in art. humeri door pars acromialis)',
       },
       {
         movement: 'Adductie',
-        muscleIds: ['latissimus_dorsi', 'pectoralis_major'],
+        muscleIds: ['latissimus_dorsi', 'pectoralis_major', 'teres_major', 'triceps_brachii'],
         note: 'Naar het lichaam toe trekken van de arm',
       },
       {
@@ -265,8 +270,8 @@ export const JOINTS_LEARNING_DATA: Record<string, JointDetail> = {
       },
       {
         movement: 'Retroflexie',
-        muscleIds: ['latissimus_dorsi', 'deltoideus', 'teres_major', 'teres_minor', 'triceps_brachii'],
-        note: 'Achterwaarts bewegen van de arm',
+        muscleIds: ['deltoideus'],
+        note: 'Achterwaarts bewegen van de arm (pars spinalis)',
       },
       {
         movement: 'Endorotatie',
@@ -308,9 +313,9 @@ export const JOINTS_LEARNING_DATA: Record<string, JointDetail> = {
         note: 'Omhoog trekken van het schouderblad (schouders ophalen)',
       },
       {
-        movement: 'Detractie',
-        muscleIds: ['trapezius', 'latissimus_dorsi'],
-        note: 'Omlaag trekken van het schouderblad',
+        movement: 'Depressie',
+        muscleIds: ['trapezius'],
+        note: 'Omlaag trekken van het schouderblad (pars ascendens)',
       },
       {
         movement: 'Retractie',

@@ -435,6 +435,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                   }}
                   className="w-full px-3 py-2 bg-slate-100 border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:bg-white cursor-pointer"
                 >
+                  <option value="mixed">🔀 Gemengde toets (alle testen door elkaar)</option>
                   <option value="bone">Bot benoemen</option>
                   <option value="full">Origo en insertie plaatsen</option>
                   <option value="landmark">Vind aanhechtingspunt</option>
@@ -489,6 +490,22 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                     ? `Origo & Insertie • ${jointMuscleIndex + 1}/${jointMusclesCount}`
                     : practiceMode === 'joint'
                     ? `${jointCategoryName} • ${jointMuscleIndex + 1}/${jointMusclesCount}`
+                    : freeQuizType === 'mixed'
+                    ? `🔀 Gemengde Toets • ${
+                        type === 'bone'
+                          ? 'Bot benoemen'
+                          : type === 'full'
+                          ? 'Origo & Insertie'
+                          : type === 'multiple_choice'
+                          ? 'Meerkeuze Test'
+                          : type === 'joints'
+                          ? 'Gewrichten'
+                          : type === 'open_question'
+                          ? 'Open Vraag'
+                          : type === 'movements'
+                          ? 'Bewegingen'
+                          : 'Aanhechtingspunt'
+                      }`
                     : freeQuizType === 'bone'
                     ? 'Bot benoemen'
                     : freeQuizType === 'full'

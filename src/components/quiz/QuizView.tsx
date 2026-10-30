@@ -454,7 +454,7 @@ export const QuizView: React.FC = () => {
     let randMuscle = cleanMuscles[Math.floor(Math.random() * cleanMuscles.length)];
     let type: QuizType = 'full';
 
-    if (targetType === 'all') {
+    if (targetType === 'all' || targetType === 'mixed') {
       const types: QuizType[] = ['bone', 'full', 'landmark', 'multiple_choice', 'movements', 'open_question', 'joints'];
       type = types[Math.floor(Math.random() * types.length)];
       if (type === 'bone') {
@@ -1503,6 +1503,7 @@ export const QuizView: React.FC = () => {
               }}
               className="w-full px-3 py-2 bg-clinical-50 border border-clinical-200 rounded-xl text-xs sm:text-sm font-semibold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
             >
+              <option value="mixed">🔀 Gemengde toets (alle testen door elkaar)</option>
               <option value="bone">Bot benoemen</option>
               <option value="full">Origo en insertie plaatsen</option>
               <option value="landmark">Vind aanhechtingspunt</option>
@@ -1620,9 +1621,11 @@ export const QuizView: React.FC = () => {
           /* Normale vraagkaart */
           <div className="bg-white p-5 rounded-2xl border border-clinical-200/90 shadow-sm space-y-4">
             <div className="flex items-center justify-between text-xs">
-              <span className="px-2.5 py-1 rounded-lg font-bold uppercase tracking-wider bg-blue-100 text-blue-800 text-[11px]">
+              <span className="px-2.5 py-1 rounded-lg font-bold uppercase tracking-wider bg-blue-100 text-blue-800 text-[11px] flex items-center gap-1.5">
                 {practiceMode === 'joint' 
                   ? `Spier ${jointMuscleIndex + 1} van ${jointMuscles.length}`
+                  : freeQuizType === 'mixed'
+                  ? `🔀 Gemengde Toets • Vraag #${currentStats.totalQuestions + 1}`
                   : `Vraag #${currentStats.totalQuestions + 1}`}
               </span>
             </div>

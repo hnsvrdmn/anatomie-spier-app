@@ -1,7 +1,13 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { Bone, BoneMarker, READER_BONES } from '../data/bonesData';
 
-const BONES_LOCAL_STORAGE_KEY = 'pmt_anatomie_bones_custom_v2';
+const BONES_LOCAL_STORAGE_KEY = 'pmt_anatomie_bones_reader_v1';
+
+// Ruim oude versies op
+try {
+  localStorage.removeItem('pmt_anatomie_bones_custom_v1');
+  localStorage.removeItem('pmt_anatomie_bones_custom_v2');
+} catch {}
 
 interface BoneContextType {
   bones: Bone[];
