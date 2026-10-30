@@ -20,6 +20,8 @@ export const MobileStudyView: React.FC = () => {
 
   const [selectedJointId, setSelectedJointId] = useState<string>('all');
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  const [drawerHeight, setDrawerHeight] = useState<number | null>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -27,11 +29,16 @@ export const MobileStudyView: React.FC = () => {
 
   // Drag handling voor de uitschuifbare lade onderin
   const dragStartYRef = useRef<number | null>(null);
+  const dragStartHeightRef = useRef<number>(0);
   const isDraggingRef = useRef<boolean>(false);
+  const hasDraggedRef = useRef<boolean>(false);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     dragStartYRef.current = e.clientY;
+    const rect = drawerRef.current?.getBoundingClientRect();
+    dragStartHeightRef.current = rect ? rect.height : (drawerHeight || Math.round(window.innerHeight * 0.5));
     isDraggingRef.current = true;
+    hasDraggedRef.current = false;
     try {
       (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     } catch {
@@ -42,12 +49,18 @@ export const MobileStudyView: React.FC = () => {
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!isDraggingRef.current || dragStartYRef.current === null) return;
     const deltaY = e.clientY - dragStartYRef.current;
-    if (deltaY < -20 && !isDrawerOpen) {
+    if (Math.abs(deltaY) > 6) {
+      hasDraggedRef.current = true;
+    }
+    // Omhoog draggen (deltaY < 0) vergroot het frame, omlaag draggen (deltaY > 0) verkleint het
+    const maxHeight = Math.max(280, window.innerHeight - 110); // Blijft altijd onder de top dropdown!
+    const minHeight = 110;
+    const targetHeight = Math.max(minHeight, Math.min(maxHeight, dragStartHeightRef.current - deltaY));
+    setDrawerHeight(targetHeight);
+    if (targetHeight > 180) {
       setIsDrawerOpen(true);
-      isDraggingRef.current = false;
-    } else if (deltaY > 20 && isDrawerOpen) {
+    } else {
       setIsDrawerOpen(false);
-      isDraggingRef.current = false;
     }
   };
 
@@ -59,27 +72,30 @@ export const MobileStudyView: React.FC = () => {
     } catch {
       // ignore
     }
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    dragStartYRef.current = e.touches[0].clientY;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (dragStartYRef.current === null) return;
-    const currentY = e.touches[0].clientY;
-    const deltaY = currentY - dragStartYRef.current;
-    if (deltaY < -20 && !isDrawerOpen) {
-      setIsDrawerOpen(true);
-      dragStartYRef.current = null;
-    } else if (deltaY > 20 && isDrawerOpen) {
-      setIsDrawerOpen(false);
-      dragStartYRef.current = null;
+    if (hasDraggedRef.current) {
+      if (drawerHeight !== null && drawerHeight < 170) {
+        setIsDrawerOpen(false);
+        setDrawerHeight(null);
+      } else {
+        setIsDrawerOpen(true);
+      }
     }
   };
 
-  const handleTouchEnd = () => {
-    dragStartYRef.current = null;
+  const handleClickHandle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (hasDraggedRef.current) {
+      hasDraggedRef.current = false;
+      return;
+    }
+    if (isDrawerOpen) {
+      setIsDrawerOpen(false);
+      setDrawerHeight(null);
+    } else {
+      setIsDrawerOpen(true);
+      // Standaard openen tot 50% van het beeldscherm!
+      setDrawerHeight(Math.round(window.innerHeight * 0.50));
+    }
   };
 
   // Gefilterde spieren op basis van gekozen gewricht
@@ -359,40 +375,48 @@ export const MobileStudyView: React.FC = () => {
           }}
           hideZoomToolbar={true}
           isMobile={true}
+          autoCenterMuscle={true}
         />
       </div>
 
-      {/* 3. UITSCHUIFBARE LADE ONDERIN: INGEVOUWEN MET GROTERE NAAM EN VOLLEDIGE LEESBARE ORIGO & INSERTIE */}
+      {/* 3. UITSCHUIFBARE LADE ONDERIN: DYNAMISCH EN MET VEILIGE MAX HOOGTE */}
       <div 
-        className={`fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-clinical-200 shadow-[0_-8px_30px_rgba(0,0,0,0.15)] rounded-t-3xl transition-all duration-300 pointer-events-auto flex flex-col ${
-          isDrawerOpen ? 'max-h-[calc(100dvh-7.5rem)]' : 'h-auto max-h-[220px]'
+        ref={drawerRef}
+        style={
+          isDrawerOpen && drawerHeight
+            ? { height: `${drawerHeight}px`, maxHeight: 'calc(100dvh - 7rem)' }
+            : undefined
+        }
+        className={`fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-clinical-200 shadow-[0_-8px_30px_rgba(0,0,0,0.15)] rounded-t-3xl ${
+          isDraggingRef.current ? '' : 'transition-all duration-200'
+        } pointer-events-auto flex flex-col ${
+          isDrawerOpen 
+            ? (!drawerHeight ? 'max-h-[50vh]' : '')
+            : 'h-auto max-h-[220px]'
         }`}
       >
-        {/* SLEEPHENDEL & HEADER MET ACTIEVE SPIER, ORIGO, INSERTIE & < > KNOPPEN */}
+        {/* SLEEPHENDEL: DEDICATED HIT-AREA VOOR HET '-' STREEPJE */}
         <div 
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerUp}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          onClick={() => setIsDrawerOpen(prev => !prev)}
-          className="w-full px-3.5 py-2.5 cursor-grab active:cursor-grabbing touch-none select-none shrink-0 border-b border-clinical-100 flex flex-col justify-center"
+          onClick={handleClickHandle}
+          className="w-full flex items-center justify-center cursor-grab active:cursor-grabbing py-2.5 touch-none select-none -mt-1 mb-0.5 active:opacity-70 group"
+          title={isDrawerOpen ? "Tik of sleep omlaag voor minimale weergave" : "Tik op '-' of sleep omhoog om details te openen"}
+          aria-label={isDrawerOpen ? "Sluit details" : "Open details"}
+          role="button"
+          tabIndex={0}
         >
-          {/* Midden: klein subtiel sleeppilletje (-) */}
-          <div className="w-8 h-1 bg-slate-300 rounded-full mx-auto mb-1.5 shrink-0" />
+          <div className="w-12 h-1.5 bg-slate-300 group-hover:bg-slate-500 rounded-full transition-colors active:scale-95" />
+        </div>
 
-          {/* Bovenste rij: [<] Actieve Spiernaam [>] + open/dicht pijl */}
+        {/* HEADER RIJ MET SPIERNAAM EN < > KNOPPEN (GEEN DRAWER TOGGLE OP DEZE RIJ!) */}
+        <div className="w-full px-3.5 pb-2.5 shrink-0 border-b border-clinical-100 flex flex-col justify-center">
           <div className="flex items-center justify-between gap-1 w-full">
             <button
               type="button"
-              onPointerDown={(e) => e.stopPropagation()}
-              onTouchStart={(e) => e.stopPropagation()}
-              onClick={(e) => {
-                e.stopPropagation();
-                handlePrevMuscle(e);
-              }}
+              onClick={handlePrevMuscle}
               className="p-1.5 -ml-1 rounded-xl hover:bg-slate-100 active:bg-slate-200 text-clinical-700 transition pointer-events-auto"
               title="Vorige spier"
               aria-label="Vorige spier"
@@ -408,12 +432,7 @@ export const MobileStudyView: React.FC = () => {
 
             <button
               type="button"
-              onPointerDown={(e) => e.stopPropagation()}
-              onTouchStart={(e) => e.stopPropagation()}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleNextMuscle(e);
-              }}
+              onClick={handleNextMuscle}
               className="p-1.5 rounded-xl hover:bg-slate-100 active:bg-slate-200 text-clinical-700 transition pointer-events-auto"
               title="Volgende spier"
               aria-label="Volgende spier"
@@ -423,12 +442,7 @@ export const MobileStudyView: React.FC = () => {
 
             <button
               type="button"
-              onPointerDown={(e) => e.stopPropagation()}
-              onTouchStart={(e) => e.stopPropagation()}
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsDrawerOpen(prev => !prev);
-              }}
+              onClick={handleClickHandle}
               className="flex items-center text-blue-600 font-bold p-1 ml-0.5 shrink-0 pointer-events-auto"
               title={isDrawerOpen ? "Sluit details" : "Open details"}
             >

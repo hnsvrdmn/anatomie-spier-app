@@ -139,8 +139,12 @@ export const BonesView: React.FC = () => {
 
   // Uitschuifbaar paneel onderin (mobiel)
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  const [drawerHeight, setDrawerHeight] = useState<number | null>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
   const dragStartYRef = useRef<number | null>(null);
+  const dragStartHeightRef = useRef<number>(0);
   const isDraggingRef = useRef<boolean>(false);
+  const hasDraggedRef = useRef<boolean>(false);
 
   // Klik op een botmarker
   const handleSelectBone = (bone: Bone) => {
@@ -176,7 +180,10 @@ export const BonesView: React.FC = () => {
   // Drag handlers voor de onderste lade
   const handlePointerDown = (e: React.PointerEvent) => {
     dragStartYRef.current = e.clientY;
+    const rect = drawerRef.current?.getBoundingClientRect();
+    dragStartHeightRef.current = rect ? rect.height : (drawerHeight || Math.round(window.innerHeight * 0.5));
     isDraggingRef.current = true;
+    hasDraggedRef.current = false;
     try {
       (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     } catch {}
@@ -185,38 +192,52 @@ export const BonesView: React.FC = () => {
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!isDraggingRef.current || dragStartYRef.current === null) return;
     const deltaY = e.clientY - dragStartYRef.current;
-    if (deltaY < -20 && !isDrawerOpen) {
+    if (Math.abs(deltaY) > 6) {
+      hasDraggedRef.current = true;
+    }
+    // Omhoog draggen vergroot frame, omlaag verkleint frame.
+    // Maximale hoogte bij draggen: veilig begrensd zodat het nooit boven het scherm uit schiet
+    const maxHeight = Math.max(250, window.innerHeight - 80);
+    const minHeight = 90;
+    const targetHeight = Math.max(minHeight, Math.min(maxHeight, dragStartHeightRef.current - deltaY));
+    setDrawerHeight(targetHeight);
+    if (targetHeight > 150) {
       setIsDrawerOpen(true);
-      isDraggingRef.current = false;
-    } else if (deltaY > 20 && isDrawerOpen) {
+    } else {
       setIsDrawerOpen(false);
-      isDraggingRef.current = false;
     }
   };
 
-  const handlePointerUp = () => {
+  const handlePointerUp = (e: React.PointerEvent) => {
     isDraggingRef.current = false;
     dragStartYRef.current = null;
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    dragStartYRef.current = e.touches[0].clientY;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (dragStartYRef.current === null) return;
-    const deltaY = e.touches[0].clientY - dragStartYRef.current;
-    if (deltaY < -20 && !isDrawerOpen) {
-      setIsDrawerOpen(true);
-      dragStartYRef.current = null;
-    } else if (deltaY > 20 && isDrawerOpen) {
-      setIsDrawerOpen(false);
-      dragStartYRef.current = null;
+    try {
+      (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+    } catch {}
+    if (hasDraggedRef.current) {
+      if (drawerHeight !== null && drawerHeight < 140) {
+        setIsDrawerOpen(false);
+        setDrawerHeight(null);
+      } else {
+        setIsDrawerOpen(true);
+      }
     }
   };
 
-  const handleTouchEnd = () => {
-    dragStartYRef.current = null;
+  const handleClickHandle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (hasDraggedRef.current) {
+      hasDraggedRef.current = false;
+      return;
+    }
+    if (isDrawerOpen) {
+      setIsDrawerOpen(false);
+      setDrawerHeight(null);
+    } else {
+      setIsDrawerOpen(true);
+      // Standaard openen tot 50% van het beeld! Alleen via draggen kan hij hoger worden
+      setDrawerHeight(Math.round(window.innerHeight * 0.50));
+    }
   };
 
   // Doorklikken naar de spier in de studie atlas
@@ -264,26 +285,38 @@ export const BonesView: React.FC = () => {
 
         {/* 2. In- en Uitklapbare Lade onderin (zwevend z-40, drukt het skelet niet weg) */}
         <div
-          className={`fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-clinical-200 shadow-[0_-8px_30px_rgba(0,0,0,0.15)] rounded-t-3xl transition-all duration-300 pointer-events-auto flex flex-col ${
+          ref={drawerRef}
+          style={
+            isDrawerOpen && drawerHeight
+              ? { height: `${drawerHeight}px`, maxHeight: 'calc(100dvh - 5.5rem)' }
+              : undefined
+          }
+          className={`fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-clinical-200 shadow-[0_-8px_30px_rgba(0,0,0,0.15)] rounded-t-3xl ${
+            isDraggingRef.current ? '' : 'transition-all duration-200'
+          } pointer-events-auto flex flex-col ${
             isDrawerOpen
-              ? 'max-h-[calc(100dvh-5.5rem)]'
+              ? (!drawerHeight ? 'max-h-[50vh]' : '')
               : 'h-auto max-h-[140px]'
           }`}
         >
-          {/* SLEEPHENDEL & COMPACT HEADER: Tik of sleep omhoog/omlaag */}
+          {/* SLEEPHENDEL: DEDICATED HIT-AREA VOOR HET '-' STREEPJE */}
           <div
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-            onClick={() => setIsDrawerOpen((prev) => !prev)}
-            className="w-full px-3.5 py-2.5 cursor-grab active:cursor-grabbing touch-none select-none shrink-0 border-b border-clinical-100 flex flex-col justify-center"
+            onPointerCancel={handlePointerUp}
+            onClick={handleClickHandle}
+            className="w-full flex items-center justify-center cursor-grab active:cursor-grabbing py-2.5 touch-none select-none -mt-1 mb-0.5 active:opacity-70 group"
+            title={isDrawerOpen ? "Tik of sleep omlaag voor minimale weergave" : "Tik op '-' of sleep omhoog om details te openen"}
+            aria-label={isDrawerOpen ? "Sluit botdetails" : "Open botdetails"}
+            role="button"
+            tabIndex={0}
           >
-            {/* Sleeppilletje (-) */}
-            <div className="w-8 h-1 bg-slate-300 rounded-full mx-auto mb-1.5 shrink-0" />
+            <div className="w-12 h-1.5 bg-slate-300 group-hover:bg-slate-500 rounded-full transition-colors active:scale-95" />
+          </div>
 
+          {/* COMPACTE NAVIGATIEHEADER (GEEN DRAWER TOGGLE OP DEZE RIJ!) */}
+          <div className="w-full px-3.5 pb-2.5 shrink-0 border-b border-clinical-100 flex flex-col justify-center">
             {/* Bovenste rij: [<] Botnaam [>] + toggle */}
             <div className="flex items-center justify-between gap-1 w-full">
               <button
@@ -316,8 +349,11 @@ export const BonesView: React.FC = () => {
               </button>
             </div>
 
-            {/* Indicatorbadge & Uitklappijltje */}
-            <div className="flex items-center justify-center gap-2 mt-1">
+            {/* Indicatorbadge & Uitklappijltje (Klik op pijltje schakelt drawer) */}
+            <div 
+              onClick={handleClickHandle}
+              className="flex items-center justify-center gap-2 mt-1 cursor-pointer select-none"
+            >
               {countsBadge && (
                 <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200/80">
                   {countsBadge}
