@@ -65,15 +65,15 @@ export const READER_BONES: Bone[] = [
       {
         "side": "left",
         "view": "ventral",
-        "x": 0.463,
-        "y": 0.502,
+        "x": 0.48,
+        "y": 0.481,
         "subpart": "Os pubis (schaambeen)"
       },
       {
         "side": "right",
         "view": "ventral",
-        "x": 0.547,
-        "y": 0.502,
+        "x": 0.518,
+        "y": 0.481,
         "subpart": "Os pubis (schaambeen)"
       },
       {
