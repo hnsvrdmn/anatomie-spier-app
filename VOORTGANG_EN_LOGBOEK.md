@@ -379,3 +379,45 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
     3. De stip is direct opvallend en kristalhelder zichtbaar dankzij de subtiele ademende blauwe ring en witte contrastrand, volledig zonder flitsende effecten of kermis.
     4. De `135% Reset` knop verschijnt keurig rechtsboven en herstelt de weergave bij een tik.
 - **Gepusht naar GitHub [2026-10-30 23:09]:** Wijzigingen gecommit en gepusht naar `main`.
+
+## 18. Toets: Spaced Repetition / Herhaling van fout beantwoorde vragen na ~5 vragen [2026-10-30 23:08]
+- **Gebruikerswens:**
+  - "kan je ervoor zorgen dat als je een vraag fout hebt beantwoord diezelfde vraag er na een stuk of 5 (hoeft niet precies) wordt herhaald?"
+- **Gedachten & Probleemanalyse:**
+  - Dit is het klassieke Leitner / flashcard principe van *spaced repetition*: wanneer een student een vraag fout heeft, moet de vraag niet verloren gaan of direct opnieuw getoond worden (wat alleen kortetermijngeheugen test), maar na ongeveer 4 tot 6 tussenliggende vragen opnieuw langskomen.
+  - Als de vraag vervolgens alsnog fout wordt beantwoord, blijft hij in het herhaalschema tot de student hem onder de knie heeft.
+- **Architectuur & Ontwerp van het plan:**
+  1. *Wachtrij voor herhalingsvragen:*
+     - Een state/ref `retryQueue` met objecten `{ question: QuizQuestion, dueAtCount: number }`.
+     - Een teller `questionCounterRef` die oploopt bij elke beantwoorde / volgende vraag.
+  2. *Wanneer een vraag fout is (`!isSuccess`):*
+     - In alle 4 evaluatiefuncties (`evaluateAttempt`, `handleMultipleChoiceSelect`, `handleMovementSubmit`, `handleOpenAnswerSubmit`):
+     - Zodra `!isSuccess`: voeg een kloon van `currentQuestion` toe aan de wachtrij met `dueAtCount = currentCount + (4 + Math.floor(Math.random() * 3))` (dus na 4, 5 of 6 vragen).
+  3. *Wanneer de volgende vraag wordt geladen (`handleNextQuestion`):*
+     - `questionCounter` verhogen.
+     - Eerst controleren of er een vraag in `retryQueue` zit waarvan `dueAtCount <= questionCounter` en die past bij de actieve modus (inclusief behoud van vraagtype).
+     - Indien ja: haal deze vraag uit de wachtrij, markeer eventueel `isRetry: true`, schud bij meerkeuze de opties willekeurig zodat de positie niet hetzelfde is, en toon de vraag via een centrale `loadQuestion` functie.
+     - Indien nee: genereer een nieuwe willekeurige vraag zoals gebruikelijk.
+  4. *In gewrichtsmodus (`practiceMode === 'joint'`):*
+     - Als de spieren van het gewricht doorlopen zijn maar er staan nog foute vragen open in de herhaalwachtrij, worden die eerst herhaald voordat de sessie als afgerond wordt gemarkeerd.
+  5. *Reset afhandeling:*
+     - Bij handmatig resetten van de toetsscore wordt ook de wachtrij leeggemaakt.
+- **Implementatie & Oplossing [2026-10-30 23:16]:**
+  - In [`anatomy.ts`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/types/anatomy.ts):
+    - `isRetry?: boolean` optionele eigenschap toegevoegd aan `QuizQuestion`.
+  - In [`QuizView.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx):
+    - `questionCounterRef` en `retryQueue` state geïntroduceerd.
+    - `registerIncorrectQuestion`: berekent een willekeurige tussenruimte van 4, 5 of 6 vragen (`4 + Math.floor(Math.random() * 3)`) en bewaart de vraag in de wachtrij.
+    - Ingebouwd in alle toetsevaluaties:
+      1. Tekentoets (`evaluateAttempt`)
+      2. Meerkeuze (`handleMultipleChoiceSelect`)
+      3. Bewegingen (`handleMovementSubmit`)
+      4. Open invulvragen & bot benoemen (`handleOpenAnswerSubmit`)
+    - `loadQuestion`: reset alle interactieve componenten en inputs, genereert een uniek ID en schudt bij meerkeuze de opties willekeurig zodat de student niet blind dezelfde positie kan aanklikken.
+    - `handleNextQuestion`: controleert eerst of er een herhalingsvraag aan de beurt is (`dueAtCount <= questionCounter`), laadt deze in met voorrang, en pakt pas een nieuwe vraag als er niets klaarstaat. In gewrichtsmodus worden overgebleven foute vragen aan het einde van het gewricht herhaald tot beheersing.
+    - `handleResetStats`: wist de herhaalwachtrij en herstelt de teller naar 0.
+    - Subtiel amber `Herhaling` label toegevoegd op desktop in de vraagkaart header.
+  - In [`MobileQuizView.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/MobileQuizView.tsx):
+    - Subtiel amber `Herhaling` label toegevoegd in de vraagheader op mobiel.
+  - Compilatie gevalideerd met `npm run build` (exit code 0).
+- **Gepusht naar GitHub [2026-10-30 23:17]:** Wijzigingen gecommit en gepusht naar `main`.

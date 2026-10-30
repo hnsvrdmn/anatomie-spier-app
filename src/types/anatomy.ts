@@ -126,6 +126,7 @@ export interface QuizQuestion {
   targetBoneMarker?: Point2D;
   targetFocusPoint?: Point2D & { zoom?: number };
   jointQuizItem?: JointQuizItem;
+  isRetry?: boolean;
 }
 
 export interface QuizAttempt {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { useMuscles } from '../../context/MuscleContext';
 import { SkeletonViewer } from '../skeleton/SkeletonViewer';
@@ -162,6 +162,10 @@ export const QuizView: React.FC = () => {
   const [showReferenceGhost, setShowReferenceGhost] = useState(false);
   const [evaluatedSide, setEvaluatedSide] = useState<'left' | 'right' | 'midline'>('left');
 
+  // Spaced repetition wachtrij voor fout beantwoorde vragen (herhaling na ~5 vragen)
+  const questionCounterRef = useRef<number>(0);
+  const [retryQueue, setRetryQueue] = useState<{ question: QuizQuestion; dueAtCount: number }[]>([]);
+
   // Desktop weergavemodus: 'both' is verplicht de standaard op desktop!
   const [viewLayout, setViewLayout] = useState<ViewLayoutMode>('both');
 
@@ -303,6 +307,73 @@ export const QuizView: React.FC = () => {
       return () => clearTimeout(timer);
     }
   }, [isEvaluated, activeQuizTool, expectedCounts, userOrigins.length, userInsertions.length, hasScaledForOrigins]);
+
+  // Laad een specifieke vraag in (bijv. herhalingsvraag uit de retry-wachtrij)
+  const loadQuestion = useCallback((q: QuizQuestion) => {
+    const freshQuestion: QuizQuestion = {
+      ...q,
+      id: `${q.id.split('-')[0]}-${q.muscle?.id || q.bone?.id || q.jointQuizItem?.id || 'retry'}-${Date.now()}`,
+      isRetry: true,
+      // Schud meerkeuze opties opnieuw zodat het antwoord niet op exact dezelfde positie staat
+      mcTextOptions: q.mcTextOptions ? [...q.mcTextOptions].sort(() => 0.5 - Math.random()) : undefined,
+    };
+
+    setCurrentQuestion(freshQuestion);
+    setUserOrigins([]);
+    setUserInsertions([]);
+    setUserOpenAnswer('');
+    setOpenAnswerFeedback(null);
+    setActiveQuizTool(
+      freshQuestion.landmarkType === 'insertion' || freshQuestion.type === 'insertions'
+        ? 'insertion'
+        : 'origin'
+    );
+    setSelectedMultipleChoiceId(null);
+    setSelectedMovements([]);
+    setIsMultipleChoiceSuccess(false);
+    setIsMovementSuccess(false);
+    setIsEvaluated(false);
+    setIsPlacementSuccess(false);
+    setMatchResults([]);
+    setShowReferenceGhost(false);
+    setEvaluatedSide(freshQuestion.side || 'left');
+    setHasScaledForOrigins(false);
+    setIsScalingInsertion(false);
+
+    if (autoRotateView) {
+      if (freshQuestion.targetBoneMarker?.view) {
+        setCurrentView(freshQuestion.targetBoneMarker.view);
+      } else if (freshQuestion.muscle?.view) {
+        setCurrentView(freshQuestion.muscle.view);
+      }
+    }
+  }, [autoRotateView, setCurrentView]);
+
+  // Registreer een fout beantwoorde vraag in de herhalingswachtrij (spaced repetition na ~5 vragen)
+  const registerIncorrectQuestion = useCallback((q: QuizQuestion) => {
+    // 4 tot 6 vragen later ("een stuk of 5 (hoeft niet precies)")
+    const offset = 4 + Math.floor(Math.random() * 3);
+    const dueAtCount = questionCounterRef.current + offset;
+
+    setRetryQueue((prev) => {
+      // Voorkom dubbele registratie van exact dezelfde opgave
+      const isAlreadyQueued = prev.some((item) => {
+        if (q.muscle?.id && item.question.muscle?.id === q.muscle.id && item.question.type === q.type) {
+          return true;
+        }
+        if (q.bone?.id && item.question.bone?.id === q.bone.id && item.question.type === q.type) {
+          return true;
+        }
+        if (q.jointQuizItem?.id && item.question.jointQuizItem?.id === q.jointQuizItem.id) {
+          return true;
+        }
+        return item.question.id === q.id;
+      });
+
+      if (isAlreadyQueued) return prev;
+      return [...prev, { question: { ...q }, dueAtCount }];
+    });
+  }, []);
 
   // Genereer vraag voor het geselecteerde gewricht op positie index (puur Origo & Insertie)
   const loadJointQuestion = useCallback((mIndex: number) => {
@@ -687,15 +758,48 @@ export const QuizView: React.FC = () => {
     }
   }, [practiceMode, selectedJointId, jointPracticeType, jointMuscleIndex, loadJointQuestion, freeQuizType]);
 
-  // Volgende vraag handler
+  // Volgende vraag handler met spaced repetition voor foute antwoorden
   const handleNextQuestion = () => {
+    questionCounterRef.current += 1;
+    const currentCount = questionCounterRef.current;
+
+    // 1. Controleer of er een herhalingsvraag klaarstaat
+    const dueIndex = retryQueue.findIndex((item) => {
+      if (item.dueAtCount > currentCount) return false;
+      if (practiceMode === 'joint') {
+        return item.question.jointId === selectedJointId;
+      }
+      if (freeQuizType === 'all' || freeQuizType === 'mixed') {
+        return true;
+      }
+      return item.question.type === freeQuizType;
+    });
+
+    if (dueIndex >= 0) {
+      const dueItem = retryQueue[dueIndex];
+      setRetryQueue((prev) => prev.filter((_, idx) => idx !== dueIndex));
+      loadQuestion(dueItem.question);
+      return;
+    }
+
+    // 2. Normale doorloop indien geen herhalingsvraag
     if (practiceMode === 'joint') {
       const nextIdx = jointMuscleIndex + 1;
       if (nextIdx < jointMuscles.length) {
         setJointMuscleIndex(nextIdx);
         loadJointQuestion(nextIdx);
       } else {
-        setJointSessionFinished(true);
+        // Indien alle spieren van het gewricht doorlopen zijn, kijk of er nog herhalingsvragen openstaan voor dit gewricht
+        const remainingJointRetryIndex = retryQueue.findIndex(
+          (item) => item.question.jointId === selectedJointId
+        );
+        if (remainingJointRetryIndex >= 0) {
+          const dueItem = retryQueue[remainingJointRetryIndex];
+          setRetryQueue((prev) => prev.filter((_, idx) => idx !== remainingJointRetryIndex));
+          loadQuestion(dueItem.question);
+        } else {
+          setJointSessionFinished(true);
+        }
       }
     } else {
       generateNewFreeQuestion();
@@ -887,6 +991,10 @@ export const QuizView: React.FC = () => {
     const isSuccess = bestPassed;
     const closeCount = bestMatches.filter((m) => m.accuracy === 'close').length;
 
+    if (!isSuccess && currentQuestion) {
+      registerIncorrectQuestion(currentQuestion);
+    }
+
     if (isSuccess) {
       try {
         confetti({
@@ -1024,6 +1132,10 @@ export const QuizView: React.FC = () => {
     setIsMultipleChoiceSuccess(isSuccess);
     setIsPlacementSuccess(isSuccess);
 
+    if (!isSuccess && currentQuestion) {
+      registerIncorrectQuestion(currentQuestion);
+    }
+
     if (isSuccess) {
       try {
         confetti({
@@ -1086,6 +1198,10 @@ export const QuizView: React.FC = () => {
     setIsMovementSuccess(isSuccess);
     setIsPlacementSuccess(isSuccess);
 
+    if (!isSuccess && currentQuestion) {
+      registerIncorrectQuestion(currentQuestion);
+    }
+
     if (isSuccess) {
       try {
         confetti({
@@ -1140,6 +1256,10 @@ export const QuizView: React.FC = () => {
     const isSuccess = result.isCorrect;
     setIsPlacementSuccess(isSuccess);
 
+    if (!isSuccess && currentQuestion) {
+      registerIncorrectQuestion(currentQuestion);
+    }
+
     if (isSuccess) {
       try {
         confetti({
@@ -1190,6 +1310,8 @@ export const QuizView: React.FC = () => {
         ...prev,
         [activeKey]: initialStats(),
       }));
+      setRetryQueue([]);
+      questionCounterRef.current = 0;
       if (practiceMode === 'joint') {
         setJointMuscleIndex(0);
         setJointSessionFinished(false);
@@ -1698,6 +1820,11 @@ export const QuizView: React.FC = () => {
                   ? `Gemengde Toets • Vraag #${currentStats.totalQuestions + 1}`
                   : `Vraag #${currentStats.totalQuestions + 1}`}
               </span>
+              {currentQuestion.isRetry && (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                  Herhaling
+                </span>
+              )}
             </div>
 
             {/* Vraagtekst met duidelijke hiërarchie (Spiernaam direct in het oog springend) */}

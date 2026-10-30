@@ -565,6 +565,11 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                     ? 'Bewegingen'
                     : 'Aanhechtingspunt'}
                 </span>
+                {currentQuestion.isRetry && (
+                  <span className="ml-1 px-1.5 py-0.5 bg-amber-100 text-amber-800 border border-amber-300 rounded text-[9px] font-bold">
+                    Herhaling
+                  </span>
+                )}
               </div>
 
               {/* Duidelijke vraagstelling per toetstype */}
