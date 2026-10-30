@@ -28,7 +28,7 @@ const BoneAttachmentsCard: React.FC<BoneAttachmentsCardProps> = ({ boneId, onSel
     <div className="flex flex-col gap-3 pt-3 border-t border-clinical-100">
       <div className="flex items-center justify-between">
         <h3 className="text-xs font-black uppercase tracking-wider text-slate-800">
-          Aanhechtende spieren (Origo & Insertie)
+          Aanhechtende spieren
         </h3>
         <span className="text-[10px] text-slate-500 font-semibold lowercase">
           {[
@@ -49,7 +49,7 @@ const BoneAttachmentsCard: React.FC<BoneAttachmentsCardProps> = ({ boneId, onSel
         <div className="space-y-1.5">
           <div className="text-[11px] font-bold text-blue-800 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-blue-600 shrink-0" />
-            <span>Origo (oorsprong):</span>
+            <span>Origo:</span>
           </div>
           <div className="space-y-1.5">
             {data.origins.map((att, idx) => (
@@ -88,7 +88,7 @@ const BoneAttachmentsCard: React.FC<BoneAttachmentsCardProps> = ({ boneId, onSel
         <div className="space-y-1.5">
           <div className="text-[11px] font-bold text-rose-800 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-red-600 shrink-0" />
-            <span>Insertie (aanhechting):</span>
+            <span>Insertie:</span>
           </div>
           <div className="space-y-1.5">
             {data.insertions.map((att, idx) => (
@@ -349,7 +349,7 @@ export const BonesView: React.FC = () => {
                   {selectedBone.structures && selectedBone.structures.length > 0 && (
                     <div className="space-y-2 pt-2 border-t border-clinical-100">
                       <div className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center justify-between">
-                        <span>Relevante botstructuren (Reader):</span>
+                        <span>Relevante botstructuren:</span>
                         <span className="text-[10px] text-sky-700 bg-sky-50 border border-sky-200/80 px-2 py-0.5 rounded-full font-bold">
                           {selectedBone.structures.length} {selectedBone.structures.length === 1 ? 'structuur' : 'structuren'}
                         </span>
@@ -481,7 +481,7 @@ export const BonesView: React.FC = () => {
             {selectedBone.structures && selectedBone.structures.length > 0 && (
               <div className="space-y-2 pt-2 border-t border-clinical-100">
                 <div className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center justify-between">
-                  <span>Relevante botstructuren (Reader):</span>
+                  <span>Relevante botstructuren:</span>
                   <span className="text-[10px] text-sky-700 bg-sky-50 border border-sky-200/80 px-2 py-0.5 rounded-full font-bold">
                     {selectedBone.structures.length} {selectedBone.structures.length === 1 ? 'structuur' : 'structuren'}
                   </span>

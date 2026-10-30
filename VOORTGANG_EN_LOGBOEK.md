@@ -81,13 +81,20 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 - In [vite.config.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/vite.config.ts) is de `watch.ignored`-regel verwijderd. Vite herlaadt nu automatisch zodra een databestand wijzigt.
 - In [src/utils/export.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/utils/export.ts) ruimt de app bij het opstarten automatisch oude localStorage-caches op. `muscles.json` is nu te allen tijde de enige, directe bron van waarheid.
 
+### ✅ 4. Titels en labels in Botten-tab vereenvoudigd
+- `Relevante botstructuren (Reader):` aangepast naar **`Relevante botstructuren:`** (de toevoeging *(Reader)* is verwijderd).
+- `Aanhechtende spieren (Origo & Insertie)` aangepast naar **`Aanhechtende spieren`** (*(Origo & Insertie)* is verwijderd).
+- `Origo (oorsprong):` aangepast naar **`Origo:`** (*(oorsprong)* is verwijderd).
+- `Insertie (aanhechting):` aangepast naar **`Insertie:`** (*(aanhechting)* is verwijderd).
+- De Nederlandse vertalingen van de relevante botstructuren (bijv. *heupkom*, *dijbeenkop*) zijn behouden.
+
 ---
 
-## 4. Waar ben ik nu mee bezig?
+## 5. Huidige status & verificatie
 1. **Volledige repo-scan op verdachte termen:**
-   Ik heb een script gedraaid over alle bestanden in `src/`. De score: **0** verdachte termen meer aanwezig (geen *symphysis*, geen *linea aspera*, geen *tendo calcaneus*, geen *tensor*, geen *gluteus medius*).
-2. **Visuele verificatie in de browser:**
-   Ik controleer in de browser of bij het aanklikken van de botten op desktop en mobiel de teksten direct fris en foutloos worden weergegeven.
+   Geautomatiseerde scan bevestigt: **0** niet-reader termen aanwezig.
+2. **Synchronisatie van alle tabs en toetsen:**
+   Alle spieren, botten, gewrichten en toetsvragen putten nu direct uit dezelfde opgeschoonde bron.
 3. **Build en synchronisatie:**
    `npm run build` is 100% foutloos gepasseerd en alle wijzigingen zijn direct vastgelegd in Git.
 
