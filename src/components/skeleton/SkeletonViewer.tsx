@@ -249,12 +249,38 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
       setZoom(Number(targetZoom.toFixed(2)));
       setPan({ x: Math.round(targetPanX), y: Math.round(targetPanY) });
       return;
+    } else if (targetBoneMarker && (!targetBoneMarker.view || targetBoneMarker.view === currentView)) {
+      // Inzoomen op het doelbot in de bot-benoem quiz (vooral op mobiel essentieel zodat lage botten op onderbeen/voet altijd in beeld zijn)
+      const targetZoom = isMobile ? 1.35 : 1.25;
+      const container = containerRef.current;
+      const W = container?.clientWidth || 250;
+      const H = container?.clientHeight || 600;
+      // Plaats het doelbot in het bovenste vrije deel van het scherm (32% vanaf top op mobiel), ruim boven de onderste uitschuifkaart
+      const desiredScreenY = isMobile ? 0.32 : 0.40;
+      const targetPanX = (0.5 - targetBoneMarker.x) * W * targetZoom;
+      const targetPanY = (desiredScreenY - 0.5) * H - (targetBoneMarker.y - 0.5) * H * targetZoom;
+
+      setZoom(Number(targetZoom.toFixed(2)));
+      setPan({ x: Math.round(targetPanX), y: Math.round(targetPanY) });
+      return;
     } else {
       // Geen actieve spier of focuspunt: herstel volledig skelet
       setZoom(1);
       setPan({ x: 0, y: 0 });
     }
-  }, [autoCenterMuscle, activeMuscle?.id, activeSide, currentView, targetFocusPoint?.x, targetFocusPoint?.y, targetFocusPoint?.zoom]);
+  }, [
+    autoCenterMuscle,
+    activeMuscle?.id,
+    activeSide,
+    currentView,
+    targetFocusPoint?.x,
+    targetFocusPoint?.y,
+    targetFocusPoint?.zoom,
+    targetBoneMarker?.x,
+    targetBoneMarker?.y,
+    targetBoneMarker?.view,
+    isMobile,
+  ]);
 
   // Herstel zoom en positie naar volledig skelet wanneer een andere spier geselecteerd wordt (bijv. in studiemodus)
   const prevSelectedMuscleIdRef = useRef<string | undefined>(activeMuscle?.id);
@@ -716,25 +742,44 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
             {/* Doelmarker voor bot-identificatietest (zonder enige tekst, uitsluitend op passend aanzicht) */}
             {targetBoneMarker && (!targetBoneMarker.view || targetBoneMarker.view === currentView) && (
               <g className="pointer-events-none">
+                {/* 1. Subtiel pulserende ring (rustig, ademend op opacity, minimalistisch en strak) */}
                 <circle
                   cx={targetBoneMarker.x * SVG_WIDTH}
                   cy={targetBoneMarker.y * SVG_HEIGHT}
-                  r={26 / zoom}
-                  fill="rgba(14, 165, 233, 0.3)"
+                  r={34 / zoom}
+                  fill="rgba(37, 99, 235, 0.16)"
+                  stroke="#3b82f6"
+                  strokeWidth={2 / zoom}
                   className="animate-pulse"
                 />
+
+                {/* 2. Fijne witte accentring voor scherp contrast tegen bot en achtergrond */}
                 <circle
                   cx={targetBoneMarker.x * SVG_WIDTH}
                   cy={targetBoneMarker.y * SVG_HEIGHT}
-                  r={14 / zoom}
-                  fill="#0284c7"
+                  r={24 / zoom}
+                  fill="none"
                   stroke="#ffffff"
-                  strokeWidth={3.5 / zoom}
+                  strokeWidth={1.5 / zoom}
+                  opacity="0.9"
                 />
+
+                {/* 3. Hoofdmarker stip in PMT-blauw met stevige witte rand en zachte schaduw */}
                 <circle
                   cx={targetBoneMarker.x * SVG_WIDTH}
                   cy={targetBoneMarker.y * SVG_HEIGHT}
-                  r={4 / zoom}
+                  r={16 / zoom}
+                  fill="#2563eb"
+                  stroke="#ffffff"
+                  strokeWidth={4 / zoom}
+                  style={{ filter: 'drop-shadow(0px 2px 6px rgba(0, 0, 0, 0.4))' }}
+                />
+
+                {/* 4. Scherp gecentreerd wit puntje */}
+                <circle
+                  cx={targetBoneMarker.x * SVG_WIDTH}
+                  cy={targetBoneMarker.y * SVG_HEIGHT}
+                  r={5 / zoom}
                   fill="#ffffff"
                 />
               </g>
@@ -777,6 +822,22 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
             </div>
           )}
         </div>
+
+        {/* Reset knopje voor mobiel wanneer er ingezoomd is */}
+        {isMobile && zoom > 1.05 && (
+          <button
+            type="button"
+            onClick={() => {
+              setZoom(1);
+              setPan({ x: 0, y: 0 });
+            }}
+            className="absolute top-2.5 right-14 z-30 px-2.5 py-1 bg-white/95 backdrop-blur-md rounded-full border border-slate-200/90 shadow-md text-[11px] font-bold text-slate-700 flex items-center gap-1 active:scale-95 transition pointer-events-auto"
+            title="Skelet weergave herstellen"
+          >
+            <RotateCcw className="w-3 h-3 text-slate-600" />
+            <span>{Math.round(zoom * 100)}% Reset</span>
+          </button>
+        )}
 
         {/* 5. Vaste Zwevende Zoom & Weergave Toolbar (buiten transform, altijd direct bereikbaar) */}
         {!hideZoomToolbar && !isMobile && (

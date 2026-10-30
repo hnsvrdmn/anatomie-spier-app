@@ -351,3 +351,31 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
     3. Zowel de actieve kuitbeenstip als de onderliggende voetstippen (ossa tarsi, ossa metatarsi, phalanges) staan ruim boven de onderste balk vrij in het gezichtsveld.
     4. De stip is kristalhelder zichtbaar dankzij de subtiele pulserende ring en witte contrastrand, zonder kermisachtig of onrustig over te komen.
 - **Gepusht naar GitHub [2026-10-30 23:03]:** Wijzigingen gecommit en gepusht naar de GitHub repository.
+
+## 17. Mobiel Toets/Quiz: 'Bot benoemen' - Auto-centering & Strakke subtiele pulserende ring [2026-10-30 23:06]
+- **Verduidelijking van de gebruiker:**
+  - De eerdere wens voor de altijd zichtbare stip op onderbeen/voeten en de subtiel pulserende ring was vooral bedoeld voor de **toets** bij de vraagmodus **"Bot benoemen"** (`#quiz`).
+- **Probleemanalyse:**
+  - In [`SkeletonViewer.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/SkeletonViewer.tsx):
+    - `autoCenterMuscle` handelde wel `activeMuscle` en `targetFocusPoint` af, maar er ontbrak een tak voor `targetBoneMarker`.
+    - Daardoor bleef het skelet bij vragen van het type `'bone'` op zoom 1.0 en pan (0,0) staan. Omdat onderbeen- en voetbotten (zoals calcaneus, talus, fibula, ossa tarsi) helemaal onderaan het skelet liggen (y = 0.75 - 0.98), vielen ze recht achter de uitschuifbare antwoordkaart van [`MobileQuizView.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/MobileQuizView.tsx).
+    - Bovendien had de `targetBoneMarker` in `SkeletonViewer.tsx` een kleine blauwe stip met een gewone `rgba(14, 165, 233, 0.3)` cirkel, wat op het skelet minder scherp contrasteerde.
+- **Implementatie & Oplossing [2026-10-30 23:07]:**
+  - In [`SkeletonViewer.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/SkeletonViewer.tsx):
+    - `autoCenterMuscle` uitgebreid met ondersteuning voor `targetBoneMarker`:
+      - Berekent `targetZoom = isMobile ? 1.35 : 1.25`.
+      - Positioneert het doelbot op mobiel strak op 32% vanaf de bovenkant van het scherm (`desiredScreenY = 0.32`).
+      - Hierdoor zweeft de botmarker altijd ruim en vrij boven de onderste antwoordkaart (zelfs bij het laagste bot zoals het hielbeen/calcaneus).
+    - Marker styling compleet vernieuwd volgens de minimalistische richtlijnen:
+      - 1. Subtiel pulserende ring (`animate-pulse`) met `rgba(37, 99, 235, 0.16)` fill en `#3b82f6` stroke (ademend op opacity, strak en klinisch).
+      - 2. Fijne witte accentring (`stroke="#ffffff"`, `opacity="0.9"`) voor scherp contrast tegen het bot.
+      - 3. Hoofdmarker stip in PMT-blauw (`#2563eb`) met 4px witte omranding en `drop-shadow(0px 2px 6px rgba(0, 0, 0, 0.4))`.
+      - 4. Scherp gecentreerd wit richtpuntje (`r={5 / zoom}`).
+    - Zwevende `135% Reset` knop toegevoegd op mobiel wanneer `zoom > 1.05`, zodat studenten na eventueel pannen/zoomen direct weer kunnen herstellen.
+- **Browser-verificatie geslaagd [2026-10-30 23:08]:**
+  - Getest via de browser subagent op mobiel formaat (420x820) in de toetsweergave (`#quiz`, modus *Bot benoemen*):
+    1. Vraag met *Calcaneus (hielbeen)* op de absolute onderkant van de hiel: camera zoomt direct soepel in naar 135%, de voet en het hielbeen staan perfect in de bovenste helft van het scherm, meer dan 200px boven de invoerkaart.
+    2. Vraag met *Os sacrum*: direct gecentreerd op het bekken.
+    3. De stip is direct opvallend en kristalhelder zichtbaar dankzij de subtiele ademende blauwe ring en witte contrastrand, volledig zonder flitsende effecten of kermis.
+    4. De `135% Reset` knop verschijnt keurig rechtsboven en herstelt de weergave bij een tik.
+- **Gepusht naar GitHub [2026-10-30 23:09]:** Wijzigingen gecommit en gepusht naar `main`.
