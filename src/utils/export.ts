@@ -1,6 +1,4 @@
 import { Muscle } from '../types/anatomy';
-import { mirrorPoints } from './coordinates';
-import initialMusclesData from '../data/muscles.json';
 
 const LOCAL_STORAGE_KEY = 'pmt_anatomie_muscles_dataset_v15';
 
@@ -77,106 +75,17 @@ export function saveMusclesToLocalStorage(muscles: Muscle[]): void {
  */
 export function loadMusclesFromLocalStorage(): Muscle[] | null {
   try {
-    // Verwijder alle oudere cache-versies zodat verouderde termen of niet-curriculum spieren verdwijnen
-    try {
-      const keysToRemove: string[] = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k && k.startsWith('pmt_anatomie_muscles_dataset') && k !== LOCAL_STORAGE_KEY) {
-          keysToRemove.push(k);
-        }
+    // Verwijder alle verouderde cache-versies zodat de officiële muscles.json altijd 1:1 leidend is
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('pmt_anatomie_muscles_dataset')) {
+        keysToRemove.push(k);
       }
-      keysToRemove.forEach(k => localStorage.removeItem(k));
-    } catch {}
-
-    const data = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (!data) return null;
-    const parsed = JSON.parse(data);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      const filtered = (parsed as Muscle[]).filter(m => !isForbiddenMuscle(m));
-      const baseMap = new Map((initialMusclesData as unknown as Muscle[]).map(m => [m.id, m]));
-      return filtered.map((m) => {
-        const base = baseMap.get(m.id);
-        const name = base?.name ?? m.name;
-        const latinName = base?.latinName ?? m.latinName;
-        const originText = base?.originText ?? m.originText;
-        const insertionText = base?.insertionText ?? m.insertionText;
-        const functionText = base?.functionText ?? m.functionText;
-        const otherFunctions = base?.otherFunctions ?? m.otherFunctions;
-        const jointCategories = base?.jointCategories ?? m.jointCategories;
-
-        const leftOrigins = base?.visuals?.left?.origins ?? m.visuals?.left?.origins ?? [];
-        const leftInsertions = base?.visuals?.left?.insertions ?? m.visuals?.left?.insertions ?? [];
-        const leftLines = (base?.visuals?.left?.attachmentLines?.length)
-          ? base.visuals.left.attachmentLines
-          : (m.visuals?.left?.attachmentLines || []);
-
-        const rightOrigins = base?.visuals?.right?.origins ?? m.visuals?.right?.origins ?? mirrorPoints(leftOrigins);
-        const rightInsertions = base?.visuals?.right?.insertions ?? m.visuals?.right?.insertions ?? mirrorPoints(leftInsertions);
-        const rightLines = (base?.visuals?.right?.attachmentLines?.length)
-          ? base.visuals.right.attachmentLines
-          : (m.visuals?.right?.attachmentLines || []);
-
-        if (m.symmetryType === 'bilateral' && m.visuals?.left) {
-          return {
-            ...m,
-            name,
-            latinName,
-            originText,
-            insertionText,
-            functionText,
-            otherFunctions,
-            jointCategories,
-            visuals: {
-              ...m.visuals,
-              left: {
-                ...m.visuals.left,
-                origins: leftOrigins,
-                insertions: leftInsertions,
-                attachmentLines: leftLines,
-              },
-              right: {
-                origins: mirrorPoints(leftOrigins),
-                insertions: mirrorPoints(leftInsertions),
-                musclePath: mirrorPoints(m.visuals.left.musclePath || []),
-                attachmentLines: leftLines.length > 0 ? leftLines.map((al) => ({
-                  ...al,
-                  id: al.id.replace('-left', '-right'),
-                  points: mirrorPoints(al.points),
-                })) : rightLines,
-              }
-            }
-          };
-        }
-        return {
-          ...m,
-          name,
-          latinName,
-          originText,
-          insertionText,
-          functionText,
-          otherFunctions,
-          jointCategories,
-          visuals: {
-            ...m.visuals,
-            left: {
-              ...(m.visuals?.left || { origins: [], insertions: [], musclePath: [] }),
-              origins: leftOrigins,
-              insertions: leftInsertions,
-              attachmentLines: leftLines,
-            },
-            right: {
-              ...(m.visuals?.right || { origins: [], insertions: [], musclePath: [] }),
-              origins: rightOrigins,
-              insertions: rightInsertions,
-              attachmentLines: rightLines,
-            },
-          }
-        };
-      });
     }
+    keysToRemove.forEach(k => localStorage.removeItem(k));
   } catch (err) {
-    console.error('Fout bij laden uit LocalStorage:', err);
+    console.error('Fout bij opschonen LocalStorage:', err);
   }
   return null;
 }
