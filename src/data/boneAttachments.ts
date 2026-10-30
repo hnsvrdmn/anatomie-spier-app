@@ -17,66 +17,61 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'latissimus_dorsi',
         muscleName: 'm. latissimus dorsi',
-        location: 'Dorsale zijde crista iliaca (darmbeenkam)',
+        location: 'dorsale zijde crista iliaca',
       },
       {
         muscleId: 'gluteus_maximus',
         muscleName: 'm. gluteus maximus',
-        location: 'Facies glutea van het os ilium en achterste deel crista iliaca',
+        location: 'crista iliaca, SIPS',
       },
       {
         muscleId: 'rectus_femoris',
         muscleName: 'm. rectus femoris',
-        location: 'Spina iliaca anterior inferior (SIAI)',
+        location: 'SIAI',
       },
       {
         muscleId: 'biceps_femoris',
         muscleName: 'm. biceps femoris',
         part: 'Caput longum',
-        location: 'Tuber ischiadicum (zitbeenknobbel)',
+        location: 'tuber ischiadicum',
       },
       {
         muscleId: 'semitendinosus',
         muscleName: 'm. semitendinosus',
-        location: 'Tuber ischiadicum (zitbeenknobbel)',
+        location: 'tuber ischiadicum',
       },
       {
         muscleId: 'semimembranosus',
         muscleName: 'm. semimembranosus',
-        location: 'Tuber ischiadicum (zitbeenknobbel)',
+        location: 'tuber ischiadicum',
       },
       {
-        muscleId: 'adductor_magnus',
-        muscleName: 'm. adductor longus, brevis & magnus',
-        location: 'Os pubis (schaambeen) en ramus van het os ischium',
+        muscleId: 'adductores',
+        muscleName: 'mm. adductor',
+        location: 'os pubis, os ischii',
       },
       {
         muscleId: 'iliopsoas',
         muscleName: 'm. iliopsoas',
         part: 'm. iliacus',
-        location: 'Fossa iliaca (binnenzijde darmbeenvleugel)',
+        location: 'ventrale vlak os ilium',
       },
       {
         muscleId: 'obliquus_internus_abdominis',
         muscleName: 'm. obliquus internus abdominis',
-        location: 'Crista iliaca (ventrale 2/3 deel)',
-      },
-      {
-        muscleId: 'erector_spinae',
-        muscleName: 'm. erector spinae',
-        location: 'Dorsale zijde crista iliaca',
+        location: 'crista iliaca, SIAS',
       },
     ],
     insertions: [
       {
         muscleId: 'rectus_abdominis',
         muscleName: 'm. rectus abdominis',
-        location: 'Crista pubica en symphysis pubica (schaambeen)',
+        location: 'os pubis',
       },
       {
         muscleId: 'obliquus_externus_abdominis',
         muscleName: 'm. obliquus externus abdominis',
-        location: 'Labium externum van de crista iliaca',
+        location: 'crista iliaca',
       },
     ],
   },
@@ -86,45 +81,45 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'vastus_lateralis',
         muscleName: 'm. vastus lateralis',
-        location: 'Trochanter major en laterale lip van de linea aspera',
+        location: 'laterale zijde corpus femoris',
       },
       {
         muscleId: 'vastus_medialis',
         muscleName: 'm. vastus medialis',
-        location: 'Mediale lip van de linea aspera femoris',
+        location: 'mediale zijde corpus femoris',
       },
       {
         muscleId: 'vastus_intermedius',
         muscleName: 'm. vastus intermedius',
-        location: 'Ventrale en laterale zijde van de femurschacht',
+        location: 'ventrale zijde corpus femoris',
       },
       {
         muscleId: 'biceps_femoris',
         muscleName: 'm. biceps femoris',
         part: 'Caput breve',
-        location: 'Middelste derde deel van de linea aspera femoris',
+        location: 'middelste derde dorsale deel van femur',
       },
       {
         muscleId: 'gastrocnemius',
         muscleName: 'm. gastrocnemius',
-        location: 'Epicondylus medialis en lateralis femoris',
+        location: 'condylus medialis/lateralis femoris',
       },
     ],
     insertions: [
       {
         muscleId: 'iliopsoas',
         muscleName: 'm. iliopsoas',
-        location: 'Trochanter minor femoris (kleine draaier)',
+        location: 'trochanter minor',
       },
       {
         muscleId: 'gluteus_maximus',
         muscleName: 'm. gluteus maximus',
-        location: 'Proximale laterale deel van het corpus femoris',
+        location: 'proximale laterale deel van corpus femoris',
       },
       {
-        muscleId: 'adductor_magnus',
-        muscleName: 'm. adductor longus, brevis & magnus',
-        location: 'Linea aspera van het corpus femoris',
+        muscleId: 'adductores',
+        muscleName: 'mm. adductor',
+        location: 'mediale zijde corpus femoris, condylus medialis',
       },
     ],
   },
@@ -135,25 +130,25 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'rectus_femoris',
         muscleName: 'm. rectus femoris',
-        location: 'Basis patellae (bovenzijde knieschijf)',
+        location: 'via patellapees aan tuberositas tibiae',
       },
       {
         muscleId: 'vastus_lateralis',
         muscleName: 'm. vastus lateralis',
-        location: 'Basis en laterale rand van de patella',
+        location: 'via patellapees aan tuberositas tibiae',
       },
       {
         muscleId: 'vastus_medialis',
         muscleName: 'm. vastus medialis',
-        location: 'Basis en mediale rand van de patella',
+        location: 'via patellapees aan tuberositas tibiae',
       },
       {
         muscleId: 'vastus_intermedius',
         muscleName: 'm. vastus intermedius',
-        location: 'Basis patellae (diepe laag)',
+        location: 'via patellapees aan tuberositas tibiae',
       },
     ],
-    note: 'De patella is een sesambeen in de quadricepspees die de trekkracht via het ligamentum patellae overbrengt naar de tuberositas tibiae.',
+    note: 'Sesambeen in de pees van de m. quadriceps femoris dat de trekkracht via de patellapees overbrengt naar de tuberositas tibiae.',
   },
 
   os_tibia: {
@@ -161,29 +156,44 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'tibialis_anterior',
         muscleName: 'm. tibialis anterior',
-        location: 'Facies lateralis tibiae (bovenzijde scheenbeenschacht)',
+        location: 'laterale ventrale vlak corpus tibia, condylus lateralis tibiae',
       },
       {
         muscleId: 'soleus',
         muscleName: 'm. soleus',
-        location: 'Linea musculi solei aan de dorsale zijde van de tibia',
+        location: 'proximale dorsale deel corpus tibia',
       },
     ],
     insertions: [
       {
         muscleId: 'rectus_femoris',
-        muscleName: 'm. quadriceps femoris (rectus femoris & vasti)',
-        location: 'Tuberositas tibiae (via het ligamentum patellae)',
+        muscleName: 'm. rectus femoris',
+        location: 'tuberositas tibiae (via patellapees)',
+      },
+      {
+        muscleId: 'vastus_lateralis',
+        muscleName: 'm. vastus lateralis',
+        location: 'tuberositas tibiae (via patellapees)',
+      },
+      {
+        muscleId: 'vastus_medialis',
+        muscleName: 'm. vastus medialis',
+        location: 'tuberositas tibiae (via patellapees)',
+      },
+      {
+        muscleId: 'vastus_intermedius',
+        muscleName: 'm. vastus intermedius',
+        location: 'tuberositas tibiae (via patellapees)',
       },
       {
         muscleId: 'semitendinosus',
         muscleName: 'm. semitendinosus',
-        location: 'Pes anserinus superficialis aan de mediale zijde van de tibia',
+        location: 'condylus medialis tibiae',
       },
       {
         muscleId: 'semimembranosus',
         muscleName: 'm. semimembranosus',
-        location: 'Dorsale zijde van de condylus medialis tibiae',
+        location: 'condylus medialis tibiae',
       },
     ],
   },
@@ -193,24 +203,24 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'fibularis_longus',
         muscleName: 'm. fibularis longus',
-        location: 'Caput fibulae en proximale 2/3 laterale vlak kuitbeen',
+        location: 'proximale laterale deel van de corpus fibula',
       },
       {
         muscleId: 'fibularis_brevis',
         muscleName: 'm. fibularis brevis',
-        location: 'Distale 2/3 laterale vlak kuitbeenschacht',
+        location: 'laterale vlak corpus fibula',
       },
       {
         muscleId: 'soleus',
         muscleName: 'm. soleus',
-        location: 'Caput fibulae en dorsale zijde collum fibulae',
+        location: 'proximale 1/3 deel van dorsale zijde fibula',
       },
     ],
     insertions: [
       {
         muscleId: 'biceps_femoris',
         muscleName: 'm. biceps femoris',
-        location: 'Caput fibulae (kuitbeenkopje)',
+        location: 'caput fibulae',
       },
     ],
   },
@@ -218,7 +228,7 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
   os_talus: {
     origins: [],
     insertions: [],
-    note: 'Geen directe spieraanhechtingen. De talus is vrijwel geheel bekleed met hyalien gewrichtskraakbeen en draagt het lichaamsgewicht over van de enkelvork naar de voetwortel.',
+    note: 'Het os talus bezit zelf geen directe spieraanhechtingen; het vormt het scharnierpunt in het art. talocruralis (BSG) en art. talo-calcaneo-navicularis (OSG).',
   },
 
   os_calcaneus: {
@@ -227,12 +237,12 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'gastrocnemius',
         muscleName: 'm. gastrocnemius',
-        location: 'Tuber calcanei via de tendo calcaneus (achillespees)',
+        location: 'via achillespees aan tuber calcanei',
       },
       {
         muscleId: 'soleus',
         muscleName: 'm. soleus',
-        location: 'Tuber calcanei via de tendo calcaneus (achillespees)',
+        location: 'via achillespees aan tuber calcanei',
       },
     ],
   },
@@ -240,7 +250,7 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
   os_naviculare: {
     origins: [],
     insertions: [],
-    note: 'Onderdeel van het voorste deel van het onderste spronggewricht (articulatio talo-calcaneo-navicularis) samen met de talus en het calcaneus.',
+    note: 'Voetwortelbeen aan de mediale zijde dat deel uitmaakt van het art. talo-calcaneo-navicularis.',
   },
 
   os_humerus: {
@@ -248,40 +258,40 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'brachialis',
         muscleName: 'm. brachialis',
-        location: 'Distale ventrale helft van de humerusschacht',
+        location: 'distale helft ventrale zijde humerus',
       },
       {
         muscleId: 'triceps_brachii',
         muscleName: 'm. triceps brachii',
-        part: 'Caput mediale & Caput laterale',
-        location: 'Dorsale vlak van de humerusschacht (boven en onder sulcus n. radialis)',
+        part: 'Caput mediale & laterale',
+        location: 'mediaal op dorsale vlak van os humerus (caput mediale) | lateraal op dorsale vlak van os humerus (caput laterale)',
       },
     ],
     insertions: [
       {
         muscleId: 'deltoideus',
         muscleName: 'm. deltoideus',
-        location: 'Tuberositas deltoidea humeri (laterale schachtzijde)',
+        location: 'lateraal op humerus (op 1/3 deel van corpus)',
       },
       {
         muscleId: 'pectoralis_major',
         muscleName: 'm. pectoralis major',
-        location: 'Crista tuberculi majoris humeri',
+        location: 'tuberculum majus',
       },
       {
         muscleId: 'latissimus_dorsi',
         muscleName: 'm. latissimus dorsi',
-        location: 'Crista tuberculi minoris / tuberculum minus humeri',
+        location: 'tuberculum minus',
       },
       {
         muscleId: 'teres_major',
         muscleName: 'm. teres major',
-        location: 'Crista tuberculi minoris humeri',
+        location: 'proximaal ventraal op humerus',
       },
       {
         muscleId: 'teres_minor',
         muscleName: 'm. teres minor',
-        location: 'Tuberculum majus humeri (onderste facet)',
+        location: 'dorsale gedeelte tuberculum majus',
       },
     ],
   },
@@ -291,52 +301,53 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'deltoideus',
         muscleName: 'm. deltoideus',
-        part: 'Pars acromialis & Pars spinalis',
-        location: 'Acromion en spina scapulae',
+        part: 'Pars acromialis & spinalis',
+        location: 'acromion (pars acromialis) | spina scapula (pars spinalis)',
       },
       {
         muscleId: 'biceps_brachii',
         muscleName: 'm. biceps brachii',
-        part: 'Caput breve & Caput longum',
-        location: 'Processus coracoïdeus (kort) en bovenzijde cavitas glenoidalis (lang)',
+        part: 'Caput breve & longum',
+        location: 'caput breve: processus coracoideus | caput longum: net boven gewrichtskom schoudergewricht',
       },
       {
         muscleId: 'triceps_brachii',
         muscleName: 'm. triceps brachii',
         part: 'Caput longum',
-        location: 'Onderzijde cavitas glenoidalis van de scapula',
+        location: 'net onder gewrichtskom schoudergewricht',
       },
       {
         muscleId: 'teres_major',
         muscleName: 'm. teres major',
-        location: 'Angulus inferior en margo lateralis scapulae',
+        location: 'angulus inferior scapula',
       },
       {
         muscleId: 'teres_minor',
         muscleName: 'm. teres minor',
-        location: 'Margo lateralis scapulae (dorsale zijde)',
+        location: 'margo lateralis scapula',
       },
     ],
     insertions: [
       {
         muscleId: 'trapezius',
         muscleName: 'm. trapezius',
-        location: 'Spina scapulae en acromion (bovenrand)',
+        part: 'Pars transversa & ascendens',
+        location: 'acromion (pars transversa) | spina scapula (pars ascendens)',
       },
       {
         muscleId: 'serratus_anterior',
         muscleName: 'm. serratus anterior',
-        location: 'Margo medialis scapulae (ventrale zijde, van angulus superior tot inferior)',
+        location: 'margo medialis scapula, angulus superior scapula, angulus inferior scapula',
       },
       {
         muscleId: 'rhomboidei',
-        muscleName: 'm. rhomboidei',
-        location: 'Margo medialis scapulae (dorsale zijde)',
+        muscleName: 'mm. Rhomboideii',
+        location: 'margo medialis scapula',
       },
       {
         muscleId: 'levator_scapulae',
-        muscleName: 'm. levator scapulae',
-        location: 'Angulus superior en margo medialis scapulae',
+        muscleName: 'm. levator scapula',
+        location: 'angulus superior scapula',
       },
     ],
   },
@@ -347,13 +358,12 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
         muscleId: 'deltoideus',
         muscleName: 'm. deltoideus',
         part: 'Pars clavicularis',
-        location: 'Laterale derde deel van de clavicula',
+        location: 'laterale 1/3 deel clavicula',
       },
       {
         muscleId: 'pectoralis_major',
         muscleName: 'm. pectoralis major',
-        part: 'Pars clavicularis',
-        location: 'Mediale helft van de voorzijde clavicula',
+        location: 'mediale ⅓ deel clavicula',
       },
     ],
     insertions: [
@@ -361,7 +371,7 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
         muscleId: 'trapezius',
         muscleName: 'm. trapezius',
         part: 'Pars descendens',
-        location: 'Laterale derde deel van de clavicula (achterrand)',
+        location: 'laterale 1/3 deel van clavicula',
       },
     ],
   },
@@ -372,12 +382,12 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'triceps_brachii',
         muscleName: 'm. triceps brachii',
-        location: 'Olecranon ulnae (harde achterpunt van de elleboog)',
+        location: 'olecranon',
       },
       {
         muscleId: 'brachialis',
         muscleName: 'm. brachialis',
-        location: 'Tuberositas ulnae',
+        location: 'tuberositas ulna',
       },
     ],
   },
@@ -388,7 +398,7 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'biceps_brachii',
         muscleName: 'm. biceps brachii',
-        location: 'Tuberositas radii (mediale zijde onder het spaakbeenkopje)',
+        location: 'tuberositas radii',
       },
     ],
   },
@@ -398,17 +408,15 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'pectoralis_major',
         muscleName: 'm. pectoralis major',
-        part: 'Pars sternocostalis',
-        location: 'Ventrale vlak van het manubrium en corpus sterni',
+        location: 'sternum',
       },
-    ],
-    insertions: [
       {
         muscleId: 'rectus_abdominis',
         muscleName: 'm. rectus abdominis',
-        location: 'Processus xiphoideus (zwaardvormig aanhangsel)',
+        location: 'processus xiphoideus',
       },
     ],
+    insertions: [],
   },
 
   os_sacrum: {
@@ -416,15 +424,21 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'gluteus_maximus',
         muscleName: 'm. gluteus maximus',
-        location: 'Dorsale en laterale zijde van het heiligbeen',
+        location: 'os sacrum',
       },
       {
         muscleId: 'erector_spinae',
         muscleName: 'm. erector spinae',
-        location: 'Dorsale zijde os sacrum (crista sacralis mediana)',
+        location: 'os sacrum',
       },
     ],
-    insertions: [],
+    insertions: [
+      {
+        muscleId: 'erector_spinae',
+        muscleName: 'm. erector spinae',
+        location: 'os sacrum',
+      },
+    ],
   },
 
   os_coccygis: {
@@ -432,7 +446,7 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'gluteus_maximus',
         muscleName: 'm. gluteus maximus',
-        location: 'Laterale rand van het os coccygis (staartbeen)',
+        location: 'os coccygis',
       },
     ],
     insertions: [],
@@ -443,34 +457,29 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'serratus_anterior',
         muscleName: 'm. serratus anterior',
-        location: 'Buitenzijde van de 1e tot en met 9e rib',
+        location: '1e tot 9e costa (rib)',
       },
       {
         muscleId: 'pectoralis_major',
         muscleName: 'm. pectoralis major',
-        location: 'Kraakbeen van de 2e tot en met 6e rib (cartilago costalis)',
+        location: 'kraakbeen van 2e-6e rib',
       },
       {
         muscleId: 'obliquus_externus_abdominis',
         muscleName: 'm. obliquus externus abdominis',
-        location: 'Buitenzijde van de 5e tot en met 12e rib',
+        location: '5e tot 12e costa',
+      },
+      {
+        muscleId: 'rectus_abdominis',
+        muscleName: 'm. rectus abdominis',
+        location: '5e - 7e costa',
       },
     ],
     insertions: [
       {
-        muscleId: 'rectus_abdominis',
-        muscleName: 'm. rectus abdominis',
-        location: 'Buitenzijde van het ribkraakbeen van de 5e, 6e en 7e rib',
-      },
-      {
         muscleId: 'obliquus_internus_abdominis',
         muscleName: 'm. obliquus internus abdominis',
-        location: 'Onderrand van de onderste 3 tot 4 ribben (costae 9-12)',
-      },
-      {
-        muscleId: 'erector_spinae',
-        muscleName: 'm. erector spinae',
-        location: 'Angulus costae van de ribben (achterzijde borstkas)',
+        location: 'kraakbeen v.d. laatste 3 costae',
       },
     ],
   },
@@ -480,40 +489,39 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'trapezius',
         muscleName: 'm. trapezius',
-        location: 'Processus spinosus van C1 t/m Th12',
+        location: 'dorsaal onderzijde schedel, processus spinosus van 1e tot 6e vertebra cervicales (descendens) | processus spinosus 7e vertebra cervicales en 1e tot 3e vertebra thoracales (transversa) | processus spinosus van de 3e tot 12e vertebra thoracales (ascendens)',
       },
       {
         muscleId: 'latissimus_dorsi',
         muscleName: 'm. latissimus dorsi',
-        location: 'Processus spinosus Th7 t/m Th12 en lumbale wervels L1 t/m L5',
+        location: 'processus spinosus 7e-12 thoracale wervels, processus spinosus alle lumbale wervels',
       },
       {
         muscleId: 'rhomboidei',
-        muscleName: 'm. rhomboidei',
-        location: 'Processus spinosus C6 t/m Th4',
+        muscleName: 'mm. Rhomboideii',
+        location: 'processus spinosus 7e cervicale en 1-5 thoracale vertebra',
       },
       {
         muscleId: 'levator_scapulae',
-        muscleName: 'm. levator scapulae',
-        location: 'Processus transversus van halswervels C1 t/m C4',
-      },
-      {
-        muscleId: 'erector_spinae',
-        muscleName: 'm. erector spinae',
-        location: 'Processus spinosus en transversus van lumbale en thoracale wervels',
+        muscleName: 'm. levator scapula',
+        location: 'processus transversus van bovenste 4 vertebra cervicales',
       },
       {
         muscleId: 'iliopsoas',
         muscleName: 'm. iliopsoas',
-        part: 'm. psoas major',
-        location: 'Wervellichamen en processus costales van Th12 t/m L5',
+        location: '12e vertebra thoracalis, 1e-5e vertebrae lumbales',
+      },
+      {
+        muscleId: 'erector_spinae',
+        muscleName: 'm. erector spinae',
+        location: 'alle wervels',
       },
     ],
     insertions: [
       {
         muscleId: 'erector_spinae',
         muscleName: 'm. erector spinae',
-        location: 'Processus spinosus en transversus van thoracale en cervicale wervels',
+        location: 'alle wervels',
       },
     ],
   },

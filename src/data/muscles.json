@@ -382,7 +382,7 @@
         ]
       }
     },
-    "otherFunctions": "Hulp-inademingsspier bij gefixeerde armen; crista tuberculi majoris."
+    "otherFunctions": "Hulp-inademingsspier bij gefixeerde armen."
   },
   {
     "id": "teres_major",
@@ -1510,7 +1510,7 @@
           },
           {
             "id": "line-insertion-obliquus-ext-crista-left",
-            "name": "Labium externum cristae iliacae",
+            "name": "crista iliaca",
             "type": "insertion",
             "points": [
               {
@@ -1698,7 +1698,7 @@
           },
           {
             "id": "line-origin-iliopsoas-iliacus-left",
-            "name": "Fossa iliaca (m. iliacus)",
+            "name": "ventrale vlak os ilium",
             "type": "origin",
             "points": [
               {
@@ -2054,7 +2054,7 @@
         "attachmentLines": [
           {
             "id": "line-origin-adductores-pubis-left",
-            "name": "Ramus superior & inferior ossis pubis, ramus ossis ischii",
+            "name": "os pubis, os ischii",
             "type": "origin",
             "points": [
               {
@@ -2074,7 +2074,7 @@
           },
           {
             "id": "line-insertion-adductores-femur-left",
-            "name": "Linea aspera & tuberculum adductorium",
+            "name": "mediale zijde corpus femoris, condylus medialis",
             "type": "insertion",
             "points": [
               {

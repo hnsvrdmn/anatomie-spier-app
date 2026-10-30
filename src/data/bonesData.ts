@@ -142,7 +142,7 @@ export const READER_BONES: Bone[] = [
     latinName: 'Os calcaneus',
     dutchName: 'Hielbeen',
     category: 'onderste_extremiteit',
-    description: 'Grootste voetwortelbeen van de achtervoet, bezit het tuber calcanei waar de tendo calcaneus (achillespees) op aanhecht.',
+    description: 'Grootste voetwortelbeen van de achtervoet, bezit het tuber calcanei waar de achillespees (via m. gastrocnemius en m. soleus) op aanhecht.',
     structures: [
       'Tuber calcanei (hielbeenknobbel)',
     ],
