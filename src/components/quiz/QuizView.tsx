@@ -1367,6 +1367,8 @@ export const QuizView: React.FC = () => {
                                     Boolean(currentQuestion.jointQuizItem);
             const shouldShowMuscle = !isJointQuestion && type !== 'bone' && !!muscle;
             const jointFocusPoint = isJointQuestion ? (currentQuestion.targetFocusPoint || getJointLocation(currentQuestion.jointQuizItem)) : null;
+            const isDrawingType = type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question' && type !== 'bone' && type !== 'joints';
+            const hideMuscleMarkers = !isEvaluated && isDrawingType;
 
             return viewLayout === 'both' ? (
               <div className="w-full h-full grid grid-cols-2 gap-4">
@@ -1391,6 +1393,7 @@ export const QuizView: React.FC = () => {
                     targetBoneMarker={currentQuestion?.targetBoneMarker}
                     targetFocusPoint={jointFocusPoint?.view === 'ventral' ? jointFocusPoint : null}
                     autoCenterMuscle={shouldShowMuscle || (jointFocusPoint?.view === 'ventral') || type === 'bone'}
+                    hideMuscleMarkers={hideMuscleMarkers}
                   />
                 </div>
 
@@ -1415,6 +1418,7 @@ export const QuizView: React.FC = () => {
                     targetBoneMarker={currentQuestion?.targetBoneMarker}
                     targetFocusPoint={jointFocusPoint?.view === 'dorsal' ? jointFocusPoint : null}
                     autoCenterMuscle={shouldShowMuscle || (jointFocusPoint?.view === 'dorsal') || type === 'bone'}
+                    hideMuscleMarkers={hideMuscleMarkers}
                   />
                 </div>
               </div>
@@ -1434,6 +1438,7 @@ export const QuizView: React.FC = () => {
                 targetBoneMarker={currentQuestion?.targetBoneMarker}
                 targetFocusPoint={jointFocusPoint}
                 autoCenterMuscle={shouldShowMuscle || !!jointFocusPoint || type === 'bone'}
+                hideMuscleMarkers={hideMuscleMarkers}
               />
             );
           })()}

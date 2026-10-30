@@ -45,6 +45,7 @@ interface SkeletonViewerProps {
   isMobile?: boolean;
   autoCenterMuscle?: boolean;
   resetOnMuscleChange?: boolean;
+  hideMuscleMarkers?: boolean;
 }
 
 export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
@@ -73,6 +74,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
   isMobile = false,
   autoCenterMuscle = false,
   resetOnMuscleChange = false,
+  hideMuscleMarkers = false,
 }) => {
   const localContainerRef = useRef<HTMLDivElement>(null);
   const containerRef = innerRef || localContainerRef;
@@ -481,6 +483,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
 
   // Normaliseer actieve spieren: toon alle geselecteerde spieren (ook van het andere aanzicht via doorschijning!)
   const musclesToRender = useMemo(() => {
+    if (hideMuscleMarkers) return [];
     const list = activeMuscles && activeMuscles.length > 0
       ? activeMuscles
       : (activeMuscle ? [activeMuscle] : []);
@@ -491,7 +494,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
       const bOpp = b.view !== currentView ? 0 : 1;
       return aOpp - bOpp;
     });
-  }, [activeMuscles, activeMuscle, currentView]);
+  }, [hideMuscleMarkers, activeMuscles, activeMuscle, currentView]);
 
   // Normaliseer gebruikerspunten
   const effectiveOrigins = userOrigins || (userQuizPoints && userQuizPoints.length > 0 ? [userQuizPoints[0]] : []);

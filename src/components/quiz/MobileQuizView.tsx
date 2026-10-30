@@ -343,6 +343,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
               hideZoomToolbar={true}
               isMobile={true}
               autoCenterMuscle={shouldShowMuscle || !!jointFocusPoint || type === 'bone'}
+              hideMuscleMarkers={!isEvaluated && isDrawingType}
             />
           );
         })()}
