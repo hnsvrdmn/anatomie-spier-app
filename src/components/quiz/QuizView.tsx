@@ -116,6 +116,20 @@ export const QuizView: React.FC = () => {
   const [toleranceMode, setToleranceMode] = useState<'normal' | 'strict' | 'expert'>('normal');
   const toleranceValue = toleranceMode === 'expert' ? 0.015 : toleranceMode === 'strict' ? 0.025 : 0.035;
 
+  // Automatisch roteren van het aanzicht bij een nieuwe vraag
+  const [autoRotateView, setAutoRotateView] = useState<boolean>(() => {
+    const saved = localStorage.getItem('pmt_auto_rotate_view');
+    return saved !== null ? saved === 'true' : true;
+  });
+
+  const handleToggleAutoRotate = useCallback(() => {
+    setAutoRotateView((prev) => {
+      const next = !prev;
+      localStorage.setItem('pmt_auto_rotate_view', String(next));
+      return next;
+    });
+  }, []);
+
   // Voor 'free' modus: welk quiztype? 'full' (Origo én insertie plaatsen over alle spieren) is de standaard!
   const [freeQuizType, setFreeQuizType] = useState<QuizType | 'all'>('full');
 
@@ -320,8 +334,10 @@ export const QuizView: React.FC = () => {
     setEvaluatedSide('left');
     setHasScaledForOrigins(false);
     setIsScalingInsertion(false);
-    setCurrentView(muscle.view);
-  }, [jointMuscles, selectedJointId, setCurrentView]);
+    if (autoRotateView) {
+      setCurrentView(muscle.view);
+    }
+  }, [jointMuscles, selectedJointId, setCurrentView, autoRotateView]);
 
   // Helper om een bondige werking/functie beschrijving te genereren ZONDER gewrichtsnamen (puur beweging en functie)
   const getMuscleFunctionDescription = useCallback((m: Muscle): string => {
@@ -412,7 +428,9 @@ export const QuizView: React.FC = () => {
       setHasScaledForOrigins(false);
       setIsScalingInsertion(false);
 
-      setCurrentView(markerView);
+      if (autoRotateView) {
+        setCurrentView(markerView);
+      }
       return;
     }
 
@@ -646,16 +664,18 @@ export const QuizView: React.FC = () => {
     setIsScalingInsertion(false);
 
     // Schakel automatisch over naar het juiste aanzicht
-    if (isJointQuestion) {
-      if (jointLoc) {
-        setCurrentView(jointLoc.view);
+    if (autoRotateView) {
+      if (isJointQuestion) {
+        if (jointLoc) {
+          setCurrentView(jointLoc.view);
+        } else {
+          setCurrentView('ventral');
+        }
       } else {
-        setCurrentView('ventral');
+        setCurrentView(randMuscle.view);
       }
-    } else {
-      setCurrentView(randMuscle.view);
     }
-  }, [cleanMuscles, freeQuizType, getMuscleFunctionDescription, setCurrentView]);
+  }, [cleanMuscles, freeQuizType, getMuscleFunctionDescription, setCurrentView, autoRotateView]);
 
   // Initialisatie effect
   useEffect(() => {
@@ -860,7 +880,7 @@ export const QuizView: React.FC = () => {
     setIsPlacementSuccess(bestPassed);
 
     // Zodra het antwoord gecontroleerd is, toon het juiste aanzicht van de spier voor duidelijke visuele feedback
-    if (muscle && currentView !== muscle.view && viewLayout !== 'both') {
+    if (autoRotateView && muscle && currentView !== muscle.view && viewLayout !== 'both') {
       setCurrentView(muscle.view);
     }
 
@@ -1208,6 +1228,10 @@ export const QuizView: React.FC = () => {
         type={type}
         currentView={currentView}
         setCurrentView={setCurrentView}
+        correctCount={currentStats.correctAnswers}
+        incorrectCount={currentStats.incorrectAnswers}
+        autoRotateView={autoRotateView}
+        onToggleAutoRotate={handleToggleAutoRotate}
         evaluatedSide={evaluatedSide}
         isEvaluated={isEvaluated}
         isPlacementSuccess={isPlacementSuccess}
@@ -1530,7 +1554,7 @@ export const QuizView: React.FC = () => {
               }}
               className="w-full px-3 py-2 bg-clinical-50 border border-clinical-200 rounded-xl text-xs sm:text-sm font-semibold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
             >
-              <option value="mixed">🔀 Gemengde toets (alle testen door elkaar)</option>
+              <option value="mixed">Gemengde toets (alle testen door elkaar)</option>
               <option value="bone">Bot benoemen</option>
               <option value="full">Origo en insertie plaatsen</option>
               <option value="landmark">Vind aanhechtingspunt</option>
@@ -1540,6 +1564,20 @@ export const QuizView: React.FC = () => {
               <option value="joints">Gewrichten</option>
             </select>
           )}
+
+          {/* Subtiele toggle voor automatisch meedraaien van het aanzicht */}
+          <div className="flex items-center justify-between px-1 pt-1 border-t border-clinical-100 text-[11px]">
+            <span className="text-slate-600 font-medium">Aanzicht autom. roteren</span>
+            <button
+              type="button"
+              onClick={handleToggleAutoRotate}
+              className={`px-2.5 py-0.5 rounded-lg font-bold transition ${
+                autoRotateView ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-200 text-slate-700'
+              }`}
+            >
+              {autoRotateView ? 'Aan' : 'Uit'}
+            </button>
+          </div>
 
           {/* Voortgangsbalk bij joint of full_all */}
           {practiceMode === 'joint' && (
@@ -1652,7 +1690,7 @@ export const QuizView: React.FC = () => {
                 {practiceMode === 'joint' 
                   ? `Spier ${jointMuscleIndex + 1} van ${jointMuscles.length}`
                   : freeQuizType === 'mixed'
-                  ? `🔀 Gemengde Toets • Vraag #${currentStats.totalQuestions + 1}`
+                  ? `Gemengde Toets • Vraag #${currentStats.totalQuestions + 1}`
                   : `Vraag #${currentStats.totalQuestions + 1}`}
               </span>
             </div>

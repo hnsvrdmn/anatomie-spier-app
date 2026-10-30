@@ -8,13 +8,13 @@ interface MovementIconProps {
 export const MovementIcon: React.FC<MovementIconProps> = ({ movement, className = 'w-4 h-4' }) => {
   const norm = movement.trim().toLowerCase();
 
-  // 1. Flexie (buiging, gehoekte pijl naar binnen)
+  // 1. Flexie (buiging, hoek verkleinen)
   if (norm.startsWith('flexie')) {
     return (
       <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M4 19L11 12L7 8" />
-        <path d="M11 12L19 12" />
-        <polyline points="15 8 19 12 15 16" />
+        <path d="M5 19l7-7h8" />
+        <path d="M9 16a5 5 0 0 0 4-4" />
+        <polyline points="13 15 13 12 10 12" />
       </svg>
     );
   }
@@ -91,13 +91,24 @@ export const MovementIcon: React.FC<MovementIconProps> = ({ movement, className 
     );
   }
 
-  // 9. Supinatie (open draaien van handpalm/onderarm, kommetje)
-  if (norm === 'supinatie') {
+  // 9. Supinatie (open draaien van handpalm/onderarm naar boven, soepkommetje)
+  if (norm.startsWith('supinatie')) {
     return (
       <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M4 14a8 8 0 0 0 16 0" />
-        <polyline points="16 10 20 14 16 18" />
-        <line x1="8" y1="6" x2="16" y2="6" />
+        <path d="M5 11a7.5 7.5 0 0 0 13.5 2.5" />
+        <polyline points="15 17 18.5 13.5 15 10" />
+        <circle cx="12" cy="11" r="1.5" fill="currentColor" />
+      </svg>
+    );
+  }
+
+  // 10. Pronatie (naar binnen draaien van handpalm/onderarm naar beneden)
+  if (norm.startsWith('pronatie')) {
+    return (
+      <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M19 11a7.5 7.5 0 0 1-13.5 2.5" />
+        <polyline points="9 17 5.5 13.5 9 10" />
+        <circle cx="12" cy="11" r="1.5" fill="currentColor" />
       </svg>
     );
   }

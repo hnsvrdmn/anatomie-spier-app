@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { SkeletonViewer } from '../skeleton/SkeletonViewer';
 import { 
   QuizQuestion, 
@@ -16,7 +16,6 @@ import {
   Check, 
   CheckCircle2, 
   RefreshCw, 
-  ChevronUp, 
   ChevronRight,
   Trash2, 
   CheckSquare, 
@@ -92,6 +91,10 @@ interface MobileQuizViewProps {
   openAnswerFeedback: AnswerValidationResult | null;
   toleranceMode?: 'normal' | 'strict' | 'expert';
   setToleranceMode?: (val: 'normal' | 'strict' | 'expert') => void;
+  correctCount?: number;
+  incorrectCount?: number;
+  autoRotateView?: boolean;
+  onToggleAutoRotate?: () => void;
 }
 
 export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
@@ -139,26 +142,33 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
   openAnswerFeedback,
   toleranceMode = 'normal',
   setToleranceMode,
+  correctCount = 0,
+  incorrectCount = 0,
+  autoRotateView = true,
+  onToggleAutoRotate,
 }) => {
-  const [isPanelExpanded, setIsPanelExpanded] = useState(() => practiceMode === 'free');
+  // Stand van het frame:
+  // - false (minimale stand): toont altijd de vraag, origo & insertie, en antwoordknoppen.
+  // - true (grote stand): toont het instellingenmenu (oefenen vs testen, gewricht/testtype kiezen, auto-rotate).
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const dragStartYRef = useRef<number | null>(null);
   const isDraggingRef = useRef<boolean>(false);
 
-  // Zorg dat het paneel uitschuift bij 'free' (toets) of zodra de vraag is beantwoord
-  useEffect(() => {
-    if (practiceMode === 'free' || isEvaluated) {
-      setIsPanelExpanded(true);
-    }
-  }, [practiceMode, isEvaluated]);
-
-
+  // Volgende vraag: zorgt dat het frame altijd in de minimale vraagstand blijft!
+  const onNextQuestion = () => {
+    setIsExpanded(false);
+    handleNextQuestion();
+  };
 
   const isDrawingType = type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question' && type !== 'bone' && type !== 'joints';
   const hasPlacedPoints = userOrigins.length > 0 || userInsertions.length > 0;
 
-  // Pointer drag handlers voor uitschuiven / inschuiven van het paneel
+  // Pointer drag handlers voor het "-" streepje
+  const hasDraggedRef = useRef<boolean>(false);
+
   const handlePointerDown = (e: React.PointerEvent) => {
     dragStartYRef.current = e.clientY;
+    hasDraggedRef.current = false;
     isDraggingRef.current = true;
     try {
       (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
@@ -170,12 +180,16 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!isDraggingRef.current || dragStartYRef.current === null) return;
     const deltaY = e.clientY - dragStartYRef.current;
-    if (deltaY < -20 && !isPanelExpanded) {
-      setIsPanelExpanded(true);
-      isDraggingRef.current = false;
-    } else if (deltaY > 20 && isPanelExpanded) {
-      setIsPanelExpanded(false);
-      isDraggingRef.current = false;
+    if (deltaY < -18) {
+      // Omhoog draggen -> frame groter maken
+      setIsExpanded(true);
+      hasDraggedRef.current = true;
+      dragStartYRef.current = e.clientY;
+    } else if (deltaY > 18) {
+      // Omlaag draggen -> frame terug naar minimale view
+      setIsExpanded(false);
+      hasDraggedRef.current = true;
+      dragStartYRef.current = e.clientY;
     }
   };
 
@@ -189,25 +203,13 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
     }
   };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    dragStartYRef.current = e.touches[0].clientY;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (dragStartYRef.current === null) return;
-    const currentY = e.touches[0].clientY;
-    const deltaY = currentY - dragStartYRef.current;
-    if (deltaY < -20 && !isPanelExpanded) {
-      setIsPanelExpanded(true);
-      dragStartYRef.current = null;
-    } else if (deltaY > 20 && isPanelExpanded) {
-      setIsPanelExpanded(false);
-      dragStartYRef.current = null;
+  const handleClickHandle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (hasDraggedRef.current) {
+      hasDraggedRef.current = false;
+      return;
     }
-  };
-
-  const handleTouchEnd = () => {
-    dragStartYRef.current = null;
+    setIsExpanded((prev) => !prev);
   };
 
   // Beknopte weergave van het juiste antwoord voor de compacte feedbackbalk
@@ -327,38 +329,34 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
         })()}
       </div>
 
-      {/* 2. VASTE ONDERKAART: COMPACT EN NAAR BENEDEN TE SCHUIVEN */}
+      {/* 2. VASTE ONDERKAART: COMPACT (MINIMAAL) OF GROOT (INSTELLINGEN) */}
       <div 
         className={`fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-8px_30px_rgba(0,0,0,0.2)] rounded-t-3xl transition-all duration-300 pointer-events-auto flex flex-col ${
-          isEvaluated
-            ? isPanelExpanded
-              ? 'px-3.5 pt-2 pb-3 max-h-[45vh]'
-              : 'px-4 py-2 max-h-[34px] cursor-pointer'
-            : isPanelExpanded
+          isExpanded
             ? 'px-3.5 pt-2 pb-3 max-h-[85vh]'
+            : isEvaluated
+            ? 'px-3.5 pt-2 pb-3 max-h-[45vh]'
             : 'px-3.5 pt-2 pb-3 max-h-[55vh]'
         }`}
       >
-        {/* SLEEPHENDEL: Tik of sleep omhoog/omlaag */}
+        {/* HET "-" STREEPJE: Druk hierop of drag omhoog om frame groter te maken */}
         <div 
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerUp}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          onClick={() => setIsPanelExpanded(prev => !prev)}
-          className={`w-full flex items-center justify-center cursor-grab active:cursor-grabbing touch-none select-none active:opacity-70 ${
-            isEvaluated && !isPanelExpanded ? 'h-full py-0.5' : 'h-5 -mt-1 mb-1'
-          }`}
-          title="Tik of sleep om paneel in/uit te klappen"
+          onClick={handleClickHandle}
+          className="w-full flex items-center justify-center cursor-pointer py-2.5 touch-none select-none -mt-1.5 mb-0.5 active:opacity-70 group"
+          title={isExpanded ? "Tik of sleep omlaag voor minimale weergave" : "Tik op het '-' of sleep omhoog om instellingen te openen"}
+          aria-label={isExpanded ? "Sluit instellingenpaneel" : "Open instellingenpaneel"}
+          role="button"
+          tabIndex={0}
         >
-          <div className="w-12 h-1.5 bg-slate-400 hover:bg-slate-500 rounded-full transition-colors" />
+          <div className="w-12 h-1.5 bg-slate-400 group-hover:bg-slate-600 rounded-full transition-colors active:scale-95" />
         </div>
 
-        {/* UITKLAPBARE INSTELMENUUTJE: ALLEEN ZICHTBAAR BIJ UITGESCHOVEN PANEEL VÓÓR CONTROLE */}
-        {isPanelExpanded && !isEvaluated && (
+        {/* GROTE STAND: UITKLAPBAAR INSTELMENU */}
+        {isExpanded && (
           <div className="pb-3 border-b border-slate-200 mb-2 space-y-2 animate-in fade-in duration-200">
             {/* Modus Switcher: Oefenen vs Testen */}
             {setPracticeMode && (
@@ -396,7 +394,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
               </span>
               <button
                 type="button"
-                onClick={() => setIsPanelExpanded(false)}
+                onClick={() => setIsExpanded(false)}
                 className="text-slate-500 hover:text-slate-800 font-bold px-2 py-0.5 text-xs bg-slate-100 rounded-lg"
               >
                 Sluiten ✕
@@ -410,7 +408,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                     value={selectedJointId}
                     onChange={(e) => {
                       setSelectedJointId(e.target.value);
-                      setIsPanelExpanded(false);
+                      setIsExpanded(false);
                     }}
                     className="w-full px-3 py-2 bg-slate-100 border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:bg-white cursor-pointer"
                   >
@@ -440,11 +438,11 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                   value={freeQuizType}
                   onChange={(e) => {
                     setFreeQuizType(e.target.value as QuizType);
-                    setIsPanelExpanded(false);
+                    setIsExpanded(false);
                   }}
                   className="w-full px-3 py-2 bg-slate-100 border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:bg-white cursor-pointer"
                 >
-                  <option value="mixed">🔀 Gemengde toets (alle testen door elkaar)</option>
+                  <option value="mixed">Gemengde toets (alle testen door elkaar)</option>
                   <option value="bone">Bot benoemen</option>
                   <option value="full">Origo en insertie plaatsen</option>
                   <option value="landmark">Vind aanhechtingspunt</option>
@@ -481,26 +479,38 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                   </div>
                 </div>
               )}
+
+              {/* Minimalistische toggle voor automatisch roteren van aanzicht */}
+              {onToggleAutoRotate && (
+                <div className="flex items-center justify-between px-1 pt-1.5 border-t border-slate-200">
+                  <span className="text-xs text-slate-600 font-medium">Aanzicht autom. roteren:</span>
+                  <button
+                    type="button"
+                    onClick={onToggleAutoRotate}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+                      autoRotateView ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-200 text-slate-700'
+                    }`}
+                  >
+                    <span>{autoRotateView ? 'Aan' : 'Uit'}</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        {/* A. VRAAGTITEL & VRAAGSTELLING (ALTIJD DUIDELIJK & VOLLEDIG LEESBAAR) */}
+        {/* MINIMALE STAND (ALTIJD DIRECT ZICHTBAAR): VRAAGTITEL, VRAAGSTELLING & BEDIENING */}
         {!isEvaluated && (
           <div className="flex items-start justify-between gap-2 mb-1">
             <div className="min-w-0 flex-1">
-              <button
-                type="button"
-                onClick={() => setIsPanelExpanded(prev => !prev)}
-                className="text-[10px] font-bold text-blue-600 uppercase tracking-wider flex items-center gap-1 hover:underline"
-              >
+              <div className="text-[10px] font-bold text-blue-600 uppercase tracking-wider flex items-center gap-1 select-none">
                 <span>
                   {selectedJointId === 'all' && practiceMode === 'joint'
                     ? `Origo & Insertie • ${jointMuscleIndex + 1}/${jointMusclesCount}`
                     : practiceMode === 'joint'
                     ? `${jointCategoryName} • ${jointMuscleIndex + 1}/${jointMusclesCount}`
                     : freeQuizType === 'mixed'
-                    ? `🔀 Gemengde Toets • ${
+                    ? `Gemengde Toets • ${
                         type === 'bone'
                           ? 'Bot benoemen'
                           : type === 'full'
@@ -529,8 +539,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                     ? 'Bewegingen'
                     : 'Aanhechtingspunt'}
                 </span>
-                <ChevronUp className={`w-3 h-3 transition-transform ${isPanelExpanded ? 'rotate-180' : ''}`} />
-              </button>
+              </div>
 
               {/* Duidelijke vraagstelling per toetstype */}
               <div className="mt-0.5">
@@ -587,15 +596,21 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
               </div>
             </div>
 
-            {/* Snel overslaan */}
-            <button
-              type="button"
-              onClick={handleNextQuestion}
-              className="p-1.5 text-slate-400 hover:text-slate-600 rounded-xl transition shrink-0"
-              title="Volgende / Overslaan"
-            >
-              <RefreshCw className="w-4 h-4" />
-            </button>
+            {/* Minimalistische score & Snel overslaan */}
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-1.5 font-mono text-xs font-bold select-none">
+                <span className="text-emerald-600">{correctCount}</span>
+                <span className="text-rose-500">{incorrectCount}</span>
+              </div>
+              <button
+                type="button"
+                onClick={onNextQuestion}
+                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-xl transition"
+                title="Volgende / Overslaan"
+              >
+                <RefreshCw className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         )}
 
@@ -715,8 +730,8 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
           </div>
         )}
 
-        {/* C. NA BEANTWOORDING: ALTIJD VOLLEDIG LEESBAAR + INGEKLAPT ALLEEN HET STREEPJE */}
-        {isEvaluated && isPanelExpanded && (
+        {/* C. NA BEANTWOORDING: ALTIJD VOLLEDIG LEESBAAR */}
+        {isEvaluated && (
           <div className="flex items-center justify-between gap-3 pt-0.5 animate-in fade-in duration-200">
             {/* 1. Goed / Fout badge */}
             <div className="shrink-0">
@@ -786,16 +801,22 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
               )}
             </div>
 
-            {/* 3. Simpele blauwe > knop voor volgende vraag */}
-            <button
-              type="button"
-              onClick={handleNextQuestion}
-              className="w-11 h-11 bg-blue-600 hover:bg-blue-700 active:scale-90 text-white rounded-2xl shadow-md flex items-center justify-center shrink-0 transition"
-              title="Volgende vraag"
-              aria-label="Volgende vraag"
-            >
-              <ChevronRight className="w-6 h-6 text-white stroke-[2.5]" />
-            </button>
+            {/* 3. Score & Simpele blauwe > knop voor volgende vraag */}
+            <div className="flex items-center gap-2.5 shrink-0">
+              <div className="flex items-center gap-1.5 font-mono text-xs font-bold select-none">
+                <span className="text-emerald-600">{correctCount}</span>
+                <span className="text-rose-500">{incorrectCount}</span>
+              </div>
+              <button
+                type="button"
+                onClick={onNextQuestion}
+                className="w-11 h-11 bg-blue-600 hover:bg-blue-700 active:scale-90 text-white rounded-2xl shadow-md flex items-center justify-center shrink-0 transition"
+                title="Volgende vraag"
+                aria-label="Volgende vraag"
+              >
+                <ChevronRight className="w-6 h-6 text-white stroke-[2.5]" />
+              </button>
+            </div>
           </div>
         )}
       </div>
