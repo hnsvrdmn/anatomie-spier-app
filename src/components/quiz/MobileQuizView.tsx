@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useMuscles } from '../../context/MuscleContext';
 import { SkeletonViewer } from '../skeleton/SkeletonViewer';
 import { 
   QuizQuestion, 
@@ -147,12 +148,30 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
   autoRotateView = true,
   onToggleAutoRotate,
 }) => {
+  const { quizOpenOptionsTrigger } = useMuscles();
+
   // Stand van het frame:
   // - false (minimale stand): toont altijd de vraag, origo & insertie, en antwoordknoppen.
   // - true (grote stand): toont het instellingenmenu (oefenen vs testen, gewricht/testtype kiezen, auto-rotate).
-  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  // Standaard UITGEKLAPT (true) bij openen van de toets of tikken op Oefen/Test, zodat direct zichtbaar is dat je testtype/gewricht kunt wijzigen!
+  const [isExpanded, setIsExpanded] = useState<boolean>(true);
   const dragStartYRef = useRef<number | null>(null);
   const isDraggingRef = useRef<boolean>(false);
+
+  // Wanneer de student op Oefen of Test tikt (in header of switcher): frame automatisch uitklappen!
+  const prevPracticeModeRef = useRef(practiceMode);
+  useEffect(() => {
+    if (prevPracticeModeRef.current !== practiceMode) {
+      prevPracticeModeRef.current = practiceMode;
+      setIsExpanded(true);
+    }
+  }, [practiceMode]);
+
+  useEffect(() => {
+    if (quizOpenOptionsTrigger > 0) {
+      setIsExpanded(true);
+    }
+  }, [quizOpenOptionsTrigger]);
 
   // Volgende vraag: zorgt dat het frame altijd in de minimale vraagstand blijft!
   const onNextQuestion = () => {
@@ -363,7 +382,10 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
               <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 rounded-xl">
                 <button
                   type="button"
-                  onClick={() => setPracticeMode('joint')}
+                  onClick={() => {
+                    setPracticeMode('joint');
+                    setIsExpanded(true);
+                  }}
                   className={`py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
                     practiceMode === 'joint'
                       ? 'bg-blue-600 text-white shadow-xs'
@@ -375,7 +397,10 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                 </button>
                 <button
                   type="button"
-                  onClick={() => setPracticeMode('free')}
+                  onClick={() => {
+                    setPracticeMode('free');
+                    setIsExpanded(true);
+                  }}
                   className={`py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
                     practiceMode === 'free'
                       ? 'bg-blue-600 text-white shadow-xs'

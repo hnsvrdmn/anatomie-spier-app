@@ -5,7 +5,7 @@ import { useIsMobile } from '../../hooks/useIsMobile';
 import { HelpModal } from './HelpModal';
 
 export const Header: React.FC = () => {
-  const { appMode, setAppMode, quizPracticeMode, setQuizPracticeMode } = useMuscles();
+  const { appMode, setAppMode, quizPracticeMode, setQuizPracticeMode, triggerQuizOpenOptions } = useMuscles();
   const isMobile = useIsMobile();
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
@@ -40,6 +40,7 @@ export const Header: React.FC = () => {
       onClick: () => {
         setAppMode('quiz');
         setQuizPracticeMode('joint');
+        triggerQuizOpenOptions();
       },
     },
     {
@@ -50,6 +51,7 @@ export const Header: React.FC = () => {
       onClick: () => {
         setAppMode('quiz');
         setQuizPracticeMode('free');
+        triggerQuizOpenOptions();
       },
     },
   ];

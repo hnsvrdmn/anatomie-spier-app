@@ -35,6 +35,8 @@ interface MuscleContextType {
   appMode: AppMode;
   quizPracticeMode: 'joint' | 'free';
   setQuizPracticeMode: (mode: 'joint' | 'free') => void;
+  quizOpenOptionsTrigger: number;
+  triggerQuizOpenOptions: () => void;
   jointPracticeType: 'attachments' | 'movements';
   setJointPracticeType: (type: 'attachments' | 'movements') => void;
   toast: ToastMessage | null;
@@ -129,6 +131,10 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return () => window.removeEventListener('hashchange', handleHash);
   }, []);
   const [quizPracticeMode, setQuizPracticeMode] = useState<'joint' | 'free'>('joint');
+  const [quizOpenOptionsTrigger, setQuizOpenOptionsTrigger] = useState(0);
+  const triggerQuizOpenOptions = useCallback(() => {
+    setQuizOpenOptionsTrigger((c) => c + 1);
+  }, []);
   const [jointPracticeType, setJointPracticeType] = useState<'attachments' | 'movements'>('attachments');
   const [toast, setToast] = useState<ToastMessage | null>(null);
 
@@ -601,6 +607,8 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         appMode,
         quizPracticeMode,
         setQuizPracticeMode,
+        quizOpenOptionsTrigger,
+        triggerQuizOpenOptions,
         jointPracticeType,
         setJointPracticeType,
         toast,
