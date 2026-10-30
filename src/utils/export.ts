@@ -2,13 +2,31 @@ import { Muscle } from '../types/anatomy';
 import { mirrorPoints } from './coordinates';
 import initialMusclesData from '../data/muscles.json';
 
-const LOCAL_STORAGE_KEY = 'pmt_anatomie_muscles_dataset_v11';
+const LOCAL_STORAGE_KEY = 'pmt_anatomie_muscles_dataset_v12';
+
+/**
+ * Filtert spieren die niet in het PMT-curriculum / de reader horen
+ * (zoals m. tensor fascia latae en m. gluteus medius).
+ * Let op: m. vastus intermedius hoort WEL in het curriculum en wordt behouden.
+ */
+export function isForbiddenMuscle(m: { id?: string; name?: string; latinName?: string }): boolean {
+  const idLower = (m.id || '').toLowerCase();
+  const nameLower = (m.name || '').toLowerCase();
+  const latinLower = (m.latinName || '').toLowerCase();
+
+  const isTensor = idLower.includes('tensor') || nameLower.includes('tensor') || latinLower.includes('tensor');
+  const isGluteusMedius = (idLower.includes('medius') || nameLower.includes('medius') || latinLower.includes('medius'))
+    && !(idLower.includes('intermedius') || nameLower.includes('intermedius') || latinLower.includes('intermedius'));
+
+  return isTensor || isGluteusMedius;
+}
 
 /**
  * Downloadt de actuele spieren dataset als muscles.json
  */
 export function downloadMusclesJson(muscles: Muscle[], filename = 'muscles.json'): void {
-  const jsonStr = JSON.stringify(muscles, null, 2);
+  const cleanMuscles = muscles.filter(m => !isForbiddenMuscle(m));
+  const jsonStr = JSON.stringify(cleanMuscles, null, 2);
   const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   
@@ -26,10 +44,11 @@ export function downloadMusclesJson(muscles: Muscle[], filename = 'muscles.json'
  */
 export async function saveMusclesToDisk(muscles: Muscle[]): Promise<boolean> {
   try {
+    const cleanMuscles = muscles.filter(m => !isForbiddenMuscle(m));
     const res = await fetch('/api/save-muscles', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(muscles),
+      body: JSON.stringify(cleanMuscles),
     });
     if (res.ok) {
       return true;
@@ -45,7 +64,8 @@ export async function saveMusclesToDisk(muscles: Muscle[]): Promise<boolean> {
  */
 export function saveMusclesToLocalStorage(muscles: Muscle[]): void {
   try {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(muscles));
+    const cleanMuscles = muscles.filter(m => !isForbiddenMuscle(m));
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(cleanMuscles));
   } catch (err) {
     console.error('Fout bij opslaan in LocalStorage:', err);
   }
@@ -57,18 +77,18 @@ export function saveMusclesToLocalStorage(muscles: Muscle[]): void {
  */
 export function loadMusclesFromLocalStorage(): Muscle[] | null {
   try {
-    // Schoon eventuele oude v10 key op
+    // Schoon alle voorgaande versies op zodat eventuele verouderde spieren (zoals tensor of gluteus medius) direct verdwijnen
     try {
+      localStorage.removeItem('pmt_anatomie_muscles_dataset');
       localStorage.removeItem('pmt_anatomie_muscles_dataset_v10');
+      localStorage.removeItem('pmt_anatomie_muscles_dataset_v11');
     } catch {}
 
     const data = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!data) return null;
     const parsed = JSON.parse(data);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      const filtered = (parsed as Muscle[]).filter(
-        (m) => m.id !== 'tensor_fasciae_latae' && m.id !== 'gluteus_medius'
-      );
+      const filtered = (parsed as Muscle[]).filter(m => !isForbiddenMuscle(m));
       const baseMap = new Map((initialMusclesData as unknown as Muscle[]).map(m => [m.id, m]));
       return filtered.map((m) => {
         let name = m.name;

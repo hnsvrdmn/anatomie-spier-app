@@ -39,42 +39,42 @@ export const SYNOVIAL_JOINT_TYPES: SynovialJointType[] = [
     latinName: 'Art. ginglymus',
     shapeDescription: 'Cilindrisch gewrichtsvlak passend in een holle goot. Laat beweging om één as toe.',
     degreesOfFreedom: '1 vrijheidsgraad (uni-axiaal)',
-    examples: ['Art. humero-ulnaris (elleboog)', 'Interfalangeale gewrichten (vingers/tenen)'],
+    examples: ['Art. humero-ulnaris (elleboog)', 'Art. talocruralis (BSG)'],
   },
   {
     dutchName: 'Rolgewricht',
     latinName: 'Art. trochoidea',
     shapeDescription: 'Ronde cilinder die roteert binnen een ring van bot en bindweefsel/ligament.',
     degreesOfFreedom: '1 vrijheidsgraad (uni-axiaal)',
-    examples: ['Art. radio-ulnaris proximalis', 'Art. atlanto-axialis (C1-C2)'],
+    examples: ['Art. radio-ulnaris proximalis', 'Art. radio-ulnaris distalis'],
   },
   {
     dutchName: 'Zadelgewricht',
     latinName: 'Art. sellaris',
     shapeDescription: 'Twee zadelvormige oppervlakken die concaaf en convex in elkaar grijpen.',
     degreesOfFreedom: '2 vrijheidsgraden (bi-axiaal)',
-    examples: ['Art. carpometacarpalis I (duimbasis / CMC-1)', 'Art. sternoclavicularis'],
+    examples: ['Art. sterno-clavicularis (SC-gewricht)'],
   },
   {
     dutchName: 'Bolgewricht',
     latinName: 'Art. spheroidea',
     shapeDescription: 'Bolvormige gewrichtskop (caput) passend in een komvormige gewrichtsholte (fossa).',
     degreesOfFreedom: '3 vrijheidsgraden (multi-axiaal / kogelgewricht)',
-    examples: ['Art. humeri (schoudergewricht)', 'Art. coxae (heupgewricht)'],
+    examples: ['Art. humeri (schoudergewricht)', 'Art. coxae (heupgewricht)', 'Art. humero-radialis (naar vorm)'],
   },
   {
     dutchName: 'Vlak gewricht',
     latinName: 'Art. plana',
     shapeDescription: 'Platte gewrichtsvlakken die een geringe glijbeweging ten opzichte van elkaar toelaten.',
     degreesOfFreedom: 'Translatie / meervoudig glijden',
-    examples: ['Art. acromioclavicularis (AC-gewricht)', 'Facetgewrichten van de wervelkolom', 'Intercarpale gewrichten'],
+    examples: ['Art. acromio-clavicularis (AC-gewricht)', 'Articulationes intervertebrales (wervelgewrichten)'],
   },
   {
     dutchName: 'Ellipsoïd gewricht',
     latinName: 'Art. ellipsoidea',
-    shapeDescription: 'Ovale eivormige kop passend in een ovale holte (ellipsvormig).',
+    shapeDescription: 'Ovale eivormige kop passend in een ovale holte (ellipsvormig). Laat beweging om twee assen toe.',
     degreesOfFreedom: '2 vrijheidsgraden (bi-axiaal)',
-    examples: ['Art. radiocarpalis (polsgewricht)', 'Art. atlanto-occipitalis (schedel-C1)', 'Metacarpofalangeale gewrichten (MCP)'],
+    examples: ['Art. ellipsoidea (ellipsoïd / eivormig gewricht naar vormindeling)'],
   },
 ];
 
@@ -286,9 +286,21 @@ export const JOINTS_LEARNING_DATA: Record<string, JointDetail> = {
     name: 'Cingulum pectorale',
     latinName: 'Cingulum pectorale',
     dutchName: 'Schoudergordel',
-    jointType: 'Schoudergordel',
+    jointType: 'Schoudergordel (SC & AC)',
     defaultView: 'dorsal',
-    description: 'Beweeglijke ophanging van het schouderblad (os scapula) en sleutelbeen (clavicula) op de thorax.',
+    description: 'Schoudergordel gevormd door het art. sterno-clavicularis (SC) en art. acromio-clavicularis (AC).',
+    subJoints: [
+      {
+        name: 'Art. sterno-clavicularis',
+        dutchName: 'SC-gewricht (zadelgewricht)',
+        description: 'Gewricht tussen sternum en clavicula.',
+      },
+      {
+        name: 'Art. acromio-clavicularis',
+        dutchName: 'AC-gewricht (vlak gewricht)',
+        description: 'Gewricht tussen acromion en clavicula.',
+      },
+    ],
     movements: [
       {
         movement: 'Elevatie',
@@ -328,9 +340,9 @@ export const JOINTS_LEARNING_DATA: Record<string, JointDetail> = {
     name: 'Romp en Wervelkolom',
     latinName: 'Columna vertebralis & abdomen',
     dutchName: 'Romp / Wervelkolom',
-    jointType: 'Amphiarthrosen & art. plana',
+    jointType: 'Diverse',
     defaultView: 'ventral',
-    description: 'Wervelkolom met tussenwervelschijven (symfysen) en facetgewrichten (art. plana), plus buikwand.',
+    description: 'Wervelkolom (met articulationes intervertebrales) en de buikwand.',
     movements: [
       {
         movement: 'Flexie',

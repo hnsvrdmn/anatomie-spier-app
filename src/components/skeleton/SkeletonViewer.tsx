@@ -30,6 +30,7 @@ interface SkeletonViewerProps {
   userQuizPoints?: Point2D[];
   userOrigins?: Point2D[];
   userInsertions?: Point2D[];
+  targetBoneMarker?: Point2D;
   // Extra interactieve selectie (bijv. in Studiemodus)
   onSelectMuscle?: (muscleId: string) => void;
   // Extra overlay kinderen (bijv. EditorOverlay)
@@ -61,6 +62,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
   userQuizPoints,
   userOrigins,
   userInsertions,
+  targetBoneMarker,
   children,
   innerRef,
   showTooltip: externalShowTooltip,
@@ -78,7 +80,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
   const hasMovedRef = useRef(false);
   const lastTouchHandledTimeRef = useRef<number>(0);
 
-  // Touch gebaren voor telefoon (pinch-to-zoom, 2-vinger pan, bescherming tegen per ongeluk plaatsen)
+  // Touch gebaren voor telefoon (pinch-to-zoom, 1- en 2-vinger pan, bescherming tegen per ongeluk plaatsen)
   const touchStateRef = useRef<{
     isPinching: boolean;
     startDistance: number;
@@ -87,7 +89,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
     startMidY: number;
     startPanX: number;
     startPanY: number;
-    singleTouchStart: { x: number; y: number } | null;
+    singleTouchStart: { x: number; y: number; startPanX: number; startPanY: number } | null;
     hasMoved: boolean;
     lastTapTime: number;
   }>({
@@ -280,12 +282,14 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
       touchStateRef.current.singleTouchStart = null;
       touchStateRef.current.hasMoved = true; // Nooit een punt plaatsen bij 2 vingers
     } else if (e.touches.length === 1) {
-      // 1 vinger: tap om punt te plaatsen, mits de vinger niet bewogen wordt
+      // 1 vinger: tap om punt te plaatsen bij loslaten zonder swipe, OF slepen om het beeld te pannen
       touchStateRef.current.isPinching = false;
       touchStateRef.current.hasMoved = false;
       touchStateRef.current.singleTouchStart = {
         x: e.touches[0].clientX,
         y: e.touches[0].clientY,
+        startPanX: pan.x,
+        startPanY: pan.y,
       };
     }
   };
@@ -318,8 +322,14 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
     } else if (e.touches.length === 1 && touchStateRef.current.singleTouchStart) {
       const dx = e.touches[0].clientX - touchStateRef.current.singleTouchStart.x;
       const dy = e.touches[0].clientY - touchStateRef.current.singleTouchStart.y;
-      if (Math.hypot(dx, dy) > 10) {
-        touchStateRef.current.hasMoved = true; // Bewogen, dus niet per ongeluk een punt plaatsen
+      const dist = Math.hypot(dx, dy);
+      // Drempelwaarde van 8px: bij een swipe/drag beweegt het beeld soepel mee en wordt géén punt geplaatst
+      if (dist > 8) {
+        touchStateRef.current.hasMoved = true;
+        setPan({
+          x: touchStateRef.current.singleTouchStart.startPanX + dx,
+          y: touchStateRef.current.singleTouchStart.startPanY + dy,
+        });
       }
     }
   };
@@ -684,6 +694,33 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                 </g>
               );
             })}
+
+            {/* Doelmarker voor bot-identificatietest (zonder enige tekst, uitsluitend op passend aanzicht) */}
+            {targetBoneMarker && (!targetBoneMarker.view || targetBoneMarker.view === currentView) && (
+              <g className="pointer-events-none">
+                <circle
+                  cx={targetBoneMarker.x * SVG_WIDTH}
+                  cy={targetBoneMarker.y * SVG_HEIGHT}
+                  r={26 / zoom}
+                  fill="rgba(14, 165, 233, 0.3)"
+                  className="animate-pulse"
+                />
+                <circle
+                  cx={targetBoneMarker.x * SVG_WIDTH}
+                  cy={targetBoneMarker.y * SVG_HEIGHT}
+                  r={14 / zoom}
+                  fill="#0284c7"
+                  stroke="#ffffff"
+                  strokeWidth={3.5 / zoom}
+                />
+                <circle
+                  cx={targetBoneMarker.x * SVG_WIDTH}
+                  cy={targetBoneMarker.y * SVG_HEIGHT}
+                  r={4 / zoom}
+                  fill="#ffffff"
+                />
+              </g>
+            )}
           </svg>
 
           {/* 3. Eventuele extra overlay componenten (bijv. EditorOverlay) */}

@@ -11,7 +11,6 @@ import {
 import { JOINT_CATEGORIES } from '../../data/jointCategories';
 import { MovementIcon } from '../common/MovementIcon';
 import { AnswerValidationResult } from '../../utils/answerMatching';
-import { useMuscles } from '../../context/MuscleContext';
 import { 
   Check, 
   CheckCircle2, 
@@ -22,12 +21,32 @@ import {
   CheckSquare, 
   Square, 
   Shuffle, 
-  RotateCcw 
+  RotateCcw,
+  GraduationCap,
+  ListChecks
 } from 'lucide-react';
+
+// Schoon spiernaam op zodat tekst tussen haakjes het antwoord niet verklapt
+const cleanMuscleName = (name?: string): string => {
+  if (!name) return '';
+  return name.replace(/\s*\([^)]*\)/g, '').trim();
+};
+
+// Schoon aanhechtingstekst op: geen verklarende tekst tussen haakjes
+const cleanAttachmentText = (text?: string): string => {
+  if (!text) return '';
+  return text
+    .replace(/\([^)]*\)/g, '')
+    .replace(/\s*(=[^,|;]+)/g, '')
+    .replace(/\s*[,/\\|]\s*[,/\\|]+/g, ', ')
+    .replace(/^[,/\\|\s]+|[,/\\|\s]+$/g, '')
+    .replace(/\s\s+/g, ' ')
+    .trim();
+};
 
 interface MobileQuizViewProps {
   currentQuestion: QuizQuestion;
-  muscle: Muscle;
+  muscle?: Muscle;
   type: string;
   currentView: AnatomicalView;
   setCurrentView: (view: AnatomicalView) => void;
@@ -70,6 +89,8 @@ interface MobileQuizViewProps {
   setUserOpenAnswer: (val: string) => void;
   handleOpenAnswerSubmit: () => void;
   openAnswerFeedback: AnswerValidationResult | null;
+  toleranceMode?: 'normal' | 'strict' | 'expert';
+  setToleranceMode?: (val: 'normal' | 'strict' | 'expert') => void;
 }
 
 export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
@@ -96,6 +117,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
   handleNextQuestion,
   canEvaluateManual,
   practiceMode,
+  setPracticeMode,
   selectedJointId,
   setSelectedJointId,
   isShuffled,
@@ -114,22 +136,23 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
   setUserOpenAnswer,
   handleOpenAnswerSubmit,
   openAnswerFeedback,
+  toleranceMode = 'normal',
+  setToleranceMode,
 }) => {
-  const { jointPracticeType, setJointPracticeType } = useMuscles();
-  const [isPanelExpanded, setIsPanelExpanded] = useState(false);
+  const [isPanelExpanded, setIsPanelExpanded] = useState(() => practiceMode === 'free');
   const dragStartYRef = useRef<number | null>(null);
   const isDraggingRef = useRef<boolean>(false);
 
-  // Zorg dat het paneel uitschuift zodra de vraag is beantwoord
+  // Zorg dat het paneel uitschuift bij 'free' (toets) of zodra de vraag is beantwoord
   useEffect(() => {
-    if (isEvaluated) {
+    if (practiceMode === 'free' || isEvaluated) {
       setIsPanelExpanded(true);
     }
-  }, [isEvaluated]);
+  }, [practiceMode, isEvaluated]);
 
 
 
-  const isDrawingType = type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question';
+  const isDrawingType = type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question' && type !== 'bone' && type !== 'joints';
   const hasPlacedPoints = userOrigins.length > 0 || userInsertions.length > 0;
 
   // Pointer drag handlers voor uitschuiven / inschuiven van het paneel
@@ -188,19 +211,23 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
 
   // Beknopte weergave van het juiste antwoord voor de compacte feedbackbalk
   const correctSummaryText = 
-    type === 'multiple_choice'
-      ? (currentQuestion.correctMcText || muscle.name)
+    type === 'bone'
+      ? (currentQuestion.correctOpenAnswer || 'Bot')
+      : type === 'joints'
+      ? (currentQuestion.correctMcText || currentQuestion.correctOpenAnswer || 'Gewricht')
+      : type === 'multiple_choice'
+      ? (currentQuestion.correctMcText || muscle?.name || '')
       : type === 'open_question'
-      ? (currentQuestion.correctOpenAnswer || muscle.name)
+      ? (currentQuestion.correctOpenAnswer || muscle?.name || '')
       : type === 'movements'
-      ? (currentQuestion.correctMovements?.join(', ') || muscle.functionText || 'Zie details')
+      ? (currentQuestion.correctMovements?.join(', ') || muscle?.functionText || 'Zie details')
       : currentQuestion.landmarkText 
       ? `${currentQuestion.landmarkType === 'origin' ? 'Origo: ' : 'Insertie: '}${currentQuestion.landmarkText}`
       : type === 'origins'
-      ? `Origo: ${muscle.originText}`
+      ? `Origo: ${muscle?.originText || ''}`
       : type === 'insertions'
-      ? `Insertie: ${muscle.insertionText}`
-      : `${muscle.name} (O: ${muscle.originText} | I: ${muscle.insertionText})`;
+      ? `Insertie: ${muscle?.insertionText || ''}`
+      : `${muscle?.name || ''} (O: ${muscle?.originText || ''} | I: ${muscle?.insertionText || ''})`;
 
   return (
     <div className="relative w-full h-[calc(100dvh-3.5rem)] flex flex-col bg-slate-900 overflow-hidden select-none">
@@ -219,33 +246,35 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
           <RotateCcw className="w-4 h-4 text-slate-700" />
         </button>
 
-        {/* Origo / Insertie knoppen linksboven voor tekentoetsen */}
+        {/* Compacte O (Origo, blauw) en I (Insertie, rood) knoppen */}
         {isDrawingType && !isEvaluated && (
           <div className="absolute top-2.5 left-2.5 z-30 flex items-center gap-1.5 pointer-events-auto">
-            <div className="flex items-center bg-slate-950/90 backdrop-blur-md p-1 rounded-2xl border border-slate-700/80 shadow-xl">
+            <div className="flex items-center gap-1 bg-slate-950/80 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 shadow-lg">
               <button
                 type="button"
                 onClick={() => setActiveQuizTool('origin')}
-                className={`h-8 px-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 ${
+                title="Plaats Origo (blauw)"
+                aria-label="Origo"
+                className={`w-7 h-7 rounded-lg text-xs font-black transition-all flex items-center justify-center ${
                   activeQuizTool === 'origin'
-                    ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-400'
-                    : 'text-blue-300 hover:bg-slate-800'
+                    ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-400'
+                    : 'text-blue-400 hover:bg-slate-800'
                 }`}
               >
-                <span className={`w-2.5 h-2.5 rounded-full ${activeQuizTool === 'origin' ? 'bg-white' : 'bg-blue-500'}`} />
-                <span>Origo ({userOrigins.length})</span>
+                O
               </button>
               <button
                 type="button"
                 onClick={() => setActiveQuizTool('insertion')}
-                className={`h-8 px-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 ${
+                title="Plaats Insertie (rood)"
+                aria-label="Insertie"
+                className={`w-7 h-7 rounded-lg text-xs font-black transition-all flex items-center justify-center ${
                   activeQuizTool === 'insertion'
-                    ? 'bg-red-600 text-white shadow-md ring-2 ring-rose-400'
-                    : 'text-rose-300 hover:bg-slate-800'
+                    ? 'bg-red-600 text-white shadow-sm ring-2 ring-rose-400'
+                    : 'text-rose-400 hover:bg-slate-800'
                 }`}
               >
-                <span className={`w-2.5 h-2.5 rounded-full ${activeQuizTool === 'insertion' ? 'bg-white' : 'bg-red-500'}`} />
-                <span>Insertie ({userInsertions.length})</span>
+                I
               </button>
             </div>
 
@@ -257,8 +286,8 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                   if (setUserInsertions) setUserInsertions([]);
                   setActiveQuizTool(currentQuestion.landmarkType === 'insertion' ? 'insertion' : 'origin');
                 }}
-                className="h-8 w-8 bg-rose-950/90 backdrop-blur-md border border-rose-800/80 text-rose-300 hover:bg-rose-900 rounded-xl shadow-xl flex items-center justify-center transition active:scale-95"
-                title="Wis punten"
+                className="h-7 w-7 bg-rose-950/90 backdrop-blur-md border border-rose-800/80 text-rose-300 hover:bg-rose-900 rounded-lg shadow-lg flex items-center justify-center transition active:scale-95"
+                title="Wis geplaatste punten"
               >
                 <Trash2 className="w-3.5 h-3.5 text-rose-300" />
               </button>
@@ -269,7 +298,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
         <SkeletonViewer
           currentView={currentView}
           activeMuscle={
-            type === 'multiple_choice' || type === 'movements' || type === 'function' || type === 'open_question' || isEvaluated
+            (type === 'multiple_choice' || type === 'movements' || type === 'function' || type === 'open_question' || isEvaluated)
               ? muscle
               : undefined
           }
@@ -279,12 +308,13 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
           onUpdateUserPoint={handleUpdateUserPoint}
           onDeleteUserPoint={handleDeleteUserPoint}
           quizMatches={matchResults}
-          showReferenceGhost={showReferenceGhost || isEvaluated}
+          showReferenceGhost={(showReferenceGhost || isEvaluated) && type !== 'bone'}
           userOrigins={userOrigins}
           userInsertions={userInsertions}
+          targetBoneMarker={currentQuestion?.targetBoneMarker}
           hideZoomToolbar={true}
           isMobile={true}
-          autoCenterMuscle={true}
+          autoCenterMuscle={type !== 'bone'}
         />
       </div>
 
@@ -321,9 +351,39 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
         {/* UITKLAPBARE INSTELMENUUTJE: ALLEEN ZICHTBAAR BIJ UITGESCHOVEN PANEEL VÓÓR CONTROLE */}
         {isPanelExpanded && !isEvaluated && (
           <div className="pb-3 border-b border-slate-200 mb-2 space-y-2 animate-in fade-in duration-200">
-            <div className="flex items-center justify-between text-xs">
+            {/* Modus Switcher: Oefenen vs Testen */}
+            {setPracticeMode && (
+              <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 rounded-xl">
+                <button
+                  type="button"
+                  onClick={() => setPracticeMode('joint')}
+                  className={`py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+                    practiceMode === 'joint'
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <GraduationCap className="w-3.5 h-3.5" />
+                  <span>Oefenen</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPracticeMode('free')}
+                  className={`py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+                    practiceMode === 'free'
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <ListChecks className="w-3.5 h-3.5" />
+                  <span>Testen</span>
+                </button>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between text-xs pt-1">
               <span className="font-black text-slate-800 uppercase tracking-wider text-[11px]">
-                {practiceMode === 'joint' ? 'Kies Gewricht' : 'Kies Toetstype'}
+                {practiceMode === 'joint' ? 'Kies Gewricht' : 'Kies Testtype'}
               </span>
               <button
                 type="button"
@@ -352,38 +412,6 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                     ))}
                   </select>
 
-                  {/* Keuze tussen Aanhechtingspunten of Bewegingen oefenen */}
-                  <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-200/80 rounded-xl">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setJointPracticeType('attachments');
-                        setIsPanelExpanded(false);
-                      }}
-                      className={`py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 ${
-                        jointPracticeType === 'attachments'
-                          ? 'bg-blue-600 text-white shadow-xs'
-                          : 'text-slate-700 hover:text-slate-900'
-                      }`}
-                    >
-                      <span>📌 Origo & Insertie</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setJointPracticeType('movements');
-                        setIsPanelExpanded(false);
-                      }}
-                      className={`py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 ${
-                        jointPracticeType === 'movements'
-                          ? 'bg-blue-600 text-white shadow-xs'
-                          : 'text-slate-700 hover:text-slate-900'
-                      }`}
-                    >
-                      <span>⚡ Bewegingen</span>
-                    </button>
-                  </div>
-
                   <div className="flex items-center justify-between px-1 pt-0.5">
                     <span className="text-xs text-slate-600 font-medium">Volgorde husselen:</span>
                     <button
@@ -407,12 +435,41 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                   }}
                   className="w-full px-3 py-2 bg-slate-100 border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:bg-white cursor-pointer"
                 >
-                  <option value="full">Origo én insertie plaatsen (alle spieren)</option>
-                  <option value="landmark">Vind aanhechtingspunt (origo / insertie)</option>
-                  <option value="multiple_choice">Meerkeuze toets (MC)</option>
-                  <option value="open_question">Open invultoets</option>
+                  <option value="bone">Bot benoemen</option>
+                  <option value="full">Origo en insertie plaatsen</option>
+                  <option value="landmark">Vind aanhechtingspunt</option>
+                  <option value="multiple_choice">Meerkeuze test</option>
+                  <option value="open_question">Open invultest</option>
                   <option value="movements">Bewegingen per spier</option>
+                  <option value="joints">Gewrichten</option>
                 </select>
+              )}
+
+              {/* Minimale tolerantie / nauwkeurigheid kiezer - alleen relevant bij tekenvragen */}
+              {isDrawingType && (
+                <div className="flex items-center justify-between px-1 pt-1.5 border-t border-slate-200">
+                  <span className="text-xs text-slate-600 font-medium">Nauwkeurigheid:</span>
+                  <div className="flex items-center gap-1 bg-slate-200/80 p-0.5 rounded-lg">
+                    {(['normal', 'strict', 'expert'] as const).map((mode) => {
+                      const labels = { normal: 'Laag', strict: 'Medium', expert: 'Strikt' };
+                      const isSelected = (toleranceMode || 'normal') === mode;
+                      return (
+                        <button
+                          key={mode}
+                          type="button"
+                          onClick={() => setToleranceMode?.(mode)}
+                          className={`px-2 py-0.5 rounded-md text-[11px] font-bold transition ${
+                            isSelected
+                              ? 'bg-blue-600 text-white shadow-xs'
+                              : 'text-slate-600 hover:text-slate-900'
+                          }`}
+                        >
+                          {labels[mode]}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               )}
             </div>
           </div>
@@ -429,11 +486,17 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
               >
                 <span>
                   {selectedJointId === 'all' && practiceMode === 'joint'
-                    ? `${jointPracticeType === 'movements' ? 'Bewegingen' : 'Origo & Insertie'} • ${jointMuscleIndex + 1}/${jointMusclesCount}`
+                    ? `Origo & Insertie • ${jointMuscleIndex + 1}/${jointMusclesCount}`
                     : practiceMode === 'joint'
-                    ? `${jointCategoryName} • ${jointPracticeType === 'movements' ? 'Bewegingen' : 'Origo/Insertie'} • ${jointMuscleIndex + 1}/${jointMusclesCount}`
+                    ? `${jointCategoryName} • ${jointMuscleIndex + 1}/${jointMusclesCount}`
+                    : freeQuizType === 'bone'
+                    ? 'Bot benoemen'
+                    : freeQuizType === 'full'
+                    ? 'Origo & Insertie'
                     : freeQuizType === 'multiple_choice'
-                    ? 'Meerkeuze Toets'
+                    ? 'Meerkeuze Test'
+                    : freeQuizType === 'joints'
+                    ? 'Gewrichten'
                     : freeQuizType === 'open_question'
                     ? 'Open Vraag'
                     : freeQuizType === 'movements'
@@ -445,31 +508,41 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
 
               {/* Duidelijke vraagstelling per toetstype */}
               <div className="mt-0.5">
-                {type === 'multiple_choice' ? (
+                {type === 'bone' ? (
+                  <h2 className="text-xs sm:text-sm font-black text-slate-900 leading-snug">
+                    Welk bot is hier gemarkeerd met de stip?
+                  </h2>
+                ) : type === 'joints' ? (
+                  <h2 className="text-xs sm:text-sm font-black text-slate-900 leading-snug">
+                    {currentQuestion.jointQuizItem?.question || 'Beantwoord de vraag over het gewricht:'}
+                  </h2>
+                ) : type === 'multiple_choice' ? (
                   <h2 className="text-xs sm:text-sm font-black text-slate-900 leading-snug">
                     {currentQuestion.mcKind === 'muscle'
                       ? 'Welke spier is hier gemarkeerd?'
                       : currentQuestion.mcKind === 'origin'
-                      ? `Wat is de juiste origo van de ${muscle.name}?`
+                      ? `Wat is de juiste origo van de ${cleanMuscleName(muscle?.name)}?`
                       : currentQuestion.mcKind === 'insertion'
-                      ? `Wat is de juiste insertie van de ${muscle.name}?`
-                      : `Wat is de werking/functie van de ${muscle.name}?`}
+                      ? `Wat is de juiste insertie van de ${cleanMuscleName(muscle?.name)}?`
+                      : currentQuestion.mcKind === 'joint'
+                      ? currentQuestion.jointQuizItem?.question
+                      : `Wat is de werking/functie van de ${cleanMuscleName(muscle?.name)}?`}
                   </h2>
                 ) : type === 'open_question' ? (
                   <h2 className="text-xs sm:text-sm font-black text-slate-900 leading-snug">
                     {currentQuestion.openKind === 'muscle'
                       ? 'Welke spier is hier op het skelet gemarkeerd?'
                       : currentQuestion.openKind === 'origin'
-                      ? `Wat is de juiste origo van de ${muscle.name}?`
+                      ? `Wat is de juiste origo van de ${cleanMuscleName(muscle?.name)}?`
                       : currentQuestion.openKind === 'insertion'
-                      ? `Wat is de juiste insertie van de ${muscle.name}?`
-                      : `Over welk gewricht loopt de ${muscle.name}?`}
+                      ? `Wat is de juiste insertie van de ${cleanMuscleName(muscle?.name)}?`
+                      : currentQuestion.jointQuizItem?.question || `Over welk gewricht loopt de ${cleanMuscleName(muscle?.name)}?`}
                   </h2>
                 ) : type === 'movements' ? (
                   <h2 className="text-xs sm:text-sm font-black text-slate-900 leading-snug">
                     {practiceMode === 'joint'
-                      ? `Welke bewegingen in dit gewricht: ${muscle.name}`
-                      : `Vink alle bewegingen aan van de ${muscle.name}:`}
+                      ? `Welke bewegingen in dit gewricht: ${cleanMuscleName(muscle?.name)}`
+                      : `Vink alle bewegingen aan van de ${cleanMuscleName(muscle?.name)}:`}
                   </h2>
                 ) : type === 'landmark' ? (
                   <div>
@@ -477,12 +550,12 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                       {currentQuestion.landmarkType === 'origin' ? 'Plaats origo:' : 'Plaats insertie:'}
                     </span>
                     <h2 className="text-xs sm:text-sm font-black text-slate-900 leading-snug">
-                      {currentQuestion.landmarkText || muscle.name}
+                      {cleanAttachmentText(currentQuestion.landmarkText) || cleanMuscleName(muscle?.name)}
                     </h2>
                   </div>
                 ) : (
                   <h2 className="text-xs sm:text-sm font-black text-slate-900 leading-snug">
-                    Plaats origo & insertie: {muscle.name}
+                    Plaats origo & insertie: {cleanMuscleName(muscle?.name)}
                   </h2>
                 )}
               </div>
@@ -525,7 +598,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
         )}
 
         {/* 2. Meerkeuze vraag (Vollidige tekst altijd leesbaar, niet afgesneden) */}
-        {type === 'multiple_choice' && currentQuestion.mcTextOptions && !isEvaluated && (
+        {(type === 'multiple_choice' || type === 'joints') && currentQuestion.mcTextOptions && !isEvaluated && (
           <div className="grid grid-cols-1 gap-1.5 pt-1">
             {currentQuestion.mcTextOptions.map((optText, idx) => {
               const isSelected = selectedMultipleChoiceId === optText;
@@ -594,14 +667,14 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
           </div>
         )}
 
-        {/* 4. Open vraag */}
-        {type === 'open_question' && !isEvaluated && (
+        {/* 4. Open vraag of Bot benoemen */}
+        {(type === 'open_question' || type === 'bone') && !isEvaluated && (
           <div className="space-y-1.5 pt-1">
             <input
               type="text"
               value={userOpenAnswer}
               onChange={(e) => setUserOpenAnswer(e.target.value)}
-              placeholder="Typ je antwoord..."
+              placeholder={type === 'bone' ? 'Typ naam van het bot...' : 'Typ je antwoord...'}
               className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:bg-white"
             />
             <button
@@ -636,28 +709,37 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
 
             {/* 2. De naam van de origo & insertie / juiste antwoord (VOLLEDIG LEESBAAR, NOOIT AFGESNEDEN!) */}
             <div className="flex-1 min-w-0 pr-1 max-h-[35vh] overflow-y-auto custom-scrollbar text-left">
-              {type === 'multiple_choice' ? (
+              {type === 'multiple_choice' || type === 'joints' ? (
                 <div className="space-y-0.5">
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Juiste antwoord:</span>
                   <p className="text-xs sm:text-sm font-black text-slate-900 leading-snug break-words">
                     {correctSummaryText}
                   </p>
+                  {currentQuestion.jointQuizItem?.explanation && (
+                    <p className="text-[11px] text-blue-800 font-semibold leading-tight pt-0.5 break-words">
+                      💡 {currentQuestion.jointQuizItem.explanation}
+                    </p>
+                  )}
                 </div>
-              ) : type === 'open_question' ? (
+              ) : type === 'open_question' || type === 'bone' ? (
                 <div className="space-y-0.5">
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Juiste antwoord:</span>
                   <p className="text-xs sm:text-sm font-black text-slate-900 leading-snug break-words">
                     {currentQuestion.correctOpenAnswer}
                   </p>
-                  {openAnswerFeedback?.feedbackNote && (
+                  {currentQuestion.jointQuizItem?.explanation ? (
+                    <p className="text-[11px] text-blue-800 font-semibold leading-tight pt-0.5 break-words">
+                      💡 {currentQuestion.jointQuizItem.explanation}
+                    </p>
+                  ) : openAnswerFeedback?.feedbackNote ? (
                     <p className="text-[11px] text-blue-800 font-semibold leading-tight pt-0.5 break-words">
                       💡 {openAnswerFeedback.feedbackNote}
                     </p>
-                  )}
+                  ) : null}
                 </div>
               ) : type === 'movements' ? (
                 <div className="space-y-0.5">
-                  <p className="text-xs sm:text-sm font-black text-slate-900 leading-snug break-words">{muscle.name}</p>
+                  <p className="text-xs sm:text-sm font-black text-slate-900 leading-snug break-words">{muscle?.name}</p>
                   <p className="text-[11px] sm:text-xs text-emerald-900 font-semibold leading-snug break-words">
                     <span className="font-bold text-emerald-700">Bewegingen: </span>
                     {currentQuestion.correctMovements?.join(', ')}
@@ -665,14 +747,14 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                 </div>
               ) : (
                 <div className="space-y-1">
-                  <p className="text-xs sm:text-sm font-black text-slate-900 leading-tight">{muscle.name}</p>
+                  <p className="text-xs sm:text-sm font-black text-slate-900 leading-tight">{muscle?.name}</p>
                   <p className="text-[11px] sm:text-xs text-blue-950 leading-snug break-words">
                     <span className="font-bold text-blue-700">Origo: </span>
-                    {muscle.originText}
+                    {muscle?.originText}
                   </p>
                   <p className="text-[11px] sm:text-xs text-rose-950 leading-snug break-words">
                     <span className="font-bold text-rose-700">Insertie: </span>
-                    {muscle.insertionText}
+                    {muscle?.insertionText}
                   </p>
                 </div>
               )}

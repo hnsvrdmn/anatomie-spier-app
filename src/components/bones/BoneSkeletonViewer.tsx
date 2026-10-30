@@ -1,7 +1,8 @@
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { AnatomicalView } from '../../types/anatomy';
 import { Bone, BoneMarker } from '../../data/bonesData';
 import { SKELETON_WIDTH, SKELETON_HEIGHT } from '../../utils/coordinates';
+import { RotateCcw } from 'lucide-react';
 
 export const SVG_WIDTH = 1000;
 export const SVG_HEIGHT = 2374.54;
@@ -19,19 +20,143 @@ export const BoneSkeletonViewer: React.FC<BoneSkeletonViewerProps> = ({
   bones,
   selectedBone,
   onSelectBone,
+  isMobile = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
 
-  // Hover state
+  // Zoom & Pan toestand (alleen actief op mobiel)
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+
+  // Hover/Selectie state voor tooltip
   const [hoveredInfo, setHoveredInfo] = useState<{ bone: Bone; marker: BoneMarker } | null>(null);
+
+  // Touch tracking voor pinch-to-zoom en soepele pan (mobiel)
+  const touchStateRef = useRef<{
+    isPinching: boolean;
+    startDistance: number;
+    startZoom: number;
+    startMidX: number;
+    startMidY: number;
+    startPanX: number;
+    startPanY: number;
+    singleTouchStart: { x: number; y: number; startPanX: number; startPanY: number } | null;
+    hasMoved: boolean;
+    lastTapTime: number;
+  }>({
+    isPinching: false,
+    startDistance: 0,
+    startZoom: 1,
+    startMidX: 0,
+    startMidY: 0,
+    startPanX: 0,
+    startPanY: 0,
+    singleTouchStart: null,
+    hasMoved: false,
+    lastTapTime: 0,
+  });
+
+  // Op PC is inzoomen niet nodig en uitgeschakeld. Bij wisselen naar desktop reset zoom.
+  useEffect(() => {
+    if (!isMobile) {
+      setZoom(1);
+      setPan({ x: 0, y: 0 });
+    }
+  }, [isMobile]);
+
+  // Touch handlers voor pinch-to-zoom en single-finger drag/pan op mobiel
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 2) {
+      touchStateRef.current.isPinching = true;
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      const dist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+      touchStateRef.current.startDistance = dist;
+      touchStateRef.current.startZoom = zoom;
+      touchStateRef.current.startMidX = (t1.clientX + t2.clientX) / 2;
+      touchStateRef.current.startMidY = (t1.clientY + t2.clientY) / 2;
+      touchStateRef.current.startPanX = pan.x;
+      touchStateRef.current.startPanY = pan.y;
+      touchStateRef.current.singleTouchStart = null;
+      touchStateRef.current.hasMoved = true;
+    } else if (e.touches.length === 1) {
+      touchStateRef.current.isPinching = false;
+      touchStateRef.current.hasMoved = false;
+      touchStateRef.current.singleTouchStart = {
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY,
+        startPanX: pan.x,
+        startPanY: pan.y,
+      };
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 2 && touchStateRef.current.isPinching) {
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      const dist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+      if (touchStateRef.current.startDistance > 0) {
+        const scale = dist / touchStateRef.current.startDistance;
+        const nextZoom = Math.max(1.0, Math.min(3.5, Number((touchStateRef.current.startZoom * scale).toFixed(2))));
+        setZoom(nextZoom);
+
+        const midX = (t1.clientX + t2.clientX) / 2;
+        const midY = (t1.clientY + t2.clientY) / 2;
+        const deltaX = midX - touchStateRef.current.startMidX;
+        const deltaY = midY - touchStateRef.current.startMidY;
+
+        if (nextZoom > 1.0) {
+          setPan({
+            x: touchStateRef.current.startPanX + deltaX,
+            y: touchStateRef.current.startPanY + deltaY,
+          });
+        } else {
+          setPan({ x: 0, y: 0 });
+        }
+      }
+    } else if (e.touches.length === 1 && touchStateRef.current.singleTouchStart) {
+      const dx = e.touches[0].clientX - touchStateRef.current.singleTouchStart.x;
+      const dy = e.touches[0].clientY - touchStateRef.current.singleTouchStart.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist > 8) {
+        touchStateRef.current.hasMoved = true;
+        setPan({
+          x: touchStateRef.current.singleTouchStart.startPanX + dx,
+          y: touchStateRef.current.singleTouchStart.startPanY + dy,
+        });
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStateRef.current.isPinching) {
+      setTimeout(() => {
+        touchStateRef.current.isPinching = false;
+      }, 100);
+      return;
+    }
+
+    if (!touchStateRef.current.hasMoved && touchStateRef.current.singleTouchStart) {
+      const now = Date.now();
+      // Dubbeltik reset naar 100%
+      if (now - touchStateRef.current.lastTapTime < 300) {
+        setZoom(1);
+        setPan({ x: 0, y: 0 });
+        touchStateRef.current.lastTapTime = 0;
+        return;
+      }
+      touchStateRef.current.lastTapTime = now;
+    }
+  };
 
   // Markers voor het huidige aanzicht
   const markersToRender = useMemo(() => {
     const list: { bone: Bone; marker: BoneMarker; isSelected: boolean }[] = [];
 
-    bones.forEach(bone => {
-      bone.markers.forEach(marker => {
+    bones.forEach((bone) => {
+      bone.markers.forEach((marker) => {
         if (marker.view === currentView || marker.view === 'both') {
           const isSelected = selectedBone?.id === bone.id;
           list.push({ bone, marker, isSelected });
@@ -45,13 +170,34 @@ export const BoneSkeletonViewer: React.FC<BoneSkeletonViewerProps> = ({
   return (
     <div
       ref={scrollWrapperRef}
+      onTouchStart={isMobile ? handleTouchStart : undefined}
+      onTouchMove={isMobile ? handleTouchMove : undefined}
+      onTouchEnd={isMobile ? handleTouchEnd : undefined}
       className="relative w-full h-full overflow-hidden flex items-center justify-center select-none bg-white"
     >
-      {/* Vaste, niet-vervormende skelet container (behoudt te allen tijde 542:1287 aspect ratio) */}
+      {/* Mobiele zoom reset indicatorknop wanneer ingezoomd */}
+      {isMobile && zoom > 1.05 && (
+        <button
+          type="button"
+          onClick={() => {
+            setZoom(1);
+            setPan({ x: 0, y: 0 });
+          }}
+          className="absolute top-2.5 right-2.5 z-30 px-2.5 py-1.5 rounded-full bg-slate-900/80 backdrop-blur-md text-white text-[11px] font-bold shadow-md flex items-center gap-1 border border-slate-700 active:scale-90 transition pointer-events-auto"
+        >
+          <RotateCcw className="w-3 h-3" />
+          <span>{Math.round(zoom * 100)}% Reset</span>
+        </button>
+      )}
+
+      {/* Vaste, schaalbare skelet container */}
       <div
         ref={containerRef}
         style={{
           aspectRatio: `${SKELETON_WIDTH} / ${SKELETON_HEIGHT}`,
+          transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+          transformOrigin: 'center center',
+          transition: touchStateRef.current.isPinching ? 'none' : 'transform 0.05s ease-out',
         }}
         className="relative h-full max-h-full max-w-full mx-auto"
       >
@@ -61,7 +207,7 @@ export const BoneSkeletonViewer: React.FC<BoneSkeletonViewerProps> = ({
           alt="Skelet - Ventraal aanzicht"
           width={SKELETON_WIDTH}
           height={SKELETON_HEIGHT}
-          className={`absolute inset-0 w-full h-full object-contain block select-none pointer-events-none transition-opacity duration-200 ${
+          className={`absolute inset-0 w-full h-full object-fill block select-none pointer-events-none transition-opacity duration-200 ${
             currentView === 'ventral' ? 'opacity-100 z-0' : 'opacity-0 z-0'
           }`}
           draggable={false}
@@ -73,7 +219,7 @@ export const BoneSkeletonViewer: React.FC<BoneSkeletonViewerProps> = ({
           alt="Skelet - Dorsaal aanzicht"
           width={SKELETON_WIDTH}
           height={SKELETON_HEIGHT}
-          className={`absolute inset-0 w-full h-full object-contain block select-none pointer-events-none transition-opacity duration-200 ${
+          className={`absolute inset-0 w-full h-full object-fill block select-none pointer-events-none transition-opacity duration-200 ${
             currentView === 'dorsal' ? 'opacity-100 z-0' : 'opacity-0 z-0'
           }`}
           draggable={false}
@@ -90,8 +236,8 @@ export const BoneSkeletonViewer: React.FC<BoneSkeletonViewerProps> = ({
             const cy = marker.y * SVG_HEIGHT;
             const isHovered = hoveredInfo?.bone.id === bone.id;
 
-            const radius = isSelected ? 18 : isHovered ? 15 : 11;
-            const hitRadius = 38;
+            const radius = isSelected ? 20 : isHovered ? 16 : 12;
+            const hitRadius = 42;
 
             const fillColor = isSelected ? '#0284c7' : isHovered ? '#0ea5e9' : '#334155';
             const strokeColor = '#ffffff';
@@ -104,24 +250,20 @@ export const BoneSkeletonViewer: React.FC<BoneSkeletonViewerProps> = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   onSelectBone?.(bone);
+                  setHoveredInfo({ bone, marker });
                 }}
                 onMouseEnter={() => setHoveredInfo({ bone, marker })}
                 onMouseLeave={() => setHoveredInfo(null)}
               >
-                {/* Onzichtbaar ruim klikgebied voor comfortabele selectie */}
-                <circle
-                  cx={cx}
-                  cy={cy}
-                  r={hitRadius}
-                  fill="transparent"
-                />
+                {/* Onzichtbaar ruim klikgebied voor touch comfort */}
+                <circle cx={cx} cy={cy} r={hitRadius} fill="transparent" />
 
                 {/* Pulserende buitenring bij geselecteerd bot */}
                 {isSelected && (
                   <circle
                     cx={cx}
                     cy={cy}
-                    r={radius * 1.9}
+                    r={radius * 1.8}
                     fill="none"
                     stroke="#0284c7"
                     strokeWidth={3}
@@ -133,13 +275,7 @@ export const BoneSkeletonViewer: React.FC<BoneSkeletonViewerProps> = ({
 
                 {/* Oplichtende gloed bij selectie */}
                 {isSelected && (
-                  <circle
-                    cx={cx}
-                    cy={cy}
-                    r={radius * 1.5}
-                    fill="#38bdf8"
-                    opacity="0.35"
-                  />
+                  <circle cx={cx} cy={cy} r={radius * 1.5} fill="#38bdf8" opacity="0.35" />
                 )}
 
                 {/* Hoofdmarker cirkel */}
@@ -154,49 +290,50 @@ export const BoneSkeletonViewer: React.FC<BoneSkeletonViewerProps> = ({
                 />
 
                 {/* Wit centrum */}
-                <circle
-                  cx={cx}
-                  cy={cy}
-                  r={radius * 0.35}
-                  fill="#ffffff"
-                />
+                <circle cx={cx} cy={cy} r={radius * 0.35} fill="#ffffff" />
               </g>
             );
           })}
         </svg>
 
-        {/* Grote, duidelijke muisover tekst (tooltip) */}
+        {/* Muisover / Tap tekst (tooltip): ALTIJD zichtbaar binnen scherm, nooit afgesneden */}
         {hoveredInfo && (() => {
-          const isNearTop = hoveredInfo.marker.y < 0.18;
+          // Plaats onder het punt als het punt zich in de bovenste 38% bevindt, anders erboven
+          const isNearTop = hoveredInfo.marker.y < 0.38;
+          // Klem X tussen 20% en 80% zodat de tooltip links of rechts nooit het scherm verlaat
+          const clampedX = Math.max(22, Math.min(78, hoveredInfo.marker.x * 100));
+
           return (
             <div
               style={{
                 position: 'absolute',
-                left: `${hoveredInfo.marker.x * 100}%`,
+                left: `${clampedX}%`,
                 top: `${hoveredInfo.marker.y * 100}%`,
-                transform: isNearTop ? 'translate(-50%, 18px)' : 'translate(-50%, calc(-100% - 18px))',
+                transform: `${
+                  isNearTop ? 'translate(-50%, 14px)' : 'translate(-50%, calc(-100% - 14px))'
+                } scale(${1 / Math.max(1, zoom)})`,
                 transformOrigin: isNearTop ? 'top center' : 'bottom center',
               }}
-              className="z-50 pointer-events-none select-none transition-all duration-75"
+              className="z-50 pointer-events-none select-none transition-all duration-75 max-w-[85vw] sm:max-w-[340px]"
             >
               {isNearTop && (
-                <div className="w-0 h-0 border-x-8 border-x-transparent border-b-8 border-b-slate-900/95 mx-auto" />
+                <div className="w-0 h-0 border-x-6 border-x-transparent border-b-6 border-b-slate-900/95 mx-auto" />
               )}
-              <div className="bg-slate-900/95 text-white px-5 py-3 rounded-2xl shadow-2xl border border-sky-400/60 backdrop-blur-md flex flex-col items-center gap-1 min-w-[220px] max-w-[380px] text-center">
-                <div className="text-xl font-black text-white tracking-wide">
+              <div className="bg-slate-900/95 text-white px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl shadow-2xl border border-sky-400/60 backdrop-blur-md flex flex-col items-center gap-0.5 text-center">
+                <div className="text-sm sm:text-base font-black text-white tracking-wide leading-tight">
                   {hoveredInfo.bone.latinName}
                 </div>
-                <div className="text-base font-bold text-sky-300">
+                <div className="text-xs sm:text-sm font-bold text-sky-300 leading-tight">
                   {hoveredInfo.bone.dutchName}
                 </div>
                 {hoveredInfo.marker.subpart && (
-                  <div className="text-sm font-extrabold text-amber-300 bg-amber-950/90 px-3 py-1 rounded-lg border border-amber-500/40 mt-1">
+                  <div className="text-[11px] font-extrabold text-amber-300 bg-amber-950/90 px-2 py-0.5 rounded-md border border-amber-500/40 mt-1">
                     {hoveredInfo.marker.subpart}
                   </div>
                 )}
               </div>
               {!isNearTop && (
-                <div className="w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-slate-900/95 mx-auto" />
+                <div className="w-0 h-0 border-x-6 border-x-transparent border-t-6 border-t-slate-900/95 mx-auto" />
               )}
             </div>
           );

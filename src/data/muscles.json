@@ -1908,8 +1908,8 @@
         ],
         "insertions": [
           {
-            "x": 0.5691,
-            "y": 0.7355,
+            "x": 0.5717,
+            "y": 0.7344,
             "name": "condylus medialis tibiae"
           }
         ],
@@ -1931,8 +1931,8 @@
         ],
         "insertions": [
           {
-            "x": 0.4309,
-            "y": 0.7355,
+            "x": 0.4283,
+            "y": 0.7344,
             "name": "condylus medialis tibiae"
           }
         ],
@@ -1972,8 +1972,8 @@
         ],
         "insertions": [
           {
-            "x": 0.5691,
-            "y": 0.7355,
+            "x": 0.5717,
+            "y": 0.7344,
             "name": "condylus medialis tibiae"
           }
         ],
@@ -1995,8 +1995,8 @@
         ],
         "insertions": [
           {
-            "x": 0.4309,
-            "y": 0.7355,
+            "x": 0.4283,
+            "y": 0.7344,
             "name": "condylus medialis tibiae"
           }
         ],
@@ -2011,138 +2011,6 @@
       }
     },
     "otherFunctions": "Vormt samen met gracilis en sartorius de pes anserinus superficialis."
-  },
-  {
-    "id": "tensor_fasciae_latae",
-    "name": "m. tensor fascia latae",
-    "latinName": "m. tensor fascia latae",
-    "view": "ventral",
-    "symmetryType": "bilateral",
-    "jointCategories": [],
-    "originText": "SIAS",
-    "insertionText": "condylus lateralis tibiae (via tractus iliotibialis)",
-    "functionText": "Abductie art. coxae",
-    "visuals": {
-      "right": {
-        "origins": [
-          {
-            "x": 0.3325,
-            "y": 0.4075,
-            "name": "SIAS"
-          }
-        ],
-        "insertions": [
-          {
-            "x": 0.3597,
-            "y": 0.7172,
-            "name": "condylus lateralis tibiae (via tractus iliotibialis)"
-          }
-        ],
-        "musclePath": [
-          {
-            "x": 0.288,
-            "y": 0.495,
-            "name": "bocht over trochanter major via tractus iliotibialis"
-          }
-        ],
-        "attachmentLines": []
-      },
-      "left": {
-        "origins": [
-          {
-            "x": 0.6675,
-            "y": 0.4075,
-            "name": "SIAS"
-          }
-        ],
-        "insertions": [
-          {
-            "x": 0.6403,
-            "y": 0.7172,
-            "name": "condylus lateralis tibiae (via tractus iliotibialis)"
-          }
-        ],
-        "musclePath": [
-          {
-            "x": 0.712,
-            "y": 0.495,
-            "name": "bocht over trochanter major via tractus iliotibialis"
-          }
-        ],
-        "attachmentLines": []
-      }
-    },
-    "otherFunctions": "Spant de tractus iliotibialis; stabiliseert de knie in strekking en het bekken in stand."
-  },
-  {
-    "id": "gluteus_medius",
-    "name": "m. gluteus medius",
-    "latinName": "m. gluteus medius",
-    "view": "dorsal",
-    "symmetryType": "bilateral",
-    "jointCategories": [],
-    "originText": "dorso-lateraal op os ilium",
-    "insertionText": "trochanter major",
-    "functionText": "Abductie art. coxae",
-    "visuals": {
-      "right": {
-        "origins": [
-          {
-            "x": 0.6113,
-            "y": 0.4356,
-            "name": "dorso-lateraal op os ilium"
-          }
-        ],
-        "insertions": [
-          {
-            "x": 0.6833,
-            "y": 0.4865,
-            "name": "trochanter major"
-          }
-        ],
-        "musclePath": []
-      },
-      "left": {
-        "origins": [
-          {
-            "x": 0.3887,
-            "y": 0.4356,
-            "name": "dorso-lateraal op os ilium"
-          }
-        ],
-        "insertions": [
-          {
-            "x": 0.3167,
-            "y": 0.4865,
-            "name": "trochanter major"
-          }
-        ],
-        "musclePath": [],
-        "attachmentLines": [
-          {
-            "id": "line-origin-gluteus-med-ala-left",
-            "name": "Ala ossis ilii & crista iliaca",
-            "type": "origin",
-            "points": [
-              {
-                "x": 0.3963,
-                "y": 0.4496
-              },
-              {
-                "x": 0.3932,
-                "y": 0.4337
-              },
-              {
-                "x": 0.372,
-                "y": 0.419
-              }
-            ],
-            "tolerance": 0.045
-          }
-        ]
-      }
-    },
-    "otherFunctions": "Essentiële bekkenstabilisator in enkelbeensstand; voorkomt positief Trendelenburg-teken."
   },
   {
     "id": "adductores",

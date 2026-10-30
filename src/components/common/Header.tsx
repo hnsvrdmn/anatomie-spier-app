@@ -1,39 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useMuscles } from '../../context/MuscleContext';
-import { BookOpen, GraduationCap, Edit3, ListChecks, Activity, Bone } from 'lucide-react';
+import { BookOpen, GraduationCap, Edit3, ListChecks, Activity, Bone, HelpCircle } from 'lucide-react';
 import { useIsMobile } from '../../hooks/useIsMobile';
+import { HelpModal } from './HelpModal';
 
 export const Header: React.FC = () => {
   const { appMode, setAppMode, quizPracticeMode, setQuizPracticeMode } = useMuscles();
   const isMobile = useIsMobile();
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
-  // Mobiele navigatie: Spieren, Botten, Bewegingen, Oefen, Toets
+  // Mobiele navigatie: Spieren, Botten, Bewegingen, Oefen, Test (alleen duidelijke iconen)
   const mobileNavItems = [
     {
       id: 'study',
       label: 'Spieren',
-      icon: <BookOpen className="w-3.5 h-3.5" />,
+      icon: <BookOpen className="w-5 h-5" />,
       isActive: appMode === 'study',
       onClick: () => setAppMode('study'),
     },
     {
       id: 'bones',
       label: 'Botten',
-      icon: <Bone className="w-3.5 h-3.5" />,
+      icon: <Bone className="w-5 h-5" />,
       isActive: appMode === 'bones',
       onClick: () => setAppMode('bones'),
     },
     {
       id: 'movements',
       label: 'Bewegingen',
-      icon: <Activity className="w-3.5 h-3.5" />,
+      icon: <Activity className="w-5 h-5" />,
       isActive: appMode === 'movements',
       onClick: () => setAppMode('movements'),
     },
     {
       id: 'quiz-joint',
       label: 'Oefen',
-      icon: <GraduationCap className="w-3.5 h-3.5" />,
+      icon: <GraduationCap className="w-5 h-5" />,
       isActive: appMode === 'quiz' && quizPracticeMode === 'joint',
       onClick: () => {
         setAppMode('quiz');
@@ -42,8 +44,8 @@ export const Header: React.FC = () => {
     },
     {
       id: 'quiz-free',
-      label: 'Toets',
-      icon: <ListChecks className="w-3.5 h-3.5" />,
+      label: 'Test',
+      icon: <ListChecks className="w-5 h-5" />,
       isActive: appMode === 'quiz' && quizPracticeMode === 'free',
       onClick: () => {
         setAppMode('quiz');
@@ -52,7 +54,7 @@ export const Header: React.FC = () => {
     },
   ];
 
-  // Desktop navigatie: Spieren, Botten, Bewegingen, Oefenen, Toetsen, Bewerken
+  // Desktop navigatie: Spieren, Botten, Bewegingen, Oefenen, Testen, Bewerken
   const desktopNavItems = [
     {
       id: 'study',
@@ -87,7 +89,7 @@ export const Header: React.FC = () => {
     },
     {
       id: 'quiz-free',
-      label: 'Toetsen',
+      label: 'Testen',
       icon: <ListChecks className="w-4 h-4" />,
       isActive: appMode === 'quiz' && quizPracticeMode === 'free',
       onClick: () => {
@@ -105,46 +107,65 @@ export const Header: React.FC = () => {
   ];
 
   return (
-    <header className="bg-clinical-900 text-white border-b border-clinical-800 shadow-md sticky top-0 z-30">
-      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-center h-14 sm:h-16">
-          {/* Modus Selectie (Gecentreerd) */}
-          <nav className="flex items-center bg-clinical-950 p-1 rounded-xl border border-clinical-800 shadow-inner">
-            {isMobile ? (
-              mobileNavItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={item.onClick}
-                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                    item.isActive
-                      ? 'bg-blue-600 text-white shadow-sm ring-1 ring-blue-400'
-                      : 'text-clinical-400 hover:text-white hover:bg-clinical-800/60'
-                  }`}
-                >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </button>
-              ))
-            ) : (
-              desktopNavItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={item.onClick}
-                  className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
-                    item.isActive
-                      ? 'bg-blue-600 text-white shadow-sm ring-1 ring-blue-400'
-                      : 'text-clinical-400 hover:text-white hover:bg-clinical-800/60'
-                  }`}
-                >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </button>
-              ))
-            )}
-          </nav>
+    <>
+      <header className="bg-clinical-900 text-white border-b border-clinical-800 shadow-md sticky top-0 z-30">
+        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+          <div className="relative flex items-center justify-center h-14 sm:h-16">
+            {/* Modus Selectie (Gecentreerd) */}
+            <nav className="flex items-center bg-clinical-950 p-1 rounded-xl border border-clinical-800 shadow-inner gap-1">
+              {isMobile ? (
+                mobileNavItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={item.onClick}
+                    title={item.label}
+                    aria-label={item.label}
+                    className={`flex items-center justify-center p-2 rounded-lg transition-all ${
+                      item.isActive
+                        ? 'bg-blue-600 text-white shadow-sm ring-1 ring-blue-400'
+                        : 'text-clinical-400 hover:text-white hover:bg-clinical-800/60'
+                    }`}
+                  >
+                    {item.icon}
+                  </button>
+                ))
+              ) : (
+                desktopNavItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={item.onClick}
+                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
+                      item.isActive
+                        ? 'bg-blue-600 text-white shadow-sm ring-1 ring-blue-400'
+                        : 'text-clinical-400 hover:text-white hover:bg-clinical-800/60'
+                    }`}
+                  >
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </button>
+                ))
+              )}
+            </nav>
+
+            {/* Hulpknop met ? icoontje rechts in de header */}
+            <div className="absolute right-1 sm:right-2 flex items-center">
+              <button
+                type="button"
+                onClick={() => setIsHelpOpen(true)}
+                className="p-1.5 sm:p-2 rounded-xl text-clinical-300 hover:text-white hover:bg-clinical-800 transition active:scale-95"
+                title="Hulp & Uitleg (?)"
+                aria-label="Hulp & Uitleg"
+              >
+                <HelpCircle className="w-5 h-5 text-clinical-300 hover:text-white" />
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      {/* Interactief Hulpvenster */}
+      <HelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
+    </>
   );
 };
 

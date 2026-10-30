@@ -15,13 +15,69 @@ import {
   MuscleVisualData
 } from '../../types/anatomy';
 import { JOINT_CATEGORIES, getJointCategory } from '../../data/jointCategories';
-import { getMovementQuestionOptions, ALL_MOVEMENT_OPTIONS } from '../../data/muscleMovements';
-import { JOINTS_LEARNING_DATA } from '../../data/jointTypesData';
+import { getMovementQuestionOptions, MUSCLE_MOVEMENTS } from '../../data/muscleMovements';
+import { READER_BONES } from '../../data/bonesData';
+import { getRandomJointQuestion, getJointMCOptions, JointQuizItem } from '../../data/jointQuestions';
 import { evaluatePointSet, distanceToSegment, projectToSegment, getAccuracy } from '../../utils/coordinates';
 import { validateAnatomicalAnswer, AnswerValidationResult } from '../../utils/answerMatching';
+import { isForbiddenMuscle } from '../../utils/export';
 import { RefreshCw, Check, Award, CheckCircle2, Shuffle, Square, CheckSquare, GraduationCap, ListChecks } from 'lucide-react';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { MobileQuizView } from './MobileQuizView';
+
+// Schoon spiernaam op zodat eventuele tekst tussen haakjes (zoals MP: of deel v.) het antwoord niet verraadt
+const cleanMuscleName = (name: string): string => {
+  return name.replace(/\s*\([^)]*\)/g, '').trim();
+};
+
+// Schoon functie/werkingstekst op: geen gewrichtsnamen (art. ...) en geen tekst tussen haakjes
+const cleanFunctionText = (muscleId: string, fallback?: string): string => {
+  const movs = MUSCLE_MOVEMENTS[muscleId];
+  if (movs && movs.length > 0) {
+    return movs.map((m) => m.replace(/\s*\([^)]*\)/g, '').trim()).join(', ');
+  }
+  if (fallback) {
+    return fallback
+      .replace(/\b(in\s+)?(het\s+)?art(\.|iculatio)?\s+[a-z\-]+/gi, '')
+      .replace(/\([^)]*\)/g, '')
+      .replace(/\s*[,/\\|]\s*[,/\\|]+/g, ',')
+      .replace(/^[,/\\|\s]+|[,/\\|\s]+$/g, '')
+      .replace(/\s\s+/g, ' ')
+      .trim();
+  }
+  return 'Geen specifieke werking';
+};
+
+// Schoon origo- en insertietekst op: verwijdert verklarende tekst tussen haakjes of gelijktekens die het antwoord weggeven
+const cleanAttachmentText = (text?: string): string => {
+  if (!text) return '';
+  return text
+    .replace(/\([^)]*\)/g, '')
+    .replace(/\s*(=[^,|;]+)/g, '')
+    .replace(/\s*[,/\\|]\s*[,/\\|]+/g, ', ')
+    .replace(/^[,/\\|\s]+|[,/\\|\s]+$/g, '')
+    .replace(/\s\s+/g, ' ')
+    .trim();
+};
+
+// Selecteer afleiders bij voorkeur uit hetzelfde gewricht / dezelfde regio om de toets uitdagender te maken
+const getRelatedDistractorMuscles = (target: Muscle, pool: Muscle[], count = 3): Muscle[] => {
+  const targetJoints = target.jointCategories || [];
+  const sameJointMuscles = pool.filter(
+    (m) => m.id !== target.id && m.jointCategories && m.jointCategories.some((j) => targetJoints.includes(j))
+  );
+
+  const shuffledSameJoint = [...sameJointMuscles].sort(() => 0.5 - Math.random());
+  if (shuffledSameJoint.length >= count) {
+    return shuffledSameJoint.slice(0, count);
+  }
+
+  const otherMuscles = pool.filter(
+    (m) => m.id !== target.id && !shuffledSameJoint.some((sj) => sj.id === m.id)
+  );
+  const shuffledOthers = [...otherMuscles].sort(() => 0.5 - Math.random());
+  return [...shuffledSameJoint, ...shuffledOthers].slice(0, count);
+};
 
 const initialStats = (): QuizStatsData => ({
   totalQuestions: 0,
@@ -42,7 +98,6 @@ export const QuizView: React.FC = () => {
     quizPracticeMode,
     setQuizPracticeMode,
     jointPracticeType,
-    setJointPracticeType
   } = useMuscles();
 
   // Hoofdmodus binnen de quiz: 'joint' (Oefenen per gewricht) of 'free' (Vrije toets)
@@ -129,12 +184,18 @@ export const QuizView: React.FC = () => {
     multiple_choice: initialStats(),
     movements: initialStats(),
     open_question: initialStats(),
+    bone: initialStats(),
+    joints: initialStats(),
     function: initialStats(),
     all: initialStats(),
   });
 
   const activeStatsKey = practiceMode === 'joint' ? 'joint' : freeQuizType;
   const currentStats = statsByType[activeStatsKey] || initialStats();
+
+  const cleanMuscles = useMemo(() => {
+    return muscles.filter((m) => !isForbiddenMuscle(m));
+  }, [muscles]);
 
   const activeJointCategory = useMemo(() => {
     if (selectedJointId === 'all') {
@@ -144,18 +205,18 @@ export const QuizView: React.FC = () => {
         name: 'alle gewrichten & spieren',
         pageInfo: 'Alle spieren',
         title: 'Alle spieren (door elkaar)',
-        muscleIds: muscles.map((m) => m.id),
+        muscleIds: cleanMuscles.map((m) => m.id),
       };
     }
     return getJointCategory(selectedJointId) || JOINT_CATEGORIES[0];
-  }, [selectedJointId, muscles]);
+  }, [selectedJointId, cleanMuscles]);
 
   // Spieren behorend tot het actieve gewricht (met optionele shuffle)
   const jointMuscles = useMemo(() => {
     if (!activeJointCategory) return [];
     const base = activeJointCategory.muscleIds
-      .map((id) => muscles.find((m) => m.id === id))
-      .filter((m): m is Muscle => m !== undefined);
+      .map((id) => cleanMuscles.find((m) => m.id === id))
+      .filter((m): m is Muscle => m !== undefined && !isForbiddenMuscle(m));
 
     if (isShuffled || selectedJointId === 'all') {
       // Shuffled volgorde gebaseerd op Fisher-Yates shuffle
@@ -167,11 +228,11 @@ export const QuizView: React.FC = () => {
       return copy;
     }
     return base;
-  }, [activeJointCategory, muscles, isShuffled, shuffleCounter, selectedJointId]);
+  }, [activeJointCategory, cleanMuscles, isShuffled, shuffleCounter, selectedJointId]);
 
   // Aantal verwachte punten per zijde (ondersteunt brede aanhechtingen zoals wervels)
   const getExpectedCounts = useCallback((side: 'left' | 'right' | 'midline') => {
-    if (!currentQuestion) return { origins: 1, insertions: 1, rawOrigins: 1, rawInsertions: 1, total: 2, isMultiSpan: false };
+    if (!currentQuestion || !currentQuestion.muscle) return { origins: 1, insertions: 1, rawOrigins: 1, rawInsertions: 1, total: 2, isMultiSpan: false };
     const vis = currentQuestion.muscle.visuals[side] || { origins: [], insertions: [] };
     const rawOrigins = vis.origins?.length || 1;
     const rawInsertions = vis.insertions?.length || 1;
@@ -228,66 +289,11 @@ export const QuizView: React.FC = () => {
     }
   }, [isEvaluated, activeQuizTool, expectedCounts, userOrigins.length, userInsertions.length, hasScaledForOrigins]);
 
-  // Genereer vraag voor het geselecteerde gewricht op positie index
+  // Genereer vraag voor het geselecteerde gewricht op positie index (puur Origo & Insertie)
   const loadJointQuestion = useCallback((mIndex: number) => {
     if (jointMuscles.length === 0) return;
     const muscle = jointMuscles[mIndex];
     if (!muscle) return;
-
-    if (jointPracticeType === 'movements') {
-      let correctMovements: string[] = [];
-      let movementOptions: string[] = [];
-
-      const jointData = JOINTS_LEARNING_DATA[selectedJointId];
-      if (jointData && selectedJointId !== 'all') {
-        correctMovements = jointData.movements
-          .filter((m) => m.muscleIds.includes(muscle.id))
-          .map((m) => m.movement);
-        const allJointMovs = jointData.movements.map((m) => m.movement);
-        const distractors = ALL_MOVEMENT_OPTIONS.filter(
-          (opt) => !correctMovements.includes(opt) && !allJointMovs.includes(opt)
-        );
-        const needed = Math.max(0, 6 - allJointMovs.length);
-        const shuffledDistractors = [...distractors].sort(() => 0.5 - Math.random()).slice(needed > 0 ? needed : 0);
-        movementOptions = Array.from(new Set([...allJointMovs, ...shuffledDistractors])).sort(() => 0.5 - Math.random());
-      } else {
-        const movData = getMovementQuestionOptions(muscle.id, 8);
-        correctMovements = movData.correctMovements;
-        movementOptions = movData.options;
-      }
-
-      setCurrentQuestion({
-        id: `joint-mov-${selectedJointId}-${muscle.id}-${Date.now()}`,
-        muscle,
-        type: 'movements',
-        side: 'left',
-        jointId: selectedJointId,
-        jointIndex: mIndex + 1,
-        jointTotal: jointMuscles.length,
-        movementOptions,
-        correctMovements,
-      });
-
-      setUserOrigins([]);
-      setUserInsertions([]);
-      setUserOpenAnswer('');
-      setOpenAnswerFeedback(null);
-      setActiveQuizTool('origin');
-      setSelectedMultipleChoiceId(null);
-      setSelectedMovements([]);
-      setIsMultipleChoiceSuccess(false);
-      setIsMovementSuccess(false);
-      setIsEvaluated(false);
-      setIsPlacementSuccess(false);
-      setMatchResults([]);
-      setShowReferenceGhost(false);
-      setEvaluatedSide('left');
-      setHasScaledForOrigins(false);
-      setIsScalingInsertion(false);
-
-      setCurrentView(muscle.view);
-      return;
-    }
 
     setCurrentQuestion({
       id: `joint-${selectedJointId}-${muscle.id}-${Date.now()}`,
@@ -313,7 +319,8 @@ export const QuizView: React.FC = () => {
     setEvaluatedSide('left');
     setHasScaledForOrigins(false);
     setIsScalingInsertion(false);
-  }, [jointMuscles, selectedJointId, jointPracticeType, setCurrentView]);
+    setCurrentView(muscle.view);
+  }, [jointMuscles, selectedJointId, setCurrentView]);
 
   // Helper om een bondige werking/functie beschrijving te genereren ZONDER gewrichtsnamen (puur beweging en functie)
   const getMuscleFunctionDescription = useCallback((m: Muscle): string => {
@@ -328,64 +335,208 @@ export const QuizView: React.FC = () => {
 
   // Genereer een nieuwe willekeurige vraag voor de 'free' modus
   const generateNewFreeQuestion = useCallback((typeOverride?: QuizType | 'all') => {
-    if (muscles.length === 0) return;
-
     const targetType = typeOverride !== undefined ? typeOverride : freeQuizType;
-    let randMuscle = muscles[Math.floor(Math.random() * muscles.length)];
+
+    // Speciaal type: Bot identificatie (open vraag met stip op skelet zonder tekst)
+    if (targetType === 'bone') {
+      const bonesWithMarkers = READER_BONES.filter((b) => b.markers && b.markers.length > 0);
+      const randBone = bonesWithMarkers[Math.floor(Math.random() * bonesWithMarkers.length)];
+      const randMarker = randBone.markers[Math.floor(Math.random() * randBone.markers.length)];
+      const markerView: 'ventral' | 'dorsal' = randMarker.view === 'both'
+        ? (Math.random() < 0.5 ? 'ventral' : 'dorsal')
+        : randMarker.view;
+
+      const markerPoint: Point2D = {
+        x: randMarker.x,
+        y: randMarker.y,
+        view: markerView,
+        side: randMarker.side,
+      };
+
+      const officialAnswer = randMarker.subpart
+        ? `${randBone.latinName} (${randBone.dutchName}) • ${randMarker.subpart}`
+        : `${randBone.latinName} (${randBone.dutchName})`;
+
+      const acceptable: string[] = [
+        randBone.latinName,
+        randBone.latinName.replace(/^os(sa)?\s+/i, ''),
+        randBone.dutchName,
+      ];
+
+      if (randMarker.subpart) {
+        acceptable.push(randMarker.subpart);
+        const match = randMarker.subpart.match(/^([^(]+)(?:\(([^)]+)\))?/);
+        if (match) {
+          if (match[1]) {
+            const p1 = match[1].trim();
+            acceptable.push(p1);
+            acceptable.push(p1.replace(/^os(sa)?\s+/i, ''));
+          }
+          if (match[2]) {
+            acceptable.push(match[2].trim());
+          }
+        }
+      }
+
+      if (randBone.id === 'os_coxae') {
+        acceptable.push('pelvis', 'bekken');
+      }
+
+      setCurrentQuestion({
+        id: `bone-${randBone.id}-${Date.now()}`,
+        type: 'bone',
+        bone: randBone,
+        boneMarker: randMarker,
+        targetBoneMarker: markerPoint,
+        correctOpenAnswer: officialAnswer,
+        acceptableAnswers: Array.from(new Set(acceptable)),
+        side: randMarker.side,
+        options: [],
+      });
+
+      setUserOrigins([]);
+      setUserInsertions([]);
+      setUserOpenAnswer('');
+      setOpenAnswerFeedback(null);
+      setActiveQuizTool('origin');
+      setSelectedMultipleChoiceId(null);
+      setSelectedMovements([]);
+      setIsMultipleChoiceSuccess(false);
+      setIsMovementSuccess(false);
+      setIsEvaluated(false);
+      setIsPlacementSuccess(false);
+      setMatchResults([]);
+      setShowReferenceGhost(false);
+      setEvaluatedSide(randMarker.side);
+      setHasScaledForOrigins(false);
+      setIsScalingInsertion(false);
+
+      setCurrentView(markerView);
+      return;
+    }
+
+    // Speciaal type: Gewrichten (lossen test over gewrichtstypen, assen, deelgewrichten en bewegingen)
+    if (targetType === 'joints') {
+      const jointItem = getRandomJointQuestion();
+      const mcTextOptions = getJointMCOptions(jointItem);
+
+      setCurrentQuestion({
+        id: `joints-${jointItem.id}-${Date.now()}`,
+        type: 'joints',
+        jointQuizItem: jointItem,
+        mcTextOptions,
+        correctMcText: jointItem.correctAnswer,
+        correctOpenAnswer: jointItem.correctAnswer,
+        acceptableAnswers: jointItem.acceptableAnswers,
+        side: 'left',
+        options: [],
+      });
+
+      setUserOrigins([]);
+      setUserInsertions([]);
+      setUserOpenAnswer('');
+      setOpenAnswerFeedback(null);
+      setActiveQuizTool('origin');
+      setSelectedMultipleChoiceId(null);
+      setSelectedMovements([]);
+      setIsMultipleChoiceSuccess(false);
+      setIsMovementSuccess(false);
+      setIsEvaluated(false);
+      setIsPlacementSuccess(false);
+      setMatchResults([]);
+      setShowReferenceGhost(false);
+      return;
+    }
+
+    if (cleanMuscles.length === 0) return;
+
+    let randMuscle = cleanMuscles[Math.floor(Math.random() * cleanMuscles.length)];
     let type: QuizType = 'full';
 
     if (targetType === 'all') {
-      const types: QuizType[] = ['full', 'landmark', 'multiple_choice', 'movements', 'open_question'];
+      const types: QuizType[] = ['bone', 'full', 'landmark', 'multiple_choice', 'movements', 'open_question', 'joints'];
       type = types[Math.floor(Math.random() * types.length)];
+      if (type === 'bone') {
+        generateNewFreeQuestion('bone');
+        return;
+      }
+      if (type === 'joints') {
+        generateNewFreeQuestion('joints');
+        return;
+      }
     } else {
       type = targetType;
     }
 
     let options: Muscle[] = [];
-    let mcKind: 'muscle' | 'origin' | 'insertion' | 'function' | undefined;
+    let mcKind: 'muscle' | 'origin' | 'insertion' | 'function' | 'joint' | undefined;
     let mcSubtype: 'origin' | 'insertion' | undefined;
     let mcTextOptions: string[] | undefined;
     let correctMcText: string | undefined;
+    let jointQuizItem: JointQuizItem | undefined;
 
-    // Samengevoegde meerkeuzetoets: wisselt willekeurig af tussen identificatie, origo, insertie en functie
+    // Samengevoegde meerkeuzetoets: wisselt willekeurig af tussen identificatie, origo, insertie, functie én gewrichten
+    // Vragen zijn uitdagender gemaakt doordat afleiders bij voorkeur uit hetzelfde gewricht / dezelfde regio komen
     if (type === 'multiple_choice') {
-      const kinds: ('muscle' | 'origin' | 'insertion' | 'function')[] = ['muscle', 'origin', 'insertion', 'function'];
+      const kinds: ('muscle' | 'origin' | 'insertion' | 'function' | 'joint')[] = ['muscle', 'origin', 'insertion', 'function', 'joint'];
       mcKind = kinds[Math.floor(Math.random() * kinds.length)];
+      const relatedDistractors = getRelatedDistractorMuscles(randMuscle, cleanMuscles, 3);
 
       if (mcKind === 'muscle') {
-        correctMcText = randMuscle.name;
-        const otherMuscles = muscles
-          .filter((m) => m.id !== randMuscle.id)
-          .map((m) => m.name);
-        const shuffledOthers = Array.from(new Set(otherMuscles)).sort(() => 0.5 - Math.random()).slice(0, 3);
-        mcTextOptions = [correctMcText, ...shuffledOthers].sort(() => 0.5 - Math.random());
+        correctMcText = cleanMuscleName(randMuscle.name);
+        const distractorNames = relatedDistractors.map((m) => cleanMuscleName(m.name));
+        const uniqueOthers = Array.from(new Set(distractorNames.filter((t) => t !== correctMcText)));
+        while (uniqueOthers.length < 3) {
+          const fallback = cleanMuscles[Math.floor(Math.random() * cleanMuscles.length)];
+          const cleanName = cleanMuscleName(fallback.name);
+          if (cleanName !== correctMcText && !uniqueOthers.includes(cleanName)) {
+            uniqueOthers.push(cleanName);
+          }
+        }
+        mcTextOptions = [correctMcText, ...uniqueOthers.slice(0, 3)].sort(() => 0.5 - Math.random());
       } else if (mcKind === 'origin') {
         mcSubtype = 'origin';
-        correctMcText = randMuscle.originText;
-        const otherTexts = muscles
-          .filter((m) => m.id !== randMuscle.id)
-          .map((m) => m.originText)
-          .filter((t): t is string => Boolean(t && t.trim() !== '' && t !== correctMcText));
-        const shuffledOthers = Array.from(new Set(otherTexts)).sort(() => 0.5 - Math.random()).slice(0, 3);
-        mcTextOptions = [correctMcText, ...shuffledOthers].sort(() => 0.5 - Math.random());
+        correctMcText = cleanAttachmentText(randMuscle.originText);
+        const distractorTexts = relatedDistractors.map((m) => cleanAttachmentText(m.originText));
+        const uniqueOthers = Array.from(new Set(distractorTexts.filter((t) => Boolean(t && t.trim() !== '' && t !== correctMcText))));
+        while (uniqueOthers.length < 3) {
+          const fallback = cleanMuscles[Math.floor(Math.random() * cleanMuscles.length)];
+          const cleaned = cleanAttachmentText(fallback.originText);
+          if (cleaned && cleaned !== correctMcText && !uniqueOthers.includes(cleaned)) {
+            uniqueOthers.push(cleaned);
+          }
+        }
+        mcTextOptions = [correctMcText, ...uniqueOthers.slice(0, 3)].sort(() => 0.5 - Math.random());
       } else if (mcKind === 'insertion') {
         mcSubtype = 'insertion';
-        correctMcText = randMuscle.insertionText;
-        const otherTexts = muscles
-          .filter((m) => m.id !== randMuscle.id)
-          .map((m) => m.insertionText)
-          .filter((t): t is string => Boolean(t && t.trim() !== '' && t !== correctMcText));
-        const shuffledOthers = Array.from(new Set(otherTexts)).sort(() => 0.5 - Math.random()).slice(0, 3);
-        mcTextOptions = [correctMcText, ...shuffledOthers].sort(() => 0.5 - Math.random());
+        correctMcText = cleanAttachmentText(randMuscle.insertionText);
+        const distractorTexts = relatedDistractors.map((m) => cleanAttachmentText(m.insertionText));
+        const uniqueOthers = Array.from(new Set(distractorTexts.filter((t) => Boolean(t && t.trim() !== '' && t !== correctMcText))));
+        while (uniqueOthers.length < 3) {
+          const fallback = cleanMuscles[Math.floor(Math.random() * cleanMuscles.length)];
+          const cleaned = cleanAttachmentText(fallback.insertionText);
+          if (cleaned && cleaned !== correctMcText && !uniqueOthers.includes(cleaned)) {
+            uniqueOthers.push(cleaned);
+          }
+        }
+        mcTextOptions = [correctMcText, ...uniqueOthers.slice(0, 3)].sort(() => 0.5 - Math.random());
+      } else if (mcKind === 'joint') {
+        jointQuizItem = getRandomJointQuestion();
+        correctMcText = jointQuizItem.correctAnswer;
+        mcTextOptions = getJointMCOptions(jointQuizItem);
       } else {
-        // 'function'
-        correctMcText = randMuscle.functionText || getMuscleFunctionDescription(randMuscle) || 'Geen specifieke functie';
-        const otherTexts = muscles
-          .filter((m) => m.id !== randMuscle.id)
-          .map((m) => m.functionText || getMuscleFunctionDescription(m))
-          .filter((t): t is string => Boolean(t && t.trim() !== '' && t !== correctMcText));
-        const shuffledOthers = Array.from(new Set(otherTexts)).sort(() => 0.5 - Math.random()).slice(0, 3);
-        mcTextOptions = [correctMcText, ...shuffledOthers].sort(() => 0.5 - Math.random());
+        // 'function': zuivere bewegingen zonder 'art.' en zonder spoilers tussen haakjes
+        correctMcText = cleanFunctionText(randMuscle.id, randMuscle.functionText);
+        const distractorTexts = relatedDistractors.map((m) => cleanFunctionText(m.id, m.functionText));
+        const uniqueOthers = Array.from(new Set(distractorTexts.filter((t) => Boolean(t && t.trim() !== '' && t !== correctMcText))));
+        while (uniqueOthers.length < 3) {
+          const fallback = cleanMuscles[Math.floor(Math.random() * cleanMuscles.length)];
+          const fText = cleanFunctionText(fallback.id, fallback.functionText);
+          if (fText && fText !== correctMcText && !uniqueOthers.includes(fText)) {
+            uniqueOthers.push(fText);
+          }
+        }
+        mcTextOptions = [correctMcText, ...uniqueOthers.slice(0, 3)].sort(() => 0.5 - Math.random());
       }
     }
 
@@ -422,16 +573,10 @@ export const QuizView: React.FC = () => {
         correctOpenAnswer = randMuscle.insertionText;
         acceptableAnswers = [randMuscle.insertionText];
       } else {
-        // 'joint'
-        const jId = randMuscle.jointCategories?.[0] || 'coxae';
-        const jCat = getJointCategory(jId);
-        correctOpenAnswer = jCat?.title || jId;
-        acceptableAnswers = [
-          jCat?.title || '',
-          jCat?.name || '',
-          jCat?.pageInfo || '',
-          jId,
-        ].filter(Boolean);
+        // 'joint' vraag: stel een vraag over typen, assen, deelgewrichten of bewegingen
+        jointQuizItem = getRandomJointQuestion();
+        correctOpenAnswer = jointQuizItem.correctAnswer;
+        acceptableAnswers = jointQuizItem.acceptableAnswers;
       }
     }
 
@@ -471,6 +616,7 @@ export const QuizView: React.FC = () => {
       openKind,
       correctOpenAnswer,
       acceptableAnswers,
+      jointQuizItem,
     });
 
     setUserOrigins([]);
@@ -492,7 +638,7 @@ export const QuizView: React.FC = () => {
 
     // Schakel automatisch over naar het juiste aanzicht van de spier
     setCurrentView(randMuscle.view);
-  }, [muscles, freeQuizType, getMuscleFunctionDescription, setCurrentView]);
+  }, [cleanMuscles, freeQuizType, getMuscleFunctionDescription, setCurrentView]);
 
   // Initialisatie effect
   useEffect(() => {
@@ -531,7 +677,7 @@ export const QuizView: React.FC = () => {
 
   // Evalueer poging met tweezijdige herkenning (links EN rechts worden geaccepteerd!)
   const evaluateAttempt = (originsToEval: Point2D[], insertionsToEval: Point2D[]) => {
-    if (!currentQuestion) return;
+    if (!currentQuestion || !currentQuestion.muscle) return;
 
     const muscle = currentQuestion.muscle;
     const isMidline = muscle.symmetryType === 'midline';
@@ -730,7 +876,7 @@ export const QuizView: React.FC = () => {
             ...current.history,
             {
               questionId: currentQuestion.id,
-              muscleId: currentQuestion.muscle.id,
+              muscleId: currentQuestion.muscle?.id || 'muscle',
               type: currentQuestion.type,
               isCorrect: isSuccess,
               score: Math.round((bestCorrectCount / (bestRequired || 1)) * 100),
@@ -745,7 +891,14 @@ export const QuizView: React.FC = () => {
   // Afhandeling klik op skelet (links of rechts) met automatische controle bij eenvoudige spieren
   const handleSkeletonClick = (point: Point2D, isRightClick: boolean = false) => {
     if (isEvaluated || !currentQuestion) return;
-    if (currentQuestion.type === 'multiple_choice' || currentQuestion.type === 'movements' || currentQuestion.type === 'function') return;
+    if (
+      currentQuestion.type === 'multiple_choice' || 
+      currentQuestion.type === 'movements' || 
+      currentQuestion.type === 'function' ||
+      currentQuestion.type === 'open_question' ||
+      currentQuestion.type === 'bone' ||
+      !currentQuestion.muscle
+    ) return;
 
     // Aanzichtvalidatie in single-view modus
     if (viewLayout !== 'both' && currentView !== currentQuestion.muscle.view) {
@@ -829,7 +982,7 @@ export const QuizView: React.FC = () => {
 
     const isSuccess = currentQuestion.correctMcText
       ? chosenTextOrId === currentQuestion.correctMcText
-      : chosenTextOrId === currentQuestion.muscle.id;
+      : chosenTextOrId === currentQuestion.muscle?.id;
 
     setIsMultipleChoiceSuccess(isSuccess);
     setIsPlacementSuccess(isSuccess);
@@ -860,7 +1013,7 @@ export const QuizView: React.FC = () => {
             ...current.history,
             {
               questionId: currentQuestion.id,
-              muscleId: currentQuestion.muscle.id,
+              muscleId: currentQuestion.muscle?.id || 'muscle',
               type: 'multiple_choice',
               isCorrect: isSuccess,
               score: isSuccess ? 100 : 0,
@@ -922,7 +1075,7 @@ export const QuizView: React.FC = () => {
             ...current.history,
             {
               questionId: currentQuestion.id,
-              muscleId: currentQuestion.muscle.id,
+              muscleId: currentQuestion.muscle?.id || 'muscle',
               type: 'movements',
               isCorrect: isSuccess,
               score: isSuccess ? 100 : 0,
@@ -938,7 +1091,7 @@ export const QuizView: React.FC = () => {
   const handleOpenAnswerSubmit = () => {
     if (isEvaluated || !currentQuestion) return;
 
-    const official = currentQuestion.correctOpenAnswer || currentQuestion.muscle.name;
+    const official = currentQuestion.correctOpenAnswer || currentQuestion.muscle?.name || 'Onbekend';
     const result = validateAnatomicalAnswer(
       userOpenAnswer,
       official,
@@ -976,8 +1129,8 @@ export const QuizView: React.FC = () => {
             ...current.history,
             {
               questionId: currentQuestion.id,
-              muscleId: currentQuestion.muscle.id,
-              type: 'open_question',
+              muscleId: currentQuestion.muscle?.id || currentQuestion.bone?.id || 'bone',
+              type: currentQuestion.type === 'bone' ? 'bone' : 'open_question',
               isCorrect: isSuccess,
               score: result.score,
               accuracyDetails: isSuccess
@@ -1091,6 +1244,8 @@ export const QuizView: React.FC = () => {
         setUserOpenAnswer={setUserOpenAnswer}
         handleOpenAnswerSubmit={handleOpenAnswerSubmit}
         openAnswerFeedback={openAnswerFeedback}
+        toleranceMode={toleranceMode}
+        setToleranceMode={setToleranceMode}
       />
     );
   }
@@ -1109,7 +1264,7 @@ export const QuizView: React.FC = () => {
             <ViewToggle
               currentView={currentView}
               onViewChange={setCurrentView}
-              recommendedView={muscle.view}
+              recommendedView={muscle?.view || currentView}
               showBothOption={true}
               activeLayout={viewLayout}
               onLayoutChange={setViewLayout}
@@ -1134,7 +1289,7 @@ export const QuizView: React.FC = () => {
         {/* Skelet Container met SVG Overlay (vaste stabiele hoogte, beweegt NOOIT naar beneden) */}
         <div className="flex-1 min-h-0 w-full h-full flex items-center justify-center py-1 overflow-hidden relative">
           {/* Origo & Insertie knoppen links naast het hoofd van het skelet, onder elkaar */}
-          {!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'landmark' && type !== 'open_question' && (
+          {!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'landmark' && type !== 'open_question' && type !== 'bone' && (
             <div className="absolute left-3 sm:left-5 top-3 sm:top-5 z-20 flex flex-col gap-2">
               <button
                 type="button"
@@ -1146,7 +1301,7 @@ export const QuizView: React.FC = () => {
                 }`}
               >
                 <span className={`w-2 h-2 rounded-full shrink-0 ${activeQuizTool === 'origin' ? 'bg-white' : 'bg-blue-600'}`} />
-                <span>Origo ({userOrigins.length})</span>
+                <span>Origo</span>
               </button>
 
               <button
@@ -1159,7 +1314,7 @@ export const QuizView: React.FC = () => {
                 } ${isScalingInsertion ? 'animate-subtle-scale' : ''}`}
               >
                 <span className={`w-2 h-2 rounded-full shrink-0 ${activeQuizTool === 'insertion' ? 'bg-white' : 'bg-red-600'}`} />
-                <span>Insertie ({userInsertions.length})</span>
+                <span>Insertie</span>
               </button>
             </div>
           )}
@@ -1168,49 +1323,45 @@ export const QuizView: React.FC = () => {
             <div className="w-full h-full grid grid-cols-2 gap-4">
               {/* Ventraal skelet links */}
               <div className="relative w-full h-full flex flex-col items-center justify-center border-r border-slate-100 pr-2">
-                <span className="absolute top-2 left-2 text-[10px] font-black uppercase tracking-wider text-slate-500 bg-slate-100/90 px-2 py-0.5 rounded-md z-10 shadow-2xs">
-                  Ventraal
-                </span>
                 <SkeletonViewer
                   currentView="ventral"
                   activeMuscle={
-                    (type === 'multiple_choice' || type === 'movements' || type === 'function' || type === 'open_question' || isEvaluated) && muscle.view === 'ventral'
+                    (type === 'multiple_choice' || type === 'movements' || type === 'function' || type === 'open_question' || isEvaluated) && muscle?.view === 'ventral'
                       ? muscle
                       : undefined
                   }
                   activeSide={evaluatedSide}
-                  interactive={!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question'}
+                  interactive={!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question' && type !== 'bone'}
                   onSkeletonClick={(pt, isRight) => handleSkeletonClick({ ...pt, view: 'ventral' }, isRight)}
                   onUpdateUserPoint={handleUpdateUserPoint}
                   onDeleteUserPoint={handleDeleteUserPoint}
                   quizMatches={ventralMatches}
-                  showReferenceGhost={showReferenceGhost && muscle.view === 'ventral'}
+                  showReferenceGhost={showReferenceGhost && muscle?.view === 'ventral'}
                   userOrigins={ventralOrigins}
                   userInsertions={ventralInsertions}
+                  targetBoneMarker={currentQuestion?.targetBoneMarker}
                 />
               </div>
 
               {/* Dorsaal skelet rechts */}
               <div className="relative w-full h-full flex flex-col items-center justify-center pl-2">
-                <span className="absolute top-2 left-2 text-[10px] font-black uppercase tracking-wider text-slate-500 bg-slate-100/90 px-2 py-0.5 rounded-md z-10 shadow-2xs">
-                  Dorsaal
-                </span>
                 <SkeletonViewer
                   currentView="dorsal"
                   activeMuscle={
-                    (type === 'multiple_choice' || type === 'movements' || type === 'function' || type === 'open_question' || isEvaluated) && muscle.view === 'dorsal'
+                    (type === 'multiple_choice' || type === 'movements' || type === 'function' || type === 'open_question' || isEvaluated) && muscle?.view === 'dorsal'
                       ? muscle
                       : undefined
                   }
                   activeSide={evaluatedSide}
-                  interactive={!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question'}
+                  interactive={!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question' && type !== 'bone'}
                   onSkeletonClick={(pt, isRight) => handleSkeletonClick({ ...pt, view: 'dorsal' }, isRight)}
                   onUpdateUserPoint={handleUpdateUserPoint}
                   onDeleteUserPoint={handleDeleteUserPoint}
                   quizMatches={dorsalMatches}
-                  showReferenceGhost={showReferenceGhost && muscle.view === 'dorsal'}
+                  showReferenceGhost={showReferenceGhost && muscle?.view === 'dorsal'}
                   userOrigins={dorsalOrigins}
                   userInsertions={dorsalInsertions}
+                  targetBoneMarker={currentQuestion?.targetBoneMarker}
                 />
               </div>
             </div>
@@ -1218,12 +1369,12 @@ export const QuizView: React.FC = () => {
             <SkeletonViewer
               currentView={currentView}
               activeMuscle={
-                type === 'multiple_choice' || type === 'movements' || type === 'function' || type === 'open_question' || isEvaluated
+                (type === 'multiple_choice' || type === 'movements' || type === 'function' || type === 'open_question' || isEvaluated)
                   ? muscle
                   : undefined
               }
               activeSide={evaluatedSide}
-              interactive={!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question'}
+              interactive={!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question' && type !== 'bone'}
               onSkeletonClick={(pt, isRight) => handleSkeletonClick({ ...pt, view: currentView }, isRight)}
               onUpdateUserPoint={handleUpdateUserPoint}
               onDeleteUserPoint={handleDeleteUserPoint}
@@ -1231,36 +1382,21 @@ export const QuizView: React.FC = () => {
               showReferenceGhost={showReferenceGhost}
               userOrigins={userOrigins}
               userInsertions={userInsertions}
+              targetBoneMarker={currentQuestion?.targetBoneMarker}
             />
           )}
         </div>
 
         {/* Onderbalk met status & instructies (vaste h-8) */}
         <div className="w-full h-8 shrink-0 flex items-center justify-between pt-2 border-t border-clinical-100 text-xs text-clinical-600 gap-2">
-          <div className="flex items-center gap-2 font-medium">
-            {type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question' && (
-              <>
-                {type === 'landmark' ? (
-                  <span className="font-bold text-slate-700">
-                    {currentQuestion.landmarkType === 'origin' ? 'Origo' : 'Insertie'}: {(currentQuestion.landmarkType === 'origin' ? userOrigins.length : userInsertions.length)} geplaatst
-                  </span>
-                ) : (
-                  <>
-                    <span className="text-blue-700 font-bold">Origo: {userOrigins.length} geplaatst</span>
-                    <span className="text-clinical-300">•</span>
-                    <span className="text-rose-700 font-bold">Insertie: {userInsertions.length} geplaatst</span>
-                  </>
-                )}
-              </>
-            )}
-          </div>
+          <div className="flex-1 min-w-0" />
           {!isEvaluated && (userOrigins.length > 0 || userInsertions.length > 0) && (
             <button
               type="button"
               onClick={() => {
                 setUserOrigins([]);
                 setUserInsertions([]);
-                setActiveQuizTool(currentQuestion.landmarkType === 'insertion' ? 'insertion' : 'origin');
+                setActiveQuizTool(currentQuestion?.landmarkType === 'insertion' ? 'insertion' : 'origin');
               }}
               className="text-xs text-rose-600 hover:text-rose-800 font-semibold underline"
             >
@@ -1302,13 +1438,13 @@ export const QuizView: React.FC = () => {
               }`}
             >
               <ListChecks className="w-3.5 h-3.5" />
-              <span>Toetsen</span>
+              <span>Testen</span>
             </button>
           </div>
 
           <div className="flex items-center justify-between pt-1 border-t border-clinical-100">
             <label className="text-[11px] font-bold text-clinical-700 uppercase tracking-wider">
-              {practiceMode === 'joint' ? 'Selecteer Gewricht' : 'Selecteer Toetstype'}
+              {practiceMode === 'joint' ? 'Selecteer Gewricht' : 'Selecteer Testtype'}
             </label>
             {practiceMode === 'joint' && (
               <div className="flex items-center gap-2">
@@ -1355,54 +1491,24 @@ export const QuizView: React.FC = () => {
                   </option>
                 ))}
               </select>
-
-              {/* Submodus: Aanhechtingen of Bewegingen oefenen */}
-              <div className="grid grid-cols-2 gap-1.5 p-1 bg-clinical-100/80 rounded-xl border border-clinical-200">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setJointPracticeType('attachments');
-                    setJointSessionFinished(false);
-                  }}
-                  className={`py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
-                    jointPracticeType === 'attachments'
-                      ? 'bg-blue-600 text-white shadow-xs'
-                      : 'text-clinical-700 hover:text-clinical-950 hover:bg-white/60'
-                  }`}
-                >
-                  <span>📌 Origo & Insertie</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setJointPracticeType('movements');
-                    setJointSessionFinished(false);
-                  }}
-                  className={`py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
-                    jointPracticeType === 'movements'
-                      ? 'bg-blue-600 text-white shadow-xs'
-                      : 'text-clinical-700 hover:text-clinical-950 hover:bg-white/60'
-                  }`}
-                >
-                  <span>⚡ Bewegingen</span>
-                </button>
-              </div>
             </div>
           ) : (
             <select
               value={freeQuizType}
               onChange={(e) => {
-                const nextType = e.target.value as QuizType;
+                const nextType = e.target.value as QuizType | 'all';
                 setFreeQuizType(nextType);
                 generateNewFreeQuestion(nextType);
               }}
               className="w-full px-3 py-2 bg-clinical-50 border border-clinical-200 rounded-xl text-xs sm:text-sm font-semibold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
             >
-              <option value="full">Origo én insertie plaatsen (alle spieren)</option>
-              <option value="landmark">Vind aanhechtingspunt (origo / insertie)</option>
-              <option value="multiple_choice">Meerkeuze toets (MC)</option>
-              <option value="open_question">Open invultoets</option>
+              <option value="bone">Bot benoemen</option>
+              <option value="full">Origo en insertie plaatsen</option>
+              <option value="landmark">Vind aanhechtingspunt</option>
+              <option value="multiple_choice">Meerkeuze test</option>
+              <option value="open_question">Open invultest</option>
               <option value="movements">Bewegingen per spier</option>
+              <option value="joints">Gewrichten</option>
             </select>
           )}
 
@@ -1422,45 +1528,45 @@ export const QuizView: React.FC = () => {
         </div>
 
         {/* Nauwkeurigheid tolerantie selector - alleen relevant bij tekenvragen */}
-        {type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question' && (
+        {type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question' && type !== 'bone' && type !== 'joints' && (
           <div className="bg-white px-3.5 py-2.5 rounded-2xl border border-clinical-200/90 shadow-sm flex items-center justify-between gap-1 text-[11px]">
             <span className="font-bold text-slate-700">Tolerantie:</span>
             <div className="flex items-center gap-1">
               <button
                 type="button"
                 onClick={() => setToleranceMode('normal')}
-                className={`px-2 py-1 rounded-lg font-bold transition text-[10px] ${
+                className={`px-2.5 py-1 rounded-lg font-bold transition text-[11px] ${
                   toleranceMode === 'normal'
                     ? 'bg-blue-600 text-white shadow-xs'
                     : 'bg-clinical-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
                 }`}
-                title="Normaal: 3.5% marge"
+                title="Laag: ruime marge (3.5%)"
               >
-                Normaal (3.5%)
+                Laag
               </button>
               <button
                 type="button"
                 onClick={() => setToleranceMode('strict')}
-                className={`px-2 py-1 rounded-lg font-bold transition text-[10px] ${
+                className={`px-2.5 py-1 rounded-lg font-bold transition text-[11px] ${
                   toleranceMode === 'strict'
                     ? 'bg-blue-600 text-white shadow-xs'
                     : 'bg-clinical-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
                 }`}
-                title="Strikt: 2.5% marge"
+                title="Medium: gemiddelde marge (2.5%)"
               >
-                Strikt (2.5%)
+                Medium
               </button>
               <button
                 type="button"
                 onClick={() => setToleranceMode('expert')}
-                className={`px-2 py-1 rounded-lg font-bold transition text-[10px] ${
+                className={`px-2.5 py-1 rounded-lg font-bold transition text-[11px] ${
                   toleranceMode === 'expert'
                     ? 'bg-blue-600 text-white shadow-xs'
                     : 'bg-clinical-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
                 }`}
-                title="Zeer strikt: 1.5% marge"
+                title="Strikt: nauwe marge (1.5%)"
               >
-                Zeer strikt (1.5%)
+                Strikt
               </button>
             </div>
           </div>
@@ -1522,25 +1628,51 @@ export const QuizView: React.FC = () => {
 
             {/* Vraagtekst met duidelijke hiërarchie (Spiernaam direct in het oog springend) */}
             <div>
-              {type === 'joint' || (practiceMode === 'joint' && jointPracticeType === 'attachments') || (type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'landmark' && type !== 'open_question') ? (
+              {type === 'bone' ? (
+                <div>
+                  <div className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1">
+                    Bot benoemen
+                  </div>
+                  <h3 className="text-base sm:text-lg font-black text-clinical-900 leading-snug">
+                    Welk bot is hier gemarkeerd met de stip?
+                  </h3>
+                  <p className="text-xs text-clinical-500 mt-1">
+                    Typ de Latijnse of Nederlandse naam van het bot in het invulveld hieronder.
+                  </p>
+                </div>
+              ) : type === 'joint' || (practiceMode === 'joint' && jointPracticeType === 'attachments') || (type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'landmark' && type !== 'open_question' && type !== 'joints') ? (
                 <div>
                   <div className="text-xs font-semibold text-clinical-500 uppercase tracking-wider mb-1">
                     Plaats de origo en insertie van:
                   </div>
                   <h3 className="text-xl sm:text-2xl font-black text-blue-950 tracking-tight">
-                    {muscle.name}
+                    {cleanMuscleName(muscle?.name || '')}
+                  </h3>
+                </div>
+              ) : type === 'joints' ? (
+                <div>
+                  <div className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1">
+                    Gewrichten • {currentQuestion.jointQuizItem?.topic || 'Theorie'}
+                  </div>
+                  <h3 className="text-base sm:text-lg font-black text-clinical-900 leading-snug">
+                    {currentQuestion.jointQuizItem?.question || 'Beantwoord de vraag over het gewricht:'}
                   </h3>
                 </div>
               ) : type === 'open_question' ? (
                 <div>
+                  <div className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1">
+                    {currentQuestion.openKind === 'joint'
+                      ? `Gewrichten • ${currentQuestion.jointQuizItem?.topic || 'Open Vraag'}`
+                      : 'Open Invultest'}
+                  </div>
                   <h3 className="text-base sm:text-lg font-black text-clinical-900 leading-snug">
                     {currentQuestion.openKind === 'muscle'
                       ? 'Welke spier is hier op het skelet gemarkeerd?'
                       : currentQuestion.openKind === 'origin'
-                      ? `Wat is de juiste origo van de ${muscle.name}?`
+                      ? `Wat is de juiste origo van de ${cleanMuscleName(muscle?.name || '')}?`
                       : currentQuestion.openKind === 'insertion'
-                      ? `Wat is de juiste insertie van de ${muscle.name}?`
-                      : `Over welk gewricht (articulatio) loopt de ${muscle.name} voornamelijk?`}
+                      ? `Wat is de juiste insertie van de ${cleanMuscleName(muscle?.name || '')}?`
+                      : currentQuestion.jointQuizItem?.question || `Over welk gewricht loopt de ${cleanMuscleName(muscle?.name || '')} voornamelijk?`}
                   </h3>
                 </div>
               ) : type === 'movements' ? (
@@ -1549,11 +1681,11 @@ export const QuizView: React.FC = () => {
                     {practiceMode === 'joint' ? `Beweging in ${activeJointCategory.title}` : 'Bewegingen & functies'}
                   </div>
                   <h3 className="text-xl sm:text-2xl font-black text-blue-950 tracking-tight mb-1.5">
-                    {muscle.name}
+                    {cleanMuscleName(muscle?.name || '')}
                   </h3>
                   <p className="text-xs text-clinical-600">
                     {practiceMode === 'joint'
-                      ? `Welke beweging(en) verzorgt de ${muscle.name} in dit gewricht? Vink alle juiste opties aan.`
+                      ? `Welke beweging(en) verzorgt de ${cleanMuscleName(muscle?.name || '')} in dit gewricht? Vink alle juiste opties aan.`
                       : 'Welke bewegingen verzorgt deze spier? Vink alle juiste opties aan (meerdere antwoorden mogelijk).'}
                   </p>
                 </div>
@@ -1566,23 +1698,27 @@ export const QuizView: React.FC = () => {
                       ? 'Origo van de spier'
                       : currentQuestion.mcKind === 'insertion'
                       ? 'Insertie van de spier'
+                      : currentQuestion.mcKind === 'joint'
+                      ? `Gewrichten • ${currentQuestion.jointQuizItem?.topic || 'Theorie'}`
                       : 'Functie & werking'}
                   </div>
                   <h3 className="text-base sm:text-lg font-black text-clinical-900 leading-snug">
                     {currentQuestion.mcKind === 'muscle'
                       ? 'Welke spier is hier op het skelet gemarkeerd?'
                       : currentQuestion.mcKind === 'origin'
-                      ? `Wat is de juiste origo van de ${muscle.name}?`
+                      ? `Wat is de juiste origo van de ${cleanMuscleName(muscle?.name || '')}?`
                       : currentQuestion.mcKind === 'insertion'
-                      ? `Wat is de juiste insertie van de ${muscle.name}?`
-                      : `Wat is de juiste werking/functie van de ${muscle.name}?`}
+                      ? `Wat is de juiste insertie van de ${cleanMuscleName(muscle?.name || '')}?`
+                      : currentQuestion.mcKind === 'joint'
+                      ? currentQuestion.jointQuizItem?.question
+                      : `Wat is de juiste werking/functie van de ${cleanMuscleName(muscle?.name || '')}?`}
                   </h3>
                 </div>
               ) : (
                 <h3 className="text-base sm:text-lg font-black text-clinical-900 leading-snug">
                   {type === 'landmark'
                     ? 'Wijs dit aanhechtingspunt aan op het skelet:'
-                    : `Plaats de origo en insertie van de ${muscle.name}`}
+                    : `Plaats de origo en insertie van de ${cleanMuscleName(muscle?.name || '')}`}
                 </h3>
               )}
 
@@ -1592,17 +1728,17 @@ export const QuizView: React.FC = () => {
                     {currentQuestion.landmarkType === 'origin' ? 'Origo' : 'Insertie'}:
                   </div>
                   <div className="text-sm sm:text-base font-extrabold text-blue-950">
-                    📍 {currentQuestion.landmarkText}
+                    📍 {cleanAttachmentText(currentQuestion.landmarkText)}
                   </div>
                   {isEvaluated && (
                     <div className="text-xs text-clinical-600 font-semibold pt-1 border-t border-blue-200/60 mt-1.5">
-                      Behoort bij: <span className="text-clinical-900 font-bold">{muscle.name}</span>
+                      Behoort bij: <span className="text-clinical-900 font-bold">{cleanMuscleName(muscle?.name || '')}</span>
                     </div>
                   )}
                 </div>
               )}
 
-              {type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'landmark' && type !== 'open_question' && expectedCounts.isMultiSpan && (
+              {type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'landmark' && type !== 'open_question' && type !== 'bone' && type !== 'joints' && expectedCounts.isMultiSpan && (
                 <p className="text-xs text-amber-800 bg-amber-50 p-2.5 rounded-xl border border-amber-200 mt-2 font-medium">
                   💡 Bij meerdere aanhechtingen (bijv. wervelkolom): plaats minimaal de uiterste punten (hoogste en laagste).
                 </p>
@@ -1610,7 +1746,7 @@ export const QuizView: React.FC = () => {
             </div>
 
             {/* DUIDELIJK ZICHTBARE TOGGLE: ORIGO / INSERTIE INTEKENEN (zonder overbodig label) */}
-            {!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'landmark' && type !== 'open_question' && (
+            {!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'landmark' && type !== 'open_question' && type !== 'bone' && type !== 'joints' && (
               <div className="pt-1">
                 <div className="grid grid-cols-2 gap-2">
                   <button
@@ -1623,7 +1759,7 @@ export const QuizView: React.FC = () => {
                     }`}
                   >
                     <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${activeQuizTool === 'origin' ? 'bg-white' : 'bg-blue-600'}`} />
-                    <span>Origo ({userOrigins.length})</span>
+                    <span>Origo</span>
                   </button>
 
                   <button
@@ -1636,7 +1772,7 @@ export const QuizView: React.FC = () => {
                     } ${isScalingInsertion ? 'animate-subtle-scale' : ''}`}
                   >
                     <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${activeQuizTool === 'insertion' ? 'bg-white' : 'bg-red-600'}`} />
-                    <span>Insertie ({userInsertions.length})</span>
+                    <span>Insertie</span>
                   </button>
                 </div>
               </div>
@@ -1654,8 +1790,8 @@ export const QuizView: React.FC = () => {
               </button>
             )}
 
-            {/* Meerkeuze Opties: Samengevoegd (Identificatie, Origo, Insertie of Functie) */}
-            {type === 'multiple_choice' && currentQuestion.mcTextOptions && (
+            {/* Meerkeuze Opties: Samengevoegd (Identificatie, Origo, Insertie, Functie of Gewrichten) */}
+            {(type === 'multiple_choice' || type === 'joints') && currentQuestion.mcTextOptions && (
               <div className="space-y-2 pt-2 border-t border-clinical-100">
                 <label className="text-[11px] font-bold text-clinical-600 uppercase tracking-wider block">
                   Kies het juiste antwoord:
@@ -1761,7 +1897,7 @@ export const QuizView: React.FC = () => {
             )}
 
             {/* Open Invultoets: Zelf typen met soepele vergevingsgezinde controle */}
-            {type === 'open_question' && (
+            {(type === 'open_question' || type === 'bone') && (
               <div className="space-y-3 pt-2 border-t border-clinical-100">
                 <div>
                   <input
@@ -1775,7 +1911,7 @@ export const QuizView: React.FC = () => {
                         handleOpenAnswerSubmit();
                       }
                     }}
-                    placeholder="Typ jouw antwoord..."
+                    placeholder={type === 'bone' ? 'Typ naam van het bot (bijv. Os coxae of Heupbeen)...' : 'Typ jouw antwoord...'}
                     className="w-full px-3.5 py-2.5 bg-clinical-50 border border-clinical-200 rounded-xl text-sm font-bold text-clinical-950 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
                   />
                 </div>
@@ -1818,6 +1954,7 @@ export const QuizView: React.FC = () => {
                 isPlacementSuccess={isPlacementSuccess}
                 userOpenAnswer={userOpenAnswer}
                 openValidationResult={openAnswerFeedback}
+                jointExplanation={currentQuestion.jointQuizItem?.explanation}
               />
             )}
 

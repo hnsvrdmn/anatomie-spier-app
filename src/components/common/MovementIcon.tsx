@@ -206,8 +206,8 @@ export const MovementIcon: React.FC<MovementIconProps> = ({ movement, className 
   if (norm.startsWith('laterorotatie')) {
     return (
       <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M6 18a9 9 0 0 1 12-8" />
-        <polyline points="18 4 18 10 12 10" />
+        <path d="M7 17c0-5 4-9 9-9h3" />
+        <polyline points="15 4 19 8 15 12" />
       </svg>
     );
   }
@@ -216,8 +216,8 @@ export const MovementIcon: React.FC<MovementIconProps> = ({ movement, className 
   if (norm.startsWith('mediorotatie')) {
     return (
       <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M18 18a9 9 0 0 0-12-8" />
-        <polyline points="6 4 6 10 12 10" />
+        <path d="M17 17c0-5-4-9-9-9H5" />
+        <polyline points="9 4 5 8 9 12" />
       </svg>
     );
   }

@@ -3,7 +3,7 @@ import { useBones } from '../../context/BoneContext';
 import { useMuscles } from '../../context/MuscleContext';
 import { BoneMarker } from '../../data/bonesData';
 import { SKELETON_WIDTH, SKELETON_HEIGHT, clientToNormalized } from '../../utils/coordinates';
-import { RotateCcw, Download } from 'lucide-react';
+import { RotateCcw, Download, Upload } from 'lucide-react';
 
 export const SVG_WIDTH = 1000;
 export const SVG_HEIGHT = 2374.54;
@@ -91,7 +91,7 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
           alt={`Skelet - ${view === 'ventral' ? 'Ventraal' : 'Dorsaal'}`}
           width={SKELETON_WIDTH}
           height={SKELETON_HEIGHT}
-          className="absolute inset-0 w-full h-full object-contain block select-none pointer-events-none"
+          className="absolute inset-0 w-full h-full object-fill block select-none pointer-events-none"
           draggable={false}
         />
 
@@ -198,8 +198,31 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
 };
 
 export const BoneEditorView: React.FC = () => {
-  const { bones, updateBonePoint, resetBones, exportBonesJson } = useBones();
+  const { bones, updateBonePoint, resetBones, exportBonesJson, importBonesJson } = useBones();
   const { showToast } = useMuscles();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const text = event.target?.result as string;
+        const parsed = JSON.parse(text);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          importBonesJson(parsed);
+          showToast('Botten dataset succesvol geïmporteerd!', 'success');
+        } else {
+          showToast('Ongeldig JSON-formaat voor botten dataset.', 'error');
+        }
+      } catch {
+        showToast('Fout bij importeren van JSON-bestand.', 'error');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
 
   // Alle markers voor het ventrale aanzicht
   const ventralMarkers = useMemo(() => {
@@ -265,10 +288,29 @@ export const BoneEditorView: React.FC = () => {
             type="button"
             onClick={exportBonesJson}
             className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold transition flex items-center gap-1.5 shadow-2xs"
+            title="Download huidige botten data als JSON bestand"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Exporteer JSON</span>
           </button>
+
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="px-3 py-1.5 rounded-xl border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold transition flex items-center gap-1.5 shadow-2xs"
+            title="Upload een eerder opgeslagen botten JSON bestand"
+          >
+            <Upload className="w-3.5 h-3.5" />
+            <span>Importeer JSON</span>
+          </button>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json,application/json"
+            onChange={handleFileUpload}
+            className="hidden"
+          />
         </div>
       </div>
 

@@ -13,7 +13,8 @@ import {
   saveMusclesToLocalStorage, 
   saveMusclesToDisk,
   loadMusclesFromLocalStorage, 
-  resetLocalStorage 
+  resetLocalStorage,
+  isForbiddenMuscle
 } from '../utils/export';
 import { mirrorPoints } from '../utils/coordinates';
 
@@ -70,7 +71,8 @@ const MuscleContext = createContext<MuscleContextType | undefined>(undefined);
 export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [muscles, setMuscles] = useState<Muscle[]>(() => {
     const saved = loadMusclesFromLocalStorage();
-    return saved || (initialMusclesData as unknown as Muscle[]);
+    const source = saved || (initialMusclesData as unknown as Muscle[]);
+    return source.filter((m) => !isForbiddenMuscle(m));
   });
 
   const [selectedMuscleIds, setSelectedMuscleIds] = useState<string[]>(() => {
@@ -559,13 +561,14 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       showToast('Ongeldig JSON-bestand: geen spieren gevonden', 'error');
       return;
     }
-    setMuscles(newMuscles);
-    saveMusclesToLocalStorage(newMuscles);
-    const saved = await saveMusclesToDisk(newMuscles);
+    const cleanMuscles = newMuscles.filter(m => !isForbiddenMuscle(m));
+    setMuscles(cleanMuscles);
+    saveMusclesToLocalStorage(cleanMuscles);
+    const saved = await saveMusclesToDisk(cleanMuscles);
     if (saved) {
-      showToast(`${newMuscles.length} spieren geïmporteerd én permanent opgeslagen op schijf!`, 'success');
+      showToast(`${cleanMuscles.length} spieren geïmporteerd én permanent opgeslagen op schijf!`, 'success');
     } else {
-      showToast(`${newMuscles.length} spieren succesvol geïmporteerd in browser!`, 'success');
+      showToast(`${cleanMuscles.length} spieren succesvol geïmporteerd in browser!`, 'success');
     }
   }, [showToast]);
 

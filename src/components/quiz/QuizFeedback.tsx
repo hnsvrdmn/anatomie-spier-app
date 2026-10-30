@@ -8,14 +8,14 @@ import { MovementIcon } from '../common/MovementIcon';
 import { MUSCLE_MOVEMENTS } from '../../data/muscleMovements';
 
 interface QuizFeedbackProps {
-  muscle: Muscle;
+  muscle?: Muscle;
   matches: MatchResult[];
   targetCount: number;
   showReferenceGhost?: boolean;
   onToggleReference?: () => void;
   onNextQuestion: () => void;
   quizType?: QuizType;
-  mcKind?: 'muscle' | 'origin' | 'insertion' | 'function' | 'joint';
+  mcKind?: 'muscle' | 'origin' | 'insertion' | 'function' | 'joint' | 'bone';
   landmarkType?: 'origin' | 'insertion';
   isMultipleChoiceSuccess?: boolean;
   isPlacementSuccess?: boolean;
@@ -25,6 +25,7 @@ interface QuizFeedbackProps {
   correctMovementsText?: string;
   userOpenAnswer?: string;
   openValidationResult?: AnswerValidationResult | null;
+  jointExplanation?: string;
 }
 
 export const QuizFeedback: React.FC<QuizFeedbackProps> = ({
@@ -43,12 +44,14 @@ export const QuizFeedback: React.FC<QuizFeedbackProps> = ({
   correctMovementsText,
   userOpenAnswer,
   openValidationResult,
+  jointExplanation,
 }) => {
-  const isOpenQuestion = quizType === 'open_question';
+  const isJoints = quizType === 'joints';
+  const isOpenQuestion = quizType === 'open_question' || quizType === 'bone';
   const isMultipleChoice = quizType === 'multiple_choice';
   const isFunctionChoice = quizType === 'function';
   const isMovements = quizType === 'movements';
-  const isChoiceQuestion = isMultipleChoice || isFunctionChoice || isMovements;
+  const isChoiceQuestion = isMultipleChoice || isFunctionChoice || isMovements || isJoints;
   const isTextOrChoice = isChoiceQuestion || isOpenQuestion;
 
   const correctCount = matches.filter((m) => m.accuracy === 'correct').length;
@@ -64,28 +67,34 @@ export const QuizFeedback: React.FC<QuizFeedbackProps> = ({
 
   // Bepaal exact welke referentiekaarten relevant zijn voor de specifieke quiz
   const showOriginCard =
-    quizType === 'joint' ||
-    quizType === 'full' ||
-    quizType === 'origins' ||
-    (quizType === 'landmark' && landmarkType === 'origin') ||
-    ((isMultipleChoice || isOpenQuestion) && (mcKind === 'origin' || mcKind === 'muscle'));
+    !!muscle && (
+      quizType === 'joint' ||
+      quizType === 'full' ||
+      quizType === 'origins' ||
+      (quizType === 'landmark' && landmarkType === 'origin') ||
+      ((isMultipleChoice || isOpenQuestion) && (mcKind === 'origin' || mcKind === 'muscle'))
+    );
 
   const showInsertionCard =
-    quizType === 'joint' ||
-    quizType === 'full' ||
-    quizType === 'insertions' ||
-    (quizType === 'landmark' && landmarkType === 'insertion') ||
-    ((isMultipleChoice || isOpenQuestion) && (mcKind === 'insertion' || mcKind === 'muscle'));
+    !!muscle && (
+      quizType === 'joint' ||
+      quizType === 'full' ||
+      quizType === 'insertions' ||
+      (quizType === 'landmark' && landmarkType === 'insertion') ||
+      ((isMultipleChoice || isOpenQuestion) && (mcKind === 'insertion' || mcKind === 'muscle'))
+    );
 
   const showMovementCard =
-    isMovements ||
-    (isMultipleChoice && mcKind === 'function') ||
-    quizType === 'function' ||
-    quizType === 'joint' ||
-    quizType === 'full' ||
-    ((isMultipleChoice || isOpenQuestion) && mcKind === 'muscle');
+    !!muscle && (
+      isMovements ||
+      (isMultipleChoice && mcKind === 'function') ||
+      quizType === 'function' ||
+      quizType === 'joint' ||
+      quizType === 'full' ||
+      ((isMultipleChoice || isOpenQuestion) && mcKind === 'muscle')
+    );
 
-  const muscleMovementsList = MUSCLE_MOVEMENTS[muscle.id];
+  const muscleMovementsList = muscle ? MUSCLE_MOVEMENTS[muscle.id] : undefined;
 
   return (
     <div className="bg-white p-4 sm:p-5 rounded-2xl border border-clinical-200/90 shadow-sm space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
@@ -125,15 +134,19 @@ export const QuizFeedback: React.FC<QuizFeedbackProps> = ({
                 ? 'Je hebt het juiste antwoord ingevuld!'
                 : openValidationResult?.isClose
                 ? 'Je antwoord leek heel sterk op het juiste antwoord, let nog even op de spelling.'
-                : `Het juiste antwoord was: ${correctAnswerText || muscle.name}.`
+                : `Het juiste antwoord was: ${correctAnswerText || muscle?.name || ''}.`
             ) : isMovements ? (
               isFullSuccess
-                ? `Je hebt alle juiste bewegingen geselecteerd voor de ${muscle.name}.`
+                ? `Je hebt alle juiste bewegingen geselecteerd voor de ${muscle?.name || ''}.`
                 : `Niet alle juiste bewegingen waren gekozen.`
+            ) : (isJoints || mcKind === 'joint') ? (
+              isFullSuccess
+                ? 'Correct beantwoord!'
+                : `Het juiste antwoord was: ${correctAnswerText || ''}.`
             ) : isChoiceQuestion ? (
               isFullSuccess
-                ? `Je hebt het juiste antwoord gekozen voor de ${muscle.name}.`
-                : `Het juiste antwoord was: ${correctAnswerText || muscle.name}.`
+                ? `Je hebt het juiste antwoord gekozen${muscle?.name ? ` voor de ${muscle.name}` : ''}.`
+                : `Het juiste antwoord was: ${correctAnswerText || muscle?.name || ''}.`
             ) : (
               <>
                 {correctCount}/{targetCount} punten exact geplaatst (&lt; 0.035 afstand).
@@ -156,7 +169,7 @@ export const QuizFeedback: React.FC<QuizFeedbackProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
             <span className="text-slate-500 font-semibold">Verwacht antwoord:</span>
             <span className="font-extrabold text-blue-900">
-              {correctAnswerText || muscle.name}
+              {correctAnswerText || muscle?.name || ''}
             </span>
           </div>
           {openValidationResult?.feedbackNote && (
@@ -165,6 +178,19 @@ export const QuizFeedback: React.FC<QuizFeedbackProps> = ({
               <span>{openValidationResult.feedbackNote}</span>
             </div>
           )}
+        </div>
+      )}
+
+      {/* 1c. Toelichting bij gewrichtsvraag */}
+      {jointExplanation && (
+        <div className="p-3.5 rounded-xl bg-blue-50/80 border border-blue-200/90 space-y-1.5 text-xs">
+          <div className="flex items-center gap-1.5 font-bold text-blue-900 uppercase tracking-wider text-[11px]">
+            <Info className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+            <span>Toelichting gewricht</span>
+          </div>
+          <p className="text-blue-950 font-medium leading-relaxed">
+            {jointExplanation}
+          </p>
         </div>
       )}
 

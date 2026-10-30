@@ -14,6 +14,7 @@ interface BoneContextType {
   deleteBonePoint: (boneId: string, markerIndex: number) => void;
   resetBones: () => void;
   exportBonesJson: () => void;
+  importBonesJson: (importedBones: Bone[]) => void;
 }
 
 const BoneContext = createContext<BoneContextType | undefined>(undefined);
@@ -128,6 +129,10 @@ export const BoneProvider: React.FC<{ children: React.ReactNode }> = ({ children
     URL.revokeObjectURL(url);
   }, [bones]);
 
+  const importBonesJson = useCallback((importedBones: Bone[]) => {
+    saveBones(importedBones);
+  }, [saveBones]);
+
   return (
     <BoneContext.Provider
       value={{
@@ -141,6 +146,7 @@ export const BoneProvider: React.FC<{ children: React.ReactNode }> = ({ children
         deleteBonePoint,
         resetBones,
         exportBonesJson,
+        importBonesJson,
       }}
     >
       {children}

@@ -12,6 +12,7 @@ export interface Point2D {
   id?: string;
   name?: string; // Optionele annotatienaam
   view?: AnatomicalView; // Ventraal of dorsaal aanzicht waarin het punt is geplaatst
+  side?: SymmetrySide | EditSymmetrySide;
 }
 
 export interface AttachmentLine {
@@ -67,6 +68,8 @@ export interface Muscle {
 
 export type AppMode = 'study' | 'movements' | 'bones' | 'quiz' | 'editor';
 
+import type { JointQuizItem } from '../data/jointQuestions';
+
 export type EditorTool = 'origin' | 'insertion' | 'origin_line' | 'insertion_line' | 'path' | 'select';
 
 export type QuizType = 
@@ -75,10 +78,12 @@ export type QuizType =
   | 'origins'      // Vind de origo('s)
   | 'insertions'   // Vind de insertie('s)
   | 'landmark'     // Vind specifiek aanhechtingspunt (origo of insertie)
-  | 'multiple_choice' // Meerkeuze toets (identificatie, origo/insertie & functie)
-  | 'open_question'   // Open toets: typ zelf het antwoord (naam, origo, insertie of werking)
-  | 'function'     // (voor backwards compatibiliteit)
-  | 'movements';   // Bewegingen per spier (selecteer alle bijbehorende bewegingen via checkboxes)
+  | 'multiple_choice' // Meerkeuze toets (identificatie, origo/insertie & functie & gewrichten)
+  | 'open_question'   // Open toets: typ zelf het antwoord (naam, origo, insertie, werking of gewrichten)
+  | 'bone'            // Bot benoemen: punt staat op skelet zonder tekst, student typt naam van het bot
+  | 'joints'          // Gewrichten test: typen, deelgewrichten, assen en bewegingen
+  | 'function'        // (voor backwards compatibiliteit)
+  | 'movements';      // Bewegingen per spier (selecteer alle bijbehorende bewegingen via checkboxes)
 
 export type MatchAccuracy = 'correct' | 'close' | 'incorrect';
 
@@ -93,7 +98,7 @@ export interface MatchResult {
 
 export interface QuizQuestion {
   id: string;
-  muscle: Muscle;
+  muscle?: Muscle;
   type: QuizType;
   side: 'left' | 'right' | 'midline';
   jointId?: string; // indien quiztype 'joint'
@@ -103,7 +108,7 @@ export interface QuizQuestion {
   landmarkText?: string; // naam van het gevraagde aanhechtingspunt (voor type 'landmark')
   landmarkType?: 'origin' | 'insertion';
   targetLandmarkIndex?: number;
-  mcKind?: 'muscle' | 'origin' | 'insertion' | 'function';
+  mcKind?: 'muscle' | 'origin' | 'insertion' | 'function' | 'joint';
   mcSubtype?: 'origin' | 'insertion';
   mcTextOptions?: string[];
   correctMcText?: string;
@@ -111,10 +116,14 @@ export interface QuizQuestion {
   correctFunctionText?: string;
   movementOptions?: string[]; // voor type 'movements': 8 opties
   correctMovements?: string[]; // juiste bewegingen voor de spier
-  // Voor type 'open_question' (open invultoets)
-  openKind?: 'muscle' | 'origin' | 'insertion' | 'function' | 'joint';
+  // Voor type 'open_question' en 'bone' (open invultoets)
+  openKind?: 'muscle' | 'origin' | 'insertion' | 'function' | 'joint' | 'bone';
   correctOpenAnswer?: string;
   acceptableAnswers?: string[];
+  bone?: any; // Bone object
+  boneMarker?: any; // BoneMarker object
+  targetBoneMarker?: Point2D;
+  jointQuizItem?: JointQuizItem;
 }
 
 export interface QuizAttempt {

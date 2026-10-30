@@ -22,7 +22,7 @@ export const QuizStats: React.FC<QuizStatsProps> = ({ stats, onResetStats }) => 
         <button
           type="button"
           onClick={onResetStats}
-          title="Herstart toetssessie"
+          title="Herstart testsessie"
           className="text-clinical-400 hover:text-clinical-700 p-1 text-xs flex items-center gap-1 transition"
         >
           <RotateCcw className="w-3 h-3" />

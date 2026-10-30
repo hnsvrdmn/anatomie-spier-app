@@ -33,9 +33,10 @@ export function normalizeAnatomyText(text: string): string {
   // Verwijder voorvoegsels die studenten vaak variëren of weglaten:
   // - articulatio, articulationes, art
   // - musculus, musculi, mm, m
+  // - os, ossa (voor botten)
   const words = s.split(/\s+/).filter(Boolean);
   const filteredWords = words.filter(w => {
-    return !['art', 'articulatio', 'articulationes', 'm', 'mm', 'musculus', 'musculi', 'de', 'het', 'een', 'van'].includes(w);
+    return !['art', 'articulatio', 'articulationes', 'm', 'mm', 'musculus', 'musculi', 'os', 'ossa', 'de', 'het', 'een', 'van'].includes(w);
   });
 
   return filteredWords.join(' ').trim();
