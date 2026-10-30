@@ -22,15 +22,28 @@ export const EditorView: React.FC = () => {
     showToast
   } = useMuscles();
 
-  // Schakelaar tussen Spieren bewerken en Botten bewerken
-  const [editorTab, setEditorTab] = useState<'muscles' | 'bones'>('muscles');
+  // Schakelaar tussen Spieren bewerken en Botten bewerken (onthoudt keuze in localStorage)
+  const [editorTab, setEditorTabState] = useState<'muscles' | 'bones'>(() => {
+    try {
+      const saved = localStorage.getItem('pmt_anatomie_editor_tab');
+      if (saved === 'bones' || saved === 'muscles') return saved;
+    } catch {}
+    return 'muscles';
+  });
 
-  // Automatisch wisselen naar het juiste aanzicht van de geselecteerde spier in bewerkmodus
+  const setEditorTab = useCallback((tab: 'muscles' | 'bones') => {
+    setEditorTabState(tab);
+    try {
+      localStorage.setItem('pmt_anatomie_editor_tab', tab);
+    } catch {}
+  }, []);
+
+  // Automatisch wisselen naar het juiste aanzicht van de geselecteerde spier in spierbewerkmodus
   useEffect(() => {
-    if (selectedMuscle && currentView !== selectedMuscle.view) {
+    if (editorTab === 'muscles' && selectedMuscle && currentView !== selectedMuscle.view) {
       setCurrentView(selectedMuscle.view);
     }
-  }, [selectedMuscle?.id, selectedMuscle?.view, setCurrentView]);
+  }, [editorTab, selectedMuscle?.id, selectedMuscle?.view, setCurrentView]);
 
   // Selecteer/sleep is nu standaard geselecteerd
   const [activeTool, setActiveTool] = useState<EditorTool>('select');

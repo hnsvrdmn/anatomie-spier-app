@@ -3,7 +3,7 @@ import { useBones } from '../../context/BoneContext';
 import { useMuscles } from '../../context/MuscleContext';
 import { BoneMarker } from '../../data/bonesData';
 import { SKELETON_WIDTH, SKELETON_HEIGHT, clientToNormalized } from '../../utils/coordinates';
-import { RotateCcw, Download, Upload } from 'lucide-react';
+import { RotateCcw, Download, Upload, Save } from 'lucide-react';
 
 export const SVG_WIDTH = 1000;
 export const SVG_HEIGHT = 2374.54;
@@ -198,9 +198,21 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
 };
 
 export const BoneEditorView: React.FC = () => {
-  const { bones, updateBonePoint, resetBones, exportBonesJson, importBonesJson } = useBones();
+  const { bones, updateBonePoint, resetBones, exportBonesJson, importBonesJson, saveBonesToDisk } = useBones();
   const { showToast } = useMuscles();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSaveToDisk = async () => {
+    setIsSaving(true);
+    const ok = await saveBonesToDisk();
+    setIsSaving(false);
+    if (ok) {
+      showToast('Botposities permanent opgeslagen in src/data/bonesData.ts op schijf!', 'success');
+    } else {
+      showToast('Opslaan naar schijf mislukt (alleen beschikbaar via lokale dev server)', 'warning');
+    }
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -270,6 +282,17 @@ export const BoneEditorView: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            disabled={isSaving}
+            onClick={handleSaveToDisk}
+            className="px-3.5 py-1.5 rounded-xl border border-emerald-300 bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition flex items-center gap-1.5 shadow-sm active:scale-95"
+            title="Sla huidige botposities permanent op in src/data/bonesData.ts op schijf"
+          >
+            <Save className="w-3.5 h-3.5" />
+            <span>{isSaving ? 'Opslaan...' : 'Opslaan naar bronbestand'}</span>
+          </button>
+
           <button
             type="button"
             onClick={() => {

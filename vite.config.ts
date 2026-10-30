@@ -69,8 +69,10 @@ export interface Bone {
   id: string;
   latinName: string;
   dutchName: string;
+  category?: 'onderste_extremiteit' | 'bovenste_extremiteit' | 'romp' | string;
   typesSubtitle?: string;
   description: string;
+  structures?: string[];
   primaryView: 'ventral' | 'dorsal' | 'both';
   markers: BoneMarker[];
 }

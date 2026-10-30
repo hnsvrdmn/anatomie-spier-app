@@ -21,6 +21,7 @@ interface BoneContextType {
   resetBones: () => void;
   exportBonesJson: () => void;
   importBonesJson: (importedBones: Bone[]) => void;
+  saveBonesToDisk: () => Promise<boolean>;
 }
 
 const BoneContext = createContext<BoneContextType | undefined>(undefined);
@@ -58,19 +59,23 @@ export const BoneProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (e) {
       console.error('Fout bij opslaan botten in localStorage:', e);
     }
-    // Slaat direct permanent op naar het bronbestand src/data/bonesData.ts
+  }, []);
+
+  const saveBonesToDisk = useCallback(async (): Promise<boolean> => {
     try {
-      fetch('/api/save-bones', {
+      const res = await fetch('/api/save-bones', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newBones),
-      }).catch(() => {
-        // Negeer als dev server offline is
+        body: JSON.stringify(bones),
       });
-    } catch {
-      // ignore
+      if (res.ok) {
+        return true;
+      }
+    } catch (err) {
+      console.warn('Kon botten niet opslaan naar schijf:', err);
     }
-  }, []);
+    return false;
+  }, [bones]);
 
   const updateBoneMarkers = useCallback((boneId: string, markers: BoneMarker[]) => {
     const updated = bones.map(b => (b.id === boneId ? { ...b, markers } : b));
@@ -153,6 +158,7 @@ export const BoneProvider: React.FC<{ children: React.ReactNode }> = ({ children
         resetBones,
         exportBonesJson,
         importBonesJson,
+        saveBonesToDisk,
       }}
     >
       {children}
