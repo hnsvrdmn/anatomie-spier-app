@@ -258,7 +258,7 @@
         ]
       }
     },
-    "otherFunctions": "Houdt de humeruskop gecentreerd in het cavitas glenoidale; stabiliseert het glenohumerale gewricht."
+    "otherFunctions": "Houdt de humeruskop gecentreerd in de cavitas glenoidalis; stabiliseert het art. humeri."
   },
   {
     "id": "pectoralis_major",
@@ -952,7 +952,7 @@
       "humeri"
     ],
     "originText": "caput breve: processus coracoideus (= op schouderblad) | caput longum: net boven gewrichtskom schoudergewricht (= op schouderblad)",
-    "insertionText": "tuberositas radii (2x art. cubiti, 1x(!) art. humeri)",
+    "insertionText": "tuberositas radii",
     "functionText": "Flexie en supinatie in het art. cubiti",
     "visuals": {
       "right": {
@@ -1099,7 +1099,7 @@
       "humeri"
     ],
     "originText": "caput longum: net onder gewrichtskom schoudergewricht (= op schouderblad) | caput mediale: mediaal op dorsale vlak van os humerus | caput laterale: lateraal op dorsale vlak van os humerus",
-    "insertionText": "olecranon (1x art. cubiti, 1x art. humeri)",
+    "insertionText": "olecranon",
     "functionText": "Adductie in het art. humeri (caput longum) en extensie in het art. cubiti",
     "visuals": {
       "left": {
@@ -2010,7 +2010,7 @@
         "attachmentLines": []
       }
     },
-    "otherFunctions": "Vormt samen met gracilis en sartorius de pes anserinus superficialis."
+    "otherFunctions": "Vormt de pes anserinus superficialis aan de mediale zijde van de tibia."
   },
   {
     "id": "adductores",
@@ -2134,7 +2134,7 @@
       "coxae"
     ],
     "originText": "crista iliaca, SIPS, os sacrum, os coccygis",
-    "insertionText": "proximale laterale deel van corpus femoris, tractus iliotibialis",
+    "insertionText": "proximale laterale deel van corpus femoris",
     "functionText": "Retroflexie art. coxae, Exorotatie art. coxae",
     "visuals": {
       "left": {
@@ -2165,11 +2165,6 @@
             "x": 0.3168,
             "y": 0.5179,
             "name": "proximale laterale deel van corpus femoris"
-          },
-          {
-            "x": 0.3228,
-            "y": 0.5293,
-            "name": "tractus iliotibialis"
           }
         ],
         "musclePath": [],
@@ -2228,11 +2223,6 @@
             "x": 0.6832,
             "y": 0.5179,
             "name": "proximale laterale deel van corpus femoris"
-          },
-          {
-            "x": 0.6772,
-            "y": 0.5293,
-            "name": "tractus iliotibialis"
           }
         ],
         "musclePath": []

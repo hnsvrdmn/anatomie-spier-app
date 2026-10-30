@@ -119,7 +119,7 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'gluteus_maximus',
         muscleName: 'm. gluteus maximus',
-        location: 'Tuberositas glutea femoris (onder trochanter major)',
+        location: 'Proximale laterale deel van het corpus femoris',
       },
       {
         muscleId: 'adductor_magnus',

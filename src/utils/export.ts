@@ -2,7 +2,7 @@ import { Muscle } from '../types/anatomy';
 import { mirrorPoints } from './coordinates';
 import initialMusclesData from '../data/muscles.json';
 
-const LOCAL_STORAGE_KEY = 'pmt_anatomie_muscles_dataset_v13';
+const LOCAL_STORAGE_KEY = 'pmt_anatomie_muscles_dataset_v14';
 
 /**
  * Filtert spieren die niet in het PMT-curriculum / de reader horen
@@ -77,12 +77,13 @@ export function saveMusclesToLocalStorage(muscles: Muscle[]): void {
  */
 export function loadMusclesFromLocalStorage(): Muscle[] | null {
   try {
-    // Schoon alle voorgaande versies op zodat eventuele verouderde spieren (zoals tensor of gluteus medius) direct verdwijnen
+    // Schoon alle voorgaande versies op zodat eventuele verouderde gegevens direct verdwijnen
     try {
       localStorage.removeItem('pmt_anatomie_muscles_dataset');
       localStorage.removeItem('pmt_anatomie_muscles_dataset_v10');
       localStorage.removeItem('pmt_anatomie_muscles_dataset_v11');
       localStorage.removeItem('pmt_anatomie_muscles_dataset_v12');
+      localStorage.removeItem('pmt_anatomie_muscles_dataset_v13');
     } catch {}
 
     const data = localStorage.getItem(LOCAL_STORAGE_KEY);
