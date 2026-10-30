@@ -315,8 +315,39 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
     4. Doorklikken naar volgende vraag ("m. biceps femoris"): skelet is direct weer schoon en blanco voor de nieuwe opgave.
 - **Gepusht naar GitHub [2026-10-30 22:57]:** Definitief vastgelegd en gepusht naar `main`.
 
-
-
-
-
-
+## 16. Mobiel Botten-tab: Zichtbaarheid lage stippen & Strakke, subtiel pulserende ring [2026-10-30 22:58]
+- **Observaties & Meldingen van de gebruiker:**
+  1. *Lage stippen (onderbeen / voeten):* Op de mobiele versie van de botten-tab vallen de laag liggende stippen (zoals fibula, tibia, tarsus, metatarsus, phalanges) buiten beeld of onder de onderste lade. De stip moet altijd duidelijk in beeld zijn.
+  2. *Zichtbaarheid & Stijl van de stip:* De stip is soms moeilijk te zien. De gebruiker wil een subtiel pulserende ring eromheen, in lijn met de rest van het design. Strak, minimalistisch en rustig; géén drukke `flow` of kermisachtige effecten.
+- **Probleemanalyse:**
+  - In [`BoneSkeletonViewer.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/bones/BoneSkeletonViewer.tsx) ontbrak auto-focus / auto-centrering bij het selecteren van een bot op mobiel. Het skelet bleef standaard op zoom 1.0 staan, waardoor botten onderaan het skelet (y = 0.75 tot 0.98) deels achter de zwevende lade vielen.
+  - De geselecteerde marker had voorheen een drukke `animate-ping` buitenring (die snel uitklapt en verdwijnt) en een gewone lichtblauwe stip, wat op sommige achtergronden minder scherp contrasteerde.
+- **Plan van aanpak:**
+  1. *Automatisch centreren op mobiel:*
+     - In [`BoneSkeletonViewer.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/bones/BoneSkeletonViewer.tsx) een `useEffect` toevoegen die bij verandering van `selectedBone` (of wisselen tussen ventraal/dorsaal) de camera soepel naar de marker panned en zoomt (`targetZoom = 1.35`), met het doelpunt veilig op `desiredScreenY = 0.33` (bovenaan het scherm).
+     - Hierdoor staan ook de laagste stippen (zoals de voetbotjes) altijd ruim boven de onderste lade in het vrije zicht.
+  2. *Strakke, minimalistische markerstijl:*
+     - Drukke `animate-ping` verwijderen.
+     - Vervangen door een rustige, subtiel ademende ring met `animate-pulse` (`rgba(37, 99, 235, 0.16)` fill en `#3b82f6` stroke), identiek aan de rustige referentiepulsen in de rest van de app.
+     - Extra witte concentrische accentring en krachtige witte omlijning met drop-shadow toevoegen voor kristalhelder contrast tegen zowel het skelet als de witte achtergrond.
+  3. Lokaal testen en verifiëren in de browser via de mobiele viewport (420x820).
+- **Implementatie & Oplossing [2026-10-30 23:01]:**
+  - In [`BoneSkeletonViewer.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/bones/BoneSkeletonViewer.tsx):
+    - `useEffect` geïmplementeerd voor mobiel (`isMobile && selectedBone`):
+      - Berekent marker-coördinaten en zet `zoom = 1.35`.
+      - Berekent `panOffset` zodat het geselecteerde bot automatisch op `33%` van de schermhoogte (`desiredScreenY = 0.33`) gepositioneerd wordt. Hierdoor vallen onderbeen- en voetstippen gegarandeerd ruim boven de onderste zwevende lade.
+      - Vloeiende CSS `transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)` toegepast op de skeleton container (automatisch uitgeschakeld tijdens handmatige drag/pinch).
+    - Marker styling herzien naar minimalistisch & professioneel design:
+      - Geen felle/drukke ping of flow;
+      - Subtiel ademende ring met rustige `animate-pulse` (`fill="rgba(37, 99, 235, 0.16)"`, `stroke="#3b82f6"`);
+      - Scherpe witte accentring (`stroke="#ffffff"`, `opacity="0.9"`);
+      - Hoofdmarker cirkel in strak PMT-blauw (`#2563eb`) met witte 4px rand en `drop-shadow(0px 2px 5px rgba(0, 0, 0, 0.35))` voor optimaal contrast tegen wit bot en achtergrond;
+      - Wit gecentreerd puntje (`r={radius * 0.35}`).
+    - `strokeColor` compilatiefoutje hersteld en build gevalideerd (`npm run build` exit code 0).
+- **Browser-verificatie geslaagd [2026-10-30 23:02]:**
+  - Getest via de browser subagent met mobiele viewport (420x820):
+    1. Geselecteerd op *Os fibula* (Kuitbeen) en *Os tibia* (Scheenbeen).
+    2. De camera zoomt en beweegt direct en soepel naar het onderbeen en de voeten.
+    3. Zowel de actieve kuitbeenstip als de onderliggende voetstippen (ossa tarsi, ossa metatarsi, phalanges) staan ruim boven de onderste balk vrij in het gezichtsveld.
+    4. De stip is kristalhelder zichtbaar dankzij de subtiele pulserende ring en witte contrastrand, zonder kermisachtig of onrustig over te komen.
+- **Gepusht naar GitHub [2026-10-30 23:03]:** Wijzigingen gecommit en gepusht naar de GitHub repository.

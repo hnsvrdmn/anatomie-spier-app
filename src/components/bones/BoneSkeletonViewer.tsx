@@ -65,6 +65,30 @@ export const BoneSkeletonViewer: React.FC<BoneSkeletonViewerProps> = ({
     }
   }, [isMobile]);
 
+  // Automatisch soepel centreren en inzoomen rondom het geselecteerde bot op mobiel
+  // Zorgt ervoor dat lage stippen (onderbeen / voeten) ALTIJD ruim boven de onderste lade in beeld staan!
+  useEffect(() => {
+    if (!isMobile || !selectedBone) return;
+
+    // Zoek de marker voor het huidige aanzicht
+    const marker = selectedBone.markers.find((m) => m.view === currentView || m.view === 'both') || selectedBone.markers[0];
+    if (!marker) return;
+
+    const container = containerRef.current;
+    const W = container?.clientWidth || 250;
+    const H = container?.clientHeight || 600;
+
+    // Doelpositie Y op het scherm: 33% vanaf de bovenkant.
+    // Hierdoor vallen onderbeen/voetbotten NOOIT achter de zwevende lade onderin!
+    const targetZoom = 1.35;
+    const desiredScreenY = 0.33;
+    const targetPanX = Math.round((0.5 - marker.x) * W * targetZoom);
+    const targetPanY = Math.round((desiredScreenY - 0.5) * H - (marker.y - 0.5) * H * targetZoom);
+
+    setZoom(targetZoom);
+    setPan({ x: targetPanX, y: targetPanY });
+  }, [isMobile, selectedBone?.id, currentView]);
+
   // Touch handlers voor pinch-to-zoom en single-finger drag/pan op mobiel
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     if (e.touches.length === 2) {
@@ -197,7 +221,9 @@ export const BoneSkeletonViewer: React.FC<BoneSkeletonViewerProps> = ({
           aspectRatio: `${SKELETON_WIDTH} / ${SKELETON_HEIGHT}`,
           transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
           transformOrigin: 'center center',
-          transition: touchStateRef.current.isPinching ? 'none' : 'transform 0.05s ease-out',
+          transition: touchStateRef.current.isPinching || touchStateRef.current.hasMoved
+            ? 'none'
+            : 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)',
         }}
         className="relative h-full max-h-full max-w-full mx-auto"
       >
@@ -258,38 +284,45 @@ export const BoneSkeletonViewer: React.FC<BoneSkeletonViewerProps> = ({
                 {/* Onzichtbaar ruim klikgebied voor touch comfort */}
                 <circle cx={cx} cy={cy} r={hitRadius} fill="transparent" />
 
-                {/* Pulserende buitenring bij geselecteerd bot */}
+                {/* 1. Subtiel ademende ring bij geselecteerd bot (rustig, minimalistisch, strak) */}
                 {isSelected && (
                   <circle
                     cx={cx}
                     cy={cy}
                     r={radius * 1.8}
-                    fill="none"
-                    stroke="#0284c7"
-                    strokeWidth={3}
-                    opacity="0.6"
-                    className="animate-ping"
-                    style={{ transformOrigin: `${cx}px ${cy}px` }}
+                    fill="rgba(37, 99, 235, 0.16)"
+                    stroke="#3b82f6"
+                    strokeWidth={2}
+                    className="animate-pulse"
                   />
                 )}
 
-                {/* Oplichtende gloed bij selectie */}
+                {/* 2. Fijne witte accentring voor scherp contrast */}
                 {isSelected && (
-                  <circle cx={cx} cy={cy} r={radius * 1.5} fill="#38bdf8" opacity="0.35" />
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r={radius * 1.35}
+                    fill="none"
+                    stroke="#ffffff"
+                    strokeWidth={1.5}
+                    opacity="0.9"
+                  />
                 )}
 
-                {/* Hoofdmarker cirkel */}
+                {/* 3. Hoofdmarker cirkel met contrastomranding en zachte schaduw */}
                 <circle
                   cx={cx}
                   cy={cy}
                   r={radius}
-                  fill={fillColor}
+                  fill={isSelected ? '#2563eb' : fillColor}
                   stroke={strokeColor}
-                  strokeWidth={strokeWidth}
+                  strokeWidth={isSelected ? 4 : strokeWidth}
                   className="transition-all duration-150"
+                  style={isSelected ? { filter: 'drop-shadow(0px 2px 5px rgba(0, 0, 0, 0.35))' } : undefined}
                 />
 
-                {/* Wit centrum */}
+                {/* 4. Scherp wit centrum */}
                 <circle cx={cx} cy={cy} r={radius * 0.35} fill="#ffffff" />
               </g>
             );
