@@ -183,12 +183,12 @@ export const JOINTS_LEARNING_DATA: Record<string, JointDetail> = {
         note: 'Art. talocruralis (BSG) - tenen naar beneden (op de tenen staan)',
       },
       {
-        movement: 'Eversie (pronatie)',
+        movement: 'Eversie',
         muscleIds: ['fibularis_brevis', 'fibularis_longus'],
         note: 'Art. talo-calcaneo-navicularis (OSG) - buitenrand van de voet omhoog',
       },
       {
-        movement: 'Inversie (supinatie)',
+        movement: 'Inversie',
         muscleIds: ['tibialis_anterior'],
         note: 'Art. talo-calcaneo-navicularis (OSG) - binnenrand van de voet omhoog',
       },

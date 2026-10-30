@@ -2491,7 +2491,7 @@
     ],
     "originText": "Laterale ventrale vlak corpus tibia, Condylus lateralis tibiae",
     "insertionText": "Mediale voetrand",
-    "functionText": "dorsaalflexie art. talocruralis, inversie (supinatie) in het art. talo-calcaneo-navicularis",
+    "functionText": "dorsaalflexie art. talocruralis, inversie in het art. talo-calcaneo-navicularis",
     "visuals": {
       "left": {
         "origins": [
@@ -2542,7 +2542,7 @@
     ],
     "originText": "Laterale vlak corpus fibula",
     "insertionText": "Laterale voetrand",
-    "functionText": "Eversie (pronatie) art. talo-calcaneo-navicularis",
+    "functionText": "Eversie art. talo-calcaneo-navicularis",
     "visuals": {
       "left": {
         "origins": [
@@ -2626,7 +2626,7 @@
     ],
     "originText": "Proximale laterale deel van de corpus fibula",
     "insertionText": "mediale voetrand (onder de voet door)",
-    "functionText": "Eversie (pronatie) art. talo-calcaneo-navicularis",
+    "functionText": "Eversie art. talo-calcaneo-navicularis",
     "visuals": {
       "right": {
         "origins": [

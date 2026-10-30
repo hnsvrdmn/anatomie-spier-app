@@ -102,7 +102,7 @@ export const MovementIcon: React.FC<MovementIconProps> = ({ movement, className 
     );
   }
 
-  // 10. Eversie (pronatie) (buitenrand voet omhoog, pijl naar lateraal-boven)
+  // 10. Eversie (buitenrand voet omhoog, pijl naar lateraal-boven)
   if (norm.includes('eversie')) {
     return (
       <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -112,7 +112,7 @@ export const MovementIcon: React.FC<MovementIconProps> = ({ movement, className 
     );
   }
 
-  // 11. Inversie (supinatie) (binnenrand voet omhoog, pijl naar mediaal-boven)
+  // 11. Inversie (binnenrand voet omhoog, pijl naar mediaal-boven)
   if (norm.includes('inversie')) {
     return (
       <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
