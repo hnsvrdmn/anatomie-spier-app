@@ -65,43 +65,43 @@ export const READER_BONES: Bone[] = [
       {
         "side": "left",
         "view": "ventral",
-        "x": 0.482,
-        "y": 0.49,
+        "x": 0.463,
+        "y": 0.502,
         "subpart": "Os pubis (schaambeen)"
       },
       {
         "side": "right",
         "view": "ventral",
-        "x": 0.531,
+        "x": 0.547,
+        "y": 0.502,
+        "subpart": "Os pubis (schaambeen)"
+      },
+      {
+        "side": "left",
+        "view": "dorsal",
+        "x": 0.406,
+        "y": 0.498,
+        "subpart": "Os ischium (zitbeen)"
+      },
+      {
+        "side": "right",
+        "view": "dorsal",
+        "x": 0.584,
+        "y": 0.502,
+        "subpart": "Os ischium (zitbeen)"
+      },
+      {
+        "side": "left",
+        "view": "ventral",
+        "x": 0.408,
+        "y": 0.495,
+        "subpart": "Os ischium (zitbeen)"
+      },
+      {
+        "side": "right",
+        "view": "ventral",
+        "x": 0.595,
         "y": 0.493,
-        "subpart": "Os pubis (schaambeen)"
-      },
-      {
-        "side": "left",
-        "view": "dorsal",
-        "x": 0.44,
-        "y": 0.51,
-        "subpart": "Os ischium (zitbeen)"
-      },
-      {
-        "side": "right",
-        "view": "dorsal",
-        "x": 0.56,
-        "y": 0.51,
-        "subpart": "Os ischium (zitbeen)"
-      },
-      {
-        "side": "left",
-        "view": "ventral",
-        "x": 0.44,
-        "y": 0.51,
-        "subpart": "Os ischium (zitbeen)"
-      },
-      {
-        "side": "right",
-        "view": "ventral",
-        "x": 0.56,
-        "y": 0.51,
         "subpart": "Os ischium (zitbeen)"
       }
     ]
@@ -138,14 +138,14 @@ export const READER_BONES: Bone[] = [
       {
         "side": "left",
         "view": "dorsal",
-        "x": 0.38,
-        "y": 0.6
+        "x": 0.355,
+        "y": 0.599
       },
       {
         "side": "right",
         "view": "dorsal",
-        "x": 0.62,
-        "y": 0.6
+        "x": 0.648,
+        "y": 0.601
       }
     ]
   },
@@ -161,14 +161,14 @@ export const READER_BONES: Bone[] = [
       {
         "side": "left",
         "view": "ventral",
-        "x": 0.418,
-        "y": 0.72
+        "x": 0.399,
+        "y": 0.704
       },
       {
         "side": "right",
         "view": "ventral",
-        "x": 0.582,
-        "y": 0.72
+        "x": 0.609,
+        "y": 0.704
       }
     ]
   },
@@ -229,26 +229,26 @@ export const READER_BONES: Bone[] = [
       {
         "side": "left",
         "view": "ventral",
-        "x": 0.368,
-        "y": 0.835
+        "x": 0.383,
+        "y": 0.837
       },
       {
         "side": "right",
         "view": "ventral",
-        "x": 0.632,
+        "x": 0.621,
         "y": 0.835
       },
       {
         "side": "left",
         "view": "dorsal",
-        "x": 0.368,
-        "y": 0.835
+        "x": 0.383,
+        "y": 0.836
       },
       {
         "side": "right",
         "view": "dorsal",
-        "x": 0.632,
-        "y": 0.835
+        "x": 0.614,
+        "y": 0.836
       }
     ]
   },
@@ -368,14 +368,14 @@ export const READER_BONES: Bone[] = [
       {
         "side": "left",
         "view": "ventral",
-        "x": 0.245,
-        "y": 0.285
+        "x": 0.255,
+        "y": 0.288
       },
       {
         "side": "right",
         "view": "ventral",
-        "x": 0.755,
-        "y": 0.285
+        "x": 0.746,
+        "y": 0.287
       },
       {
         "side": "left",
@@ -386,7 +386,7 @@ export const READER_BONES: Bone[] = [
       {
         "side": "right",
         "view": "dorsal",
-        "x": 0.755,
+        "x": 0.746,
         "y": 0.285
       }
     ]
@@ -688,15 +688,15 @@ export const READER_BONES: Bone[] = [
       {
         "side": "left",
         "view": "ventral",
-        "x": 0.435,
-        "y": 0.355,
+        "x": 0.371,
+        "y": 0.347,
         "subpart": "Costae fluctuantes (zwevende ribben 11-12)"
       },
       {
         "side": "right",
         "view": "ventral",
-        "x": 0.565,
-        "y": 0.355,
+        "x": 0.625,
+        "y": 0.35,
         "subpart": "Costae fluctuantes (zwevende ribben 11-12)"
       }
     ]
