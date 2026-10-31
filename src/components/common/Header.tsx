@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useMuscles } from '../../context/MuscleContext';
 import { BookOpen, GraduationCap, Edit3, ListChecks, Activity, Bone, HelpCircle } from 'lucide-react';
 import { useIsMobile } from '../../hooks/useIsMobile';
@@ -8,6 +8,34 @@ export const Header: React.FC = () => {
   const { appMode, setAppMode, quizPracticeMode, setQuizPracticeMode, triggerQuizOpenOptions } = useMuscles();
   const isMobile = useIsMobile();
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+
+  // 3x tikken op het ? icoontje opent verborgen Flashcards modus
+  const helpTapCountRef = useRef(0);
+  const helpTapTimerRef = useRef<number | null>(null);
+
+  const handleHelpButtonClick = () => {
+    helpTapCountRef.current += 1;
+
+    if (helpTapTimerRef.current) {
+      window.clearTimeout(helpTapTimerRef.current);
+      helpTapTimerRef.current = null;
+    }
+
+    if (helpTapCountRef.current >= 3) {
+      helpTapCountRef.current = 0;
+      setIsHelpOpen(false);
+      setAppMode('flashcards');
+      return;
+    }
+
+    helpTapTimerRef.current = window.setTimeout(() => {
+      if (helpTapCountRef.current > 0 && helpTapCountRef.current < 3) {
+        setIsHelpOpen(true);
+      }
+      helpTapCountRef.current = 0;
+      helpTapTimerRef.current = null;
+    }, 320);
+  };
 
   // Mobiele navigatie: Spieren, Botten, Bewegingen, Oefen, Test (alleen duidelijke iconen)
   const mobileNavItems = [
@@ -149,11 +177,11 @@ export const Header: React.FC = () => {
               )}
             </nav>
 
-            {/* Hulpknop met ? icoontje rechts in de header */}
+            {/* Hulpknop met ? icoontje rechts in de header (3x tikken opent verborgen Flashcards) */}
             <div className="absolute right-1 sm:right-2 flex items-center">
               <button
                 type="button"
-                onClick={() => setIsHelpOpen(true)}
+                onClick={handleHelpButtonClick}
                 className="p-1.5 sm:p-2 rounded-xl text-clinical-300 hover:text-white hover:bg-clinical-800 transition active:scale-95"
                 title="Hulp & Uitleg (?)"
                 aria-label="Hulp & Uitleg"

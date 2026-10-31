@@ -18,7 +18,7 @@ import { JOINT_CATEGORIES, getJointCategory } from '../../data/jointCategories';
 import { getMovementQuestionOptions, MUSCLE_MOVEMENTS } from '../../data/muscleMovements';
 import { READER_BONES } from '../../data/bonesData';
 import { getRandomJointQuestion, getJointMCOptions, JointQuizItem, getJointLocation } from '../../data/jointQuestions';
-import { evaluatePointSet, distanceToSegment, projectToSegment, getAccuracy } from '../../utils/coordinates';
+import { evaluatePointSet, distanceToSegment, projectToSegment, getAccuracy, getDistinctTargetCount } from '../../utils/coordinates';
 import { validateAnatomicalAnswer, AnswerValidationResult } from '../../utils/answerMatching';
 import { isForbiddenMuscle } from '../../utils/export';
 import { MovementIcon } from '../common/MovementIcon';
@@ -126,6 +126,20 @@ export const QuizView: React.FC = () => {
     setAutoRotateView((prev) => {
       const next = !prev;
       localStorage.setItem('pmt_auto_rotate_view', String(next));
+      return next;
+    });
+  }, []);
+
+  // Automatisch inzoomen op het gevraagde element bij een nieuwe vraag
+  const [autoZoom, setAutoZoom] = useState<boolean>(() => {
+    const saved = localStorage.getItem('pmt_auto_zoom');
+    return saved !== null ? saved === 'true' : true;
+  });
+
+  const handleToggleAutoZoom = useCallback(() => {
+    setAutoZoom((prev) => {
+      const next = !prev;
+      localStorage.setItem('pmt_auto_zoom', String(next));
       return next;
     });
   }, []);
@@ -249,12 +263,12 @@ export const QuizView: React.FC = () => {
     return base;
   }, [activeJointCategory, cleanMuscles, isShuffled, shuffleCounter, selectedJointId]);
 
-  // Aantal verwachte punten per zijde (ondersteunt brede aanhechtingen zoals wervels)
+  // Aantal verwachte punten per zijde (gebaseerd op unieke anatomische structuren/zones)
   const getExpectedCounts = useCallback((side: 'left' | 'right' | 'midline') => {
     if (!currentQuestion || !currentQuestion.muscle) return { origins: 1, insertions: 1, rawOrigins: 1, rawInsertions: 1, total: 2, isMultiSpan: false };
     const vis = currentQuestion.muscle.visuals[side] || { origins: [], insertions: [] };
-    const rawOrigins = vis.origins?.length || 1;
-    const rawInsertions = vis.insertions?.length || 1;
+    const rawOrigins = getDistinctTargetCount(vis.origins);
+    const rawInsertions = getDistinctTargetCount(vis.insertions);
     const origins = rawOrigins > 2 ? 2 : Math.max(1, rawOrigins);
     const insertions = rawInsertions > 2 ? 2 : Math.max(1, rawInsertions);
 
@@ -679,7 +693,17 @@ export const QuizView: React.FC = () => {
       const pts = (randMuscle.visuals.right?.[landmarkType === 'origin' ? 'origins' : 'insertions'] ||
                    randMuscle.visuals.left?.[landmarkType === 'origin' ? 'origins' : 'insertions'] || []);
       if (pts.length > 0) {
-        targetLandmarkIndex = Math.floor(Math.random() * pts.length);
+        // Kies eerlijk uit unieke anatomische aanhechtingsnamen
+        const uniqueIndices: number[] = [];
+        const seenNames = new Set<string>();
+        pts.forEach((p, idx) => {
+          const key = (p.name || '').trim().toLowerCase() || `__idx_${idx}`;
+          if (!seenNames.has(key)) {
+            seenNames.add(key);
+            uniqueIndices.push(idx);
+          }
+        });
+        targetLandmarkIndex = uniqueIndices[Math.floor(Math.random() * uniqueIndices.length)];
         const chosen = pts[targetLandmarkIndex];
         landmarkText = chosen.name || (landmarkType === 'origin' ? randMuscle.originText : randMuscle.insertionText);
       } else {
@@ -897,19 +921,39 @@ export const QuizView: React.FC = () => {
         sideRequired = 1;
         sidePassed = sideCorrect >= 1;
       } else if (currentQuestion.type === 'origins' || (currentQuestion.type === 'landmark' && currentQuestion.landmarkType === 'origin')) {
-        const targetPts = currentQuestion.type === 'landmark'
-          ? [targetOrigins[currentQuestion.targetLandmarkIndex ?? 0] || targetOrigins[0]].filter(Boolean)
-          : targetOrigins;
-        const res = evaluatePointSet(validOrigins, targetPts, 'origin', toleranceValue, vis.attachmentLines || []);
+        let targetPts = targetOrigins;
+        let targetLines = vis.attachmentLines || [];
+        if (currentQuestion.type === 'landmark') {
+          const chosenPt = targetOrigins[currentQuestion.targetLandmarkIndex ?? 0] || targetOrigins[0];
+          const askedKey = (currentQuestion.landmarkText || chosenPt?.name || '').trim().toLowerCase();
+          targetPts = askedKey
+            ? targetOrigins.filter((p) => (p.name || '').trim().toLowerCase() === askedKey)
+            : [chosenPt].filter(Boolean);
+          if (targetPts.length === 0 && chosenPt) targetPts = [chosenPt];
+          targetLines = (vis.attachmentLines || []).filter(
+            (l) => l.type === 'origin' && (l.name || '').trim().toLowerCase() === askedKey
+          );
+        }
+        const res = evaluatePointSet(validOrigins, targetPts, 'origin', toleranceValue, targetLines);
         sideMatches = res.matches;
         sideRequired = res.requiredCount;
         sideCorrect = res.correctCount;
         sidePassed = res.isPassed;
       } else if (currentQuestion.type === 'insertions' || (currentQuestion.type === 'landmark' && currentQuestion.landmarkType === 'insertion')) {
-        const targetPts = currentQuestion.type === 'landmark'
-          ? [targetInsertions[currentQuestion.targetLandmarkIndex ?? 0] || targetInsertions[0]].filter(Boolean)
-          : targetInsertions;
-        const res = evaluatePointSet(validInsertions, targetPts, 'insertion', toleranceValue, vis.attachmentLines || []);
+        let targetPts = targetInsertions;
+        let targetLines = vis.attachmentLines || [];
+        if (currentQuestion.type === 'landmark') {
+          const chosenPt = targetInsertions[currentQuestion.targetLandmarkIndex ?? 0] || targetInsertions[0];
+          const askedKey = (currentQuestion.landmarkText || chosenPt?.name || '').trim().toLowerCase();
+          targetPts = askedKey
+            ? targetInsertions.filter((p) => (p.name || '').trim().toLowerCase() === askedKey)
+            : [chosenPt].filter(Boolean);
+          if (targetPts.length === 0 && chosenPt) targetPts = [chosenPt];
+          targetLines = (vis.attachmentLines || []).filter(
+            (l) => l.type === 'insertion' && (l.name || '').trim().toLowerCase() === askedKey
+          );
+        }
+        const res = evaluatePointSet(validInsertions, targetPts, 'insertion', toleranceValue, targetLines);
         sideMatches = res.matches;
         sideRequired = res.requiredCount;
         sideCorrect = res.correctCount;
@@ -1090,13 +1134,21 @@ export const QuizView: React.FC = () => {
           evaluateAttempt(nextOrigins, nextInsertions);
         }
       } else {
-        // 'joint'
+        // 'joint' / 'full'
         if (nextOrigins.length >= 1 && nextInsertions.length >= 1) {
           evaluateAttempt(nextOrigins, nextInsertions);
         } else if (toolToUse === 'origin' && nextOrigins.length >= 1 && nextInsertions.length === 0) {
           setActiveQuizTool('insertion');
         }
       }
+    } else if (
+      toolToUse === 'origin' &&
+      expectedCounts.insertions > 0 &&
+      nextOrigins.length >= expectedCounts.origins &&
+      nextInsertions.length === 0
+    ) {
+      // Wissel ook bij spieren met 2 origo's automatisch naar insertie zodra de verwachte origo's geplaatst zijn
+      setActiveQuizTool('insertion');
     }
   };
 
@@ -1354,6 +1406,8 @@ export const QuizView: React.FC = () => {
         incorrectCount={currentStats.incorrectAnswers}
         autoRotateView={autoRotateView}
         onToggleAutoRotate={handleToggleAutoRotate}
+        autoZoom={autoZoom}
+        onToggleAutoZoom={handleToggleAutoZoom}
         evaluatedSide={evaluatedSide}
         isEvaluated={isEvaluated}
         isPlacementSuccess={isPlacementSuccess}
@@ -1514,7 +1568,7 @@ export const QuizView: React.FC = () => {
                     userInsertions={ventralInsertions}
                     targetBoneMarker={currentQuestion?.targetBoneMarker}
                     targetFocusPoint={jointFocusPoint?.view === 'ventral' ? jointFocusPoint : null}
-                    autoCenterMuscle={shouldShowMuscle || (jointFocusPoint?.view === 'ventral') || type === 'bone'}
+                    autoCenterMuscle={autoZoom && (shouldShowMuscle || (jointFocusPoint?.view === 'ventral') || type === 'bone')}
                     hideMuscleMarkers={hideMuscleMarkers}
                   />
                 </div>
@@ -1539,7 +1593,7 @@ export const QuizView: React.FC = () => {
                     userInsertions={dorsalInsertions}
                     targetBoneMarker={currentQuestion?.targetBoneMarker}
                     targetFocusPoint={jointFocusPoint?.view === 'dorsal' ? jointFocusPoint : null}
-                    autoCenterMuscle={shouldShowMuscle || (jointFocusPoint?.view === 'dorsal') || type === 'bone'}
+                    autoCenterMuscle={autoZoom && (shouldShowMuscle || (jointFocusPoint?.view === 'dorsal') || type === 'bone')}
                     hideMuscleMarkers={hideMuscleMarkers}
                   />
                 </div>
@@ -1559,7 +1613,7 @@ export const QuizView: React.FC = () => {
                 userInsertions={userInsertions}
                 targetBoneMarker={currentQuestion?.targetBoneMarker}
                 targetFocusPoint={jointFocusPoint}
-                autoCenterMuscle={shouldShowMuscle || !!jointFocusPoint || type === 'bone'}
+                autoCenterMuscle={autoZoom && (shouldShowMuscle || !!jointFocusPoint || type === 'bone')}
                 hideMuscleMarkers={hideMuscleMarkers}
               />
             );
@@ -1692,18 +1746,32 @@ export const QuizView: React.FC = () => {
             </select>
           )}
 
-          {/* Subtiele toggle voor automatisch meedraaien van het aanzicht */}
-          <div className="flex items-center justify-between px-1 pt-1 border-t border-clinical-100 text-[11px]">
-            <span className="text-slate-600 font-medium">Aanzicht autom. roteren</span>
-            <button
-              type="button"
-              onClick={handleToggleAutoRotate}
-              className={`px-2.5 py-0.5 rounded-lg font-bold transition ${
-                autoRotateView ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-200 text-slate-700'
-              }`}
-            >
-              {autoRotateView ? 'Aan' : 'Uit'}
-            </button>
+          {/* Subtiele toggles voor automatisch meedraaien en automatisch inzoomen */}
+          <div className="pt-1.5 border-t border-clinical-100 space-y-1.5 text-[11px]">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-slate-600 font-medium">Aanzicht autom. roteren</span>
+              <button
+                type="button"
+                onClick={handleToggleAutoRotate}
+                className={`px-2.5 py-0.5 rounded-lg font-bold transition ${
+                  autoRotateView ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-200 text-slate-700'
+                }`}
+              >
+                {autoRotateView ? 'Aan' : 'Uit'}
+              </button>
+            </div>
+            <div className="flex items-center justify-between px-1">
+              <span className="text-slate-600 font-medium">Automatisch inzoomen</span>
+              <button
+                type="button"
+                onClick={handleToggleAutoZoom}
+                className={`px-2.5 py-0.5 rounded-lg font-bold transition ${
+                  autoZoom ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-200 text-slate-700'
+                }`}
+              >
+                {autoZoom ? 'Aan' : 'Uit'}
+              </button>
+            </div>
           </div>
 
           {/* Voortgangsbalk bij joint of full_all */}

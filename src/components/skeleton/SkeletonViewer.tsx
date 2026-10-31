@@ -175,9 +175,19 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
     };
   }, []);
 
+  const prevAutoCenterRef = useRef<boolean>(autoCenterMuscle);
+
   // Automatisch centreren en inzoomen op de getoonde spier (vooral op mobiel bij toetsvragen)
   useEffect(() => {
-    if (!autoCenterMuscle) return;
+    if (!autoCenterMuscle) {
+      if (prevAutoCenterRef.current) {
+        setZoom(1);
+        setPan({ x: 0, y: 0 });
+      }
+      prevAutoCenterRef.current = false;
+      return;
+    }
+    prevAutoCenterRef.current = true;
 
     if (activeMuscle) {
       const pts: Point2D[] = [];

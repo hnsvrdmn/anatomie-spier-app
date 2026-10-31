@@ -421,3 +421,553 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
     - Subtiel amber `Herhaling` label toegevoegd in de vraagheader op mobiel.
   - Compilatie gevalideerd met `npm run build` (exit code 0).
 - **Gepusht naar GitHub [2026-10-30 23:17]:** Wijzigingen gecommit en gepusht naar `main`.
+
+
+## 19. Brainstorm Zijproject: Puzzel-gameplay & Gamification [2026-10-31 09:50]
+- **Doel:** Een losstaand zijproject bedenken (niet bereikbaar vanuit de main app) om anatomie leren verslavender te maken met een puzzel-gameplay loop zoals *Sudoku*, *Queens* of *Connections*.
+- **Bevindingen over de huidige app:**
+  - De app heeft een hele rijke dataset met duidelijke relaties: **Spieren** hebben exacte **Origo's**, **Inserties**, **Botten**, **Gewrichten** en **Bewegingen**, plus **2D-coördinaten** op het skelet.
+  - De huidige toetsmodus is vooral *vraag -> antwoord -> goed/fout* (flashcard-stijl). Dat werkt om te overhoren, maar mist het "deductie-gevoel" (het leggen van verbanden en uitsluiten van opties) dat puzzels zoals Sudoku of Queens zo verslavend maakt.
+- **Actie:** Verschillende concrete puzzelconcepten uitgewerkt en voorgelegd aan de gebruiker, nog zonder code te bouwen.
+- **Feedback van de gebruiker [2026-10-31 09:57]:**
+  - De eerste 5 tekstuele puzzel-ideeën voelen nog niet écht verslavend.
+  - Belangrijke randvoorwaarde: uitsluitend termen uit de officiële bronbestanden (`src/data/muscles.json`, `src/data/bonesData.ts`, `src/data/boneAttachments.ts`, `src/data/muscleMovements.ts`) mogen worden gebruikt — geen externe spieren (zoals *m. piriformis* of *m. gluteus medius*).
+- **Nieuwe denkrichting:**
+  - Waarom zijn spellen als *Sudoku*, *Queens*, *Minesweeper*, *Flow Free* of *GeoGuessr* verslavend? Omdat je **niet** lappen tekst zit te lezen, maar visueel/ruimtelijk bezig bent met snelle micro-interacties, kettingreacties en direct "satisfying" feedback.
+- **Gekozen richting [2026-10-31 10:01]:**
+  - Gebruiker kiest voor concept **3. "Anatomie Nonogram / Kleur-het-Skelet" (Botten & Aanhechtingen)**.
+  - We werken het game-design nu gedetailleerd uit: hoe de gameplay loop werkt, hoe we omgaan met spieren die meerdere origo's hebben (zoals *m. biceps brachii* of *m. gastrocnemius*), hoe het "wegstreep/eliminatie"-effect werkt zoals bij Sudoku/Mahjong, en welke spelmodi of hints het verslavend maken.
+- **Ontwerpkeuzes bevestigd door gebruiker [2026-10-31 10:06]:**
+  1. **Labels op bot-pinnen:** Beide (aan/uit te zetten met een subtiele toggle).
+  2. **Interactie (Optie B):** Eerst vrij op het skelet origo(s) en insertie(s) verbinden, en daarna de bijbehorende spier kiezen uit de beschikbare lijst.
+  3. **Toegang:** Alleen via directe URL (`?game=1` of `#game`), volledig onzichtbaar vanuit de hoofdapp.
+  4. **Stijl & Mobiel:** Volledig mobiel-vriendelijk én ultra-minimalistisch. Geen overbodige tekst, geen dubbele termen, geen toeters en bellen — strak, rustig en gefocust op de puzzel.
+- **Actie:** Eerste speelbare versie van de puzzel (`SkeletonPuzzleGame.tsx`) bouwen en koppelen aan `#game` / `?game=1`.
+- **Voortgang [2026-10-31 10:10]:**
+  - Eerste versie van `src/components/game/SkeletonPuzzleGame.tsx` opgezet.
+  - Gedeelde bot-punten (zoals *tuberositas tibiae* met 4 spieren, *tuber ischiadicum* met 3 spieren, *condylus medialis tibiae* met 2 spieren) worden samengevoegd tot één pin met een aflopende teller, zonder dubbele labels.
+  - Nu eerst de referentiebestanden in het project (`pdf_exact_tables.json` / `extracted_pdf_pages` / `E:\windesheim\anatomie blok 1`) kort checken zodat alle gebruikte labels 100% overeenkomen met de reader, en daarna `App.tsx` koppelen op `?game=1` / `#game`.
+- **Implementatie & Build [2026-10-31 10:11]:**
+  - Terminologie gecontroleerd tegen `pdf_exact_tables.json` en `src/data/muscles.json` (verboden spieren zoals *m. tensor fascia latae* en *m. gluteus medius* worden automatisch uitgefilterd).
+  - `src/App.tsx` aangepast zodat het zijproject **uitsluitend** laadt via `?game=1` of `#game`. De hoofdapp heeft geen enkele knop of verwijzing naar de game.
+  - Compilatie (`npm run build`) uitgevoerd ter verificatie.
+- **Ontwerpkeuzes bevestigd door gebruiker [2026-10-31 10:06]:**
+  1. **Labels op bot-pinnen:** Beide (aan/uit te zetten met een subtiele toggle).
+  2. **Interactie (Optie B):** Eerst vrij op het skelet origo(s) en insertie(s) verbinden, en daarna de bijbehorende spier kiezen uit de beschikbare lijst.
+  3. **Toegang:** Alleen via directe URL (`?game=1` of `#game`), volledig onzichtbaar vanuit de hoofdapp.
+  4. **Stijl & Mobiel:** Volledig mobiel-vriendelijk én ultra-minimalistisch. Geen overbodige tekst, geen dubbele termen, geen toeters en bellen — strak, rustig en gefocust op de puzzel.
+- **Actie:** Eerste speelbare versie van de puzzel (`SkeletonPuzzleGame.tsx`) bouwen en koppelen aan `#game` / `?game=1`.
+- **Voortgang [2026-10-31 10:10]:**
+  - Eerste versie van `src/components/game/SkeletonPuzzleGame.tsx` opgezet.
+  - Gedeelde bot-punten (zoals *tuberositas tibiae* met 4 spieren, *tuber ischiadicum* met 3 spieren, *condylus medialis tibiae* met 2 spieren) worden samengevoegd tot één pin met een aflopende teller, zonder dubbele labels.
+  - Nu eerst de referentiebestanden in het project (`pdf_exact_tables.json` / `extracted_pdf_pages` / `E:\windesheim\anatomie blok 1`) kort checken zodat alle gebruikte labels 100% overeenkomen met de reader, en daarna `App.tsx` koppelen op `?game=1` / `#game`.
+- **Implementatie & Build [2026-10-31 10:11]:**
+  - Terminologie gecontroleerd tegen `pdf_exact_tables.json` en `src/data/muscles.json` (verboden spieren zoals *m. tensor fascia latae* en *m. gluteus medius* worden automatisch uitgefilterd).
+  - `src/App.tsx` aangepast zodat het zijproject **uitsluitend** laadt via `?game=1` of `#game`. De hoofdapp heeft geen enkele knop of verwijzing naar de game.
+  - Compilatie (`npm run build`) uitgevoerd ter verificatie.
+- **Server opgestart [2026-10-31 10:15]:**
+  - Vite dev server draait op poort **3000** (in plaats van 5173).
+  - Exacte adres voor het zijproject: `http://localhost:3000/#game` (of `http://localhost:3000/?game=1`).
+
+## 20. Verbeteringen Skelet-Puzzel & Nieuw Spel: "Anatomie Connections" [2026-10-31 10:23]
+- **Feedback van de gebruiker op Spel 1 (Skelet-Puzzel):**
+  1. De `Labels`-toggle voor aanhechtingspunten weghalen.
+  2. Alle spierkaartjes onderin in één oogopslag zichtbaar maken zonder te hoeven scrollen (minimaal 7 spieren direct zichtbaar in een strak grid).
+  3. De regio's/gewrichten bovenin bij hun **Latijnse naam** noemen (*Art. coxae*, *Art. genus*, *Art. pedis*, *Art. humeri*, *Art. cubiti*, *Cingulum pectorale*, *Columna vertebralis / Thorax*).
+- **Nieuw verzoek:**
+  - Bouw daarnaast **Spel 2: "Anatomie Connections"** (zoals NYT Connections: 16 kaartjes op een 4x4 bord, vind de 4 groepen van 4 die bij elkaar horen).
+  - Gebruik hiervoor ook de extra theorie en antwoorden uit de reader in `E:\windesheim\anatomie blok 1` naast de bestaande app-data.
+- **Actie:** Eerst `E:\windesheim\anatomie blok 1` inspecteren op documenten, reader-vragen en antwoorden.
+- **Inhoud `E:\windesheim\anatomie blok 1` geanalyseerd [2026-10-31 10:24]:**
+  - Naast de spiertabellen bevatten de antwoorddocumenten rijke leerstof voor **Anatomie Connections**:
+    1. **Vlakken, Assen & Bewegingen:** Transversale as $\leftrightarrow$ Sagittaal vlak (flexie/extensie), Sagittale as $\leftrightarrow$ Frontaal vlak (abductie/adductie), Longitudinale as $\leftrightarrow$ Transversaal vlak (rotaties / pronatie-supinatie).
+    2. **Synoviale gewrichtstypen:** *Art. ginglymus* (scharniergewricht, 1 as), *Art. trochoidea* (rolgewricht, 1 as), *Art. sellaris* (zadelgewricht, 2 assen), *Art. spheroidea* (bolgewricht, 3 assen), *Art. plana* (vlakgewricht), *Art. ellipsoidea* (ellipsvormig gewricht), *Art. trocho-ginglymus* (*art. genus* & *art. cubiti*).
+    3. **Deelgewrichten & Samenstellende botten:**
+       - *Art. cubiti*: *Art. humero-ulnaris*, *Art. humero-radialis*, *Art. radio-ulnaris proximalis* (*os humerus*, *os ulna*, *os radius*).
+       - *Art. pedis*: *Art. talocruralis* (BSG: *os tibia*, *os fibula*, *os talus*), *Art. subtalaris* (OSG), *Art. talo-calcaneo-navicularis* (OSG: *os talus*, *os calcaneus*, *os naviculare*).
+       - *Cingulum pectorale*: *Art. sterno-clavicularis*, *Art. acromio-clavicularis* (*os sternum*, *os clavicula*, *os scapula*).
+       - *Romp / Vertebrae & Costae*: *Vertebrae cervicales (7)*, *thoracales (12)*, *lumbales (5)*, *Costae verae (7)*, *costae spuriae (3)*, *costae fluctuantes (2)*.
+    4. **Botstructuren per bot & Ligamenten (*Art. pedis*):**
+       - *Os coxae*: *SIAS*, *SIAI*, *SIPS*, *SIPI*, *Acetabulum*, *Tuber ischiadicum*, *Crista iliaca*.
+       - *Os scapula*: *Acromion*, *Processus coracoideus*, *Cavitas glenoidalis*, *Spina scapula*, *Angulus superior/inferior*, *Margo medialis/lateralis*.
+       - *Os humerus*: *Caput humeri*, *Tuberculum majus*, *Tuberculum minus*, *Trochlea humeri*, *Capitulum humeri*, *Epicondylus medialis/lateralis*.
+       - *Ligamenten enkel*: *Lig. deltoideum* (remt pronatie), *Lig. calcaneofibulare*, *Lig. talofibulare anterior*, *Lig. talofibulare posterior* (remmen supinatie).
+- **Actie:**
+  1. In `SkeletonPuzzleGame.tsx`:
+     - `Labels`-toggle verwijderd.
+     - Gewrichten bovenin benoemd met hun Latijnse naam (*Art. coxae*, *Art. genus*, *Art. pedis*, *Art. humeri*, *Art. cubiti*, *Cingulum pectorale*, *Columna vertebralis*).
+     - Spierkaartjes onderin in een strak, compact overzicht zonder scrollen zodat alle kaarten (minimaal 7+ spieren) direct in één oogopslag zichtbaar zijn.
+  2. Nieuw spel `ConnectionsGame.tsx` ("Anatomie Connections") bouwen en via een minimalistische spel-switcher in de geheime `#game` / `?game=1` omgeving beschikbaar maken.
+- **Tussenupdate [2026-10-31 10:25]:**
+  - `SkeletonPuzzleGame.tsx` bijgewerkt:
+    - `Labels`-toggle verwijderd.
+    - Gewrichten bovenin op Latijnse naam gezet (*Art. coxae*, *Art. genus*, *Art. pedis*, *Art. humeri*, *Cingulum pectorale*, *Art. cubiti*, *Columna vertebralis*).
+    - Onderin staan alle spierkaarten (tot 7 spieren) in een vast 2x4 / 4x2 grid direct in één oogopslag zichtbaar zonder scrollbalk.
+  - Nu bezig met het bouwen van **Spel 2: "Anatomie Connections"** (`ConnectionsGame.tsx`) met de stof uit de app én de antwoordbestanden uit `E:\windesheim\anatomie blok 1`.
+- **Afronding & Verificatie [2026-10-31 10:27]:**
+  - `ConnectionsGame.tsx` gebouwd met 24 categorieën van elk 4 begrippen uit zowel de app-data als de PDF-antwoorden in `E:\windesheim\anatomie blok 1` (o.a. ligamenten *art. pedis*, samenstellende botten, deelgewrichten *art. cubiti* & *cingulum*, assen/vlakken/bewegingen, synoviaal gewrichtstypen, spierfysiologie & sarcomeer-onderdelen).
+  - Bevat 6 vaste themaborden én een `Willekeurige Mix`-knop die steeds 4 niet-overlappende categorieën combineert tot een nieuw 4x4 bord, inclusief de "Bijna! 3 van de 4 horen bij elkaar"-hint.
+  - Bovenin de `#game` weergave in `App.tsx` zit nu een minimalistische schakelaar tussen **`1. Skelet Puzzel`** en **`2. Connections`**.
+  - Compilatie (`npm run build`) geslaagd zonder fouten.
+
+## 21. Tekst-fit fix in Connections & Bouw van Spel 3 en Spel 4 [2026-10-31 10:31]
+- **Gebruikerswens:**
+  1. In **2. Connections** passen sommige langere Latijnse termen niet netjes in de blokjes -> direct oplossen.
+  2. Bouw nog **2 extra spellen** die het beste bij de collectie en de leerstof passen.
+- **Keuze voor Spel 3 & Spel 4:**
+  - **Spel 3: `3. Queens Grid` (Anatomie Deductie-Rooster):**
+    - Geïnspireerd op *LinkedIn Queens* en *Logigrammen*: een strak 4x4 deductierooster waarin elke rij en kolom precies één match (`✓`) heeft.
+    - Zodra je een match plaatst, worden de overige vakjes in die rij en kolom automatisch weggestreept (`×`), zodat je door eliminatie de hele puzzel oplost. Bevat borden over spieren (origo/insertie/functie), gewrichten (type/assen/botten), bewegingsanalyse (vlak/as/beweging uit de reader) en spierfysiologie (uit de oefenvragen).
+  - **Spel 4: `4. Raad de Spier` (Wordle / Loldle voor Spieren):**
+    - Raad de verborgen reader-spier door een spier aan te tikken en direct kleurfeedback (🟩 Groen = exact, 🟨 Geel = deels, ⬜ Grijs = niet) te krijgen op 5 kolommen: **Aanzicht**, **Gewricht**, **Origo-bot**, **Insertie-bot** en **Beweging**.
+- **Actie:** Eerst `ConnectionsGame.tsx` verbeteren (tekst-fit in blokjes), daarna `QueensGridGame.tsx` en `MuscleGuessGame.tsx` bouwen.
+- **Tussenupdate [2026-10-31 10:32]:**
+  - Tekst-weergave in `ConnectionsGame.tsx` opgelost (dynamische tekstschaal + woordafbreking zodat ook lange Latijnse termen netjes binnen de 4x4 blokjes blijven).
+  - Spel 3 (`QueensGridGame.tsx`) gebouwd: een 4x4 deductie-rooster met automatische rij/kolom-wegstreping zodra een match gevonden is, inclusief borden over spieren, *art. pedis* ligamenten, synoviale gewrichten, assen/vlakken en spierfysiologie.
+  - Nu bezig met Spel 4: `MuscleGuessGame.tsx` ("4. Raad de Spier" - Wordle/Loldle stijl met 5 eigenschap-kolommen).
+- **Afronding 4 Spellen [2026-10-31 10:33]:**
+  - `MuscleGuessGame.tsx` ("4. Raad de Spier") gebouwd en samen met `QueensGridGame.tsx` ("3. Eliminatie Rooster") toegevoegd aan de `#game` balk in `App.tsx`.
+  - Alle 4 spellen draaien op poort 3000 (`http://localhost:3000/#game`) en de build (`npm run build`) slaagt zonder fouten.
+
+## 22. Analyse & Plan van Aanpak: Aanhechtingspunten (Punt vs. Zone/Corpus) in de Toets [2026-10-31 10:39]
+- **Vraag van de gebruiker:**
+  - In de hoofdapp werkt het plaatsen van aanhechtingspunten in de toets nog niet lekker, omdat sommige aanhechtingen heel klein zijn (zoals een *condylus* of *SIAI*) en andere juist langgerekt (zoals een *corpus*, *margo*, *crista* of *ribben/wervels*).
+  - Eerst de afbeeldingen (`skeleton_ventral.png` en `skeleton_dorsal.png`) en de huidige data/code analyseren en met een concreet plan komen vóór implementatie.
+- **Gevonden oorzaken in de huidige data & code:**
+  1. **Asymmetrie in `muscles.json`:** Bij 28 van de 31 spieren staan de `attachmentLines` (zones) **alleen** ingevuld bij `visuals.left` en zijn ze bij `visuals.right` volledig leeg (`[]`)! Als een student op de rechter lichaamshelft (links op het scherm bij ventraal) klikt, werken de zones helemaal niet.
+  2. **1-op-1 koppeling ontbreekt:** In de huidige data staan `origins` (losse punten) en `attachmentLines` (lijnen) los van elkaar. Daardoor weet de toets niet welk specifiek aanhechtingspunt een *punt* is (bijv. *tuber ischiadicum*) en welk aanhechtingspunt een *lang traject/zone* is (bijv. *middelste derde dorsale deel van femur*).
+  3. **Zones komen vaak niet overeen met het echte bot op de tekening:** Bijv. bij de *mm. vasti* beslaat de lijn nu maar een klein stukje van de femurschacht in plaats van het daadwerkelijke *corpus femoris* op de tekening, en bij o.a. *m. tibialis anterior*, *m. soleus*, *m. teres minor* en *m. triceps brachii* ontbreken de zones op het *corpus* of de *margo* volledig.
+  4. **Onduidelijke aantallen te plaatsen stippen:** Bij één brede zone (zoals *5e tot 12e costa* bij *m. obliquus externus*) staan er 3 losse stippen in `origins`, waardoor de student 2 of 3 stippen moet raden voor wat anatomisch één zone is.
+- **Actie:** Plan van aanpak voorgelegd aan de gebruiker ter goedkeuring.
+- **Goedkeuring ontvangen [2026-10-31 10:42]:**
+  - Gebruiker is akkoord met het plan.
+  - **Stap 1 (Beeld- & Pixelanalyse):** Eerst de exacte botcontouren op `skeleton_ventral.png` en `skeleton_dorsal.png` opmeten zodat elke lange aanhechtingszone (corpora, cristae, margines, wervelreeksen, ribben) precies op het getekende bot ligt.
+- **Stap 1 & 3 uitgevoerd (`src/data/muscles.json`) [2026-10-31 10:46]:**
+  - Voor alle 25 spieren met langgerekte aanhechtingen (corpora van femur/tibia/fibula/humerus, *margo medialis/lateralis scapulae*, *spina scapula*, *clavicula*, *sternum*, *crista iliaca*, *linea alba*, wervelreeksen, ribben en voetranden) zijn de `attachmentLines` nu exact op de botcontouren geplaatst én 100% symmetrisch aanwezig onder zowel `visuals.left` als `visuals.right`.
+  - De overige 6 spieren hebben uitsluitend kleine punt-aanhechtingen (zoals *SIAI*, *tuberositas tibiae*, *tuber ischiadicum*, *condylus medialis/lateralis*, *tuber calcanei*, *processus coracoideus*, *tuberositas radii*).
+- **Stap 2 & 4 uitgevoerd (`coordinates.ts`, `QuizView.tsx` & `MuscleMarkers.tsx`) [2026-10-31 10:53]:**
+  - In `src/utils/coordinates.ts` groepeert `getDistinctTargets()` nu gelijknamige vezelpunten (zoals de 3 stippen van *5e tot 12e costa* of de 2 stippen van *1e tot 9e costa*) tot **één uniek anatomisch doel** en koppelt dit 1-op-1 op naam aan de bijbehorende `AttachmentLine` (botzone).
+  - Kleine botpunten (zoals *condylus*, *SIAS*, *SIAI*, *tuberositas*, *olecranon*, *caput fibulae*) worden puur als punt geëvalueerd (`TOLERANCE_CORRECT = 0.020`, dekt precies het getekende botknobbeltje), terwijl lange botregio's (zoals *corpus femoris*, *corpus tibiae*, *margo medialis/lateralis scapulae*, *crista iliaca*, *linea alba*, *wervelreeks* en *ribben*) over het gehele bottraject (zowel links als rechts) als 100% goed worden gerekend.
+  - In `src/components/quiz/QuizView.tsx` vraagt de losse modus *Aanhechtingspunten* (`landmark`) nu gericht naar één specifieke structuur en filtert bij controle alleen het bijbehorende punt óf de bijbehorende botzone.
+  - In `src/components/skeleton/MuscleMarkers.tsx` verschijnt bij de antwoord-terugkoppeling (`showReferenceGhost`) een subtiele oplichtende band over de hele aanhechtingszone zodat direct zichtbaar is of een aanhechting een lang botvlak of een klein punt is.
+  - Build (`npm run build`) geslaagd zonder fouten en tijdelijk hulpscript opgeruimd. Klaar om te testen op `http://localhost:3000/`.
+
+## 23. Toggle voor Automatisch Inzoomen + Uitbreiding Puzzels met PDF-materiaal [2026-10-31 10:55]
+- **Nieuwe wensen van de gebruiker:**
+  1. **Hoofdapp (Oefenen & Testen):** Naast de bestaande schakelaar voor *Automatisch draaien* (`autoRotateView`) ook een schakelaar toevoegen voor **Automatisch inzoomen** (`autoZoom`), zodat de gebruiker het automatisch inzoomen op het gevraagde element aan of uit kan zetten (standaard aan).
+  2. **Puzzels (`#game`):** De inhoud van `E:\windesheim\anatomie blok 1` (met name `ANTWOORDEN synoviaal gewrichten.pdf`, `ANTWOORDEN assen vlakken en bewegingen.pdf` en de overige antwoorden-PDF's) volledig uitlezen en verwerken in **2. Connections** (4 words) én op een slimme manier in de andere puzzels.
+- **Actie 1 uitgevoerd [2026-10-31 10:56]:**
+  - Schakelaar **Automatisch inzoomen** (`autoZoom`, standaard *Aan*, opgeslagen in `localStorage`) toegevoegd aan zowel de desktop-weergave (`QuizView.tsx`) als het mobiele instellingenmenu (`MobileQuizView.tsx`), direct onder *Aanzicht autom. roteren*.
+  - In `SkeletonViewer.tsx` zoomt het skelet direct terug uit naar volledig overzicht (`zoom = 1`) zodra de gebruiker *Automatisch inzoomen* uitzet.
+- **Actie 2: Analyse van alle antwoorden-PDF's afgerond [2026-10-31 10:58]:**
+  - Uitgelezen: `ANTWOORDEN synoviaal gewrichten.pdf`, `ANTWOORDEN assen vlakken en bewegingen.pdf`, `ANTWOORDEN assen en vlakken.pdf`, `ANTWOORDEN richtingen.pdf`, `ANTWOORDEN eerste bewegingsanalyse.pdf`, `ANTWOORDEN romp.pdf`, `ANTWOORDEN cingulum pectorale.pdf`, `ANTWOORDEN cubiti.pdf`, `ANTWOORDEN humeri.pdf`, `Art. Coxae ANTWOORDEN.pdf`, `Art.genus ANTWOORDEN.pdf`, `Art. pedis ANTWOORDEN.pdf` en `OEFENTOETS ANATOMIE ANTWOORDEN.pdf`.
+  - **Hoe we dit verwerken in de puzzels (`#game`):**
+    1. **`2. Connections` (`ConnectionsGame.tsx` - 4 Words):**
+       - Uitbreiden met nieuwe themaborden rechtstreeks uit `ANTWOORDEN synoviaal gewrichten.pdf` (de 6 synoviale gewrichtstypen, de 12 structuren rond een synoviaal gewricht zoals *bursa*, *peesschede*, *hyalien kraakbeen*, *synoviaal membraan*, gewrichtskoppen vs. gewrichtskommen), `ANTWOORDEN assen vlakken en bewegingen.pdf` (bewegingen in S/T, F/S, T/L én de "n.v.t."-bewegingen zoals *eversie/inversie*, *horizontale ab-/adductie*, *protractie/retractie*, *elevatie/detractie*, *latero-/mediorotatie*), `ANTWOORDEN richtingen.pdf`, en `ANTWOORDEN romp/cubiti/genus/pedis.pdf`.
+    2. **`3. Eliminatie Rooster` (`QueensGridGame.tsx`):**
+       - Uitbreiden met nieuwe 4x4 logische deductie-roosters uit `ANTWOORDEN synoviaal gewrichten.pdf` (structuur ↔ functie zoals *bursa*, *peesschede*, *synoviaal membraan*, *hyalien kraakbeen*; én gewrichtstype ↔ vrijheidsgraden/beweging) en `ANTWOORDEN assen vlakken en bewegingen.pdf` (beweging ↔ vlak & as, inclusief *n.v.t.* bij schoudergordel/onderste spronggewricht).
+    3. **`4. Raad het Begrip` (`MuscleGuessGame.tsx`):**
+       - Uitbreiden met een modus-schakelaar bovenin: **[Spieren (31)]** én **[Gewrichten & Vlak/As (PDF)]**, zodat je in dezelfde Wordle/Loldle-stijl met Groen/Geel/Grijze kolommen ook de gewrichten en bewegingen uit `ANTWOORDEN synoviaal gewrichten.pdf` en `ANTWOORDEN assen vlakken en bewegingen.pdf` kunt raden op basis van *Type gewricht*, *Aantal assen*, *Vlak*, *As* en *Samenstellende botten*!
+- **Afronding & Verificatie [2026-10-31 11:01]:**
+  - In `ConnectionsGame.tsx` zijn **Bord 7 (Synoviaal PDF)**, **Bord 8 (Vlak & As PDF)** en **Bord 9 (Richtingen & Knie PDF)** toegevoegd (totaal 9 vaste borden + 36 groepen voor de *Willekeurige Mix*).
+  - In `QueensGridGame.tsx` zijn 3 nieuwe 4x4 deductie-roosters toegevoegd: **Gewrichtsopbouw (PDF)** (*hyalien kraakbeen*, *synoviaal membraan*, *peesschede*, *bursa*), **Vlak, As & Beweging (PDF)** (inclusief *n.v.t.* bij onderste spronggewricht) en **Banden Art. genus (PDF)** (*lig. cruciatum anterior/posterior*, *lig. collaterale medialis/lateralis*).
+  - In `MuscleGuessGame.tsx` is de tab **Gewrichten & Vlak/As (PDF)** toegevoegd waarmee alle 19 gewrichtsbewegingen uit `ANTWOORDEN synoviaal gewrichten.pdf` en `ANTWOORDEN assen vlakken en bewegingen.pdf` via de 5 kolommen (*Type*, *Assen*, *Vlak*, *As*, *Botten*) geraden kunnen worden.
+  - `npm run build` gecontroleerd en geslaagd zonder fouten.
+
+## 24. Nieuw Tabblad "Flashcards" (NotebookLM-stijl met Screenshots uit Moduleboek) [2026-10-31 11:04]
+- **Opdracht van de gebruiker:**
+  - Nieuw tabblad **Flashcards** in de hoofdapp toevoegen.
+  - Werking en animaties zoals **NotebookLM**:
+    - 3D kaart-flip animatie + soepele kaartwissel (vooral geoptimaliseerd voor mobiel én desktop).
+    - Bijhouden welke kaarten **Goed** en welke **Fout** zijn beantwoord.
+    - Aan het einde van een set (of tussentijds) de mogelijkheid om **alleen de foute kaarten opnieuw te doen** óf **de hele set opnieuw te starten**.
+  - Een setje voor **elk gelezen antwoorden-PDF** (met 30 tot 60 kaarten per set zodat werkelijk alles uit het moduleboek en de antwoorden-PDF's erin zit), uitsluitend met de exacte terminologie uit het moduleboek (geen verboden spieren zoals *m. piriformis*, en met de toegestane spieren uit de reader/app).
+  - Regelmatig gebruikmaken van **screenshots uit het moduleboek / de antwoorden-PDF's** (zonder dat de antwoorden in het plaatje al worden verklapt op de voorkant!).
+- **Stappenplan:**
+  1. **Stap 1:** Screenshots/afbeeldingen van de anatomische figuren uit het moduleboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf` en de opdracht-PDF's) extraheren en opslaan in `public/images/flashcards/`.
+  2. **Stap 2:** De nog niet volledig gelezen pagina's van `oefenvragen fysiologie tot herfst met antwoorden.pdf` en het `Moduulboek` bekijken zodat alle theorie (synoviale opbouw, bewegingsanalyse, alle gewrichten, botten, ligamenten, spieren en fysiologie) compleet is.
+  3. **Stap 3:** `src/data/flashcardsData.ts` opbouwen met een aparte set (30–50 kaarten per set) voor elk antwoorden-PDF.
+- **Correctie van gebruiker [2026-10-31 11:06]:**
+  - **Geen fysiologie verwerken! Het gaat puur om anatomie (en bewegingsanalyse).**
+  - De 11 zuivere anatomie-antwoorden-PDF's zijn:
+    1. `ANTWOORDEN richtingen.pdf` (Richtingen & Aanzichten)
+    2. `ANTWOORDEN assen en vlakken.pdf` + `ANTWOORDEN assen vlakken en bewegingen.pdf` (Assen, Vlakken & Bewegingen)
+    3. `ANTWOORDEN synoviaal gewrichten.pdf` (Synoviaal Gewrichten & Gewrichtsopbouw)
+    4. `ANTWOORDEN eerste bewegingsanalyse.pdf` (Eerste Bewegingsanalyse)
+    5. `Art. Coxae ANTWOORDEN.pdf` (Art. coxae: Heupgewricht, Botten & Spieren)
+    6. `Art.genus ANTWOORDEN.pdf` (Art. genus: Kniegewricht, Banden, Menisci & Spieren)
+    7. `Art. pedis ANTWOORDEN.pdf` (Art. pedis: Enkel/Voet, Banden & Spieren)
+    8. `ANTWOORDEN humeri.pdf` (Art. humeri: Schoudergewricht, Scapula/Humerus & Spieren)
+    9. `ANTWOORDEN cubiti.pdf` (Art. cubiti: Ellebooggewricht, Botten & Spieren)
+    10. `ANTWOORDEN cingulum pectorale.pdf` (Cingulum pectorale: Schoudergordel & Spieren)
+    11. `ANTWOORDEN romp.pdf` (Romp: Wervelkolom, Thorax, Wervelopbouw & Spieren)
+  - Plus de anatomische woordenlijst en platen achterin het Moduulboek (p. 68–74) en `OEFENTOETS ANATOMIE ANTWOORDEN.pdf`.
+  - Elk setje krijgt tussen de **30 en 60 anatomie-flashcards** (met screenshots uit het Moduulboek / de PDF's).
+- **Stap 1 afgerond [2026-10-31 11:09]:**
+  - 33 scherpe anatomische screenshots uitgesneden uit de 11 anatomie-antwoorden-PDF's én het Moduulboek (o.a. `synoviaal_opbouw_1_12.png`, `coxae_botten_1_15.png`, `genus_ligamenten_1_7.png`, `pedis_botten_1_5.png`, `pedis_ligamenten_1_4.png`, `humeri_botten_1_14.png`, `cubiti_botten_1_13.png`, `cingulum_sternum_clavicula.png`, `cingulum_scapulahumeraal.png`, `romp_wervelkolom_1_10.png`, `romp_wervel_1_8.png`, `bewegingsanalyse_1_2_3.png`, `bewegingsanalyse_streksprong.png`, en de overzichtsplaten van botten en spieren) en opgeslagen in `public/images/flashcards/`.
+  - Ook de fysiologie-onderdelen uit de spellen (`ConnectionsGame.tsx` en `QueensGridGame.tsx`) verwijderd en vervangen door zuivere anatomie.
+- **Stap 2 & 3 afgerond [2026-10-31 11:22]:**
+  - `src/data/flashcardsPart1.ts`, `src/data/flashcardsPart2.ts`, `src/data/flashcardsPart3.ts` en `src/data/flashcardsData.ts` aangemaakt met **11 complete anatomie-flashcardsets** (30 tot 53 kaarten per set, **355 flashcards** in totaal, 100% zuivere anatomie & bewegingsanalyse met alle 33 screenshots uit het Moduulboek en de antwoorden-PDF's).
+- **Stap 4 & 5 afgerond [2026-10-31 11:25]:**
+  - NotebookLM-stijl Flashcards UI gebouwd in `src/components/flashcards/FlashcardsView.tsx`:
+    - **11 complete sets** (30 tot 53 kaarten per set, **355 flashcards** in totaal, 100% zuivere anatomie & bewegingsanalyse zonder fysiologie, met 33 scherpe screenshots uit het Moduulboek en de antwoorden-PDF's).
+    - **3D kaart-flip animatie** (`rotateY(180deg)`, `perspective: 1400px`) bij tikken/klikken of `[Spatie]`/`[Enter]`.
+    - **Mobiele swipe-bediening & animaties:** horizontaal swipen op mobiel (links = *Fout / Nog oefenen*, rechts = *Goed / Gekend*) met live gekleurde feedback-badges en achterliggende stapelkaart.
+    - **Foute kaarten herhalen:** zowel tussentijds (via de knop *"Oefen foute (X)"*) als op het eindscherm (*"Oefen foute kaarten opnieuw (X)"* of *"Hele set opnieuw"*).
+    - **Afbeelding-zoom (Lightbox):** tik op *"Vergroot"* bij elk Moduulboek-figuur om de genummerde botstructuren, gewrichten, ligamenten en spieren op volledig scherm te bekijken.
+  - Nieuw tabblad **Flashcards** toegevoegd aan `Header.tsx` (zowel mobiel als desktop), `MuscleContext.tsx`, `anatomy.ts` en `App.tsx` (`http://localhost:3000/#flashcards`).
+  - Productiebuild (`npm run build`) geslaagd zonder fouten.
+
+## 25. Bugfixes: Bewegings-icoontjes & Z-index Dropdown vs. Help Popup [2026-10-31 11:28]
+- **Gemelde bugs (met screenshots van mobiel):**
+  1. De icoontjes van de bewegingen (`MovementIcon.tsx`) zagen er bij sommige bewegingen (zoals *Flexie*, *Supinatie*, *Exorotatie*, *Mediorotatie*, *Inversie*/*Eversie*) platgedrukt of afgesneden uit op klein formaat, en misten spellingvarianten zoals *Dorsaalextensie* en *Lateraalflexie*.
+  2. Op de mobiele Studie-tab (`MobileStudyView.tsx`) viel de bovenste balk met de twee dropdowns (`Alle Gewrichten` en `m. deltoideus`, die op `z-50` stond) óver de `HelpModal` (`Hulp & Uitleg`, die ook op `z-50` stond maar eerder in de DOM werd gerenderd).
+- **Oplossing:**
+  - In `src/components/common/MovementIcon.tsx` alle 22 bewegings-SVG's herontworpen met ruime marges binnen de `0 0 24 24` viewBox, zonder overlappende lijntjes of losse stipjes die op `14×14px` dichtlopen, én ondersteuning toegevoegd voor zowel `dorsaalflexie`/`dorsaalextensie` als `lateroflexie`/`lateraalflexie`.
+  - In `src/components/study/MobileStudyView.tsx` de `z-index` van de bovenste dropdown-balk verlaagd van `z-50` naar `z-20` en in `src/components/common/HelpModal.tsx` de modal-laag verhoogd naar `z-[100]`, zodat het hulpvenster altijd netjes boven alle balken en dropdowns ligt.
+
+## 26. Minimalistische Flipcards-interface & Verborgen Toegang (3x tikken op `?`) [2026-10-31 11:34]
+- **Wensen van de gebruiker:**
+  1. De hoofdstukken samenvoegen met de 'kies een flashcard' popup tot één strakke dropdown bovenaan.
+  2. Alle overbodige uitleg, ondertitels, bronvermeldingen en tekstlabels weghalen zodat het scherm zo rustig mogelijk is (alleen de groene en rode tellers voor goed en fout).
+  3. De aparte *Flip*-knop onderin weghalen (alleen Vorige, Rood `✕` en Groen `✓` + tikken op de kaart zelf om te flippen).
+  4. De Flashcards-knop in de navigatiebalk voor nu verbergen en openen wanneer je **3 keer snel op het `?`-icoontje** rechtsboven tikt, zodat alles eerst rustig getest kan worden.
+- **Uitgevoerd:**
+  - `src/components/common/Header.tsx`: Flashcards-knop uit de zichtbare balk gehaald en een triple-tap detector op de `?`-knop gezet (`3x tikken` binnen 320ms opent direct `#flashcards`; `1x tikken` opent gewoon het Hulp & Uitleg venster).
+  - `src/components/flashcards/FlashcardsView.tsx`: Volledig minimalistisch gemaakt met één hoofdstuk-dropdown (inclusief groene/rode voortgangsbadges per hoofdstuk), enkel kleur-tellers voor goed/fout, een rustige kaart zonder extra toelichtingsteksten en onderin uitsluitend `<`, `✕` (rood) en `✓` (groen).
+
+## 27. Responsieve Schermhoogte (`100dvh`) voor Alle Mobiele Resoluties [2026-10-31 11:38]
+- **Melding van gebruiker (met screenshot):**
+  - Op mobiel vielen de onderste drie knoppen (`<`, `✕`, `✓`) net van het scherm af door de combinatie van vaste minimumhoogtes op de kaart en `min-h-screen` i.p.v. `100dvh`.
+- **Oplossing in `src/components/flashcards/FlashcardsView.tsx`:**
+  - De hoofdcontainer heeft nu exact `h-[calc(100dvh-3.5rem)] sm:h-[calc(100dvh-4rem)] overflow-hidden` (precies passend onder de header en binnen de zichtbare dynamische viewport van mobiele browsers).
+  - De vaste `min-h-[340px]` op de kaart is verwijderd en vervangen door `flex-1 min-h-0`, en de voortgangslijn is geïntegreerd in de tellerrij. Hierdoor schaalt de flipcard (inclusief afbeelding) automatisch mee met élke schermhoogte en beeldverhouding en blijven de onderste knoppen altijd volledig in beeld.
+
+## 28. Opschonen & Versimpelen Flashcards: 100% Moduulboek-termen & Korte Vragen/Antwoorden [2026-10-31 11:45]
+- **Wens van de gebruiker:**
+  - Alle termen die niet in het Moduulboek of de antwoorden-PDF's voorkomen (zoals *circumductie*, *mediaanvlak*, klinische syndromen, etc.) verwijderen.
+  - Vragen en antwoorden zo kort, eenvoudig en snel leesbaar mogelijk maken zonder extra of verdiepende uitleg.
+- **Uitvoering:**
+  - **Stap 1 afgerond:** `src/data/flashcardsPart1.ts` (Set 1 Richtingen, Set 2 Assen/Vlakken/Bewegingen, Set 3 Synoviaal Gewrichten & Bewegingsanalyse) volledig herschreven met korte, directe 1-regel vragen en antwoorden exact volgens het Moduulboek en de antwoorden-PDF's.
+  - **Stap 2 afgerond:** `src/data/flashcardsPart2.ts` (Set 4 Art. coxae, Set 5 Art. genus, Set 6 Art. pedis) herschreven met exacte nummering uit de antwoorden-PDF's en korte, snelle vragen/antwoorden (niet-curriculumspieren zoals `m. sartorius` verwijderd).
+  - **Stap 3 afgerond:** `src/data/flashcardsPart3.ts` (Set 7 Art. cubiti, Set 8 Art. humeri, Set 9 Cingulum pectorale) en `src/data/flashcardsData.ts` (Set 10 Romp & Set 11 Oefentoets Anatomie + overzichtspagina's p. 71–74) herschreven en gecontroleerd tegen het volledige Moduulboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf`), `spiertabellen.pdf` en alle 11 antwoorden-PDF's.
+  - **Landingspagina toegevoegd [2026-10-31 12:02]:** In `src/components/flashcards/FlashcardsView.tsx` kom je nu eerst op het minimalistische overzichtsscherm (*Kies een flashcard-set*) met alle 11 sets (inclusief voortgangsbadges voor goed/fout/totaal), en kun je vanuit elke set met de overzichtsknop (`LayoutGrid`) linksboven of via het eindscherm direct terug naar de landingspagina.
+  - Productiebuild (`npm run build`) geslaagd met 0 fouten.
+
+## 28. Opschonen & Versimpelen Flashcards: 100% Moduulboek-termen & Korte Vragen/Antwoorden [2026-10-31 11:45]
+- **Wens van de gebruiker:**
+  - Alle termen die niet in het Moduulboek of de antwoorden-PDF's voorkomen (zoals *circumductie*, *mediaanvlak*, klinische syndromen, etc.) verwijderen.
+  - Vragen en antwoorden zo kort, eenvoudig en snel leesbaar mogelijk maken zonder extra of verdiepende uitleg.
+- **Uitvoering:**
+  - **Stap 1 afgerond:** `src/data/flashcardsPart1.ts` (Set 1 Richtingen, Set 2 Assen/Vlakken/Bewegingen, Set 3 Synoviaal Gewrichten & Bewegingsanalyse) volledig herschreven met korte, directe 1-regel vragen en antwoorden exact volgens het Moduulboek en de antwoorden-PDF's.
+  - **Stap 2 afgerond:** `src/data/flashcardsPart2.ts` (Set 4 Art. coxae, Set 5 Art. genus, Set 6 Art. pedis) herschreven met exacte nummering uit de antwoorden-PDF's en korte, snelle vragen/antwoorden (niet-curriculumspieren zoals `m. sartorius` verwijderd).
+  - **Stap 3 afgerond:** `src/data/flashcardsPart3.ts` (Set 7 Art. cubiti, Set 8 Art. humeri, Set 9 Cingulum pectorale) en `src/data/flashcardsData.ts` (Set 10 Romp & Set 11 Oefentoets Anatomie + overzichtspagina's p. 71–74) herschreven en gecontroleerd tegen het volledige Moduulboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf`), `spiertabellen.pdf` en alle 11 antwoorden-PDF's.
+  - **Landingspagina toegevoegd [2026-10-31 12:02]:** In `src/components/flashcards/FlashcardsView.tsx` kom je nu eerst op het minimalistische overzichtsscherm (*Kies een flashcard-set*) met alle 11 sets (inclusief voortgangsbadges voor goed/fout/totaal), en kun je vanuit elke set met de overzichtsknop (`LayoutGrid`) linksboven of via het eindscherm direct terug naar de landingspagina.
+  - Productiebuild (`npm run build`) geslaagd met 0 fouten.
+
+## 24. Nieuw Tabblad "Flashcards" (NotebookLM-stijl met Screenshots uit Moduleboek) [2026-10-31 11:04]
+- **Opdracht van de gebruiker:**
+  - Nieuw tabblad **Flashcards** in de hoofdapp toevoegen.
+  - Werking en animaties zoals **NotebookLM**:
+    - 3D kaart-flip animatie + soepele kaartwissel (vooral geoptimaliseerd voor mobiel én desktop).
+    - Bijhouden welke kaarten **Goed** en welke **Fout** zijn beantwoord.
+    - Aan het einde van een set (of tussentijds) de mogelijkheid om **alleen de foute kaarten opnieuw te doen** óf **de hele set opnieuw te starten**.
+  - Een setje voor **elk gelezen antwoorden-PDF** (met 30 tot 60 kaarten per set zodat werkelijk alles uit het moduleboek en de antwoorden-PDF's erin zit), uitsluitend met de exacte terminologie uit het moduleboek (geen verboden spieren zoals *m. piriformis*, en met de toegestane spieren uit de reader/app).
+  - Regelmatig gebruikmaken van **screenshots uit het moduleboek / de antwoorden-PDF's** (zonder dat de antwoorden in het plaatje al worden verklapt op de voorkant!).
+- **Stappenplan:**
+  1. **Stap 1:** Screenshots/afbeeldingen van de anatomische figuren uit het moduleboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf` en de opdracht-PDF's) extraheren en opslaan in `public/images/flashcards/`.
+  2. **Stap 2:** De nog niet volledig gelezen pagina's van `oefenvragen fysiologie tot herfst met antwoorden.pdf` en het `Moduulboek` bekijken zodat alle theorie (synoviale opbouw, bewegingsanalyse, alle gewrichten, botten, ligamenten, spieren en fysiologie) compleet is.
+  3. **Stap 3:** `src/data/flashcardsData.ts` opbouwen met een aparte set (30–50 kaarten per set) voor elk antwoorden-PDF.
+- **Correctie van gebruiker [2026-10-31 11:06]:**
+  - **Geen fysiologie verwerken! Het gaat puur om anatomie (en bewegingsanalyse).**
+  - De 11 zuivere anatomie-antwoorden-PDF's zijn:
+    1. `ANTWOORDEN richtingen.pdf` (Richtingen & Aanzichten)
+    2. `ANTWOORDEN assen en vlakken.pdf` + `ANTWOORDEN assen vlakken en bewegingen.pdf` (Assen, Vlakken & Bewegingen)
+    3. `ANTWOORDEN synoviaal gewrichten.pdf` (Synoviaal Gewrichten & Gewrichtsopbouw)
+    4. `ANTWOORDEN eerste bewegingsanalyse.pdf` (Eerste Bewegingsanalyse)
+    5. `Art. Coxae ANTWOORDEN.pdf` (Art. coxae: Heupgewricht, Botten & Spieren)
+    6. `Art.genus ANTWOORDEN.pdf` (Art. genus: Kniegewricht, Banden, Menisci & Spieren)
+    7. `Art. pedis ANTWOORDEN.pdf` (Art. pedis: Enkel/Voet, Banden & Spieren)
+    8. `ANTWOORDEN humeri.pdf` (Art. humeri: Schoudergewricht, Scapula/Humerus & Spieren)
+    9. `ANTWOORDEN cubiti.pdf` (Art. cubiti: Ellebooggewricht, Botten & Spieren)
+    10. `ANTWOORDEN cingulum pectorale.pdf` (Cingulum pectorale: Schoudergordel & Spieren)
+    11. `ANTWOORDEN romp.pdf` (Romp: Wervelkolom, Thorax, Wervelopbouw & Spieren)
+  - Plus de anatomische woordenlijst en platen achterin het Moduulboek (p. 68–74) en `OEFENTOETS ANATOMIE ANTWOORDEN.pdf`.
+  - Elk setje krijgt tussen de **30 en 60 anatomie-flashcards** (met screenshots uit het Moduulboek / de PDF's).
+- **Stap 1 afgerond [2026-10-31 11:09]:**
+  - 33 scherpe anatomische screenshots uitgesneden uit de 11 anatomie-antwoorden-PDF's én het Moduulboek (o.a. `synoviaal_opbouw_1_12.png`, `coxae_botten_1_15.png`, `genus_ligamenten_1_7.png`, `pedis_botten_1_5.png`, `pedis_ligamenten_1_4.png`, `humeri_botten_1_14.png`, `cubiti_botten_1_13.png`, `cingulum_sternum_clavicula.png`, `cingulum_scapulahumeraal.png`, `romp_wervelkolom_1_10.png`, `romp_wervel_1_8.png`, `bewegingsanalyse_1_2_3.png`, `bewegingsanalyse_streksprong.png`, en de overzichtsplaten van botten en spieren) en opgeslagen in `public/images/flashcards/`.
+  - Ook de fysiologie-onderdelen uit de spellen (`ConnectionsGame.tsx` en `QueensGridGame.tsx`) verwijderd en vervangen door zuivere anatomie.
+- **Stap 2 & 3 afgerond [2026-10-31 11:22]:**
+  - `src/data/flashcardsPart1.ts`, `src/data/flashcardsPart2.ts`, `src/data/flashcardsPart3.ts` en `src/data/flashcardsData.ts` aangemaakt met **11 complete anatomie-flashcardsets** (30 tot 53 kaarten per set, **355 flashcards** in totaal, 100% zuivere anatomie & bewegingsanalyse met alle 33 screenshots uit het Moduulboek en de antwoorden-PDF's).
+- **Stap 4 & 5 afgerond [2026-10-31 11:25]:**
+  - NotebookLM-stijl Flashcards UI gebouwd in `src/components/flashcards/FlashcardsView.tsx`:
+    - **11 complete sets** (30 tot 53 kaarten per set, **355 flashcards** in totaal, 100% zuivere anatomie & bewegingsanalyse zonder fysiologie, met 33 scherpe screenshots uit het Moduulboek en de antwoorden-PDF's).
+    - **3D kaart-flip animatie** (`rotateY(180deg)`, `perspective: 1400px`) bij tikken/klikken of `[Spatie]`/`[Enter]`.
+    - **Mobiele swipe-bediening & animaties:** horizontaal swipen op mobiel (links = *Fout / Nog oefenen*, rechts = *Goed / Gekend*) met live gekleurde feedback-badges en achterliggende stapelkaart.
+    - **Foute kaarten herhalen:** zowel tussentijds (via de knop *"Oefen foute (X)"*) als op het eindscherm (*"Oefen foute kaarten opnieuw (X)"* of *"Hele set opnieuw"*).
+    - **Afbeelding-zoom (Lightbox):** tik op *"Vergroot"* bij elk Moduulboek-figuur om de genummerde botstructuren, gewrichten, ligamenten en spieren op volledig scherm te bekijken.
+  - Nieuw tabblad **Flashcards** toegevoegd aan `Header.tsx` (zowel mobiel als desktop), `MuscleContext.tsx`, `anatomy.ts` en `App.tsx` (`http://localhost:3000/#flashcards`).
+  - Productiebuild (`npm run build`) geslaagd zonder fouten.
+
+## 25. Bugfixes: Bewegings-icoontjes & Z-index Dropdown vs. Help Popup [2026-10-31 11:28]
+- **Gemelde bugs (met screenshots van mobiel):**
+  1. De icoontjes van de bewegingen (`MovementIcon.tsx`) zagen er bij sommige bewegingen (zoals *Flexie*, *Supinatie*, *Exorotatie*, *Mediorotatie*, *Inversie*/*Eversie*) platgedrukt of afgesneden uit op klein formaat, en misten spellingvarianten zoals *Dorsaalextensie* en *Lateraalflexie*.
+  2. Op de mobiele Studie-tab (`MobileStudyView.tsx`) viel de bovenste balk met de twee dropdowns (`Alle Gewrichten` en `m. deltoideus`, die op `z-50` stond) óver de `HelpModal` (`Hulp & Uitleg`, die ook op `z-50` stond maar eerder in de DOM werd gerenderd).
+- **Oplossing:**
+  - In `src/components/common/MovementIcon.tsx` alle 22 bewegings-SVG's herontworpen met ruime marges binnen de `0 0 24 24` viewBox, zonder overlappende lijntjes of losse stipjes die op `14×14px` dichtlopen, én ondersteuning toegevoegd voor zowel `dorsaalflexie`/`dorsaalextensie` als `lateroflexie`/`lateraalflexie`.
+  - In `src/components/study/MobileStudyView.tsx` de `z-index` van de bovenste dropdown-balk verlaagd van `z-50` naar `z-20` en in `src/components/common/HelpModal.tsx` de modal-laag verhoogd naar `z-[100]`, zodat het hulpvenster altijd netjes boven alle balken en dropdowns ligt.
+
+## 26. Minimalistische Flipcards-interface & Verborgen Toegang (3x tikken op `?`) [2026-10-31 11:34]
+- **Wensen van de gebruiker:**
+  1. De hoofdstukken samenvoegen met de 'kies een flashcard' popup tot één strakke dropdown bovenaan.
+  2. Alle overbodige uitleg, ondertitels, bronvermeldingen en tekstlabels weghalen zodat het scherm zo rustig mogelijk is (alleen de groene en rode tellers voor goed en fout).
+  3. De aparte *Flip*-knop onderin weghalen (alleen Vorige, Rood `✕` en Groen `✓` + tikken op de kaart zelf om te flippen).
+  4. De Flashcards-knop in de navigatiebalk voor nu verbergen en openen wanneer je **3 keer snel op het `?`-icoontje** rechtsboven tikt, zodat alles eerst rustig getest kan worden.
+- **Uitgevoerd:**
+  - `src/components/common/Header.tsx`: Flashcards-knop uit de zichtbare balk gehaald en een triple-tap detector op de `?`-knop gezet (`3x tikken` binnen 320ms opent direct `#flashcards`; `1x tikken` opent gewoon het Hulp & Uitleg venster).
+  - `src/components/flashcards/FlashcardsView.tsx`: Volledig minimalistisch gemaakt met één hoofdstuk-dropdown (inclusief groene/rode voortgangsbadges per hoofdstuk), enkel kleur-tellers voor goed/fout, een rustige kaart zonder extra toelichtingsteksten en onderin uitsluitend `<`, `✕` (rood) en `✓` (groen).
+
+## 27. Responsieve Schermhoogte (`100dvh`) voor Alle Mobiele Resoluties [2026-10-31 11:38]
+- **Melding van gebruiker (met screenshot):**
+  - Op mobiel vielen de onderste drie knoppen (`<`, `✕`, `✓`) net van het scherm af door de combinatie van vaste minimumhoogtes op de kaart en `min-h-screen` i.p.v. `100dvh`.
+- **Oplossing in `src/components/flashcards/FlashcardsView.tsx`:**
+  - De hoofdcontainer heeft nu exact `h-[calc(100dvh-3.5rem)] sm:h-[calc(100dvh-4rem)] overflow-hidden` (precies passend onder de header en binnen de zichtbare dynamische viewport van mobiele browsers).
+  - De vaste `min-h-[340px]` op de kaart is verwijderd en vervangen door `flex-1 min-h-0`, en de voortgangslijn is geïntegreerd in de tellerrij. Hierdoor schaalt de flipcard (inclusief afbeelding) automatisch mee met élke schermhoogte en beeldverhouding en blijven de onderste knoppen altijd volledig in beeld.
+
+## 28. Opschonen & Versimpelen Flashcards: 100% Moduulboek-termen & Korte Vragen/Antwoorden [2026-10-31 11:45]
+- **Wens van de gebruiker:**
+  - Alle termen die niet in het Moduulboek of de antwoorden-PDF's voorkomen (zoals *circumductie*, *mediaanvlak*, klinische syndromen, etc.) verwijderen.
+  - Vragen en antwoorden zo kort, eenvoudig en snel leesbaar mogelijk maken zonder extra of verdiepende uitleg.
+- **Uitvoering:**
+  - **Stap 1 afgerond:** `src/data/flashcardsPart1.ts` (Set 1 Richtingen, Set 2 Assen/Vlakken/Bewegingen, Set 3 Synoviaal Gewrichten & Bewegingsanalyse) volledig herschreven met korte, directe 1-regel vragen en antwoorden exact volgens het Moduulboek en de antwoorden-PDF's.
+  - **Stap 2 afgerond:** `src/data/flashcardsPart2.ts` (Set 4 Art. coxae, Set 5 Art. genus, Set 6 Art. pedis) herschreven met exacte nummering uit de antwoorden-PDF's en korte, snelle vragen/antwoorden (niet-curriculumspieren zoals `m. sartorius` verwijderd).
+  - **Stap 3 afgerond:** `src/data/flashcardsPart3.ts` (Set 7 Art. cubiti, Set 8 Art. humeri, Set 9 Cingulum pectorale) en `src/data/flashcardsData.ts` (Set 10 Romp & Set 11 Oefentoets Anatomie + overzichtspagina's p. 71–74) herschreven en gecontroleerd tegen het volledige Moduulboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf`), `spiertabellen.pdf` en alle 11 antwoorden-PDF's.
+  - **Landingspagina toegevoegd [2026-10-31 12:02]:** In `src/components/flashcards/FlashcardsView.tsx` kom je nu eerst op het minimalistische overzichtsscherm (*Kies een flashcard-set*) met alle 11 sets (inclusief voortgangsbadges voor goed/fout/totaal), en kun je vanuit elke set met de overzichtsknop (`LayoutGrid`) linksboven of via het eindscherm direct terug naar de landingspagina.
+  - Productiebuild (`npm run build`) geslaagd met 0 fouten.
+
+## 28. Opschonen & Versimpelen Flashcards: 100% Moduulboek-termen & Korte Vragen/Antwoorden [2026-10-31 11:45]
+- **Wens van de gebruiker:**
+  - Alle termen die niet in het Moduulboek of de antwoorden-PDF's voorkomen (zoals *circumductie*, *mediaanvlak*, klinische syndromen, etc.) verwijderen.
+  - Vragen en antwoorden zo kort, eenvoudig en snel leesbaar mogelijk maken zonder extra of verdiepende uitleg.
+- **Uitvoering:**
+  - **Stap 1 afgerond:** `src/data/flashcardsPart1.ts` (Set 1 Richtingen, Set 2 Assen/Vlakken/Bewegingen, Set 3 Synoviaal Gewrichten & Bewegingsanalyse) volledig herschreven met korte, directe 1-regel vragen en antwoorden exact volgens het Moduulboek en de antwoorden-PDF's.
+  - **Stap 2 afgerond:** `src/data/flashcardsPart2.ts` (Set 4 Art. coxae, Set 5 Art. genus, Set 6 Art. pedis) herschreven met exacte nummering uit de antwoorden-PDF's en korte, snelle vragen/antwoorden (niet-curriculumspieren zoals `m. sartorius` verwijderd).
+  - **Stap 3 afgerond:** `src/data/flashcardsPart3.ts` (Set 7 Art. cubiti, Set 8 Art. humeri, Set 9 Cingulum pectorale) en `src/data/flashcardsData.ts` (Set 10 Romp & Set 11 Oefentoets Anatomie + overzichtspagina's p. 71–74) herschreven en gecontroleerd tegen het volledige Moduulboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf`), `spiertabellen.pdf` en alle 11 antwoorden-PDF's.
+  - **Landingspagina toegevoegd [2026-10-31 12:02]:** In `src/components/flashcards/FlashcardsView.tsx` kom je nu eerst op het minimalistische overzichtsscherm (*Kies een flashcard-set*) met alle 11 sets (inclusief voortgangsbadges voor goed/fout/totaal), en kun je vanuit elke set met de overzichtsknop (`LayoutGrid`) linksboven of via het eindscherm direct terug naar de landingspagina.
+  - Productiebuild (`npm run build`) geslaagd met 0 fouten.
+- **Goedkeuring ontvangen [2026-10-31 10:42]:**
+  - Gebruiker is akkoord met het plan.
+  - **Stap 1 (Beeld- & Pixelanalyse):** Eerst de exacte botcontouren op `skeleton_ventral.png` en `skeleton_dorsal.png` opmeten zodat elke lange aanhechtingszone (corpora, cristae, margines, wervelreeksen, ribben) precies op het getekende bot ligt.
+- **Stap 1 & 3 uitgevoerd (`src/data/muscles.json`) [2026-10-31 10:46]:**
+  - Voor alle 25 spieren met langgerekte aanhechtingen (corpora van femur/tibia/fibula/humerus, *margo medialis/lateralis scapulae*, *spina scapula*, *clavicula*, *sternum*, *crista iliaca*, *linea alba*, wervelreeksen, ribben en voetranden) zijn de `attachmentLines` nu exact op de botcontouren geplaatst én 100% symmetrisch aanwezig onder zowel `visuals.left` als `visuals.right`.
+  - De overige 6 spieren hebben uitsluitend kleine punt-aanhechtingen (zoals *SIAI*, *tuberositas tibiae*, *tuber ischiadicum*, *condylus medialis/lateralis*, *tuber calcanei*, *processus coracoideus*, *tuberositas radii*).
+- **Stap 2 & 4 uitgevoerd (`coordinates.ts`, `QuizView.tsx` & `MuscleMarkers.tsx`) [2026-10-31 10:53]:**
+  - In `src/utils/coordinates.ts` groepeert `getDistinctTargets()` nu gelijknamige vezelpunten (zoals de 3 stippen van *5e tot 12e costa* of de 2 stippen van *1e tot 9e costa*) tot **één uniek anatomisch doel** en koppelt dit 1-op-1 op naam aan de bijbehorende `AttachmentLine` (botzone).
+  - Kleine botpunten (zoals *condylus*, *SIAS*, *SIAI*, *tuberositas*, *olecranon*, *caput fibulae*) worden puur als punt geëvalueerd (`TOLERANCE_CORRECT = 0.020`, dekt precies het getekende botknobbeltje), terwijl lange botregio's (zoals *corpus femoris*, *corpus tibiae*, *margo medialis/lateralis scapulae*, *crista iliaca*, *linea alba*, *wervelreeks* en *ribben*) over het gehele bottraject (zowel links als rechts) als 100% goed worden gerekend.
+  - In `src/components/quiz/QuizView.tsx` vraagt de losse modus *Aanhechtingspunten* (`landmark`) nu gericht naar één specifieke structuur en filtert bij controle alleen het bijbehorende punt óf de bijbehorende botzone.
+  - In `src/components/skeleton/MuscleMarkers.tsx` verschijnt bij de antwoord-terugkoppeling (`showReferenceGhost`) een subtiele oplichtende band over de hele aanhechtingszone zodat direct zichtbaar is of een aanhechting een lang botvlak of een klein punt is.
+  - Build (`npm run build`) geslaagd zonder fouten en tijdelijk hulpscript opgeruimd. Klaar om te testen op `http://localhost:3000/`.
+
+## 23. Toggle voor Automatisch Inzoomen + Uitbreiding Puzzels met PDF-materiaal [2026-10-31 10:55]
+- **Nieuwe wensen van de gebruiker:**
+  1. **Hoofdapp (Oefenen & Testen):** Naast de bestaande schakelaar voor *Automatisch draaien* (`autoRotateView`) ook een schakelaar toevoegen voor **Automatisch inzoomen** (`autoZoom`), zodat de gebruiker het automatisch inzoomen op het gevraagde element aan of uit kan zetten (standaard aan).
+  2. **Puzzels (`#game`):** De inhoud van `E:\windesheim\anatomie blok 1` (met name `ANTWOORDEN synoviaal gewrichten.pdf`, `ANTWOORDEN assen vlakken en bewegingen.pdf` en de overige antwoorden-PDF's) volledig uitlezen en verwerken in **2. Connections** (4 words) én op een slimme manier in de andere puzzels.
+- **Actie 1 uitgevoerd [2026-10-31 10:56]:**
+  - Schakelaar **Automatisch inzoomen** (`autoZoom`, standaard *Aan*, opgeslagen in `localStorage`) toegevoegd aan zowel de desktop-weergave (`QuizView.tsx`) als het mobiele instellingenmenu (`MobileQuizView.tsx`), direct onder *Aanzicht autom. roteren*.
+  - In `SkeletonViewer.tsx` zoomt het skelet direct terug uit naar volledig overzicht (`zoom = 1`) zodra de gebruiker *Automatisch inzoomen* uitzet.
+- **Actie 2: Analyse van alle antwoorden-PDF's afgerond [2026-10-31 10:58]:**
+  - Uitgelezen: `ANTWOORDEN synoviaal gewrichten.pdf`, `ANTWOORDEN assen vlakken en bewegingen.pdf`, `ANTWOORDEN assen en vlakken.pdf`, `ANTWOORDEN richtingen.pdf`, `ANTWOORDEN eerste bewegingsanalyse.pdf`, `ANTWOORDEN romp.pdf`, `ANTWOORDEN cingulum pectorale.pdf`, `ANTWOORDEN cubiti.pdf`, `ANTWOORDEN humeri.pdf`, `Art. Coxae ANTWOORDEN.pdf`, `Art.genus ANTWOORDEN.pdf`, `Art. pedis ANTWOORDEN.pdf` en `OEFENTOETS ANATOMIE ANTWOORDEN.pdf`.
+  - **Hoe we dit verwerken in de puzzels (`#game`):**
+    1. **`2. Connections` (`ConnectionsGame.tsx` - 4 Words):**
+       - Uitbreiden met nieuwe themaborden rechtstreeks uit `ANTWOORDEN synoviaal gewrichten.pdf` (de 6 synoviale gewrichtstypen, de 12 structuren rond een synoviaal gewricht zoals *bursa*, *peesschede*, *hyalien kraakbeen*, *synoviaal membraan*, gewrichtskoppen vs. gewrichtskommen), `ANTWOORDEN assen vlakken en bewegingen.pdf` (bewegingen in S/T, F/S, T/L én de "n.v.t."-bewegingen zoals *eversie/inversie*, *horizontale ab-/adductie*, *protractie/retractie*, *elevatie/detractie*, *latero-/mediorotatie*), `ANTWOORDEN richtingen.pdf`, en `ANTWOORDEN romp/cubiti/genus/pedis.pdf`.
+    2. **`3. Eliminatie Rooster` (`QueensGridGame.tsx`):**
+       - Uitbreiden met nieuwe 4x4 logische deductie-roosters uit `ANTWOORDEN synoviaal gewrichten.pdf` (structuur ↔ functie zoals *bursa*, *peesschede*, *synoviaal membraan*, *hyalien kraakbeen*; én gewrichtstype ↔ vrijheidsgraden/beweging) en `ANTWOORDEN assen vlakken en bewegingen.pdf` (beweging ↔ vlak & as, inclusief *n.v.t.* bij schoudergordel/onderste spronggewricht).
+    3. **`4. Raad het Begrip` (`MuscleGuessGame.tsx`):**
+       - Uitbreiden met een modus-schakelaar bovenin: **[Spieren (31)]** én **[Gewrichten & Vlak/As (PDF)]**, zodat je in dezelfde Wordle/Loldle-stijl met Groen/Geel/Grijze kolommen ook de gewrichten en bewegingen uit `ANTWOORDEN synoviaal gewrichten.pdf` en `ANTWOORDEN assen vlakken en bewegingen.pdf` kunt raden op basis van *Type gewricht*, *Aantal assen*, *Vlak*, *As* en *Samenstellende botten*!
+- **Afronding & Verificatie [2026-10-31 11:01]:**
+  - In `ConnectionsGame.tsx` zijn **Bord 7 (Synoviaal PDF)**, **Bord 8 (Vlak & As PDF)** en **Bord 9 (Richtingen & Knie PDF)** toegevoegd (totaal 9 vaste borden + 36 groepen voor de *Willekeurige Mix*).
+  - In `QueensGridGame.tsx` zijn 3 nieuwe 4x4 deductie-roosters toegevoegd: **Gewrichtsopbouw (PDF)** (*hyalien kraakbeen*, *synoviaal membraan*, *peesschede*, *bursa*), **Vlak, As & Beweging (PDF)** (inclusief *n.v.t.* bij onderste spronggewricht) en **Banden Art. genus (PDF)** (*lig. cruciatum anterior/posterior*, *lig. collaterale medialis/lateralis*).
+  - In `MuscleGuessGame.tsx` is de tab **Gewrichten & Vlak/As (PDF)** toegevoegd waarmee alle 19 gewrichtsbewegingen uit `ANTWOORDEN synoviaal gewrichten.pdf` en `ANTWOORDEN assen vlakken en bewegingen.pdf` via de 5 kolommen (*Type*, *Assen*, *Vlak*, *As*, *Botten*) geraden kunnen worden.
+  - `npm run build` gecontroleerd en geslaagd zonder fouten.
+
+## 24. Nieuw Tabblad "Flashcards" (NotebookLM-stijl met Screenshots uit Moduleboek) [2026-10-31 11:04]
+- **Opdracht van de gebruiker:**
+  - Nieuw tabblad **Flashcards** in de hoofdapp toevoegen.
+  - Werking en animaties zoals **NotebookLM**:
+    - 3D kaart-flip animatie + soepele kaartwissel (vooral geoptimaliseerd voor mobiel én desktop).
+    - Bijhouden welke kaarten **Goed** en welke **Fout** zijn beantwoord.
+    - Aan het einde van een set (of tussentijds) de mogelijkheid om **alleen de foute kaarten opnieuw te doen** óf **de hele set opnieuw te starten**.
+  - Een setje voor **elk gelezen antwoorden-PDF** (met 30 tot 60 kaarten per set zodat werkelijk alles uit het moduleboek en de antwoorden-PDF's erin zit), uitsluitend met de exacte terminologie uit het moduleboek (geen verboden spieren zoals *m. piriformis*, en met de toegestane spieren uit de reader/app).
+  - Regelmatig gebruikmaken van **screenshots uit het moduleboek / de antwoorden-PDF's** (zonder dat de antwoorden in het plaatje al worden verklapt op de voorkant!).
+- **Stappenplan:**
+  1. **Stap 1:** Screenshots/afbeeldingen van de anatomische figuren uit het moduleboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf` en de opdracht-PDF's) extraheren en opslaan in `public/images/flashcards/`.
+  2. **Stap 2:** De nog niet volledig gelezen pagina's van `oefenvragen fysiologie tot herfst met antwoorden.pdf` en het `Moduulboek` bekijken zodat alle theorie (synoviale opbouw, bewegingsanalyse, alle gewrichten, botten, ligamenten, spieren en fysiologie) compleet is.
+  3. **Stap 3:** `src/data/flashcardsData.ts` opbouwen met een aparte set (30–50 kaarten per set) voor elk antwoorden-PDF.
+- **Correctie van gebruiker [2026-10-31 11:06]:**
+  - **Geen fysiologie verwerken! Het gaat puur om anatomie (en bewegingsanalyse).**
+  - De 11 zuivere anatomie-antwoorden-PDF's zijn:
+    1. `ANTWOORDEN richtingen.pdf` (Richtingen & Aanzichten)
+    2. `ANTWOORDEN assen en vlakken.pdf` + `ANTWOORDEN assen vlakken en bewegingen.pdf` (Assen, Vlakken & Bewegingen)
+    3. `ANTWOORDEN synoviaal gewrichten.pdf` (Synoviaal Gewrichten & Gewrichtsopbouw)
+    4. `ANTWOORDEN eerste bewegingsanalyse.pdf` (Eerste Bewegingsanalyse)
+    5. `Art. Coxae ANTWOORDEN.pdf` (Art. coxae: Heupgewricht, Botten & Spieren)
+    6. `Art.genus ANTWOORDEN.pdf` (Art. genus: Kniegewricht, Banden, Menisci & Spieren)
+    7. `Art. pedis ANTWOORDEN.pdf` (Art. pedis: Enkel/Voet, Banden & Spieren)
+    8. `ANTWOORDEN humeri.pdf` (Art. humeri: Schoudergewricht, Scapula/Humerus & Spieren)
+    9. `ANTWOORDEN cubiti.pdf` (Art. cubiti: Ellebooggewricht, Botten & Spieren)
+    10. `ANTWOORDEN cingulum pectorale.pdf` (Cingulum pectorale: Schoudergordel & Spieren)
+    11. `ANTWOORDEN romp.pdf` (Romp: Wervelkolom, Thorax, Wervelopbouw & Spieren)
+  - Plus de anatomische woordenlijst en platen achterin het Moduulboek (p. 68–74) en `OEFENTOETS ANATOMIE ANTWOORDEN.pdf`.
+  - Elk setje krijgt tussen de **30 en 60 anatomie-flashcards** (met screenshots uit het Moduulboek / de PDF's).
+- **Stap 1 afgerond [2026-10-31 11:09]:**
+  - 33 scherpe anatomische screenshots uitgesneden uit de 11 anatomie-antwoorden-PDF's én het Moduulboek (o.a. `synoviaal_opbouw_1_12.png`, `coxae_botten_1_15.png`, `genus_ligamenten_1_7.png`, `pedis_botten_1_5.png`, `pedis_ligamenten_1_4.png`, `humeri_botten_1_14.png`, `cubiti_botten_1_13.png`, `cingulum_sternum_clavicula.png`, `cingulum_scapulahumeraal.png`, `romp_wervelkolom_1_10.png`, `romp_wervel_1_8.png`, `bewegingsanalyse_1_2_3.png`, `bewegingsanalyse_streksprong.png`, en de overzichtsplaten van botten en spieren) en opgeslagen in `public/images/flashcards/`.
+  - Ook de fysiologie-onderdelen uit de spellen (`ConnectionsGame.tsx` en `QueensGridGame.tsx`) verwijderd en vervangen door zuivere anatomie.
+- **Stap 2 & 3 afgerond [2026-10-31 11:22]:**
+  - `src/data/flashcardsPart1.ts`, `src/data/flashcardsPart2.ts`, `src/data/flashcardsPart3.ts` en `src/data/flashcardsData.ts` aangemaakt met **11 complete anatomie-flashcardsets** (30 tot 53 kaarten per set, **355 flashcards** in totaal, 100% zuivere anatomie & bewegingsanalyse met alle 33 screenshots uit het Moduulboek en de antwoorden-PDF's).
+- **Stap 4 & 5 afgerond [2026-10-31 11:25]:**
+  - NotebookLM-stijl Flashcards UI gebouwd in `src/components/flashcards/FlashcardsView.tsx`:
+    - **11 complete sets** (30 tot 53 kaarten per set, **355 flashcards** in totaal, 100% zuivere anatomie & bewegingsanalyse zonder fysiologie, met 33 scherpe screenshots uit het Moduulboek en de antwoorden-PDF's).
+    - **3D kaart-flip animatie** (`rotateY(180deg)`, `perspective: 1400px`) bij tikken/klikken of `[Spatie]`/`[Enter]`.
+    - **Mobiele swipe-bediening & animaties:** horizontaal swipen op mobiel (links = *Fout / Nog oefenen*, rechts = *Goed / Gekend*) met live gekleurde feedback-badges en achterliggende stapelkaart.
+    - **Foute kaarten herhalen:** zowel tussentijds (via de knop *"Oefen foute (X)"*) als op het eindscherm (*"Oefen foute kaarten opnieuw (X)"* of *"Hele set opnieuw"*).
+    - **Afbeelding-zoom (Lightbox):** tik op *"Vergroot"* bij elk Moduulboek-figuur om de genummerde botstructuren, gewrichten, ligamenten en spieren op volledig scherm te bekijken.
+  - Nieuw tabblad **Flashcards** toegevoegd aan `Header.tsx` (zowel mobiel als desktop), `MuscleContext.tsx`, `anatomy.ts` en `App.tsx` (`http://localhost:3000/#flashcards`).
+  - Productiebuild (`npm run build`) geslaagd zonder fouten.
+
+## 25. Bugfixes: Bewegings-icoontjes & Z-index Dropdown vs. Help Popup [2026-10-31 11:28]
+- **Gemelde bugs (met screenshots van mobiel):**
+  1. De icoontjes van de bewegingen (`MovementIcon.tsx`) zagen er bij sommige bewegingen (zoals *Flexie*, *Supinatie*, *Exorotatie*, *Mediorotatie*, *Inversie*/*Eversie*) platgedrukt of afgesneden uit op klein formaat, en misten spellingvarianten zoals *Dorsaalextensie* en *Lateraalflexie*.
+  2. Op de mobiele Studie-tab (`MobileStudyView.tsx`) viel de bovenste balk met de twee dropdowns (`Alle Gewrichten` en `m. deltoideus`, die op `z-50` stond) óver de `HelpModal` (`Hulp & Uitleg`, die ook op `z-50` stond maar eerder in de DOM werd gerenderd).
+- **Oplossing:**
+  - In `src/components/common/MovementIcon.tsx` alle 22 bewegings-SVG's herontworpen met ruime marges binnen de `0 0 24 24` viewBox, zonder overlappende lijntjes of losse stipjes die op `14×14px` dichtlopen, én ondersteuning toegevoegd voor zowel `dorsaalflexie`/`dorsaalextensie` als `lateroflexie`/`lateraalflexie`.
+  - In `src/components/study/MobileStudyView.tsx` de `z-index` van de bovenste dropdown-balk verlaagd van `z-50` naar `z-20` en in `src/components/common/HelpModal.tsx` de modal-laag verhoogd naar `z-[100]`, zodat het hulpvenster altijd netjes boven alle balken en dropdowns ligt.
+
+## 26. Minimalistische Flipcards-interface & Verborgen Toegang (3x tikken op `?`) [2026-10-31 11:34]
+- **Wensen van de gebruiker:**
+  1. De hoofdstukken samenvoegen met de 'kies een flashcard' popup tot één strakke dropdown bovenaan.
+  2. Alle overbodige uitleg, ondertitels, bronvermeldingen en tekstlabels weghalen zodat het scherm zo rustig mogelijk is (alleen de groene en rode tellers voor goed en fout).
+  3. De aparte *Flip*-knop onderin weghalen (alleen Vorige, Rood `✕` en Groen `✓` + tikken op de kaart zelf om te flippen).
+  4. De Flashcards-knop in de navigatiebalk voor nu verbergen en openen wanneer je **3 keer snel op het `?`-icoontje** rechtsboven tikt, zodat alles eerst rustig getest kan worden.
+- **Uitgevoerd:**
+  - `src/components/common/Header.tsx`: Flashcards-knop uit de zichtbare balk gehaald en een triple-tap detector op de `?`-knop gezet (`3x tikken` binnen 320ms opent direct `#flashcards`; `1x tikken` opent gewoon het Hulp & Uitleg venster).
+  - `src/components/flashcards/FlashcardsView.tsx`: Volledig minimalistisch gemaakt met één hoofdstuk-dropdown (inclusief groene/rode voortgangsbadges per hoofdstuk), enkel kleur-tellers voor goed/fout, een rustige kaart zonder extra toelichtingsteksten en onderin uitsluitend `<`, `✕` (rood) en `✓` (groen).
+
+## 27. Responsieve Schermhoogte (`100dvh`) voor Alle Mobiele Resoluties [2026-10-31 11:38]
+- **Melding van gebruiker (met screenshot):**
+  - Op mobiel vielen de onderste drie knoppen (`<`, `✕`, `✓`) net van het scherm af door de combinatie van vaste minimumhoogtes op de kaart en `min-h-screen` i.p.v. `100dvh`.
+- **Oplossing in `src/components/flashcards/FlashcardsView.tsx`:**
+  - De hoofdcontainer heeft nu exact `h-[calc(100dvh-3.5rem)] sm:h-[calc(100dvh-4rem)] overflow-hidden` (precies passend onder de header en binnen de zichtbare dynamische viewport van mobiele browsers).
+  - De vaste `min-h-[340px]` op de kaart is verwijderd en vervangen door `flex-1 min-h-0`, en de voortgangslijn is geïntegreerd in de tellerrij. Hierdoor schaalt de flipcard (inclusief afbeelding) automatisch mee met élke schermhoogte en beeldverhouding en blijven de onderste knoppen altijd volledig in beeld.
+
+## 28. Opschonen & Versimpelen Flashcards: 100% Moduulboek-termen & Korte Vragen/Antwoorden [2026-10-31 11:45]
+- **Wens van de gebruiker:**
+  - Alle termen die niet in het Moduulboek of de antwoorden-PDF's voorkomen (zoals *circumductie*, *mediaanvlak*, klinische syndromen, etc.) verwijderen.
+  - Vragen en antwoorden zo kort, eenvoudig en snel leesbaar mogelijk maken zonder extra of verdiepende uitleg.
+- **Uitvoering:**
+  - **Stap 1 afgerond:** `src/data/flashcardsPart1.ts` (Set 1 Richtingen, Set 2 Assen/Vlakken/Bewegingen, Set 3 Synoviaal Gewrichten & Bewegingsanalyse) volledig herschreven met korte, directe 1-regel vragen en antwoorden exact volgens het Moduulboek en de antwoorden-PDF's.
+  - **Stap 2 afgerond:** `src/data/flashcardsPart2.ts` (Set 4 Art. coxae, Set 5 Art. genus, Set 6 Art. pedis) herschreven met exacte nummering uit de antwoorden-PDF's en korte, snelle vragen/antwoorden (niet-curriculumspieren zoals `m. sartorius` verwijderd).
+  - **Stap 3 afgerond:** `src/data/flashcardsPart3.ts` (Set 7 Art. cubiti, Set 8 Art. humeri, Set 9 Cingulum pectorale) en `src/data/flashcardsData.ts` (Set 10 Romp & Set 11 Oefentoets Anatomie + overzichtspagina's p. 71–74) herschreven en gecontroleerd tegen het volledige Moduulboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf`), `spiertabellen.pdf` en alle 11 antwoorden-PDF's.
+  - **Landingspagina toegevoegd [2026-10-31 12:02]:** In `src/components/flashcards/FlashcardsView.tsx` kom je nu eerst op het minimalistische overzichtsscherm (*Kies een flashcard-set*) met alle 11 sets (inclusief voortgangsbadges voor goed/fout/totaal), en kun je vanuit elke set met de overzichtsknop (`LayoutGrid`) linksboven of via het eindscherm direct terug naar de landingspagina.
+  - Productiebuild (`npm run build`) geslaagd met 0 fouten.
+
+## 28. Opschonen & Versimpelen Flashcards: 100% Moduulboek-termen & Korte Vragen/Antwoorden [2026-10-31 11:45]
+- **Wens van de gebruiker:**
+  - Alle termen die niet in het Moduulboek of de antwoorden-PDF's voorkomen (zoals *circumductie*, *mediaanvlak*, klinische syndromen, etc.) verwijderen.
+  - Vragen en antwoorden zo kort, eenvoudig en snel leesbaar mogelijk maken zonder extra of verdiepende uitleg.
+- **Uitvoering:**
+  - **Stap 1 afgerond:** `src/data/flashcardsPart1.ts` (Set 1 Richtingen, Set 2 Assen/Vlakken/Bewegingen, Set 3 Synoviaal Gewrichten & Bewegingsanalyse) volledig herschreven met korte, directe 1-regel vragen en antwoorden exact volgens het Moduulboek en de antwoorden-PDF's.
+  - **Stap 2 afgerond:** `src/data/flashcardsPart2.ts` (Set 4 Art. coxae, Set 5 Art. genus, Set 6 Art. pedis) herschreven met exacte nummering uit de antwoorden-PDF's en korte, snelle vragen/antwoorden (niet-curriculumspieren zoals `m. sartorius` verwijderd).
+  - **Stap 3 afgerond:** `src/data/flashcardsPart3.ts` (Set 7 Art. cubiti, Set 8 Art. humeri, Set 9 Cingulum pectorale) en `src/data/flashcardsData.ts` (Set 10 Romp & Set 11 Oefentoets Anatomie + overzichtspagina's p. 71–74) herschreven en gecontroleerd tegen het volledige Moduulboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf`), `spiertabellen.pdf` en alle 11 antwoorden-PDF's.
+  - **Landingspagina toegevoegd [2026-10-31 12:02]:** In `src/components/flashcards/FlashcardsView.tsx` kom je nu eerst op het minimalistische overzichtsscherm (*Kies een flashcard-set*) met alle 11 sets (inclusief voortgangsbadges voor goed/fout/totaal), en kun je vanuit elke set met de overzichtsknop (`LayoutGrid`) linksboven of via het eindscherm direct terug naar de landingspagina.
+  - Productiebuild (`npm run build`) geslaagd met 0 fouten.
+
+## 24. Nieuw Tabblad "Flashcards" (NotebookLM-stijl met Screenshots uit Moduleboek) [2026-10-31 11:04]
+- **Opdracht van de gebruiker:**
+  - Nieuw tabblad **Flashcards** in de hoofdapp toevoegen.
+  - Werking en animaties zoals **NotebookLM**:
+    - 3D kaart-flip animatie + soepele kaartwissel (vooral geoptimaliseerd voor mobiel én desktop).
+    - Bijhouden welke kaarten **Goed** en welke **Fout** zijn beantwoord.
+    - Aan het einde van een set (of tussentijds) de mogelijkheid om **alleen de foute kaarten opnieuw te doen** óf **de hele set opnieuw te starten**.
+  - Een setje voor **elk gelezen antwoorden-PDF** (met 30 tot 60 kaarten per set zodat werkelijk alles uit het moduleboek en de antwoorden-PDF's erin zit), uitsluitend met de exacte terminologie uit het moduleboek (geen verboden spieren zoals *m. piriformis*, en met de toegestane spieren uit de reader/app).
+  - Regelmatig gebruikmaken van **screenshots uit het moduleboek / de antwoorden-PDF's** (zonder dat de antwoorden in het plaatje al worden verklapt op de voorkant!).
+- **Stappenplan:**
+  1. **Stap 1:** Screenshots/afbeeldingen van de anatomische figuren uit het moduleboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf` en de opdracht-PDF's) extraheren en opslaan in `public/images/flashcards/`.
+  2. **Stap 2:** De nog niet volledig gelezen pagina's van `oefenvragen fysiologie tot herfst met antwoorden.pdf` en het `Moduulboek` bekijken zodat alle theorie (synoviale opbouw, bewegingsanalyse, alle gewrichten, botten, ligamenten, spieren en fysiologie) compleet is.
+  3. **Stap 3:** `src/data/flashcardsData.ts` opbouwen met een aparte set (30–50 kaarten per set) voor elk antwoorden-PDF.
+- **Correctie van gebruiker [2026-10-31 11:06]:**
+  - **Geen fysiologie verwerken! Het gaat puur om anatomie (en bewegingsanalyse).**
+  - De 11 zuivere anatomie-antwoorden-PDF's zijn:
+    1. `ANTWOORDEN richtingen.pdf` (Richtingen & Aanzichten)
+    2. `ANTWOORDEN assen en vlakken.pdf` + `ANTWOORDEN assen vlakken en bewegingen.pdf` (Assen, Vlakken & Bewegingen)
+    3. `ANTWOORDEN synoviaal gewrichten.pdf` (Synoviaal Gewrichten & Gewrichtsopbouw)
+    4. `ANTWOORDEN eerste bewegingsanalyse.pdf` (Eerste Bewegingsanalyse)
+    5. `Art. Coxae ANTWOORDEN.pdf` (Art. coxae: Heupgewricht, Botten & Spieren)
+    6. `Art.genus ANTWOORDEN.pdf` (Art. genus: Kniegewricht, Banden, Menisci & Spieren)
+    7. `Art. pedis ANTWOORDEN.pdf` (Art. pedis: Enkel/Voet, Banden & Spieren)
+    8. `ANTWOORDEN humeri.pdf` (Art. humeri: Schoudergewricht, Scapula/Humerus & Spieren)
+    9. `ANTWOORDEN cubiti.pdf` (Art. cubiti: Ellebooggewricht, Botten & Spieren)
+    10. `ANTWOORDEN cingulum pectorale.pdf` (Cingulum pectorale: Schoudergordel & Spieren)
+    11. `ANTWOORDEN romp.pdf` (Romp: Wervelkolom, Thorax, Wervelopbouw & Spieren)
+  - Plus de anatomische woordenlijst en platen achterin het Moduulboek (p. 68–74) en `OEFENTOETS ANATOMIE ANTWOORDEN.pdf`.
+  - Elk setje krijgt tussen de **30 en 60 anatomie-flashcards** (met screenshots uit het Moduulboek / de PDF's).
+- **Stap 1 afgerond [2026-10-31 11:09]:**
+  - 33 scherpe anatomische screenshots uitgesneden uit de 11 anatomie-antwoorden-PDF's én het Moduulboek (o.a. `synoviaal_opbouw_1_12.png`, `coxae_botten_1_15.png`, `genus_ligamenten_1_7.png`, `pedis_botten_1_5.png`, `pedis_ligamenten_1_4.png`, `humeri_botten_1_14.png`, `cubiti_botten_1_13.png`, `cingulum_sternum_clavicula.png`, `cingulum_scapulahumeraal.png`, `romp_wervelkolom_1_10.png`, `romp_wervel_1_8.png`, `bewegingsanalyse_1_2_3.png`, `bewegingsanalyse_streksprong.png`, en de overzichtsplaten van botten en spieren) en opgeslagen in `public/images/flashcards/`.
+  - Ook de fysiologie-onderdelen uit de spellen (`ConnectionsGame.tsx` en `QueensGridGame.tsx`) verwijderd en vervangen door zuivere anatomie.
+- **Stap 2 & 3 afgerond [2026-10-31 11:22]:**
+  - `src/data/flashcardsPart1.ts`, `src/data/flashcardsPart2.ts`, `src/data/flashcardsPart3.ts` en `src/data/flashcardsData.ts` aangemaakt met **11 complete anatomie-flashcardsets** (30 tot 53 kaarten per set, **355 flashcards** in totaal, 100% zuivere anatomie & bewegingsanalyse met alle 33 screenshots uit het Moduulboek en de antwoorden-PDF's).
+- **Stap 4 & 5 afgerond [2026-10-31 11:25]:**
+  - NotebookLM-stijl Flashcards UI gebouwd in `src/components/flashcards/FlashcardsView.tsx`:
+    - **11 complete sets** (30 tot 53 kaarten per set, **355 flashcards** in totaal, 100% zuivere anatomie & bewegingsanalyse zonder fysiologie, met 33 scherpe screenshots uit het Moduulboek en de antwoorden-PDF's).
+    - **3D kaart-flip animatie** (`rotateY(180deg)`, `perspective: 1400px`) bij tikken/klikken of `[Spatie]`/`[Enter]`.
+    - **Mobiele swipe-bediening & animaties:** horizontaal swipen op mobiel (links = *Fout / Nog oefenen*, rechts = *Goed / Gekend*) met live gekleurde feedback-badges en achterliggende stapelkaart.
+    - **Foute kaarten herhalen:** zowel tussentijds (via de knop *"Oefen foute (X)"*) als op het eindscherm (*"Oefen foute kaarten opnieuw (X)"* of *"Hele set opnieuw"*).
+    - **Afbeelding-zoom (Lightbox):** tik op *"Vergroot"* bij elk Moduulboek-figuur om de genummerde botstructuren, gewrichten, ligamenten en spieren op volledig scherm te bekijken.
+  - Nieuw tabblad **Flashcards** toegevoegd aan `Header.tsx` (zowel mobiel als desktop), `MuscleContext.tsx`, `anatomy.ts` en `App.tsx` (`http://localhost:3000/#flashcards`).
+  - Productiebuild (`npm run build`) geslaagd zonder fouten.
+
+## 25. Bugfixes: Bewegings-icoontjes & Z-index Dropdown vs. Help Popup [2026-10-31 11:28]
+- **Gemelde bugs (met screenshots van mobiel):**
+  1. De icoontjes van de bewegingen (`MovementIcon.tsx`) zagen er bij sommige bewegingen (zoals *Flexie*, *Supinatie*, *Exorotatie*, *Mediorotatie*, *Inversie*/*Eversie*) platgedrukt of afgesneden uit op klein formaat, en misten spellingvarianten zoals *Dorsaalextensie* en *Lateraalflexie*.
+  2. Op de mobiele Studie-tab (`MobileStudyView.tsx`) viel de bovenste balk met de twee dropdowns (`Alle Gewrichten` en `m. deltoideus`, die op `z-50` stond) óver de `HelpModal` (`Hulp & Uitleg`, die ook op `z-50` stond maar eerder in de DOM werd gerenderd).
+- **Oplossing:**
+  - In `src/components/common/MovementIcon.tsx` alle 22 bewegings-SVG's herontworpen met ruime marges binnen de `0 0 24 24` viewBox, zonder overlappende lijntjes of losse stipjes die op `14×14px` dichtlopen, én ondersteuning toegevoegd voor zowel `dorsaalflexie`/`dorsaalextensie` als `lateroflexie`/`lateraalflexie`.
+  - In `src/components/study/MobileStudyView.tsx` de `z-index` van de bovenste dropdown-balk verlaagd van `z-50` naar `z-20` en in `src/components/common/HelpModal.tsx` de modal-laag verhoogd naar `z-[100]`, zodat het hulpvenster altijd netjes boven alle balken en dropdowns ligt.
+
+## 26. Minimalistische Flipcards-interface & Verborgen Toegang (3x tikken op `?`) [2026-10-31 11:34]
+- **Wensen van de gebruiker:**
+  1. De hoofdstukken samenvoegen met de 'kies een flashcard' popup tot één strakke dropdown bovenaan.
+  2. Alle overbodige uitleg, ondertitels, bronvermeldingen en tekstlabels weghalen zodat het scherm zo rustig mogelijk is (alleen de groene en rode tellers voor goed en fout).
+  3. De aparte *Flip*-knop onderin weghalen (alleen Vorige, Rood `✕` en Groen `✓` + tikken op de kaart zelf om te flippen).
+  4. De Flashcards-knop in de navigatiebalk voor nu verbergen en openen wanneer je **3 keer snel op het `?`-icoontje** rechtsboven tikt, zodat alles eerst rustig getest kan worden.
+- **Uitgevoerd:**
+  - `src/components/common/Header.tsx`: Flashcards-knop uit de zichtbare balk gehaald en een triple-tap detector op de `?`-knop gezet (`3x tikken` binnen 320ms opent direct `#flashcards`; `1x tikken` opent gewoon het Hulp & Uitleg venster).
+  - `src/components/flashcards/FlashcardsView.tsx`: Volledig minimalistisch gemaakt met één hoofdstuk-dropdown (inclusief groene/rode voortgangsbadges per hoofdstuk), enkel kleur-tellers voor goed/fout, een rustige kaart zonder extra toelichtingsteksten en onderin uitsluitend `<`, `✕` (rood) en `✓` (groen).
+
+## 27. Responsieve Schermhoogte (`100dvh`) voor Alle Mobiele Resoluties [2026-10-31 11:38]
+- **Melding van gebruiker (met screenshot):**
+  - Op mobiel vielen de onderste drie knoppen (`<`, `✕`, `✓`) net van het scherm af door de combinatie van vaste minimumhoogtes op de kaart en `min-h-screen` i.p.v. `100dvh`.
+- **Oplossing in `src/components/flashcards/FlashcardsView.tsx`:**
+  - De hoofdcontainer heeft nu exact `h-[calc(100dvh-3.5rem)] sm:h-[calc(100dvh-4rem)] overflow-hidden` (precies passend onder de header en binnen de zichtbare dynamische viewport van mobiele browsers).
+  - De vaste `min-h-[340px]` op de kaart is verwijderd en vervangen door `flex-1 min-h-0`, en de voortgangslijn is geïntegreerd in de tellerrij. Hierdoor schaalt de flipcard (inclusief afbeelding) automatisch mee met élke schermhoogte en beeldverhouding en blijven de onderste knoppen altijd volledig in beeld.
+
+## 28. Opschonen & Versimpelen Flashcards: 100% Moduulboek-termen & Korte Vragen/Antwoorden [2026-10-31 11:45]
+- **Wens van de gebruiker:**
+  - Alle termen die niet in het Moduulboek of de antwoorden-PDF's voorkomen (zoals *circumductie*, *mediaanvlak*, klinische syndromen, etc.) verwijderen.
+  - Vragen en antwoorden zo kort, eenvoudig en snel leesbaar mogelijk maken zonder extra of verdiepende uitleg.
+- **Uitvoering:**
+  - **Stap 1 afgerond:** `src/data/flashcardsPart1.ts` (Set 1 Richtingen, Set 2 Assen/Vlakken/Bewegingen, Set 3 Synoviaal Gewrichten & Bewegingsanalyse) volledig herschreven met korte, directe 1-regel vragen en antwoorden exact volgens het Moduulboek en de antwoorden-PDF's.
+  - **Stap 2 afgerond:** `src/data/flashcardsPart2.ts` (Set 4 Art. coxae, Set 5 Art. genus, Set 6 Art. pedis) herschreven met exacte nummering uit de antwoorden-PDF's en korte, snelle vragen/antwoorden (niet-curriculumspieren zoals `m. sartorius` verwijderd).
+  - **Stap 3 afgerond:** `src/data/flashcardsPart3.ts` (Set 7 Art. cubiti, Set 8 Art. humeri, Set 9 Cingulum pectorale) en `src/data/flashcardsData.ts` (Set 10 Romp & Set 11 Oefentoets Anatomie + overzichtspagina's p. 71–74) herschreven en gecontroleerd tegen het volledige Moduulboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf`), `spiertabellen.pdf` en alle 11 antwoorden-PDF's.
+  - **Landingspagina toegevoegd [2026-10-31 12:02]:** In `src/components/flashcards/FlashcardsView.tsx` kom je nu eerst op het minimalistische overzichtsscherm (*Kies een flashcard-set*) met alle 11 sets (inclusief voortgangsbadges voor goed/fout/totaal), en kun je vanuit elke set met de overzichtsknop (`LayoutGrid`) linksboven of via het eindscherm direct terug naar de landingspagina.
+  - Productiebuild (`npm run build`) geslaagd met 0 fouten.
+
+## 28. Opschonen & Versimpelen Flashcards: 100% Moduulboek-termen & Korte Vragen/Antwoorden [2026-10-31 11:45]
+- **Wens van de gebruiker:**
+  - Alle termen die niet in het Moduulboek of de antwoorden-PDF's voorkomen (zoals *circumductie*, *mediaanvlak*, klinische syndromen, etc.) verwijderen.
+  - Vragen en antwoorden zo kort, eenvoudig en snel leesbaar mogelijk maken zonder extra of verdiepende uitleg.
+- **Uitvoering:**
+  - **Stap 1 afgerond:** `src/data/flashcardsPart1.ts` (Set 1 Richtingen, Set 2 Assen/Vlakken/Bewegingen, Set 3 Synoviaal Gewrichten & Bewegingsanalyse) volledig herschreven met korte, directe 1-regel vragen en antwoorden exact volgens het Moduulboek en de antwoorden-PDF's.
+  - **Stap 2 afgerond:** `src/data/flashcardsPart2.ts` (Set 4 Art. coxae, Set 5 Art. genus, Set 6 Art. pedis) herschreven met exacte nummering uit de antwoorden-PDF's en korte, snelle vragen/antwoorden (niet-curriculumspieren zoals `m. sartorius` verwijderd).
+  - **Stap 3 afgerond:** `src/data/flashcardsPart3.ts` (Set 7 Art. cubiti, Set 8 Art. humeri, Set 9 Cingulum pectorale) en `src/data/flashcardsData.ts` (Set 10 Romp & Set 11 Oefentoets Anatomie + overzichtspagina's p. 71–74) herschreven en gecontroleerd tegen het volledige Moduulboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf`), `spiertabellen.pdf` en alle 11 antwoorden-PDF's.
+  - **Landingspagina toegevoegd [2026-10-31 12:02]:** In `src/components/flashcards/FlashcardsView.tsx` kom je nu eerst op het minimalistische overzichtsscherm (*Kies een flashcard-set*) met alle 11 sets (inclusief voortgangsbadges voor goed/fout/totaal), en kun je vanuit elke set met de overzichtsknop (`LayoutGrid`) linksboven of via het eindscherm direct terug naar de landingspagina.
+  - Productiebuild (`npm run build`) geslaagd met 0 fouten.

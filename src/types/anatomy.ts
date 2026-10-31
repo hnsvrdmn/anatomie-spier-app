@@ -66,7 +66,7 @@ export interface Muscle {
 }
 
 
-export type AppMode = 'study' | 'movements' | 'bones' | 'quiz' | 'editor';
+export type AppMode = 'study' | 'movements' | 'bones' | 'quiz' | 'flashcards' | 'editor';
 
 import type { JointQuizItem } from '../data/jointQuestions';
 

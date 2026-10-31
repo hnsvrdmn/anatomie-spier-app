@@ -100,12 +100,25 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
 
           return (
             <g key={`marker-attach-line-${side}-${line.id || lIdx}`}>
+              {/* Subtiele gekleurde zone-band wanneer na controle het juiste antwoord wordt getoond */}
+              {showReferenceGhost && (
+                <path
+                  d={pathD}
+                  fill="none"
+                  stroke={isOrigin ? '#3b82f6' : '#ef4444'}
+                  strokeWidth={22 / zoom}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  opacity={0.22}
+                  className="pointer-events-none animate-pulse"
+                />
+              )}
               {/* Witte contour eronder voor maximaal contrast en leesbaarheid tegen skelet */}
               <path
                 d={pathD}
                 fill="none"
                 stroke="#ffffff"
-                strokeWidth={5 / zoom}
+                strokeWidth={(showReferenceGhost ? 6.5 : 5) / zoom}
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 opacity={isOppositeView ? 0.45 : 0.85}
@@ -116,7 +129,7 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                 d={pathD}
                 fill="none"
                 stroke={strokeColor}
-                strokeWidth={3 / zoom}
+                strokeWidth={(showReferenceGhost ? 4.2 : 3) / zoom}
                 strokeDasharray={`${5 / zoom} ${4 / zoom}`}
                 strokeLinecap="round"
                 strokeLinejoin="round"

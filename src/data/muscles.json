@@ -47,24 +47,64 @@
         ],
         "attachmentLines": [
           {
-            "id": "line-origin-latissimus-spine-right",
-            "name": "Processus spinosi T7-L5 & fascia thoracolumbalis",
+            "id": "line-lat-thor-right",
+            "name": "processus spinosus 7e-12e thoracale wervels",
             "type": "origin",
             "points": [
               {
-                "x": 0.5,
-                "y": 0.275
+                "x": 0.5025,
+                "y": 0.245
               },
               {
-                "x": 0.4989,
-                "y": 0.3471
+                "x": 0.5025,
+                "y": 0.2767
               },
               {
-                "x": 0.5,
-                "y": 0.422
+                "x": 0.5025,
+                "y": 0.34
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-lat-lumb-right",
+            "name": "processus spinosus alle lumbale wervels",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.4979,
+                "y": 0.345
+              },
+              {
+                "x": 0.4979,
+                "y": 0.4214
+              },
+              {
+                "x": 0.4979,
+                "y": 0.44
+              }
+            ],
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-lat-crista-right",
+            "name": "dorsale zijde crista iliaca",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.555,
+                "y": 0.415
+              },
+              {
+                "x": 0.5844,
+                "y": 0.4224
+              },
+              {
+                "x": 0.635,
+                "y": 0.405
+              }
+            ],
+            "tolerance": 0.024
           }
         ]
       },
@@ -102,24 +142,64 @@
         ],
         "attachmentLines": [
           {
-            "id": "line-origin-latissimus-spine-left",
-            "name": "Processus spinosi T7-L5 & fascia thoracolumbalis",
+            "id": "line-lat-thor-left",
+            "name": "processus spinosus 7e-12e thoracale wervels",
             "type": "origin",
             "points": [
               {
-                "x": 0.5,
-                "y": 0.275
+                "x": 0.4975,
+                "y": 0.245
               },
               {
-                "x": 0.5011,
-                "y": 0.3471
+                "x": 0.4975,
+                "y": 0.2767
               },
               {
-                "x": 0.5,
-                "y": 0.422
+                "x": 0.4975,
+                "y": 0.34
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-lat-lumb-left",
+            "name": "processus spinosus alle lumbale wervels",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.5021,
+                "y": 0.345
+              },
+              {
+                "x": 0.5021,
+                "y": 0.4214
+              },
+              {
+                "x": 0.5021,
+                "y": 0.44
+              }
+            ],
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-lat-crista-left",
+            "name": "dorsale zijde crista iliaca",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.445,
+                "y": 0.415
+              },
+              {
+                "x": 0.4156,
+                "y": 0.4224
+              },
+              {
+                "x": 0.365,
+                "y": 0.405
+              }
+            ],
+            "tolerance": 0.024
           }
         ]
       }
@@ -173,28 +253,64 @@
         ],
         "attachmentLines": [
           {
-            "id": "line-origin-deltoideus-arch-left",
-            "name": "Clavicula lateraal, acromion & spina scapulae",
+            "id": "line-delt-clav-left",
+            "name": "Pars clavicularis: laterale 1/3 deel clavicula",
             "type": "origin",
             "points": [
               {
-                "x": 0.66,
-                "y": 0.195
+                "x": 0.63,
+                "y": 0.197
               },
               {
-                "x": 0.71,
-                "y": 0.195
-              },
-              {
-                "x": 0.745,
-                "y": 0.205
+                "x": 0.6651,
+                "y": 0.1957
               },
               {
                 "x": 0.7,
-                "y": 0.215
+                "y": 0.199
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.02
+          },
+          {
+            "id": "line-delt-spina-left",
+            "name": "Pars spinalis: spina scapula",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.645,
+                "y": 0.215
+              },
+              {
+                "x": 0.6856,
+                "y": 0.2125
+              },
+              {
+                "x": 0.712,
+                "y": 0.209
+              }
+            ],
+            "tolerance": 0.02
+          },
+          {
+            "id": "line-delt-ins-left",
+            "name": "lateraal op humerus (op 1/3 deel van corpus)",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.7596,
+                "y": 0.242
+              },
+              {
+                "x": 0.7596,
+                "y": 0.2642
+              },
+              {
+                "x": 0.7536,
+                "y": 0.29
+              }
+            ],
+            "tolerance": 0.022
           }
         ]
       },
@@ -232,28 +348,64 @@
         ],
         "attachmentLines": [
           {
-            "id": "line-origin-deltoideus-arch-right",
-            "name": "Clavicula lateraal, acromion & spina scapulae",
+            "id": "line-delt-clav-right",
+            "name": "Pars clavicularis: laterale 1/3 deel clavicula",
             "type": "origin",
             "points": [
               {
-                "x": 0.34,
-                "y": 0.195
+                "x": 0.37,
+                "y": 0.197
               },
               {
-                "x": 0.29,
-                "y": 0.195
-              },
-              {
-                "x": 0.255,
-                "y": 0.205
+                "x": 0.3349,
+                "y": 0.1957
               },
               {
                 "x": 0.3,
-                "y": 0.215
+                "y": 0.199
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.02
+          },
+          {
+            "id": "line-delt-spina-right",
+            "name": "Pars spinalis: spina scapula",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.355,
+                "y": 0.215
+              },
+              {
+                "x": 0.3144,
+                "y": 0.2125
+              },
+              {
+                "x": 0.288,
+                "y": 0.209
+              }
+            ],
+            "tolerance": 0.02
+          },
+          {
+            "id": "line-delt-ins-right",
+            "name": "lateraal op humerus (op 1/3 deel van corpus)",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.2404,
+                "y": 0.242
+              },
+              {
+                "x": 0.2404,
+                "y": 0.2642
+              },
+              {
+                "x": 0.2464,
+                "y": 0.29
+              }
+            ],
+            "tolerance": 0.022
           }
         ]
       }
@@ -304,6 +456,72 @@
             "y": 0.242,
             "name": "spierbuik verloop"
           }
+        ],
+        "attachmentLines": [
+          {
+            "id": "line-pec-clav-right",
+            "name": "mediale deel clavicula",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.475,
+                "y": 0.198
+              },
+              {
+                "x": 0.3966,
+                "y": 0.1971
+              },
+              {
+                "x": 0.365,
+                "y": 0.197
+              }
+            ],
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-pec-sternum-right",
+            "name": "sternum",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.5044,
+                "y": 0.205
+              },
+              {
+                "x": 0.5044,
+                "y": 0.2392
+              },
+              {
+                "x": 0.5044,
+                "y": 0.29
+              }
+            ],
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-pec-ribs-right",
+            "name": "kraakbeen van 2e-6e rib",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.465,
+                "y": 0.225
+              },
+              {
+                "x": 0.445,
+                "y": 0.255
+              },
+              {
+                "x": 0.435,
+                "y": 0.285
+              },
+              {
+                "x": 0.445,
+                "y": 0.31
+              }
+            ],
+            "tolerance": 0.026
+          }
         ]
       },
       "left": {
@@ -340,44 +558,68 @@
         ],
         "attachmentLines": [
           {
-            "id": "line-origin-pectoralis-clavicle-left",
-            "name": "Pars clavicularis (mediale helft clavicula)",
+            "id": "line-pec-clav-left",
+            "name": "mediale deel clavicula",
             "type": "origin",
             "points": [
               {
-                "x": 0.5212,
-                "y": 0.1982
-              },
-              {
-                "x": 0.5721,
-                "y": 0.2009
-              },
-              {
-                "x": 0.62,
+                "x": 0.525,
                 "y": 0.198
+              },
+              {
+                "x": 0.6034,
+                "y": 0.1971
+              },
+              {
+                "x": 0.635,
+                "y": 0.197
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.022
           },
           {
-            "id": "line-origin-pectoralis-sternocostal-left",
-            "name": "Sternum & ribkraakbeen Costae 2-6",
+            "id": "line-pec-sternum-left",
+            "name": "sternum",
             "type": "origin",
             "points": [
               {
-                "x": 0.505,
-                "y": 0.21
+                "x": 0.4956,
+                "y": 0.205
               },
               {
-                "x": 0.505,
-                "y": 0.26
+                "x": 0.4956,
+                "y": 0.2392
               },
               {
-                "x": 0.5051,
-                "y": 0.3047
+                "x": 0.4956,
+                "y": 0.29
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-pec-ribs-left",
+            "name": "kraakbeen van 2e-6e rib",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.535,
+                "y": 0.225
+              },
+              {
+                "x": 0.555,
+                "y": 0.255
+              },
+              {
+                "x": 0.565,
+                "y": 0.285
+              },
+              {
+                "x": 0.555,
+                "y": 0.31
+              }
+            ],
+            "tolerance": 0.026
           }
         ]
       }
@@ -430,7 +672,8 @@
             "name": "Proximaal ventraal op humerus"
           }
         ],
-        "musclePath": []
+        "musclePath": [],
+        "attachmentLines": []
       }
     },
     "otherFunctions": "Ondersteunt m. latissimus dorsi bij krachtige adductie en retroflexie."
@@ -464,7 +707,28 @@
           }
         ],
         "musclePath": [],
-        "attachmentLines": []
+        "attachmentLines": [
+          {
+            "id": "line-teres-min-margo-left",
+            "name": "Margo lateralis scapula",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.295,
+                "y": 0.228
+              },
+              {
+                "x": 0.3117,
+                "y": 0.2521
+              },
+              {
+                "x": 0.355,
+                "y": 0.278
+              }
+            ],
+            "tolerance": 0.022
+          }
+        ]
       },
       "right": {
         "origins": [
@@ -482,7 +746,28 @@
           }
         ],
         "musclePath": [],
-        "attachmentLines": []
+        "attachmentLines": [
+          {
+            "id": "line-teres-min-margo-right",
+            "name": "Margo lateralis scapula",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.705,
+                "y": 0.228
+              },
+              {
+                "x": 0.6883,
+                "y": 0.2521
+              },
+              {
+                "x": 0.645,
+                "y": 0.278
+              }
+            ],
+            "tolerance": 0.022
+          }
+        ]
       }
     },
     "otherFunctions": "Deel van de rotator cuff; centreert humeruskop dorsaal."
@@ -544,28 +829,104 @@
         ],
         "attachmentLines": [
           {
-            "id": "line-origin-trapezius-spine-right",
-            "name": "Processus spinosi C1-T12 (wervelkolom)",
+            "id": "line-trap-o-desc-right",
+            "name": "Pars descendens: dorsaal onderzijde schedel en proc. spinosus C1-C6",
             "type": "origin",
             "points": [
               {
-                "x": 0.5,
-                "y": 0.114
+                "x": 0.4995,
+                "y": 0.095
               },
               {
-                "x": 0.5,
-                "y": 0.182
+                "x": 0.4995,
+                "y": 0.1136
               },
               {
-                "x": 0.5,
-                "y": 0.25
-              },
-              {
-                "x": 0.5,
-                "y": 0.335
+                "x": 0.4995,
+                "y": 0.16
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-trap-o-tran-right",
+            "name": "Pars transversa: proc. spinosus C7 en T1-T3",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.5005,
+                "y": 0.16
+              },
+              {
+                "x": 0.5005,
+                "y": 0.1821
+              },
+              {
+                "x": 0.5005,
+                "y": 0.21
+              }
+            ],
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-trap-o-asc-right",
+            "name": "Pars ascendens: proc. spinosus T3-T12",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.4976,
+                "y": 0.21
+              },
+              {
+                "x": 0.4976,
+                "y": 0.275
+              },
+              {
+                "x": 0.4976,
+                "y": 0.3331
+              }
+            ],
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-trap-i-clav-right",
+            "name": "Pars descendens: laterale 1/3 deel van clavicula",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.645,
+                "y": 0.198
+              },
+              {
+                "x": 0.694,
+                "y": 0.1989
+              },
+              {
+                "x": 0.702,
+                "y": 0.2
+              }
+            ],
+            "tolerance": 0.02
+          },
+          {
+            "id": "line-trap-i-spina-right",
+            "name": "Pars ascendens: spina scapula",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.615,
+                "y": 0.214
+              },
+              {
+                "x": 0.6392,
+                "y": 0.211
+              },
+              {
+                "x": 0.702,
+                "y": 0.208
+              }
+            ],
+            "tolerance": 0.02
           }
         ]
       },
@@ -613,28 +974,104 @@
         ],
         "attachmentLines": [
           {
-            "id": "line-origin-trapezius-spine-left",
-            "name": "Processus spinosi C1-T12 (wervelkolom)",
+            "id": "line-trap-o-desc-left",
+            "name": "Pars descendens: dorsaal onderzijde schedel en proc. spinosus C1-C6",
             "type": "origin",
             "points": [
               {
-                "x": 0.5,
-                "y": 0.114
+                "x": 0.5005,
+                "y": 0.095
               },
               {
-                "x": 0.5,
-                "y": 0.182
+                "x": 0.5005,
+                "y": 0.1136
               },
               {
-                "x": 0.5,
-                "y": 0.25
-              },
-              {
-                "x": 0.5,
-                "y": 0.335
+                "x": 0.5005,
+                "y": 0.16
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-trap-o-tran-left",
+            "name": "Pars transversa: proc. spinosus C7 en T1-T3",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.4995,
+                "y": 0.16
+              },
+              {
+                "x": 0.4995,
+                "y": 0.1821
+              },
+              {
+                "x": 0.4995,
+                "y": 0.21
+              }
+            ],
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-trap-o-asc-left",
+            "name": "Pars ascendens: proc. spinosus T3-T12",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.5024,
+                "y": 0.21
+              },
+              {
+                "x": 0.5024,
+                "y": 0.275
+              },
+              {
+                "x": 0.5024,
+                "y": 0.3331
+              }
+            ],
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-trap-i-clav-left",
+            "name": "Pars descendens: laterale 1/3 deel van clavicula",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.355,
+                "y": 0.198
+              },
+              {
+                "x": 0.306,
+                "y": 0.1989
+              },
+              {
+                "x": 0.298,
+                "y": 0.2
+              }
+            ],
+            "tolerance": 0.02
+          },
+          {
+            "id": "line-trap-i-spina-left",
+            "name": "Pars ascendens: spina scapula",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.385,
+                "y": 0.214
+              },
+              {
+                "x": 0.3608,
+                "y": 0.211
+              },
+              {
+                "x": 0.298,
+                "y": 0.208
+              }
+            ],
+            "tolerance": 0.02
           }
         ]
       }
@@ -675,7 +1112,48 @@
           }
         ],
         "musclePath": [],
-        "attachmentLines": []
+        "attachmentLines": [
+          {
+            "id": "line-levator-o1-left",
+            "name": "processus transversus van 1-2 vertebra cervicales",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.4985,
+                "y": 0.112
+              },
+              {
+                "x": 0.4985,
+                "y": 0.1276
+              },
+              {
+                "x": 0.5005,
+                "y": 0.1444
+              }
+            ],
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-levator-o2-left",
+            "name": "processus transversus van 3-4 vertebra cervicales",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.4985,
+                "y": 0.1276
+              },
+              {
+                "x": 0.5005,
+                "y": 0.1444
+              },
+              {
+                "x": 0.5005,
+                "y": 0.158
+              }
+            ],
+            "tolerance": 0.022
+          }
+        ]
       },
       "right": {
         "origins": [
@@ -698,7 +1176,48 @@
           }
         ],
         "musclePath": [],
-        "attachmentLines": []
+        "attachmentLines": [
+          {
+            "id": "line-levator-o1-right",
+            "name": "processus transversus van 1-2 vertebra cervicales",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.5015,
+                "y": 0.112
+              },
+              {
+                "x": 0.5015,
+                "y": 0.1276
+              },
+              {
+                "x": 0.4995,
+                "y": 0.1444
+              }
+            ],
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-levator-o2-right",
+            "name": "processus transversus van 3-4 vertebra cervicales",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.5015,
+                "y": 0.1276
+              },
+              {
+                "x": 0.4995,
+                "y": 0.1444
+              },
+              {
+                "x": 0.4995,
+                "y": 0.158
+              }
+            ],
+            "tolerance": 0.022
+          }
+        ]
       }
     },
     "otherFunctions": "Voorkomt het afzakken van de schoudergordel bij dragen van zware lasten."
@@ -749,48 +1268,48 @@
         "musclePath": [],
         "attachmentLines": [
           {
-            "id": "line-origin-serratus-ribs-left",
-            "name": "Costae 1 t/m 9 (laterale ribben)",
+            "id": "line-serratus-orig-left",
+            "name": "1e tot 9e costa (rib)",
             "type": "origin",
             "points": [
               {
-                "x": 0.6562,
-                "y": 0.2355
+                "x": 0.35,
+                "y": 0.22
               },
               {
-                "x": 0.68,
-                "y": 0.265
+                "x": 0.3198,
+                "y": 0.2688
               },
               {
-                "x": 0.69,
-                "y": 0.305
+                "x": 0.3128,
+                "y": 0.3259
               },
               {
-                "x": 0.68,
-                "y": 0.345
+                "x": 0.325,
+                "y": 0.35
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.028
           },
           {
-            "id": "line-insertion-serratus-margo-left",
-            "name": "Margo medialis scapulae",
+            "id": "line-serratus-ins-left",
+            "name": "margo medialis scapula",
             "type": "insertion",
             "points": [
               {
-                "x": 0.4,
-                "y": 0.21
+                "x": 0.4016,
+                "y": 0.2156
               },
               {
-                "x": 0.4141,
-                "y": 0.246
+                "x": 0.4163,
+                "y": 0.2451
               },
               {
-                "x": 0.3951,
-                "y": 0.2835
+                "x": 0.3961,
+                "y": 0.2821
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.022
           }
         ]
       },
@@ -824,7 +1343,53 @@
             "name": "margo medialis scapula"
           }
         ],
-        "musclePath": []
+        "musclePath": [],
+        "attachmentLines": [
+          {
+            "id": "line-serratus-orig-right",
+            "name": "1e tot 9e costa (rib)",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.65,
+                "y": 0.22
+              },
+              {
+                "x": 0.6802,
+                "y": 0.2688
+              },
+              {
+                "x": 0.6872,
+                "y": 0.3259
+              },
+              {
+                "x": 0.675,
+                "y": 0.35
+              }
+            ],
+            "tolerance": 0.028
+          },
+          {
+            "id": "line-serratus-ins-right",
+            "name": "margo medialis scapula",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.5984,
+                "y": 0.2156
+              },
+              {
+                "x": 0.5837,
+                "y": 0.2451
+              },
+              {
+                "x": 0.6039,
+                "y": 0.2821
+              }
+            ],
+            "tolerance": 0.022
+          }
+        ]
       }
     },
     "otherFunctions": "Houdt de scapula vlak tegen de thoraxwand; bij parese ontstaat scapula alata."
@@ -870,44 +1435,84 @@
         "musclePath": [],
         "attachmentLines": [
           {
-            "id": "line-origin-rhomboidei-spine-left",
-            "name": "Processus spinosi C7-T5",
+            "id": "line-rhomb-o1-left",
+            "name": "processus spinosus 7e cervicale vertebra",
             "type": "origin",
             "points": [
               {
-                "x": 0.495,
-                "y": 0.165
+                "x": 0.4722,
+                "y": 0.155
               },
               {
-                "x": 0.495,
+                "x": 0.4722,
+                "y": 0.167
+              },
+              {
+                "x": 0.4652,
                 "y": 0.2
-              },
-              {
-                "x": 0.495,
-                "y": 0.235
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.022
           },
           {
-            "id": "line-insertion-rhomboidei-margo-left",
-            "name": "Margo medialis scapulae",
+            "id": "line-rhomb-o2-left",
+            "name": "processus spinosus 1-5 thoracale vertebra",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.4722,
+                "y": 0.18
+              },
+              {
+                "x": 0.4652,
+                "y": 0.2279
+              },
+              {
+                "x": 0.4652,
+                "y": 0.242
+              }
+            ],
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-rhomb-i1-left",
+            "name": "margo medialis scapula (craniaal)",
             "type": "insertion",
             "points": [
               {
-                "x": 0.4,
-                "y": 0.21
+                "x": 0.4016,
+                "y": 0.215
               },
               {
-                "x": 0.4131,
-                "y": 0.2429
+                "x": 0.4016,
+                "y": 0.2343
               },
               {
-                "x": 0.3972,
-                "y": 0.2835
+                "x": 0.4039,
+                "y": 0.2717
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-rhomb-i2-left",
+            "name": "margo medialis scapula (caudaal)",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.4016,
+                "y": 0.2343
+              },
+              {
+                "x": 0.4039,
+                "y": 0.2717
+              },
+              {
+                "x": 0.4039,
+                "y": 0.282
+              }
+            ],
+            "tolerance": 0.022
           }
         ]
       },
@@ -936,7 +1541,89 @@
             "name": "margo medialis scapula (caudaal)"
           }
         ],
-        "musclePath": []
+        "musclePath": [],
+        "attachmentLines": [
+          {
+            "id": "line-rhomb-o1-right",
+            "name": "processus spinosus 7e cervicale vertebra",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.5278,
+                "y": 0.155
+              },
+              {
+                "x": 0.5278,
+                "y": 0.167
+              },
+              {
+                "x": 0.5348,
+                "y": 0.2
+              }
+            ],
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-rhomb-o2-right",
+            "name": "processus spinosus 1-5 thoracale vertebra",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.5278,
+                "y": 0.18
+              },
+              {
+                "x": 0.5348,
+                "y": 0.2279
+              },
+              {
+                "x": 0.5348,
+                "y": 0.242
+              }
+            ],
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-rhomb-i1-right",
+            "name": "margo medialis scapula (craniaal)",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.5984,
+                "y": 0.215
+              },
+              {
+                "x": 0.5984,
+                "y": 0.2343
+              },
+              {
+                "x": 0.5961,
+                "y": 0.2717
+              }
+            ],
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-rhomb-i2-right",
+            "name": "margo medialis scapula (caudaal)",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.5984,
+                "y": 0.2343
+              },
+              {
+                "x": 0.5961,
+                "y": 0.2717
+              },
+              {
+                "x": 0.5961,
+                "y": 0.282
+              }
+            ],
+            "tolerance": 0.022
+          }
+        ]
       }
     },
     "otherFunctions": "Fixeert en stabiliseert de margo medialis van de scapula tegen de ribbenboog."
@@ -1044,7 +1731,29 @@
             "name": "tuberositas ulna"
           }
         ],
-        "musclePath": []
+        "musclePath": [],
+        "attachmentLines": [
+          {
+            "id": "line-brachialis-orig-right",
+            "name": "distale helft ventrale zijde humerus",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.258,
+                "y": 0.282
+              },
+              {
+                "x": 0.2662,
+                "y": 0.3156
+              },
+              {
+                "x": 0.264,
+                "y": 0.355
+              }
+            ],
+            "tolerance": 0.024
+          }
+        ]
       },
       "left": {
         "origins": [
@@ -1064,24 +1773,24 @@
         "musclePath": [],
         "attachmentLines": [
           {
-            "id": "line-origin-brachialis-shaft-left",
-            "name": "Distale helft facies anterior humeri",
+            "id": "line-brachialis-orig-left",
+            "name": "distale helft ventrale zijde humerus",
             "type": "origin",
             "points": [
               {
-                "x": 0.7422,
-                "y": 0.2915
+                "x": 0.742,
+                "y": 0.282
               },
               {
-                "x": 0.7391,
-                "y": 0.3174
+                "x": 0.7338,
+                "y": 0.3156
               },
               {
-                "x": 0.7359,
-                "y": 0.3402
+                "x": 0.736,
+                "y": 0.355
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.024
           }
         ]
       }
@@ -1134,7 +1843,48 @@
             "name": "tricepspees"
           }
         ],
-        "attachmentLines": []
+        "attachmentLines": [
+          {
+            "id": "line-triceps-lat-left",
+            "name": "caput laterale: lateraal op dorsale vlak van os humerus",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.2482,
+                "y": 0.252
+              },
+              {
+                "x": 0.2482,
+                "y": 0.2982
+              },
+              {
+                "x": 0.255,
+                "y": 0.34
+              }
+            ],
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-triceps-med-left",
+            "name": "caput mediale: mediaal op dorsale vlak van os humerus",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.2387,
+                "y": 0.26
+              },
+              {
+                "x": 0.2387,
+                "y": 0.2808
+              },
+              {
+                "x": 0.262,
+                "y": 0.345
+              }
+            ],
+            "tolerance": 0.022
+          }
+        ]
       },
       "right": {
         "origins": [
@@ -1166,6 +1916,48 @@
             "x": 0.765,
             "y": 0.32,
             "name": "tricepspees"
+          }
+        ],
+        "attachmentLines": [
+          {
+            "id": "line-triceps-lat-right",
+            "name": "caput laterale: lateraal op dorsale vlak van os humerus",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.7518,
+                "y": 0.252
+              },
+              {
+                "x": 0.7518,
+                "y": 0.2982
+              },
+              {
+                "x": 0.745,
+                "y": 0.34
+              }
+            ],
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-triceps-med-right",
+            "name": "caput mediale: mediaal op dorsale vlak van os humerus",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.7613,
+                "y": 0.26
+              },
+              {
+                "x": 0.7613,
+                "y": 0.2808
+              },
+              {
+                "x": 0.738,
+                "y": 0.345
+              }
+            ],
+            "tolerance": 0.022
           }
         ]
       }
@@ -1208,24 +2000,24 @@
         "musclePath": [],
         "attachmentLines": [
           {
-            "id": "line-origin-rectus-ribs-left",
-            "name": "Kraakbeen Costae 5-7 & proc. xiphoideus",
+            "id": "line-rect-abd-ribs-left",
+            "name": "5-7 costa",
             "type": "origin",
             "points": [
               {
-                "x": 0.5101,
-                "y": 0.3063
+                "x": 0.525,
+                "y": 0.265
               },
               {
-                "x": 0.527,
-                "y": 0.2879
+                "x": 0.5514,
+                "y": 0.2746
               },
               {
-                "x": 0.5472,
-                "y": 0.2763
+                "x": 0.58,
+                "y": 0.292
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.024
           }
         ]
       },
@@ -1249,7 +2041,29 @@
             "name": "os pubis"
           }
         ],
-        "musclePath": []
+        "musclePath": [],
+        "attachmentLines": [
+          {
+            "id": "line-rect-abd-ribs-right",
+            "name": "5-7 costa",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.475,
+                "y": 0.265
+              },
+              {
+                "x": 0.4486,
+                "y": 0.2746
+              },
+              {
+                "x": 0.42,
+                "y": 0.292
+              }
+            ],
+            "tolerance": 0.024
+          }
+        ]
       }
     },
     "otherFunctions": "Ondersteunt buikpers en bekkenkanteling naar achteren (achteroverkanteling bekken)."
@@ -1295,55 +2109,64 @@
         "musclePath": [],
         "attachmentLines": [
           {
-            "id": "line-origin-obliquus-int-crista-left",
-            "name": "Linea intermedia cristae iliacae",
+            "id": "line-obliq-int-crista-left",
+            "name": "crista iliaca",
             "type": "origin",
             "points": [
               {
-                "x": 0.653,
-                "y": 0.4209
+                "x": 0.595,
+                "y": 0.398
               },
               {
-                "x": 0.6621,
-                "y": 0.4056
+                "x": 0.635,
+                "y": 0.395
               },
               {
-                "x": 0.6303,
-                "y": 0.3935
+                "x": 0.6498,
+                "y": 0.4235
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.024
           },
           {
-            "id": "line-insertion-obliquus-int-linea-alba-left",
-            "name": "Linea alba",
+            "id": "line-obliq-int-ribs-left",
+            "name": "kraakbeen v.d. laatste 3 costae",
             "type": "insertion",
             "points": [
               {
-                "x": 0.6333,
-                "y": 0.3661
+                "x": 0.55,
+                "y": 0.288
               },
               {
-                "x": 0.5258,
-                "y": 0.2934
+                "x": 0.5739,
+                "y": 0.3026
               },
               {
-                "x": 0.4985,
-                "y": 0.3055
-              },
-              {
-                "x": 0.5015,
-                "y": 0.3731
+                "x": 0.625,
+                "y": 0.345
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.026
           },
           {
-            "id": "line-insertion-1791030483996",
+            "id": "line-obliq-int-linea-left",
+            "name": "linea alba",
             "type": "insertion",
-            "name": "kraakbeen v.d. laatste 3 costae, linea alba",
-            "points": [],
-            "tolerance": 0.045
+            "points": [
+              {
+                "x": 0.5019,
+                "y": 0.305
+              },
+              {
+                "x": 0.5019,
+                "y": 0.3559
+              },
+              {
+                "x": 0.5019,
+                "y": 0.468
+              }
+            ],
+            "tolerance": 0.022
           }
         ]
       },
@@ -1372,7 +2195,69 @@
             "name": "linea alba"
           }
         ],
-        "musclePath": []
+        "musclePath": [],
+        "attachmentLines": [
+          {
+            "id": "line-obliq-int-crista-right",
+            "name": "crista iliaca",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.405,
+                "y": 0.398
+              },
+              {
+                "x": 0.365,
+                "y": 0.395
+              },
+              {
+                "x": 0.3502,
+                "y": 0.4235
+              }
+            ],
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-obliq-int-ribs-right",
+            "name": "kraakbeen v.d. laatste 3 costae",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.45,
+                "y": 0.288
+              },
+              {
+                "x": 0.4261,
+                "y": 0.3026
+              },
+              {
+                "x": 0.375,
+                "y": 0.345
+              }
+            ],
+            "tolerance": 0.026
+          },
+          {
+            "id": "line-obliq-int-linea-right",
+            "name": "linea alba",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.4981,
+                "y": 0.305
+              },
+              {
+                "x": 0.4981,
+                "y": 0.3559
+              },
+              {
+                "x": 0.4981,
+                "y": 0.468
+              }
+            ],
+            "tolerance": 0.022
+          }
+        ]
       }
     },
     "otherFunctions": "Verhoogt de intra-abdominale druk en ondersteunt romprotatie en lumbale stabiliteit."
@@ -1400,12 +2285,12 @@
           {
             "x": 0.3997,
             "y": 0.3367,
-            "name": "5e tot 12e costa "
+            "name": "5e tot 12e costa"
           },
           {
             "x": 0.3661,
             "y": 0.3686,
-            "name": "5e tot 12e costa "
+            "name": "5e tot 12e costa"
           }
         ],
         "insertions": [
@@ -1425,7 +2310,81 @@
             "name": "linea alba"
           }
         ],
-        "musclePath": []
+        "musclePath": [],
+        "attachmentLines": [
+          {
+            "id": "line-obliq-ext-ribs-right",
+            "name": "5e tot 12e costa",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.415,
+                "y": 0.285
+              },
+              {
+                "x": 0.3997,
+                "y": 0.3367
+              },
+              {
+                "x": 0.3304,
+                "y": 0.3495
+              },
+              {
+                "x": 0.3661,
+                "y": 0.3686
+              }
+            ],
+            "tolerance": 0.03
+          },
+          {
+            "id": "line-obliq-ext-crista-right",
+            "name": "crista iliaca",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.405,
+                "y": 0.398
+              },
+              {
+                "x": 0.365,
+                "y": 0.395
+              },
+              {
+                "x": 0.335,
+                "y": 0.408
+              },
+              {
+                "x": 0.3502,
+                "y": 0.4235
+              }
+            ],
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-obliq-ext-linea-right",
+            "name": "linea alba",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.4981,
+                "y": 0.305
+              },
+              {
+                "x": 0.4981,
+                "y": 0.3559
+              },
+              {
+                "x": 0.4979,
+                "y": 0.4086
+              },
+              {
+                "x": 0.4979,
+                "y": 0.468
+              }
+            ],
+            "tolerance": 0.022
+          }
+        ]
       },
       "left": {
         "origins": [
@@ -1437,12 +2396,12 @@
           {
             "x": 0.6003,
             "y": 0.3367,
-            "name": "5e tot 12e costa "
+            "name": "5e tot 12e costa"
           },
           {
             "x": 0.6339,
             "y": 0.3686,
-            "name": "5e tot 12e costa "
+            "name": "5e tot 12e costa"
           }
         ],
         "insertions": [
@@ -1465,68 +2424,76 @@
         "musclePath": [],
         "attachmentLines": [
           {
-            "id": "line-origin-obliquus-ext-ribs-left",
-            "name": "Buitenzijde Costae 5 t/m 12",
+            "id": "line-obliq-ext-ribs-left",
+            "name": "5e tot 12e costa",
             "type": "origin",
             "points": [
               {
-                "x": 0.6878,
-                "y": 0.3284
+                "x": 0.585,
+                "y": 0.285
               },
               {
-                "x": 0.6727,
-                "y": 0.3514
+                "x": 0.6003,
+                "y": 0.3367
               },
               {
-                "x": 0.6287,
-                "y": 0.368
+                "x": 0.6696,
+                "y": 0.3495
               },
               {
-                "x": 0.5848,
-                "y": 0.3361
+                "x": 0.6339,
+                "y": 0.3686
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.03
           },
           {
-            "id": "line-insertion-obliquus-ext-linea-alba-left",
-            "name": "Linea alba",
-            "type": "insertion",
-            "points": [
-              {
-                "x": 0.5011,
-                "y": 0.3545
-              },
-              {
-                "x": 0.5,
-                "y": 0.38
-              },
-              {
-                "x": 0.5015,
-                "y": 0.4598
-              }
-            ],
-            "tolerance": 0.045
-          },
-          {
-            "id": "line-insertion-obliquus-ext-crista-left",
+            "id": "line-obliq-ext-crista-left",
             "name": "crista iliaca",
             "type": "insertion",
             "points": [
               {
-                "x": 0.5788,
-                "y": 0.3967
+                "x": 0.595,
+                "y": 0.398
               },
               {
-                "x": 0.6409,
-                "y": 0.3922
+                "x": 0.635,
+                "y": 0.395
               },
               {
-                "x": 0.6651,
-                "y": 0.4139
+                "x": 0.665,
+                "y": 0.408
+              },
+              {
+                "x": 0.6498,
+                "y": 0.4235
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-obliq-ext-linea-left",
+            "name": "linea alba",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.5019,
+                "y": 0.305
+              },
+              {
+                "x": 0.5019,
+                "y": 0.3559
+              },
+              {
+                "x": 0.5021,
+                "y": 0.4086
+              },
+              {
+                "x": 0.5021,
+                "y": 0.468
+              }
+            ],
+            "tolerance": 0.022
           }
         ]
       }
@@ -1569,44 +2536,64 @@
         "musclePath": [],
         "attachmentLines": [
           {
-            "id": "line-origin-erector-pelvis-left",
-            "name": "Sacrum, crista iliaca & proc. spinosi lumbaal",
+            "id": "line-erector-o1-left",
+            "name": "alle wervels (craniaal)",
             "type": "origin",
             "points": [
               {
-                "x": 0.4811,
-                "y": 0.125
+                "x": 0.4841,
+                "y": 0.1244
+              },
+              {
+                "x": 0.4858,
+                "y": 0.2727
               },
               {
                 "x": 0.485,
-                "y": 0.42
-              },
-              {
-                "x": 0.475,
                 "y": 0.47
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.028
           },
           {
-            "id": "line-insertion-erector-spine-left",
-            "name": "Proc. spinosi & costae thoracaal tot schedelbasis",
+            "id": "line-erector-o2-left",
+            "name": "wervels en os sacrum (caudaal)",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.4841,
+                "y": 0.1244
+              },
+              {
+                "x": 0.4858,
+                "y": 0.2727
+              },
+              {
+                "x": 0.485,
+                "y": 0.47
+              }
+            ],
+            "tolerance": 0.028
+          },
+          {
+            "id": "line-erector-ins-left",
+            "name": "alle wervels en os sacrum",
             "type": "insertion",
             "points": [
               {
-                "x": 0.485,
-                "y": 0.125
+                "x": 0.4841,
+                "y": 0.1244
+              },
+              {
+                "x": 0.4858,
+                "y": 0.2727
               },
               {
                 "x": 0.485,
-                "y": 0.22
-              },
-              {
-                "x": 0.4871,
-                "y": 0.4713
+                "y": 0.47
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.028
           }
         ]
       },
@@ -1630,7 +2617,69 @@
             "name": "alle wervels en os sacrum"
           }
         ],
-        "musclePath": []
+        "musclePath": [],
+        "attachmentLines": [
+          {
+            "id": "line-erector-o1-right",
+            "name": "alle wervels (craniaal)",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.5159,
+                "y": 0.1244
+              },
+              {
+                "x": 0.5142,
+                "y": 0.2727
+              },
+              {
+                "x": 0.515,
+                "y": 0.47
+              }
+            ],
+            "tolerance": 0.028
+          },
+          {
+            "id": "line-erector-o2-right",
+            "name": "wervels en os sacrum (caudaal)",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.5159,
+                "y": 0.1244
+              },
+              {
+                "x": 0.5142,
+                "y": 0.2727
+              },
+              {
+                "x": 0.515,
+                "y": 0.47
+              }
+            ],
+            "tolerance": 0.028
+          },
+          {
+            "id": "line-erector-ins-right",
+            "name": "alle wervels en os sacrum",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.5159,
+                "y": 0.1244
+              },
+              {
+                "x": 0.5142,
+                "y": 0.2727
+              },
+              {
+                "x": 0.515,
+                "y": 0.47
+              }
+            ],
+            "tolerance": 0.028
+          }
+        ]
       }
     },
     "otherFunctions": "Houdt de wervelkolom rechtop tegen de zwaartekracht; regelt segmentele lumbale stabiliteit."
@@ -1677,44 +2726,64 @@
         "musclePath": [],
         "attachmentLines": [
           {
-            "id": "line-origin-iliopsoas-psoas-left",
-            "name": "Corpora & proc. transversi T12-L5 (m. psoas major)",
+            "id": "line-iliopsoas-t12-left",
+            "name": "12e vertebra thoracalis",
             "type": "origin",
             "points": [
               {
                 "x": 0.525,
-                "y": 0.32
+                "y": 0.308
               },
               {
-                "x": 0.53,
-                "y": 0.36
+                "x": 0.525,
+                "y": 0.3235
               },
               {
-                "x": 0.537,
-                "y": 0.4
+                "x": 0.5372,
+                "y": 0.365
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.024
           },
           {
-            "id": "line-origin-iliopsoas-iliacus-left",
+            "id": "line-iliopsoas-lumb-left",
+            "name": "1e-5e vertebrae lumbales",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.525,
+                "y": 0.345
+              },
+              {
+                "x": 0.5372,
+                "y": 0.3988
+              },
+              {
+                "x": 0.5372,
+                "y": 0.415
+              }
+            ],
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-iliopsoas-ilium-left",
             "name": "ventrale vlak os ilium",
             "type": "origin",
             "points": [
               {
-                "x": 0.6015,
-                "y": 0.4216
+                "x": 0.595,
+                "y": 0.405
               },
               {
-                "x": 0.62,
+                "x": 0.625,
                 "y": 0.415
               },
               {
-                "x": 0.635,
-                "y": 0.4129
+                "x": 0.65,
+                "y": 0.425
               }
             ],
-            "tolerance": 0.05
+            "tolerance": 0.028
           }
         ]
       },
@@ -1743,7 +2812,69 @@
             "name": "trochanter minor"
           }
         ],
-        "musclePath": []
+        "musclePath": [],
+        "attachmentLines": [
+          {
+            "id": "line-iliopsoas-t12-right",
+            "name": "12e vertebra thoracalis",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.475,
+                "y": 0.308
+              },
+              {
+                "x": 0.475,
+                "y": 0.3235
+              },
+              {
+                "x": 0.4628,
+                "y": 0.365
+              }
+            ],
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-iliopsoas-lumb-right",
+            "name": "1e-5e vertebrae lumbales",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.475,
+                "y": 0.345
+              },
+              {
+                "x": 0.4628,
+                "y": 0.3988
+              },
+              {
+                "x": 0.4628,
+                "y": 0.415
+              }
+            ],
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-iliopsoas-ilium-right",
+            "name": "ventrale vlak os ilium",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.405,
+                "y": 0.405
+              },
+              {
+                "x": 0.375,
+                "y": 0.415
+              },
+              {
+                "x": 0.35,
+                "y": 0.425
+              }
+            ],
+            "tolerance": 0.028
+          }
+        ]
       }
     },
     "otherFunctions": "Belangrijkste heupbuiger; trekt bij eenzijdige aanspanning de lumbale lordose aan."
@@ -1835,7 +2966,33 @@
             "name": "caput fibulae"
           }
         ],
-        "musclePath": []
+        "musclePath": [],
+        "attachmentLines": [
+          {
+            "id": "line-biceps-fem-shaft-right",
+            "name": "middelste derde dorsale deel van femur (caput brevis)",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.652,
+                "y": 0.535
+              },
+              {
+                "x": 0.64,
+                "y": 0.568
+              },
+              {
+                "x": 0.6323,
+                "y": 0.5931
+              },
+              {
+                "x": 0.618,
+                "y": 0.645
+              }
+            ],
+            "tolerance": 0.024
+          }
+        ]
       },
       "left": {
         "origins": [
@@ -1860,24 +3017,28 @@
         "musclePath": [],
         "attachmentLines": [
           {
-            "id": "line-origin-biceps-fem-aspera-left",
-            "name": "Labium laterale lineae asperae (caput breve)",
+            "id": "line-biceps-fem-shaft-left",
+            "name": "middelste derde dorsale deel van femur (caput brevis)",
             "type": "origin",
             "points": [
               {
-                "x": 0.3584,
-                "y": 0.5765
+                "x": 0.348,
+                "y": 0.535
               },
               {
-                "x": 0.368,
-                "y": 0.595
+                "x": 0.36,
+                "y": 0.568
               },
               {
-                "x": 0.3796,
-                "y": 0.6205
+                "x": 0.3677,
+                "y": 0.5931
+              },
+              {
+                "x": 0.382,
+                "y": 0.645
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.024
           }
         ]
       }
@@ -1919,7 +3080,8 @@
             "y": 0.6987,
             "name": "bocht condylus medialis"
           }
-        ]
+        ],
+        "attachmentLines": []
       },
       "left": {
         "origins": [
@@ -1983,7 +3145,8 @@
             "y": 0.67,
             "name": "verloop naar pes anserinus"
           }
-        ]
+        ],
+        "attachmentLines": []
       },
       "left": {
         "origins": [
@@ -2053,44 +3216,68 @@
         "musclePath": [],
         "attachmentLines": [
           {
-            "id": "line-origin-adductores-pubis-left",
-            "name": "os pubis, os ischii",
+            "id": "line-adductores-pub-left",
+            "name": "os pubis (m. adductor longus & brevis)",
             "type": "origin",
             "points": [
               {
                 "x": 0.518,
-                "y": 0.47
+                "y": 0.468
               },
               {
-                "x": 0.535,
-                "y": 0.485
+                "x": 0.5325,
+                "y": 0.4711
               },
               {
-                "x": 0.55,
-                "y": 0.51
+                "x": 0.5447,
+                "y": 0.5029
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.022
           },
           {
-            "id": "line-insertion-adductores-femur-left",
-            "name": "mediale zijde corpus femoris, condylus medialis",
+            "id": "line-adductores-isch-left",
+            "name": "os ischii (m. adductor magnus)",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.5325,
+                "y": 0.4711
+              },
+              {
+                "x": 0.5447,
+                "y": 0.5029
+              },
+              {
+                "x": 0.555,
+                "y": 0.512
+              }
+            ],
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-adductores-ins-left",
+            "name": "mediale zijde corpus femoris",
             "type": "insertion",
             "points": [
               {
-                "x": 0.6197,
-                "y": 0.5682
+                "x": 0.635,
+                "y": 0.515
               },
               {
-                "x": 0.6,
-                "y": 0.62
+                "x": 0.62,
+                "y": 0.565
               },
               {
-                "x": 0.5682,
-                "y": 0.6792
+                "x": 0.609,
+                "y": 0.6154
+              },
+              {
+                "x": 0.582,
+                "y": 0.66
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.024
           }
         ]
       },
@@ -2119,7 +3306,73 @@
             "name": "condylus medialis"
           }
         ],
-        "musclePath": []
+        "musclePath": [],
+        "attachmentLines": [
+          {
+            "id": "line-adductores-pub-right",
+            "name": "os pubis (m. adductor longus & brevis)",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.482,
+                "y": 0.468
+              },
+              {
+                "x": 0.4675,
+                "y": 0.4711
+              },
+              {
+                "x": 0.4553,
+                "y": 0.5029
+              }
+            ],
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-adductores-isch-right",
+            "name": "os ischii (m. adductor magnus)",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.4675,
+                "y": 0.4711
+              },
+              {
+                "x": 0.4553,
+                "y": 0.5029
+              },
+              {
+                "x": 0.445,
+                "y": 0.512
+              }
+            ],
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-adductores-ins-right",
+            "name": "mediale zijde corpus femoris",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.365,
+                "y": 0.515
+              },
+              {
+                "x": 0.38,
+                "y": 0.565
+              },
+              {
+                "x": 0.391,
+                "y": 0.6154
+              },
+              {
+                "x": 0.418,
+                "y": 0.66
+              }
+            ],
+            "tolerance": 0.024
+          }
+        ]
       }
     },
     "otherFunctions": "Stabiliseert het bekken in het frontale vlak; ondersteunt heupflexie en -extensie afhankelijk van de hoek."
@@ -2170,28 +3423,64 @@
         "musclePath": [],
         "attachmentLines": [
           {
-            "id": "line-origin-gluteus-max-crista-left",
-            "name": "Crista iliaca, SIPS & sacrum",
+            "id": "line-glut-crista-left",
+            "name": "crista iliaca",
             "type": "origin",
             "points": [
               {
-                "x": 0.33,
-                "y": 0.42
+                "x": 0.335,
+                "y": 0.415
               },
               {
                 "x": 0.355,
                 "y": 0.403
               },
               {
-                "x": 0.4235,
-                "y": 0.4094
-              },
-              {
-                "x": 0.4417,
-                "y": 0.4362
+                "x": 0.38,
+                "y": 0.405
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-glut-sacrum-left",
+            "name": "os sacrum",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.41,
+                "y": 0.418
+              },
+              {
+                "x": 0.4231,
+                "y": 0.4342
+              },
+              {
+                "x": 0.435,
+                "y": 0.445
+              }
+            ],
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-glut-ins-left",
+            "name": "proximale laterale deel van corpus femoris",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.308,
+                "y": 0.49
+              },
+              {
+                "x": 0.3168,
+                "y": 0.5179
+              },
+              {
+                "x": 0.33,
+                "y": 0.565
+              }
+            ],
+            "tolerance": 0.024
           }
         ]
       },
@@ -2225,7 +3514,69 @@
             "name": "proximale laterale deel van corpus femoris"
           }
         ],
-        "musclePath": []
+        "musclePath": [],
+        "attachmentLines": [
+          {
+            "id": "line-glut-crista-right",
+            "name": "crista iliaca",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.665,
+                "y": 0.415
+              },
+              {
+                "x": 0.645,
+                "y": 0.403
+              },
+              {
+                "x": 0.62,
+                "y": 0.405
+              }
+            ],
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-glut-sacrum-right",
+            "name": "os sacrum",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.59,
+                "y": 0.418
+              },
+              {
+                "x": 0.5769,
+                "y": 0.4342
+              },
+              {
+                "x": 0.565,
+                "y": 0.445
+              }
+            ],
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-glut-ins-right",
+            "name": "proximale laterale deel van corpus femoris",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.692,
+                "y": 0.49
+              },
+              {
+                "x": 0.6832,
+                "y": 0.5179
+              },
+              {
+                "x": 0.67,
+                "y": 0.565
+              }
+            ],
+            "tolerance": 0.024
+          }
+        ]
       }
     },
     "otherFunctions": "Sterkste heupstrekker; onmisbaar bij traplopen, opstaan uit een stoel en sprinten."
@@ -2264,6 +3615,36 @@
             "y": 0.68,
             "name": "via patellapees"
           }
+        ],
+        "attachmentLines": [
+          {
+            "id": "line-vastus-lat-orig-right",
+            "name": "laterale zijde corpus femoris",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.3183,
+                "y": 0.4959
+              },
+              {
+                "x": 0.33,
+                "y": 0.53
+              },
+              {
+                "x": 0.342,
+                "y": 0.57
+              },
+              {
+                "x": 0.355,
+                "y": 0.61
+              },
+              {
+                "x": 0.368,
+                "y": 0.66
+              }
+            ],
+            "tolerance": 0.024
+          }
         ]
       },
       "left": {
@@ -2290,24 +3671,32 @@
         ],
         "attachmentLines": [
           {
-            "id": "line-origin-vastus-lat-aspera-left",
-            "name": "Labium laterale lineae asperae & trochanter major",
+            "id": "line-vastus-lat-orig-left",
+            "name": "laterale zijde corpus femoris",
             "type": "origin",
             "points": [
               {
-                "x": 0.6829,
-                "y": 0.4978
+                "x": 0.6817,
+                "y": 0.4959
               },
               {
-                "x": 0.6708,
-                "y": 0.5268
+                "x": 0.67,
+                "y": 0.53
               },
               {
-                "x": 0.6674,
-                "y": 0.5434
+                "x": 0.658,
+                "y": 0.57
+              },
+              {
+                "x": 0.645,
+                "y": 0.61
+              },
+              {
+                "x": 0.632,
+                "y": 0.66
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.024
           }
         ]
       }
@@ -2342,7 +3731,37 @@
             "name": "via patellapees aan tuberositas tibiae"
           }
         ],
-        "musclePath": []
+        "musclePath": [],
+        "attachmentLines": [
+          {
+            "id": "line-vastus-int-orig-right",
+            "name": "ventrale zijde corpus femoris",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.34,
+                "y": 0.495
+              },
+              {
+                "x": 0.3436,
+                "y": 0.5208
+              },
+              {
+                "x": 0.356,
+                "y": 0.56
+              },
+              {
+                "x": 0.368,
+                "y": 0.605
+              },
+              {
+                "x": 0.385,
+                "y": 0.655
+              }
+            ],
+            "tolerance": 0.024
+          }
+        ]
       },
       "left": {
         "origins": [
@@ -2362,24 +3781,32 @@
         "musclePath": [],
         "attachmentLines": [
           {
-            "id": "line-origin-vastus-interm-shaft-left",
-            "name": "Facies anterior et lateralis corpus femoris",
+            "id": "line-vastus-int-orig-left",
+            "name": "ventrale zijde corpus femoris",
             "type": "origin",
             "points": [
               {
-                "x": 0.6579,
-                "y": 0.5185
+                "x": 0.66,
+                "y": 0.495
               },
               {
-                "x": 0.6397,
-                "y": 0.5721
+                "x": 0.6564,
+                "y": 0.5208
               },
               {
-                "x": 0.6337,
-                "y": 0.5992
+                "x": 0.644,
+                "y": 0.56
+              },
+              {
+                "x": 0.632,
+                "y": 0.605
+              },
+              {
+                "x": 0.615,
+                "y": 0.655
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.024
           }
         ]
       }
@@ -2420,6 +3847,36 @@
             "y": 0.6833,
             "name": "via patellapees"
           }
+        ],
+        "attachmentLines": [
+          {
+            "id": "line-vastus-med-orig-right",
+            "name": "mediale zijde corpus femoris",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.362,
+                "y": 0.515
+              },
+              {
+                "x": 0.375,
+                "y": 0.555
+              },
+              {
+                "x": 0.384,
+                "y": 0.585
+              },
+              {
+                "x": 0.391,
+                "y": 0.6154
+              },
+              {
+                "x": 0.408,
+                "y": 0.655
+              }
+            ],
+            "tolerance": 0.024
+          }
         ]
       },
       "left": {
@@ -2446,24 +3903,32 @@
         ],
         "attachmentLines": [
           {
-            "id": "line-origin-vastus-med-aspera-left",
-            "name": "Labium mediale lineae asperae",
+            "id": "line-vastus-med-orig-left",
+            "name": "mediale zijde corpus femoris",
             "type": "origin",
             "points": [
               {
-                "x": 0.6178,
-                "y": 0.5867
+                "x": 0.638,
+                "y": 0.515
               },
               {
-                "x": 0.6132,
-                "y": 0.6059
+                "x": 0.625,
+                "y": 0.555
               },
               {
-                "x": 0.6026,
-                "y": 0.6374
+                "x": 0.616,
+                "y": 0.585
+              },
+              {
+                "x": 0.609,
+                "y": 0.6154
+              },
+              {
+                "x": 0.592,
+                "y": 0.655
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.024
           }
         ]
       }
@@ -2499,7 +3964,56 @@
           }
         ],
         "musclePath": [],
-        "attachmentLines": []
+        "attachmentLines": [
+          {
+            "id": "line-tib-ant-orig-left",
+            "name": "Laterale ventrale vlak corpus tibia & condylus lateralis tibiae",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.62,
+                "y": 0.74
+              },
+              {
+                "x": 0.614,
+                "y": 0.7545
+              },
+              {
+                "x": 0.602,
+                "y": 0.79
+              },
+              {
+                "x": 0.592,
+                "y": 0.83
+              },
+              {
+                "x": 0.586,
+                "y": 0.865
+              }
+            ],
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-tib-ant-ins-left",
+            "name": "Mediale voetrand",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.528,
+                "y": 0.935
+              },
+              {
+                "x": 0.5376,
+                "y": 0.9492
+              },
+              {
+                "x": 0.545,
+                "y": 0.962
+              }
+            ],
+            "tolerance": 0.022
+          }
+        ]
       },
       "right": {
         "origins": [
@@ -2516,7 +4030,57 @@
             "name": "Mediale voetrand"
           }
         ],
-        "musclePath": []
+        "musclePath": [],
+        "attachmentLines": [
+          {
+            "id": "line-tib-ant-orig-right",
+            "name": "Laterale ventrale vlak corpus tibia & condylus lateralis tibiae",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.38,
+                "y": 0.74
+              },
+              {
+                "x": 0.386,
+                "y": 0.7545
+              },
+              {
+                "x": 0.398,
+                "y": 0.79
+              },
+              {
+                "x": 0.408,
+                "y": 0.83
+              },
+              {
+                "x": 0.414,
+                "y": 0.865
+              }
+            ],
+            "tolerance": 0.024
+          },
+          {
+            "id": "line-tib-ant-ins-right",
+            "name": "Mediale voetrand",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.472,
+                "y": 0.935
+              },
+              {
+                "x": 0.4624,
+                "y": 0.9492
+              },
+              {
+                "x": 0.455,
+                "y": 0.962
+              }
+            ],
+            "tolerance": 0.022
+          }
+        ]
       }
     },
     "otherFunctions": "Voorkomt klapvoet tijdens de standfase; houdt de mediale voetboog in stand."
@@ -2558,24 +4122,44 @@
         ],
         "attachmentLines": [
           {
-            "id": "line-origin-fibularis-brev-fibula-left",
-            "name": "Distale 1/2 facies lateralis fibulae",
+            "id": "line-fib-brev-orig-left",
+            "name": "Laterale vlak corpus fibula",
             "type": "origin",
             "points": [
               {
-                "x": 0.6246,
-                "y": 0.821
+                "x": 0.63,
+                "y": 0.79
               },
               {
-                "x": 0.6193,
-                "y": 0.8379
+                "x": 0.6214,
+                "y": 0.8335
               },
               {
-                "x": 0.6182,
-                "y": 0.8482
+                "x": 0.615,
+                "y": 0.88
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-fib-brev-ins-left",
+            "name": "Laterale voetrand",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.608,
+                "y": 0.922
+              },
+              {
+                "x": 0.6192,
+                "y": 0.9359
+              },
+              {
+                "x": 0.632,
+                "y": 0.955
+              }
+            ],
+            "tolerance": 0.022
           }
         ]
       },
@@ -2599,6 +4183,48 @@
             "x": 0.4083,
             "y": 0.9451,
             "name": "achter laterale malleolus"
+          }
+        ],
+        "attachmentLines": [
+          {
+            "id": "line-fib-brev-orig-right",
+            "name": "Laterale vlak corpus fibula",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.37,
+                "y": 0.79
+              },
+              {
+                "x": 0.3786,
+                "y": 0.8335
+              },
+              {
+                "x": 0.385,
+                "y": 0.88
+              }
+            ],
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-fib-brev-ins-right",
+            "name": "Laterale voetrand",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.392,
+                "y": 0.922
+              },
+              {
+                "x": 0.3808,
+                "y": 0.9359
+              },
+              {
+                "x": 0.368,
+                "y": 0.955
+              }
+            ],
+            "tolerance": 0.022
           }
         ]
       }
@@ -2644,6 +4270,48 @@
             "y": 0.9344,
             "name": "Curve-punt 2"
           }
+        ],
+        "attachmentLines": [
+          {
+            "id": "line-fib-long-orig-right",
+            "name": "Proximale laterale deel van de corpus fibula",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.352,
+                "y": 0.742
+              },
+              {
+                "x": 0.3549,
+                "y": 0.7523
+              },
+              {
+                "x": 0.37,
+                "y": 0.815
+              }
+            ],
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-fib-long-ins-right",
+            "name": "mediale voetrand (onder de voet door)",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.475,
+                "y": 0.935
+              },
+              {
+                "x": 0.4697,
+                "y": 0.9525
+              },
+              {
+                "x": 0.455,
+                "y": 0.962
+              }
+            ],
+            "tolerance": 0.022
+          }
         ]
       },
       "left": {
@@ -2675,24 +4343,44 @@
         ],
         "attachmentLines": [
           {
-            "id": "line-origin-fibularis-long-fibula-left",
-            "name": "Caput & proximale 2/3e facies lateralis fibulae",
+            "id": "line-fib-long-orig-left",
+            "name": "Proximale laterale deel van de corpus fibula",
             "type": "origin",
             "points": [
               {
-                "x": 0.6543,
-                "y": 0.7424
+                "x": 0.648,
+                "y": 0.742
               },
               {
-                "x": 0.6447,
-                "y": 0.7545
+                "x": 0.6451,
+                "y": 0.7523
               },
               {
-                "x": 0.6394,
-                "y": 0.7696
+                "x": 0.63,
+                "y": 0.815
               }
             ],
-            "tolerance": 0.045
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-fib-long-ins-left",
+            "name": "mediale voetrand (onder de voet door)",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.525,
+                "y": 0.935
+              },
+              {
+                "x": 0.5303,
+                "y": 0.9525
+              },
+              {
+                "x": 0.545,
+                "y": 0.962
+              }
+            ],
+            "tolerance": 0.022
           }
         ]
       }
@@ -2813,7 +4501,48 @@
             "name": "via achillespees"
           }
         ],
-        "attachmentLines": []
+        "attachmentLines": [
+          {
+            "id": "line-soleus-fib-left",
+            "name": "Proximale 1/3 deel van dorsale zijde fibula",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.352,
+                "y": 0.745
+              },
+              {
+                "x": 0.3572,
+                "y": 0.7601
+              },
+              {
+                "x": 0.37,
+                "y": 0.81
+              }
+            ],
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-soleus-tib-left",
+            "name": "proximale dorsale deel corpus tibia",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.405,
+                "y": 0.742
+              },
+              {
+                "x": 0.4133,
+                "y": 0.7571
+              },
+              {
+                "x": 0.425,
+                "y": 0.815
+              }
+            ],
+            "tolerance": 0.022
+          }
+        ]
       },
       "right": {
         "origins": [
@@ -2840,6 +4569,48 @@
             "x": 0.592,
             "y": 0.84,
             "name": "via achillespees"
+          }
+        ],
+        "attachmentLines": [
+          {
+            "id": "line-soleus-fib-right",
+            "name": "Proximale 1/3 deel van dorsale zijde fibula",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.648,
+                "y": 0.745
+              },
+              {
+                "x": 0.6428,
+                "y": 0.7601
+              },
+              {
+                "x": 0.63,
+                "y": 0.81
+              }
+            ],
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-soleus-tib-right",
+            "name": "proximale dorsale deel corpus tibia",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.595,
+                "y": 0.742
+              },
+              {
+                "x": 0.5867,
+                "y": 0.7571
+              },
+              {
+                "x": 0.575,
+                "y": 0.815
+              }
+            ],
+            "tolerance": 0.022
           }
         ]
       }

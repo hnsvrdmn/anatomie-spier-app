@@ -97,10 +97,10 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [appMode, setAppModeState] = useState<AppMode>(() => {
     try {
       const h = window.location.hash.replace('#', '') as AppMode;
-      if (h && ['study', 'movements', 'bones', 'quiz', 'editor'].includes(h)) return h;
+      if (h && ['study', 'movements', 'bones', 'quiz', 'flashcards', 'editor'].includes(h)) return h;
       const p = new URLSearchParams(window.location.search);
       const m = p.get('mode') as AppMode;
-      if (m && ['study', 'movements', 'bones', 'quiz', 'editor'].includes(m)) return m;
+      if (m && ['study', 'movements', 'bones', 'quiz', 'flashcards', 'editor'].includes(m)) return m;
     } catch {
       // fallback
     }
@@ -120,7 +120,7 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const handleHash = () => {
       try {
         const h = window.location.hash.replace('#', '') as AppMode;
-        if (h && ['study', 'movements', 'bones', 'quiz', 'editor'].includes(h)) {
+        if (h && ['study', 'movements', 'bones', 'quiz', 'flashcards', 'editor'].includes(h)) {
           setAppModeState(h);
         }
       } catch {

@@ -202,7 +202,7 @@ export const MobileStudyView: React.FC = () => {
     <div className="relative w-full h-[calc(100dvh-3.5rem)] bg-white flex flex-col overflow-hidden select-none">
       
       {/* 1. MENUUTJE BOVENIN: 2 DROPDOWNS (GEWRICHT + DAARONDER SPIEREN DIE BIJ DAT GEWRICHT HOREN) */}
-      <div className="w-full px-3 py-2 bg-white/95 backdrop-blur-md border-b border-clinical-200 shrink-0 relative z-50 shadow-xs pointer-events-auto box-border space-y-1.5">
+      <div className="w-full px-3 py-2 bg-white/95 backdrop-blur-md border-b border-clinical-200 shrink-0 relative z-20 shadow-xs pointer-events-auto box-border space-y-1.5">
         {!isSearching ? (
           <>
             {/* Bovenste dropdown: Gewricht kiezen met correct aantal spieren */}

@@ -96,6 +96,8 @@ interface MobileQuizViewProps {
   incorrectCount?: number;
   autoRotateView?: boolean;
   onToggleAutoRotate?: () => void;
+  autoZoom?: boolean;
+  onToggleAutoZoom?: () => void;
 }
 
 export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
@@ -147,6 +149,8 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
   incorrectCount = 0,
   autoRotateView = true,
   onToggleAutoRotate,
+  autoZoom = true,
+  onToggleAutoZoom,
 }) => {
   const { quizOpenOptionsTrigger } = useMuscles();
 
@@ -342,7 +346,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
               targetFocusPoint={jointFocusPoint}
               hideZoomToolbar={true}
               isMobile={true}
-              autoCenterMuscle={shouldShowMuscle || !!jointFocusPoint || type === 'bone'}
+              autoCenterMuscle={autoZoom && (shouldShowMuscle || !!jointFocusPoint || type === 'bone')}
               hideMuscleMarkers={!isEvaluated && isDrawingType}
             />
           );
@@ -518,6 +522,22 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                     }`}
                   >
                     <span>{autoRotateView ? 'Aan' : 'Uit'}</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Minimalistische toggle voor automatisch inzoomen */}
+              {onToggleAutoZoom && (
+                <div className="flex items-center justify-between px-1 pt-1.5 border-t border-slate-200">
+                  <span className="text-xs text-slate-600 font-medium">Automatisch inzoomen:</span>
+                  <button
+                    type="button"
+                    onClick={onToggleAutoZoom}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+                      autoZoom ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-200 text-slate-700'
+                    }`}
+                  >
+                    <span>{autoZoom ? 'Aan' : 'Uit'}</span>
                   </button>
                 </div>
               )}

@@ -1,8 +1,8 @@
 import { Point2D, MatchAccuracy, MatchResult, AttachmentLine } from '../types/anatomy';
 
-// Toleranties volgens PMT-specificaties (hooguit ~2.5 cm afwijking op een 170 cm skelet)
-export const TOLERANCE_CORRECT = 0.015; // 0.015 * 170 cm = 2.55 cm
-export const TOLERANCE_CLOSE = 0.028;   // 0.028 * 170 cm = 4.76 cm
+// Toleranties volgens PMT-specificaties (afgestemd op de getekende botcontouren zoals condyli en tuberositates)
+export const TOLERANCE_CORRECT = 0.020; // ~3.4 cm op een 170 cm skelet (dekt precies een getekende condylus/tuberositas)
+export const TOLERANCE_CLOSE = 0.035;   // ~5.9 cm op een 170 cm skelet
 
 // Skelet rasterafbeelding verhouding (skeleton_ventral en skeleton_dorsal zijn 542 x 1287)
 export const SKELETON_WIDTH = 542;
@@ -206,11 +206,92 @@ export interface EvaluationSetResult {
   isPassed: boolean;
 }
 
+export interface DistinctTarget {
+  key: string;
+  name: string;
+  points: Point2D[];
+  line?: AttachmentLine;
+}
+
 /**
- * Evalueert een set gebruikerspunten tegen doelpunten én continue aanhechtingslijnen
- * (zoals de linea alba, crista iliaca, wervelkolom of margo medialis scapulae).
- * Een punt dat waar dan ook langs een geldige aanhechtingslijn wordt geplaatst,
- * wordt als 100% correct gerekend!
+ * Groepeert doelpunten en aanhechtingslijnen tot unieke anatomische doelen (1-op-1 op naam).
+ * Hierdoor tellen meervoudige vezelpunten met dezelfde naam (zoals '5e tot 12e costa' of 'linea alba')
+ * als één anatomische structuur (zone), terwijl losse punten met verschillende namen (zoals 'SIAS' of
+ * 'processus coracoideus' + 'tuberculum supraglenoidale') elk een eigen doel blijven.
+ */
+export function getDistinctTargets(
+  targetPoints: Point2D[] = [],
+  attachmentLines: AttachmentLine[] = [],
+  targetType: 'origin' | 'insertion' | 'path'
+): DistinctTarget[] {
+  const matchingLines = (attachmentLines || []).filter(
+    (l) => l.type === targetType && l.points && l.points.length >= 2
+  );
+
+  const map = new Map<string, DistinctTarget>();
+
+  targetPoints.forEach((pt, idx) => {
+    const rawName = (pt.name || '').trim();
+    const key = rawName ? rawName.toLowerCase() : `__pt_${idx}`;
+    const existing = map.get(key);
+    if (existing) {
+      existing.points.push(pt);
+    } else {
+      const matchedLine = rawName
+        ? matchingLines.find((l) => (l.name || '').trim().toLowerCase() === key)
+        : undefined;
+      map.set(key, {
+        key,
+        name: rawName,
+        points: [pt],
+        line: matchedLine,
+      });
+    }
+  });
+
+  const targets = Array.from(map.values());
+
+  // Indien er slechts 1 uniek doelpunt is en 1 lijn van hetzelfde type zonder exacte naammatch, koppel ze
+  if (targets.length === 1 && !targets[0].line && matchingLines.length === 1) {
+    targets[0].line = matchingLines[0];
+  }
+
+  // Indien er geen discrete punten zijn maar wel lijnen
+  if (targets.length === 0 && matchingLines.length > 0) {
+    matchingLines.forEach((line, idx) => {
+      const rawName = (line.name || '').trim();
+      const key = rawName ? rawName.toLowerCase() : `__line_${idx}`;
+      targets.push({
+        key,
+        name: rawName,
+        points: [],
+        line,
+      });
+    });
+  }
+
+  return targets;
+}
+
+/**
+ * Geeft het aantal unieke anatomische aanhechtingsdoelen voor een zijde terug.
+ */
+export function getDistinctTargetCount(points?: Point2D[]): number {
+  if (!points || points.length === 0) return 1;
+  const keys = new Set(
+    points.map((pt, idx) => {
+      const n = (pt.name || '').trim().toLowerCase();
+      return n || `__pt_${idx}`;
+    })
+  );
+  return Math.max(1, keys.size);
+}
+
+/**
+ * Evalueert een set gebruikerspunten tegen unieke anatomische doelen:
+ * - Korte/kleine botpunten (zoals condylus, SIAS, SIAI, tuberositas, olecranon) worden als punt geëvalueerd.
+ * - Lange botregio's (zoals corpus femoris, linea alba, crista iliaca, margo medialis scapulae, ribben, wervels)
+ *   hebben een gekoppelde AttachmentLine en worden over de gehele botzone als 100% correct gerekend.
  */
 export function evaluatePointSet(
   userPoints: Point2D[],
@@ -219,77 +300,9 @@ export function evaluatePointSet(
   toleranceCorrect: number = TOLERANCE_CORRECT,
   attachmentLines?: AttachmentLine[]
 ): EvaluationSetResult {
-  const matchingLines = (attachmentLines || []).filter(
-    (l) => l.type === targetType && l.points && l.points.length >= 2
-  );
+  const distinctTargets = getDistinctTargets(targetPoints, attachmentLines || [], targetType);
 
-  // Indien er geen discrete targetPoints zijn, maar wel een aanhechtingslijn:
-  if (targetPoints.length === 0 && matchingLines.length > 0) {
-    const matches: MatchResult[] = [];
-    let correctCount = 0;
-    let closeCount = 0;
-
-    for (const upt of userPoints) {
-      let bestDist = Infinity;
-      let bestProj = { ...upt };
-      let matchedName = matchingLines[0].name;
-
-      let bestTolCorrect = 0.016;
-      let bestTolClose = 0.024;
-
-      for (const line of matchingLines) {
-        const lineTolCorrect = line.tolerance || 0.016;
-        const lineTolClose = lineTolCorrect * 1.5;
-        const res = distanceToPolyline(upt, line.points);
-        if (res.distance < bestDist) {
-          bestDist = res.distance;
-          bestProj = res.projection;
-          matchedName = line.name;
-          bestTolCorrect = lineTolCorrect;
-          bestTolClose = lineTolClose;
-        }
-      }
-
-      if (bestDist < bestTolCorrect) {
-        matches.push({
-          userPoint: upt,
-          targetPoint: bestProj,
-          distance: bestDist,
-          accuracy: 'correct',
-          targetType,
-          matchedLineName: matchedName,
-        });
-        correctCount++;
-      } else if (bestDist <= bestTolClose) {
-        matches.push({
-          userPoint: upt,
-          targetPoint: bestProj,
-          distance: bestDist,
-          accuracy: 'close',
-          targetType,
-          matchedLineName: matchedName,
-        });
-        closeCount++;
-      } else {
-        matches.push({
-          userPoint: upt,
-          distance: bestDist,
-          accuracy: 'incorrect',
-          targetType,
-        });
-      }
-    }
-
-    return {
-      matches,
-      requiredCount: 1,
-      correctCount,
-      closeCount,
-      isPassed: correctCount >= 1,
-    };
-  }
-
-  if (targetPoints.length === 0) {
+  if (distinctTargets.length === 0) {
     return {
       matches: [],
       requiredCount: 0,
@@ -299,65 +312,134 @@ export function evaluatePointSet(
     };
   }
 
-  // Ondersteun brede aanhechtingszones (zoals wervelkolom of meerdere ribben):
-  const isMultiSpan = targetPoints.length > 2 || (targetPoints.length === 2 && Math.abs(targetPoints[0].y - targetPoints[1].y) > 0.08) || matchingLines.length > 0;
-  const requiredCount = isMultiSpan ? Math.min(2, targetPoints.length) : targetPoints.length;
+  const requiredCount = distinctTargets.length > 2 ? 2 : distinctTargets.length;
+  const ptTolCorrect = toleranceCorrect;
+  const ptTolClose = Math.max(TOLERANCE_CLOSE, toleranceCorrect * 1.6);
 
-  // Standaard greedy bipartite matching uitvoeren op de discrete punten
-  const greedyResult = matchPointsGreedy(userPoints, targetPoints, targetType, toleranceCorrect);
-  const matches: MatchResult[] = [];
+  // Hulpfunctie om één gebruikerspunt te testen tegen één DistinctTarget (punt + optionele botzone)
+  const evalAgainstTarget = (upt: Point2D, target: DistinctTarget): MatchResult => {
+    let bestDist = Infinity;
+    let bestTargetPt: Point2D = target.points[0] || { ...upt };
+    let bestAcc: MatchAccuracy = 'incorrect';
+    let bestNormScore = Infinity; // distance / tolCorrect (voor eerlijke vergelijking tussen punt en zone)
+    let matchedLineName: string | undefined;
 
-  let correctCount = 0;
-  let closeCount = 0;
-
-  for (const match of greedyResult.matches) {
-    if (match.accuracy === 'correct') {
-      matches.push(match);
-      correctCount++;
-    } else if (match.accuracy === 'close') {
-      matches.push(match);
-      closeCount++;
-    } else {
-      // 1. Controleer eerst of het punt langs een van de gedefinieerde aanhechtingslijnen ligt (bijv. Linea alba)
-      let lineMatched = false;
-      for (const line of matchingLines) {
-        const lineTolCorrect = line.tolerance || 0.016;
-        const lineTolClose = lineTolCorrect * 1.5;
-        const polyRes = distanceToPolyline(match.userPoint, line.points);
-        if (polyRes.distance < lineTolCorrect) {
-          matches.push({
-            userPoint: match.userPoint,
-            targetPoint: polyRes.projection,
-            distance: polyRes.distance,
-            accuracy: 'correct',
-            targetType,
-            matchedLineName: line.name,
-          });
-          correctCount++;
-          lineMatched = true;
-          break;
-        } else if (polyRes.distance <= lineTolClose) {
-          matches.push({
-            userPoint: match.userPoint,
-            targetPoint: polyRes.projection,
-            distance: polyRes.distance,
-            accuracy: 'close',
-            targetType,
-            matchedLineName: line.name,
-          });
-          closeCount++;
-          lineMatched = true;
-          break;
-        }
+    for (const pt of target.points) {
+      const d = calculateDistance(upt, pt);
+      const acc = getAccuracy(d, ptTolCorrect, ptTolClose);
+      const norm = d / ptTolCorrect;
+      if (norm < bestNormScore) {
+        bestNormScore = norm;
+        bestDist = d;
+        bestTargetPt = pt;
+        bestAcc = acc;
+        matchedLineName = undefined;
       }
+    }
 
-      if (lineMatched) continue;
+    if (target.line && target.line.points && target.line.points.length >= 2) {
+      const lineTolCorrect = Math.max(target.line.tolerance || 0.022, toleranceCorrect * 0.85);
+      const lineTolClose = Math.max(lineTolCorrect * 1.5, toleranceCorrect * 1.5);
+      const polyRes = distanceToPolyline(upt, target.line.points);
+      const lineAcc = getAccuracy(polyRes.distance, lineTolCorrect, lineTolClose);
+      const norm = polyRes.distance / lineTolCorrect;
 
-      matches.push(match);
+      // Geef voorrang aan de zone als deze een betere accuracy geeft of relatief dichterbij ligt
+      const accRank = (a: MatchAccuracy) => (a === 'correct' ? 0 : a === 'close' ? 1 : 2);
+      if (
+        accRank(lineAcc) < accRank(bestAcc) ||
+        (accRank(lineAcc) === accRank(bestAcc) && norm < bestNormScore)
+      ) {
+        bestNormScore = norm;
+        bestDist = polyRes.distance;
+        bestTargetPt = polyRes.projection;
+        bestAcc = lineAcc;
+        matchedLineName = target.line.name;
+      }
+    }
+
+    return {
+      userPoint: upt,
+      targetPoint: bestTargetPt,
+      distance: bestDist,
+      accuracy: bestAcc,
+      targetType,
+      matchedLineName,
+    };
+  };
+
+  // Koppel gebruikerspunten optimaal aan nog niet gematchte DistinctTargets
+  const matchedUserIndices = new Set<number>();
+  const matchedTargetIndices = new Set<number>();
+  const resultsByUserIdx = new Map<number, MatchResult>();
+
+  // Bereken alle mogelijke paren (userIdx, targetIdx)
+  interface CandidatePair {
+    uIdx: number;
+    tIdx: number;
+    res: MatchResult;
+    rank: number;
+  }
+
+  const pairs: CandidatePair[] = [];
+  for (let uIdx = 0; uIdx < userPoints.length; uIdx++) {
+    for (let tIdx = 0; tIdx < distinctTargets.length; tIdx++) {
+      const res = evalAgainstTarget(userPoints[uIdx], distinctTargets[tIdx]);
+      const rank = res.accuracy === 'correct' ? 0 : res.accuracy === 'close' ? 1 : 2;
+      pairs.push({ uIdx, tIdx, res, rank });
     }
   }
 
-  const isPassed = correctCount >= requiredCount;
+  // Sorteer op beste accuracy (correct -> close -> incorrect) en daarbinnen kleinste afstand
+  pairs.sort((a, b) => {
+    if (a.rank !== b.rank) return a.rank - b.rank;
+    return a.res.distance - b.res.distance;
+  });
+
+  let satisfiedTargets = 0;
+
+  for (const pair of pairs) {
+    if (matchedUserIndices.has(pair.uIdx) || matchedTargetIndices.has(pair.tIdx)) continue;
+    matchedUserIndices.add(pair.uIdx);
+    matchedTargetIndices.add(pair.tIdx);
+    resultsByUserIdx.set(pair.uIdx, pair.res);
+    if (pair.res.accuracy === 'correct') {
+      satisfiedTargets++;
+    }
+  }
+
+  // Voor eventuele extra geplaatste punten (bijv. een 2e punt op dezelfde ribben- of linea alba-zone):
+  // reken goed als ze op een geldige zone of tweede vezelpunt van een reeds gematcht doel liggen
+  for (let uIdx = 0; uIdx < userPoints.length; uIdx++) {
+    if (matchedUserIndices.has(uIdx)) continue;
+    let bestExtra: MatchResult | null = null;
+    for (let tIdx = 0; tIdx < distinctTargets.length; tIdx++) {
+      const res = evalAgainstTarget(userPoints[uIdx], distinctTargets[tIdx]);
+      if (
+        !bestExtra ||
+        (res.accuracy === 'correct' && bestExtra.accuracy !== 'correct') ||
+        (res.accuracy === bestExtra.accuracy && res.distance < bestExtra.distance)
+      ) {
+        bestExtra = res;
+      }
+    }
+    if (bestExtra) {
+      resultsByUserIdx.set(uIdx, bestExtra);
+    }
+  }
+
+  const matches: MatchResult[] = [];
+  let correctCount = 0;
+  let closeCount = 0;
+
+  for (let uIdx = 0; uIdx < userPoints.length; uIdx++) {
+    const m = resultsByUserIdx.get(uIdx)!;
+    matches.push(m);
+    if (m.accuracy === 'correct') correctCount++;
+    else if (m.accuracy === 'close') closeCount++;
+  }
+
+  const isPassed = satisfiedTargets >= requiredCount;
 
   return {
     matches,
