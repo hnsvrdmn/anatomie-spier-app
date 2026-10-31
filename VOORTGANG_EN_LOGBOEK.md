@@ -652,7 +652,30 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
   - **Stap 2 afgerond:** `src/data/flashcardsPart2.ts` (Set 4 Art. coxae, Set 5 Art. genus, Set 6 Art. pedis) herschreven met exacte nummering uit de antwoorden-PDF's en korte, snelle vragen/antwoorden (niet-curriculumspieren zoals `m. sartorius` verwijderd).
   - **Stap 3 afgerond:** `src/data/flashcardsPart3.ts` (Set 7 Art. cubiti, Set 8 Art. humeri, Set 9 Cingulum pectorale) en `src/data/flashcardsData.ts` (Set 10 Romp & Set 11 Oefentoets Anatomie + overzichtspagina's p. 71–74) herschreven en gecontroleerd tegen het volledige Moduulboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf`), `spiertabellen.pdf` en alle 11 antwoorden-PDF's.
   - **Landingspagina toegevoegd [2026-10-31 12:02]:** In `src/components/flashcards/FlashcardsView.tsx` kom je nu eerst op het minimalistische overzichtsscherm (*Kies een flashcard-set*) met alle 11 sets (inclusief voortgangsbadges voor goed/fout/totaal), en kun je vanuit elke set met de overzichtsknop (`LayoutGrid`) linksboven of via het eindscherm direct terug naar de landingspagina.
+  - **Fix afbeeldingen zichtbaarheid (`BASE_URL` & flexbox-hoogte) [2026-10-31 12:07]:** In `FlashcardsView.tsx` `resolveAssetUrl()` toegevoegd zodat `/images/flashcards/...` ook op GitHub Pages (`/anatomie-spier-app/`) naar het juiste pad verwijst, en `max-h-full` in een `flex-1` container (waardoor de afbeelding op 0px hoogte klapte) vervangen door `max-h-[34dvh] sm:max-h-[40dvh]` op zowel de voor- als achterzijde van de kaart.
+  - **Sets uitgebreid naar 41–45 kaarten per set [2026-10-31 12:15]:** Alle 11 sets uitgebreid met extra kernvragen en de 5 spierfiguren uit de antwoorden-PDF's (`genus_spieren_fig.png`, `cubiti_spieren_fig.png`, `humeri_spieren_fig.png`, `cingulum_spieren_fig.png`, `romp_spieren_fig.png`), zodat elke set tussen de 41 en 45 kaarten bevat (**472 kaarten totaal**, 100% uit het Moduulboek en de antwoorden-PDF's).
   - Productiebuild (`npm run build`) geslaagd met 0 fouten.
+
+## 29. Verborgen Spel-toegang (3x tikken op Study), Terugknop vanuit Spel & Opschonen Antwoord-tekst op Afbeeldingen [2026-10-31 13:41]
+- **Wensen van de gebruiker:**
+  1. **3x tikken op de `Study` (*Spieren*) knop** opent het verborgen spelgedeelte (`#game`).
+  2. **Terugknop vanuit het spelgedeelte naar de hoofdapp:** een knop in de bovenbalk van het spel waarmee je direct terugkeert naar de hoofdapp.
+  3. **Geen antwoord-verklappende tekst meer op flashcard-afbeeldingen:** alle 38 afbeeldingen in `public/images/flashcards/` gecontroleerd en opgeschoond zodat nergens een tekstvak, tabel, aanzicht-label of Engelse anatomische term het antwoord verklapt.
+  4. **Niet pushen naar GitHub** tenzij de gebruiker daar expliciet om vraagt.
+- **Uitgevoerd:**
+  - In [`Header.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/common/Header.tsx): `handleStudyButtonClick` toegevoegd met een triple-tap detector (3x snel tikken binnen 350ms op het *Spieren* icoon op mobiel of de *Spieren* knop op desktop navigeert direct naar `#game`).
+  - In [`App.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/App.tsx): linksboven in de spel-header een `← App` knop (`handleExitGame`) toegevoegd die `#game` uit de URL haalt en direct terugschakelt naar de hoofdapp.
+  - Alle **20 afbeeldingen** met verklappende teksten of rand-artefacten in `public/images/flashcards/` opgeschoond:
+    - `humeri_spieren_fig.png` & `cingulum_spieren_fig.png`: tekstvakken *"Insertie van de m. teres major..."* en *"Insertie van de m. latissimus dorsi..."* verwijderd.
+    - `cubiti_spieren_fig.png`: `"1. longum / 1. breve"` en `"3. longum / 3. laterale / 3. mediale"` vervangen door strakke genummerde vakjes `1` en `3`.
+    - `romp_wervelkolom_1_10.png`: tabelrand en Engelse namen (`1st cervical or Atlas`, `2nd cervical or Axis`, `1st thoracic`, `1st lumbar`) verwijderd.
+    - `coxae_botten_1_15.png` & `genus_botten_1_9.png`: kopteksten `Os coxa`, `Os femur`, `Os tibia` en `Zie art. genus` verwijderd.
+    - `cubiti_botten_1_13.png`, `humeri_botten_1_14.png`, `pedis_botten_1_5.png`, `pedis_ligamenten_1_4.png`: ingevulde kaders met `Lichaamszijde: R/L` en `Aanzicht: ventraal/dorsaal/mediaal/lateraal` én de antwoordtabel (`3 Os talus / 4 Os calcaneus / 5 Os naviculare`) verwijderd.
+    - `richtingen_os_coxae.png`, `richtingen_scapula_blanco.png`, `richtingen_aanzichten.png`, `richtingen_radioulnaris.png`: bijschriften (`Rechter os coxae van mediaal/lateraal`) en afgesneden letters verwijderd.
+    - `genus_ligamenten_1_7.png`: Engelse tekstlabels op de bot- en meniscusstructuren (`Femur`, `Tibia`, `Fibula`, `Lateral/Medial meniscus`, `Cruciate`) weggefilterd terwijl de nummers `1 t/m 7` scherp zichtbaar blijven.
+    - `overzicht_spieren_dorsaal.png` & `overzicht_spieren_ventraal.png`: antwoordlijsten rechtsboven verwijderd en op de ventrale plaat alle ontbrekende vraagnummers (`2.`, `8.`, `9.`, `10.`, `15.`, `16.`) netjes in de vakjes geplaatst.
+    - `bewegingen_cingulum.png`, `bewegingen_coxae.png`, `bewegingen_pedis.png`, `bewegingen_romp.png`: afgesneden gewrichtstitels aan de bovenrand weggesneden.
+  - Productiebuild (`npm run build`) geslaagd met 0 fouten. Niet gepusht naar GitHub conform afspraak.
 
 ## 28. Opschonen & Versimpelen Flashcards: 100% Moduulboek-termen & Korte Vragen/Antwoorden [2026-10-31 11:45]
 - **Wens van de gebruiker:**
@@ -663,7 +686,30 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
   - **Stap 2 afgerond:** `src/data/flashcardsPart2.ts` (Set 4 Art. coxae, Set 5 Art. genus, Set 6 Art. pedis) herschreven met exacte nummering uit de antwoorden-PDF's en korte, snelle vragen/antwoorden (niet-curriculumspieren zoals `m. sartorius` verwijderd).
   - **Stap 3 afgerond:** `src/data/flashcardsPart3.ts` (Set 7 Art. cubiti, Set 8 Art. humeri, Set 9 Cingulum pectorale) en `src/data/flashcardsData.ts` (Set 10 Romp & Set 11 Oefentoets Anatomie + overzichtspagina's p. 71–74) herschreven en gecontroleerd tegen het volledige Moduulboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf`), `spiertabellen.pdf` en alle 11 antwoorden-PDF's.
   - **Landingspagina toegevoegd [2026-10-31 12:02]:** In `src/components/flashcards/FlashcardsView.tsx` kom je nu eerst op het minimalistische overzichtsscherm (*Kies een flashcard-set*) met alle 11 sets (inclusief voortgangsbadges voor goed/fout/totaal), en kun je vanuit elke set met de overzichtsknop (`LayoutGrid`) linksboven of via het eindscherm direct terug naar de landingspagina.
+  - **Fix afbeeldingen zichtbaarheid (`BASE_URL` & flexbox-hoogte) [2026-10-31 12:07]:** In `FlashcardsView.tsx` `resolveAssetUrl()` toegevoegd zodat `/images/flashcards/...` ook op GitHub Pages (`/anatomie-spier-app/`) naar het juiste pad verwijst, en `max-h-full` in een `flex-1` container (waardoor de afbeelding op 0px hoogte klapte) vervangen door `max-h-[34dvh] sm:max-h-[40dvh]` op zowel de voor- als achterzijde van de kaart.
+  - **Sets uitgebreid naar 41–45 kaarten per set [2026-10-31 12:15]:** Alle 11 sets uitgebreid met extra kernvragen en de 5 spierfiguren uit de antwoorden-PDF's (`genus_spieren_fig.png`, `cubiti_spieren_fig.png`, `humeri_spieren_fig.png`, `cingulum_spieren_fig.png`, `romp_spieren_fig.png`), zodat elke set tussen de 41 en 45 kaarten bevat (**472 kaarten totaal**, 100% uit het Moduulboek en de antwoorden-PDF's).
   - Productiebuild (`npm run build`) geslaagd met 0 fouten.
+
+## 29. Verborgen Spel-toegang (3x tikken op Study), Terugknop vanuit Spel & Opschonen Antwoord-tekst op Afbeeldingen [2026-10-31 13:41]
+- **Wensen van de gebruiker:**
+  1. **3x tikken op de `Study` (*Spieren*) knop** opent het verborgen spelgedeelte (`#game`).
+  2. **Terugknop vanuit het spelgedeelte naar de hoofdapp:** een knop in de bovenbalk van het spel waarmee je direct terugkeert naar de hoofdapp.
+  3. **Geen antwoord-verklappende tekst meer op flashcard-afbeeldingen:** alle 38 afbeeldingen in `public/images/flashcards/` gecontroleerd en opgeschoond zodat nergens een tekstvak, tabel, aanzicht-label of Engelse anatomische term het antwoord verklapt.
+  4. **Niet pushen naar GitHub** tenzij de gebruiker daar expliciet om vraagt.
+- **Uitgevoerd:**
+  - In [`Header.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/common/Header.tsx): `handleStudyButtonClick` toegevoegd met een triple-tap detector (3x snel tikken binnen 350ms op het *Spieren* icoon op mobiel of de *Spieren* knop op desktop navigeert direct naar `#game`).
+  - In [`App.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/App.tsx): linksboven in de spel-header een `← App` knop (`handleExitGame`) toegevoegd die `#game` uit de URL haalt en direct terugschakelt naar de hoofdapp.
+  - Alle **20 afbeeldingen** met verklappende teksten of rand-artefacten in `public/images/flashcards/` opgeschoond:
+    - `humeri_spieren_fig.png` & `cingulum_spieren_fig.png`: tekstvakken *"Insertie van de m. teres major..."* en *"Insertie van de m. latissimus dorsi..."* verwijderd.
+    - `cubiti_spieren_fig.png`: `"1. longum / 1. breve"` en `"3. longum / 3. laterale / 3. mediale"` vervangen door strakke genummerde vakjes `1` en `3`.
+    - `romp_wervelkolom_1_10.png`: tabelrand en Engelse namen (`1st cervical or Atlas`, `2nd cervical or Axis`, `1st thoracic`, `1st lumbar`) verwijderd.
+    - `coxae_botten_1_15.png` & `genus_botten_1_9.png`: kopteksten `Os coxa`, `Os femur`, `Os tibia` en `Zie art. genus` verwijderd.
+    - `cubiti_botten_1_13.png`, `humeri_botten_1_14.png`, `pedis_botten_1_5.png`, `pedis_ligamenten_1_4.png`: ingevulde kaders met `Lichaamszijde: R/L` en `Aanzicht: ventraal/dorsaal/mediaal/lateraal` én de antwoordtabel (`3 Os talus / 4 Os calcaneus / 5 Os naviculare`) verwijderd.
+    - `richtingen_os_coxae.png`, `richtingen_scapula_blanco.png`, `richtingen_aanzichten.png`, `richtingen_radioulnaris.png`: bijschriften (`Rechter os coxae van mediaal/lateraal`) en afgesneden letters verwijderd.
+    - `genus_ligamenten_1_7.png`: Engelse tekstlabels op de bot- en meniscusstructuren (`Femur`, `Tibia`, `Fibula`, `Lateral/Medial meniscus`, `Cruciate`) weggefilterd terwijl de nummers `1 t/m 7` scherp zichtbaar blijven.
+    - `overzicht_spieren_dorsaal.png` & `overzicht_spieren_ventraal.png`: antwoordlijsten rechtsboven verwijderd en op de ventrale plaat alle ontbrekende vraagnummers (`2.`, `8.`, `9.`, `10.`, `15.`, `16.`) netjes in de vakjes geplaatst.
+    - `bewegingen_cingulum.png`, `bewegingen_coxae.png`, `bewegingen_pedis.png`, `bewegingen_romp.png`: afgesneden gewrichtstitels aan de bovenrand weggesneden.
+  - Productiebuild (`npm run build`) geslaagd met 0 fouten. Niet gepusht naar GitHub conform afspraak.
 
 ## 24. Nieuw Tabblad "Flashcards" (NotebookLM-stijl met Screenshots uit Moduleboek) [2026-10-31 11:04]
 - **Opdracht van de gebruiker:**
@@ -743,7 +789,30 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
   - **Stap 2 afgerond:** `src/data/flashcardsPart2.ts` (Set 4 Art. coxae, Set 5 Art. genus, Set 6 Art. pedis) herschreven met exacte nummering uit de antwoorden-PDF's en korte, snelle vragen/antwoorden (niet-curriculumspieren zoals `m. sartorius` verwijderd).
   - **Stap 3 afgerond:** `src/data/flashcardsPart3.ts` (Set 7 Art. cubiti, Set 8 Art. humeri, Set 9 Cingulum pectorale) en `src/data/flashcardsData.ts` (Set 10 Romp & Set 11 Oefentoets Anatomie + overzichtspagina's p. 71–74) herschreven en gecontroleerd tegen het volledige Moduulboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf`), `spiertabellen.pdf` en alle 11 antwoorden-PDF's.
   - **Landingspagina toegevoegd [2026-10-31 12:02]:** In `src/components/flashcards/FlashcardsView.tsx` kom je nu eerst op het minimalistische overzichtsscherm (*Kies een flashcard-set*) met alle 11 sets (inclusief voortgangsbadges voor goed/fout/totaal), en kun je vanuit elke set met de overzichtsknop (`LayoutGrid`) linksboven of via het eindscherm direct terug naar de landingspagina.
+  - **Fix afbeeldingen zichtbaarheid (`BASE_URL` & flexbox-hoogte) [2026-10-31 12:07]:** In `FlashcardsView.tsx` `resolveAssetUrl()` toegevoegd zodat `/images/flashcards/...` ook op GitHub Pages (`/anatomie-spier-app/`) naar het juiste pad verwijst, en `max-h-full` in een `flex-1` container (waardoor de afbeelding op 0px hoogte klapte) vervangen door `max-h-[34dvh] sm:max-h-[40dvh]` op zowel de voor- als achterzijde van de kaart.
+  - **Sets uitgebreid naar 41–45 kaarten per set [2026-10-31 12:15]:** Alle 11 sets uitgebreid met extra kernvragen en de 5 spierfiguren uit de antwoorden-PDF's (`genus_spieren_fig.png`, `cubiti_spieren_fig.png`, `humeri_spieren_fig.png`, `cingulum_spieren_fig.png`, `romp_spieren_fig.png`), zodat elke set tussen de 41 en 45 kaarten bevat (**472 kaarten totaal**, 100% uit het Moduulboek en de antwoorden-PDF's).
   - Productiebuild (`npm run build`) geslaagd met 0 fouten.
+
+## 29. Verborgen Spel-toegang (3x tikken op Study), Terugknop vanuit Spel & Opschonen Antwoord-tekst op Afbeeldingen [2026-10-31 13:41]
+- **Wensen van de gebruiker:**
+  1. **3x tikken op de `Study` (*Spieren*) knop** opent het verborgen spelgedeelte (`#game`).
+  2. **Terugknop vanuit het spelgedeelte naar de hoofdapp:** een knop in de bovenbalk van het spel waarmee je direct terugkeert naar de hoofdapp.
+  3. **Geen antwoord-verklappende tekst meer op flashcard-afbeeldingen:** alle 38 afbeeldingen in `public/images/flashcards/` gecontroleerd en opgeschoond zodat nergens een tekstvak, tabel, aanzicht-label of Engelse anatomische term het antwoord verklapt.
+  4. **Niet pushen naar GitHub** tenzij de gebruiker daar expliciet om vraagt.
+- **Uitgevoerd:**
+  - In [`Header.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/common/Header.tsx): `handleStudyButtonClick` toegevoegd met een triple-tap detector (3x snel tikken binnen 350ms op het *Spieren* icoon op mobiel of de *Spieren* knop op desktop navigeert direct naar `#game`).
+  - In [`App.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/App.tsx): linksboven in de spel-header een `← App` knop (`handleExitGame`) toegevoegd die `#game` uit de URL haalt en direct terugschakelt naar de hoofdapp.
+  - Alle **20 afbeeldingen** met verklappende teksten of rand-artefacten in `public/images/flashcards/` opgeschoond:
+    - `humeri_spieren_fig.png` & `cingulum_spieren_fig.png`: tekstvakken *"Insertie van de m. teres major..."* en *"Insertie van de m. latissimus dorsi..."* verwijderd.
+    - `cubiti_spieren_fig.png`: `"1. longum / 1. breve"` en `"3. longum / 3. laterale / 3. mediale"` vervangen door strakke genummerde vakjes `1` en `3`.
+    - `romp_wervelkolom_1_10.png`: tabelrand en Engelse namen (`1st cervical or Atlas`, `2nd cervical or Axis`, `1st thoracic`, `1st lumbar`) verwijderd.
+    - `coxae_botten_1_15.png` & `genus_botten_1_9.png`: kopteksten `Os coxa`, `Os femur`, `Os tibia` en `Zie art. genus` verwijderd.
+    - `cubiti_botten_1_13.png`, `humeri_botten_1_14.png`, `pedis_botten_1_5.png`, `pedis_ligamenten_1_4.png`: ingevulde kaders met `Lichaamszijde: R/L` en `Aanzicht: ventraal/dorsaal/mediaal/lateraal` én de antwoordtabel (`3 Os talus / 4 Os calcaneus / 5 Os naviculare`) verwijderd.
+    - `richtingen_os_coxae.png`, `richtingen_scapula_blanco.png`, `richtingen_aanzichten.png`, `richtingen_radioulnaris.png`: bijschriften (`Rechter os coxae van mediaal/lateraal`) en afgesneden letters verwijderd.
+    - `genus_ligamenten_1_7.png`: Engelse tekstlabels op de bot- en meniscusstructuren (`Femur`, `Tibia`, `Fibula`, `Lateral/Medial meniscus`, `Cruciate`) weggefilterd terwijl de nummers `1 t/m 7` scherp zichtbaar blijven.
+    - `overzicht_spieren_dorsaal.png` & `overzicht_spieren_ventraal.png`: antwoordlijsten rechtsboven verwijderd en op de ventrale plaat alle ontbrekende vraagnummers (`2.`, `8.`, `9.`, `10.`, `15.`, `16.`) netjes in de vakjes geplaatst.
+    - `bewegingen_cingulum.png`, `bewegingen_coxae.png`, `bewegingen_pedis.png`, `bewegingen_romp.png`: afgesneden gewrichtstitels aan de bovenrand weggesneden.
+  - Productiebuild (`npm run build`) geslaagd met 0 fouten. Niet gepusht naar GitHub conform afspraak.
 
 ## 28. Opschonen & Versimpelen Flashcards: 100% Moduulboek-termen & Korte Vragen/Antwoorden [2026-10-31 11:45]
 - **Wens van de gebruiker:**
@@ -754,7 +823,30 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
   - **Stap 2 afgerond:** `src/data/flashcardsPart2.ts` (Set 4 Art. coxae, Set 5 Art. genus, Set 6 Art. pedis) herschreven met exacte nummering uit de antwoorden-PDF's en korte, snelle vragen/antwoorden (niet-curriculumspieren zoals `m. sartorius` verwijderd).
   - **Stap 3 afgerond:** `src/data/flashcardsPart3.ts` (Set 7 Art. cubiti, Set 8 Art. humeri, Set 9 Cingulum pectorale) en `src/data/flashcardsData.ts` (Set 10 Romp & Set 11 Oefentoets Anatomie + overzichtspagina's p. 71–74) herschreven en gecontroleerd tegen het volledige Moduulboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf`), `spiertabellen.pdf` en alle 11 antwoorden-PDF's.
   - **Landingspagina toegevoegd [2026-10-31 12:02]:** In `src/components/flashcards/FlashcardsView.tsx` kom je nu eerst op het minimalistische overzichtsscherm (*Kies een flashcard-set*) met alle 11 sets (inclusief voortgangsbadges voor goed/fout/totaal), en kun je vanuit elke set met de overzichtsknop (`LayoutGrid`) linksboven of via het eindscherm direct terug naar de landingspagina.
+  - **Fix afbeeldingen zichtbaarheid (`BASE_URL` & flexbox-hoogte) [2026-10-31 12:07]:** In `FlashcardsView.tsx` `resolveAssetUrl()` toegevoegd zodat `/images/flashcards/...` ook op GitHub Pages (`/anatomie-spier-app/`) naar het juiste pad verwijst, en `max-h-full` in een `flex-1` container (waardoor de afbeelding op 0px hoogte klapte) vervangen door `max-h-[34dvh] sm:max-h-[40dvh]` op zowel de voor- als achterzijde van de kaart.
+  - **Sets uitgebreid naar 41–45 kaarten per set [2026-10-31 12:15]:** Alle 11 sets uitgebreid met extra kernvragen en de 5 spierfiguren uit de antwoorden-PDF's (`genus_spieren_fig.png`, `cubiti_spieren_fig.png`, `humeri_spieren_fig.png`, `cingulum_spieren_fig.png`, `romp_spieren_fig.png`), zodat elke set tussen de 41 en 45 kaarten bevat (**472 kaarten totaal**, 100% uit het Moduulboek en de antwoorden-PDF's).
   - Productiebuild (`npm run build`) geslaagd met 0 fouten.
+
+## 29. Verborgen Spel-toegang (3x tikken op Study), Terugknop vanuit Spel & Opschonen Antwoord-tekst op Afbeeldingen [2026-10-31 13:41]
+- **Wensen van de gebruiker:**
+  1. **3x tikken op de `Study` (*Spieren*) knop** opent het verborgen spelgedeelte (`#game`).
+  2. **Terugknop vanuit het spelgedeelte naar de hoofdapp:** een knop in de bovenbalk van het spel waarmee je direct terugkeert naar de hoofdapp.
+  3. **Geen antwoord-verklappende tekst meer op flashcard-afbeeldingen:** alle 38 afbeeldingen in `public/images/flashcards/` gecontroleerd en opgeschoond zodat nergens een tekstvak, tabel, aanzicht-label of Engelse anatomische term het antwoord verklapt.
+  4. **Niet pushen naar GitHub** tenzij de gebruiker daar expliciet om vraagt.
+- **Uitgevoerd:**
+  - In [`Header.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/common/Header.tsx): `handleStudyButtonClick` toegevoegd met een triple-tap detector (3x snel tikken binnen 350ms op het *Spieren* icoon op mobiel of de *Spieren* knop op desktop navigeert direct naar `#game`).
+  - In [`App.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/App.tsx): linksboven in de spel-header een `← App` knop (`handleExitGame`) toegevoegd die `#game` uit de URL haalt en direct terugschakelt naar de hoofdapp.
+  - Alle **20 afbeeldingen** met verklappende teksten of rand-artefacten in `public/images/flashcards/` opgeschoond:
+    - `humeri_spieren_fig.png` & `cingulum_spieren_fig.png`: tekstvakken *"Insertie van de m. teres major..."* en *"Insertie van de m. latissimus dorsi..."* verwijderd.
+    - `cubiti_spieren_fig.png`: `"1. longum / 1. breve"` en `"3. longum / 3. laterale / 3. mediale"` vervangen door strakke genummerde vakjes `1` en `3`.
+    - `romp_wervelkolom_1_10.png`: tabelrand en Engelse namen (`1st cervical or Atlas`, `2nd cervical or Axis`, `1st thoracic`, `1st lumbar`) verwijderd.
+    - `coxae_botten_1_15.png` & `genus_botten_1_9.png`: kopteksten `Os coxa`, `Os femur`, `Os tibia` en `Zie art. genus` verwijderd.
+    - `cubiti_botten_1_13.png`, `humeri_botten_1_14.png`, `pedis_botten_1_5.png`, `pedis_ligamenten_1_4.png`: ingevulde kaders met `Lichaamszijde: R/L` en `Aanzicht: ventraal/dorsaal/mediaal/lateraal` én de antwoordtabel (`3 Os talus / 4 Os calcaneus / 5 Os naviculare`) verwijderd.
+    - `richtingen_os_coxae.png`, `richtingen_scapula_blanco.png`, `richtingen_aanzichten.png`, `richtingen_radioulnaris.png`: bijschriften (`Rechter os coxae van mediaal/lateraal`) en afgesneden letters verwijderd.
+    - `genus_ligamenten_1_7.png`: Engelse tekstlabels op de bot- en meniscusstructuren (`Femur`, `Tibia`, `Fibula`, `Lateral/Medial meniscus`, `Cruciate`) weggefilterd terwijl de nummers `1 t/m 7` scherp zichtbaar blijven.
+    - `overzicht_spieren_dorsaal.png` & `overzicht_spieren_ventraal.png`: antwoordlijsten rechtsboven verwijderd en op de ventrale plaat alle ontbrekende vraagnummers (`2.`, `8.`, `9.`, `10.`, `15.`, `16.`) netjes in de vakjes geplaatst.
+    - `bewegingen_cingulum.png`, `bewegingen_coxae.png`, `bewegingen_pedis.png`, `bewegingen_romp.png`: afgesneden gewrichtstitels aan de bovenrand weggesneden.
+  - Productiebuild (`npm run build`) geslaagd met 0 fouten. Niet gepusht naar GitHub conform afspraak.
 - **Goedkeuring ontvangen [2026-10-31 10:42]:**
   - Gebruiker is akkoord met het plan.
   - **Stap 1 (Beeld- & Pixelanalyse):** Eerst de exacte botcontouren op `skeleton_ventral.png` en `skeleton_dorsal.png` opmeten zodat elke lange aanhechtingszone (corpora, cristae, margines, wervelreeksen, ribben) precies op het getekende bot ligt.
@@ -868,7 +960,30 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
   - **Stap 2 afgerond:** `src/data/flashcardsPart2.ts` (Set 4 Art. coxae, Set 5 Art. genus, Set 6 Art. pedis) herschreven met exacte nummering uit de antwoorden-PDF's en korte, snelle vragen/antwoorden (niet-curriculumspieren zoals `m. sartorius` verwijderd).
   - **Stap 3 afgerond:** `src/data/flashcardsPart3.ts` (Set 7 Art. cubiti, Set 8 Art. humeri, Set 9 Cingulum pectorale) en `src/data/flashcardsData.ts` (Set 10 Romp & Set 11 Oefentoets Anatomie + overzichtspagina's p. 71–74) herschreven en gecontroleerd tegen het volledige Moduulboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf`), `spiertabellen.pdf` en alle 11 antwoorden-PDF's.
   - **Landingspagina toegevoegd [2026-10-31 12:02]:** In `src/components/flashcards/FlashcardsView.tsx` kom je nu eerst op het minimalistische overzichtsscherm (*Kies een flashcard-set*) met alle 11 sets (inclusief voortgangsbadges voor goed/fout/totaal), en kun je vanuit elke set met de overzichtsknop (`LayoutGrid`) linksboven of via het eindscherm direct terug naar de landingspagina.
+  - **Fix afbeeldingen zichtbaarheid (`BASE_URL` & flexbox-hoogte) [2026-10-31 12:07]:** In `FlashcardsView.tsx` `resolveAssetUrl()` toegevoegd zodat `/images/flashcards/...` ook op GitHub Pages (`/anatomie-spier-app/`) naar het juiste pad verwijst, en `max-h-full` in een `flex-1` container (waardoor de afbeelding op 0px hoogte klapte) vervangen door `max-h-[34dvh] sm:max-h-[40dvh]` op zowel de voor- als achterzijde van de kaart.
+  - **Sets uitgebreid naar 41–45 kaarten per set [2026-10-31 12:15]:** Alle 11 sets uitgebreid met extra kernvragen en de 5 spierfiguren uit de antwoorden-PDF's (`genus_spieren_fig.png`, `cubiti_spieren_fig.png`, `humeri_spieren_fig.png`, `cingulum_spieren_fig.png`, `romp_spieren_fig.png`), zodat elke set tussen de 41 en 45 kaarten bevat (**472 kaarten totaal**, 100% uit het Moduulboek en de antwoorden-PDF's).
   - Productiebuild (`npm run build`) geslaagd met 0 fouten.
+
+## 29. Verborgen Spel-toegang (3x tikken op Study), Terugknop vanuit Spel & Opschonen Antwoord-tekst op Afbeeldingen [2026-10-31 13:41]
+- **Wensen van de gebruiker:**
+  1. **3x tikken op de `Study` (*Spieren*) knop** opent het verborgen spelgedeelte (`#game`).
+  2. **Terugknop vanuit het spelgedeelte naar de hoofdapp:** een knop in de bovenbalk van het spel waarmee je direct terugkeert naar de hoofdapp.
+  3. **Geen antwoord-verklappende tekst meer op flashcard-afbeeldingen:** alle 38 afbeeldingen in `public/images/flashcards/` gecontroleerd en opgeschoond zodat nergens een tekstvak, tabel, aanzicht-label of Engelse anatomische term het antwoord verklapt.
+  4. **Niet pushen naar GitHub** tenzij de gebruiker daar expliciet om vraagt.
+- **Uitgevoerd:**
+  - In [`Header.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/common/Header.tsx): `handleStudyButtonClick` toegevoegd met een triple-tap detector (3x snel tikken binnen 350ms op het *Spieren* icoon op mobiel of de *Spieren* knop op desktop navigeert direct naar `#game`).
+  - In [`App.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/App.tsx): linksboven in de spel-header een `← App` knop (`handleExitGame`) toegevoegd die `#game` uit de URL haalt en direct terugschakelt naar de hoofdapp.
+  - Alle **20 afbeeldingen** met verklappende teksten of rand-artefacten in `public/images/flashcards/` opgeschoond:
+    - `humeri_spieren_fig.png` & `cingulum_spieren_fig.png`: tekstvakken *"Insertie van de m. teres major..."* en *"Insertie van de m. latissimus dorsi..."* verwijderd.
+    - `cubiti_spieren_fig.png`: `"1. longum / 1. breve"` en `"3. longum / 3. laterale / 3. mediale"` vervangen door strakke genummerde vakjes `1` en `3`.
+    - `romp_wervelkolom_1_10.png`: tabelrand en Engelse namen (`1st cervical or Atlas`, `2nd cervical or Axis`, `1st thoracic`, `1st lumbar`) verwijderd.
+    - `coxae_botten_1_15.png` & `genus_botten_1_9.png`: kopteksten `Os coxa`, `Os femur`, `Os tibia` en `Zie art. genus` verwijderd.
+    - `cubiti_botten_1_13.png`, `humeri_botten_1_14.png`, `pedis_botten_1_5.png`, `pedis_ligamenten_1_4.png`: ingevulde kaders met `Lichaamszijde: R/L` en `Aanzicht: ventraal/dorsaal/mediaal/lateraal` én de antwoordtabel (`3 Os talus / 4 Os calcaneus / 5 Os naviculare`) verwijderd.
+    - `richtingen_os_coxae.png`, `richtingen_scapula_blanco.png`, `richtingen_aanzichten.png`, `richtingen_radioulnaris.png`: bijschriften (`Rechter os coxae van mediaal/lateraal`) en afgesneden letters verwijderd.
+    - `genus_ligamenten_1_7.png`: Engelse tekstlabels op de bot- en meniscusstructuren (`Femur`, `Tibia`, `Fibula`, `Lateral/Medial meniscus`, `Cruciate`) weggefilterd terwijl de nummers `1 t/m 7` scherp zichtbaar blijven.
+    - `overzicht_spieren_dorsaal.png` & `overzicht_spieren_ventraal.png`: antwoordlijsten rechtsboven verwijderd en op de ventrale plaat alle ontbrekende vraagnummers (`2.`, `8.`, `9.`, `10.`, `15.`, `16.`) netjes in de vakjes geplaatst.
+    - `bewegingen_cingulum.png`, `bewegingen_coxae.png`, `bewegingen_pedis.png`, `bewegingen_romp.png`: afgesneden gewrichtstitels aan de bovenrand weggesneden.
+  - Productiebuild (`npm run build`) geslaagd met 0 fouten. Niet gepusht naar GitHub conform afspraak.
 
 ## 28. Opschonen & Versimpelen Flashcards: 100% Moduulboek-termen & Korte Vragen/Antwoorden [2026-10-31 11:45]
 - **Wens van de gebruiker:**
@@ -879,7 +994,30 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
   - **Stap 2 afgerond:** `src/data/flashcardsPart2.ts` (Set 4 Art. coxae, Set 5 Art. genus, Set 6 Art. pedis) herschreven met exacte nummering uit de antwoorden-PDF's en korte, snelle vragen/antwoorden (niet-curriculumspieren zoals `m. sartorius` verwijderd).
   - **Stap 3 afgerond:** `src/data/flashcardsPart3.ts` (Set 7 Art. cubiti, Set 8 Art. humeri, Set 9 Cingulum pectorale) en `src/data/flashcardsData.ts` (Set 10 Romp & Set 11 Oefentoets Anatomie + overzichtspagina's p. 71–74) herschreven en gecontroleerd tegen het volledige Moduulboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf`), `spiertabellen.pdf` en alle 11 antwoorden-PDF's.
   - **Landingspagina toegevoegd [2026-10-31 12:02]:** In `src/components/flashcards/FlashcardsView.tsx` kom je nu eerst op het minimalistische overzichtsscherm (*Kies een flashcard-set*) met alle 11 sets (inclusief voortgangsbadges voor goed/fout/totaal), en kun je vanuit elke set met de overzichtsknop (`LayoutGrid`) linksboven of via het eindscherm direct terug naar de landingspagina.
+  - **Fix afbeeldingen zichtbaarheid (`BASE_URL` & flexbox-hoogte) [2026-10-31 12:07]:** In `FlashcardsView.tsx` `resolveAssetUrl()` toegevoegd zodat `/images/flashcards/...` ook op GitHub Pages (`/anatomie-spier-app/`) naar het juiste pad verwijst, en `max-h-full` in een `flex-1` container (waardoor de afbeelding op 0px hoogte klapte) vervangen door `max-h-[34dvh] sm:max-h-[40dvh]` op zowel de voor- als achterzijde van de kaart.
+  - **Sets uitgebreid naar 41–45 kaarten per set [2026-10-31 12:15]:** Alle 11 sets uitgebreid met extra kernvragen en de 5 spierfiguren uit de antwoorden-PDF's (`genus_spieren_fig.png`, `cubiti_spieren_fig.png`, `humeri_spieren_fig.png`, `cingulum_spieren_fig.png`, `romp_spieren_fig.png`), zodat elke set tussen de 41 en 45 kaarten bevat (**472 kaarten totaal**, 100% uit het Moduulboek en de antwoorden-PDF's).
   - Productiebuild (`npm run build`) geslaagd met 0 fouten.
+
+## 29. Verborgen Spel-toegang (3x tikken op Study), Terugknop vanuit Spel & Opschonen Antwoord-tekst op Afbeeldingen [2026-10-31 13:41]
+- **Wensen van de gebruiker:**
+  1. **3x tikken op de `Study` (*Spieren*) knop** opent het verborgen spelgedeelte (`#game`).
+  2. **Terugknop vanuit het spelgedeelte naar de hoofdapp:** een knop in de bovenbalk van het spel waarmee je direct terugkeert naar de hoofdapp.
+  3. **Geen antwoord-verklappende tekst meer op flashcard-afbeeldingen:** alle 38 afbeeldingen in `public/images/flashcards/` gecontroleerd en opgeschoond zodat nergens een tekstvak, tabel, aanzicht-label of Engelse anatomische term het antwoord verklapt.
+  4. **Niet pushen naar GitHub** tenzij de gebruiker daar expliciet om vraagt.
+- **Uitgevoerd:**
+  - In [`Header.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/common/Header.tsx): `handleStudyButtonClick` toegevoegd met een triple-tap detector (3x snel tikken binnen 350ms op het *Spieren* icoon op mobiel of de *Spieren* knop op desktop navigeert direct naar `#game`).
+  - In [`App.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/App.tsx): linksboven in de spel-header een `← App` knop (`handleExitGame`) toegevoegd die `#game` uit de URL haalt en direct terugschakelt naar de hoofdapp.
+  - Alle **20 afbeeldingen** met verklappende teksten of rand-artefacten in `public/images/flashcards/` opgeschoond:
+    - `humeri_spieren_fig.png` & `cingulum_spieren_fig.png`: tekstvakken *"Insertie van de m. teres major..."* en *"Insertie van de m. latissimus dorsi..."* verwijderd.
+    - `cubiti_spieren_fig.png`: `"1. longum / 1. breve"` en `"3. longum / 3. laterale / 3. mediale"` vervangen door strakke genummerde vakjes `1` en `3`.
+    - `romp_wervelkolom_1_10.png`: tabelrand en Engelse namen (`1st cervical or Atlas`, `2nd cervical or Axis`, `1st thoracic`, `1st lumbar`) verwijderd.
+    - `coxae_botten_1_15.png` & `genus_botten_1_9.png`: kopteksten `Os coxa`, `Os femur`, `Os tibia` en `Zie art. genus` verwijderd.
+    - `cubiti_botten_1_13.png`, `humeri_botten_1_14.png`, `pedis_botten_1_5.png`, `pedis_ligamenten_1_4.png`: ingevulde kaders met `Lichaamszijde: R/L` en `Aanzicht: ventraal/dorsaal/mediaal/lateraal` én de antwoordtabel (`3 Os talus / 4 Os calcaneus / 5 Os naviculare`) verwijderd.
+    - `richtingen_os_coxae.png`, `richtingen_scapula_blanco.png`, `richtingen_aanzichten.png`, `richtingen_radioulnaris.png`: bijschriften (`Rechter os coxae van mediaal/lateraal`) en afgesneden letters verwijderd.
+    - `genus_ligamenten_1_7.png`: Engelse tekstlabels op de bot- en meniscusstructuren (`Femur`, `Tibia`, `Fibula`, `Lateral/Medial meniscus`, `Cruciate`) weggefilterd terwijl de nummers `1 t/m 7` scherp zichtbaar blijven.
+    - `overzicht_spieren_dorsaal.png` & `overzicht_spieren_ventraal.png`: antwoordlijsten rechtsboven verwijderd en op de ventrale plaat alle ontbrekende vraagnummers (`2.`, `8.`, `9.`, `10.`, `15.`, `16.`) netjes in de vakjes geplaatst.
+    - `bewegingen_cingulum.png`, `bewegingen_coxae.png`, `bewegingen_pedis.png`, `bewegingen_romp.png`: afgesneden gewrichtstitels aan de bovenrand weggesneden.
+  - Productiebuild (`npm run build`) geslaagd met 0 fouten. Niet gepusht naar GitHub conform afspraak.
 
 ## 24. Nieuw Tabblad "Flashcards" (NotebookLM-stijl met Screenshots uit Moduleboek) [2026-10-31 11:04]
 - **Opdracht van de gebruiker:**
@@ -959,7 +1097,30 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
   - **Stap 2 afgerond:** `src/data/flashcardsPart2.ts` (Set 4 Art. coxae, Set 5 Art. genus, Set 6 Art. pedis) herschreven met exacte nummering uit de antwoorden-PDF's en korte, snelle vragen/antwoorden (niet-curriculumspieren zoals `m. sartorius` verwijderd).
   - **Stap 3 afgerond:** `src/data/flashcardsPart3.ts` (Set 7 Art. cubiti, Set 8 Art. humeri, Set 9 Cingulum pectorale) en `src/data/flashcardsData.ts` (Set 10 Romp & Set 11 Oefentoets Anatomie + overzichtspagina's p. 71–74) herschreven en gecontroleerd tegen het volledige Moduulboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf`), `spiertabellen.pdf` en alle 11 antwoorden-PDF's.
   - **Landingspagina toegevoegd [2026-10-31 12:02]:** In `src/components/flashcards/FlashcardsView.tsx` kom je nu eerst op het minimalistische overzichtsscherm (*Kies een flashcard-set*) met alle 11 sets (inclusief voortgangsbadges voor goed/fout/totaal), en kun je vanuit elke set met de overzichtsknop (`LayoutGrid`) linksboven of via het eindscherm direct terug naar de landingspagina.
+  - **Fix afbeeldingen zichtbaarheid (`BASE_URL` & flexbox-hoogte) [2026-10-31 12:07]:** In `FlashcardsView.tsx` `resolveAssetUrl()` toegevoegd zodat `/images/flashcards/...` ook op GitHub Pages (`/anatomie-spier-app/`) naar het juiste pad verwijst, en `max-h-full` in een `flex-1` container (waardoor de afbeelding op 0px hoogte klapte) vervangen door `max-h-[34dvh] sm:max-h-[40dvh]` op zowel de voor- als achterzijde van de kaart.
+  - **Sets uitgebreid naar 41–45 kaarten per set [2026-10-31 12:15]:** Alle 11 sets uitgebreid met extra kernvragen en de 5 spierfiguren uit de antwoorden-PDF's (`genus_spieren_fig.png`, `cubiti_spieren_fig.png`, `humeri_spieren_fig.png`, `cingulum_spieren_fig.png`, `romp_spieren_fig.png`), zodat elke set tussen de 41 en 45 kaarten bevat (**472 kaarten totaal**, 100% uit het Moduulboek en de antwoorden-PDF's).
   - Productiebuild (`npm run build`) geslaagd met 0 fouten.
+
+## 29. Verborgen Spel-toegang (3x tikken op Study), Terugknop vanuit Spel & Opschonen Antwoord-tekst op Afbeeldingen [2026-10-31 13:41]
+- **Wensen van de gebruiker:**
+  1. **3x tikken op de `Study` (*Spieren*) knop** opent het verborgen spelgedeelte (`#game`).
+  2. **Terugknop vanuit het spelgedeelte naar de hoofdapp:** een knop in de bovenbalk van het spel waarmee je direct terugkeert naar de hoofdapp.
+  3. **Geen antwoord-verklappende tekst meer op flashcard-afbeeldingen:** alle 38 afbeeldingen in `public/images/flashcards/` gecontroleerd en opgeschoond zodat nergens een tekstvak, tabel, aanzicht-label of Engelse anatomische term het antwoord verklapt.
+  4. **Niet pushen naar GitHub** tenzij de gebruiker daar expliciet om vraagt.
+- **Uitgevoerd:**
+  - In [`Header.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/common/Header.tsx): `handleStudyButtonClick` toegevoegd met een triple-tap detector (3x snel tikken binnen 350ms op het *Spieren* icoon op mobiel of de *Spieren* knop op desktop navigeert direct naar `#game`).
+  - In [`App.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/App.tsx): linksboven in de spel-header een `← App` knop (`handleExitGame`) toegevoegd die `#game` uit de URL haalt en direct terugschakelt naar de hoofdapp.
+  - Alle **20 afbeeldingen** met verklappende teksten of rand-artefacten in `public/images/flashcards/` opgeschoond:
+    - `humeri_spieren_fig.png` & `cingulum_spieren_fig.png`: tekstvakken *"Insertie van de m. teres major..."* en *"Insertie van de m. latissimus dorsi..."* verwijderd.
+    - `cubiti_spieren_fig.png`: `"1. longum / 1. breve"` en `"3. longum / 3. laterale / 3. mediale"` vervangen door strakke genummerde vakjes `1` en `3`.
+    - `romp_wervelkolom_1_10.png`: tabelrand en Engelse namen (`1st cervical or Atlas`, `2nd cervical or Axis`, `1st thoracic`, `1st lumbar`) verwijderd.
+    - `coxae_botten_1_15.png` & `genus_botten_1_9.png`: kopteksten `Os coxa`, `Os femur`, `Os tibia` en `Zie art. genus` verwijderd.
+    - `cubiti_botten_1_13.png`, `humeri_botten_1_14.png`, `pedis_botten_1_5.png`, `pedis_ligamenten_1_4.png`: ingevulde kaders met `Lichaamszijde: R/L` en `Aanzicht: ventraal/dorsaal/mediaal/lateraal` én de antwoordtabel (`3 Os talus / 4 Os calcaneus / 5 Os naviculare`) verwijderd.
+    - `richtingen_os_coxae.png`, `richtingen_scapula_blanco.png`, `richtingen_aanzichten.png`, `richtingen_radioulnaris.png`: bijschriften (`Rechter os coxae van mediaal/lateraal`) en afgesneden letters verwijderd.
+    - `genus_ligamenten_1_7.png`: Engelse tekstlabels op de bot- en meniscusstructuren (`Femur`, `Tibia`, `Fibula`, `Lateral/Medial meniscus`, `Cruciate`) weggefilterd terwijl de nummers `1 t/m 7` scherp zichtbaar blijven.
+    - `overzicht_spieren_dorsaal.png` & `overzicht_spieren_ventraal.png`: antwoordlijsten rechtsboven verwijderd en op de ventrale plaat alle ontbrekende vraagnummers (`2.`, `8.`, `9.`, `10.`, `15.`, `16.`) netjes in de vakjes geplaatst.
+    - `bewegingen_cingulum.png`, `bewegingen_coxae.png`, `bewegingen_pedis.png`, `bewegingen_romp.png`: afgesneden gewrichtstitels aan de bovenrand weggesneden.
+  - Productiebuild (`npm run build`) geslaagd met 0 fouten. Niet gepusht naar GitHub conform afspraak.
 
 ## 28. Opschonen & Versimpelen Flashcards: 100% Moduulboek-termen & Korte Vragen/Antwoorden [2026-10-31 11:45]
 - **Wens van de gebruiker:**
@@ -970,4 +1131,27 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
   - **Stap 2 afgerond:** `src/data/flashcardsPart2.ts` (Set 4 Art. coxae, Set 5 Art. genus, Set 6 Art. pedis) herschreven met exacte nummering uit de antwoorden-PDF's en korte, snelle vragen/antwoorden (niet-curriculumspieren zoals `m. sartorius` verwijderd).
   - **Stap 3 afgerond:** `src/data/flashcardsPart3.ts` (Set 7 Art. cubiti, Set 8 Art. humeri, Set 9 Cingulum pectorale) en `src/data/flashcardsData.ts` (Set 10 Romp & Set 11 Oefentoets Anatomie + overzichtspagina's p. 71–74) herschreven en gecontroleerd tegen het volledige Moduulboek (`Moduulboek Anatomie, bewegingsanalyse en spierfysiologie - 2025-2026.pdf`), `spiertabellen.pdf` en alle 11 antwoorden-PDF's.
   - **Landingspagina toegevoegd [2026-10-31 12:02]:** In `src/components/flashcards/FlashcardsView.tsx` kom je nu eerst op het minimalistische overzichtsscherm (*Kies een flashcard-set*) met alle 11 sets (inclusief voortgangsbadges voor goed/fout/totaal), en kun je vanuit elke set met de overzichtsknop (`LayoutGrid`) linksboven of via het eindscherm direct terug naar de landingspagina.
+  - **Fix afbeeldingen zichtbaarheid (`BASE_URL` & flexbox-hoogte) [2026-10-31 12:07]:** In `FlashcardsView.tsx` `resolveAssetUrl()` toegevoegd zodat `/images/flashcards/...` ook op GitHub Pages (`/anatomie-spier-app/`) naar het juiste pad verwijst, en `max-h-full` in een `flex-1` container (waardoor de afbeelding op 0px hoogte klapte) vervangen door `max-h-[34dvh] sm:max-h-[40dvh]` op zowel de voor- als achterzijde van de kaart.
+  - **Sets uitgebreid naar 41–45 kaarten per set [2026-10-31 12:15]:** Alle 11 sets uitgebreid met extra kernvragen en de 5 spierfiguren uit de antwoorden-PDF's (`genus_spieren_fig.png`, `cubiti_spieren_fig.png`, `humeri_spieren_fig.png`, `cingulum_spieren_fig.png`, `romp_spieren_fig.png`), zodat elke set tussen de 41 en 45 kaarten bevat (**472 kaarten totaal**, 100% uit het Moduulboek en de antwoorden-PDF's).
   - Productiebuild (`npm run build`) geslaagd met 0 fouten.
+
+## 29. Verborgen Spel-toegang (3x tikken op Study), Terugknop vanuit Spel & Opschonen Antwoord-tekst op Afbeeldingen [2026-10-31 13:41]
+- **Wensen van de gebruiker:**
+  1. **3x tikken op de `Study` (*Spieren*) knop** opent het verborgen spelgedeelte (`#game`).
+  2. **Terugknop vanuit het spelgedeelte naar de hoofdapp:** een knop in de bovenbalk van het spel waarmee je direct terugkeert naar de hoofdapp.
+  3. **Geen antwoord-verklappende tekst meer op flashcard-afbeeldingen:** alle 38 afbeeldingen in `public/images/flashcards/` gecontroleerd en opgeschoond zodat nergens een tekstvak, tabel, aanzicht-label of Engelse anatomische term het antwoord verklapt.
+  4. **Niet pushen naar GitHub** tenzij de gebruiker daar expliciet om vraagt.
+- **Uitgevoerd:**
+  - In [`Header.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/common/Header.tsx): `handleStudyButtonClick` toegevoegd met een triple-tap detector (3x snel tikken binnen 350ms op het *Spieren* icoon op mobiel of de *Spieren* knop op desktop navigeert direct naar `#game`).
+  - In [`App.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/App.tsx): linksboven in de spel-header een `← App` knop (`handleExitGame`) toegevoegd die `#game` uit de URL haalt en direct terugschakelt naar de hoofdapp.
+  - Alle **20 afbeeldingen** met verklappende teksten of rand-artefacten in `public/images/flashcards/` opgeschoond:
+    - `humeri_spieren_fig.png` & `cingulum_spieren_fig.png`: tekstvakken *"Insertie van de m. teres major..."* en *"Insertie van de m. latissimus dorsi..."* verwijderd.
+    - `cubiti_spieren_fig.png`: `"1. longum / 1. breve"` en `"3. longum / 3. laterale / 3. mediale"` vervangen door strakke genummerde vakjes `1` en `3`.
+    - `romp_wervelkolom_1_10.png`: tabelrand en Engelse namen (`1st cervical or Atlas`, `2nd cervical or Axis`, `1st thoracic`, `1st lumbar`) verwijderd.
+    - `coxae_botten_1_15.png` & `genus_botten_1_9.png`: kopteksten `Os coxa`, `Os femur`, `Os tibia` en `Zie art. genus` verwijderd.
+    - `cubiti_botten_1_13.png`, `humeri_botten_1_14.png`, `pedis_botten_1_5.png`, `pedis_ligamenten_1_4.png`: ingevulde kaders met `Lichaamszijde: R/L` en `Aanzicht: ventraal/dorsaal/mediaal/lateraal` én de antwoordtabel (`3 Os talus / 4 Os calcaneus / 5 Os naviculare`) verwijderd.
+    - `richtingen_os_coxae.png`, `richtingen_scapula_blanco.png`, `richtingen_aanzichten.png`, `richtingen_radioulnaris.png`: bijschriften (`Rechter os coxae van mediaal/lateraal`) en afgesneden letters verwijderd.
+    - `genus_ligamenten_1_7.png`: Engelse tekstlabels op de bot- en meniscusstructuren (`Femur`, `Tibia`, `Fibula`, `Lateral/Medial meniscus`, `Cruciate`) weggefilterd terwijl de nummers `1 t/m 7` scherp zichtbaar blijven.
+    - `overzicht_spieren_dorsaal.png` & `overzicht_spieren_ventraal.png`: antwoordlijsten rechtsboven verwijderd en op de ventrale plaat alle ontbrekende vraagnummers (`2.`, `8.`, `9.`, `10.`, `15.`, `16.`) netjes in de vakjes geplaatst.
+    - `bewegingen_cingulum.png`, `bewegingen_coxae.png`, `bewegingen_pedis.png`, `bewegingen_romp.png`: afgesneden gewrichtstitels aan de bovenrand weggesneden.
+  - Productiebuild (`npm run build`) geslaagd met 0 fouten. Niet gepusht naar GitHub conform afspraak.

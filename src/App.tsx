@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ArrowLeft } from 'lucide-react';
 import { MuscleProvider, useMuscles } from './context/MuscleContext';
 import { Header } from './components/common/Header';
 import { Toast } from './components/common/Toast';
@@ -38,29 +39,48 @@ const AppContent: React.FC = () => {
   }, []);
 
   if (isGame) {
+    const handleExitGame = () => {
+      if (typeof window !== 'undefined') {
+        const cleanUrl = window.location.pathname;
+        window.history.pushState('', document.title, cleanUrl);
+      }
+      setIsGame(false);
+    };
+
     return (
       <div className="h-[100dvh] w-full flex flex-col bg-slate-50 text-slate-900 overflow-hidden select-none">
-        <div className="shrink-0 h-10 px-2 bg-slate-900 text-white flex items-center justify-center gap-1 overflow-x-auto no-scrollbar">
-          {(
-            [
-              { id: 'skeleton', label: '1. Skelet Puzzel' },
-              { id: 'connections', label: '2. Connections' },
-              { id: 'queens', label: '3. Eliminatie Rooster' },
-              { id: 'guess', label: '4. Raad de Spier' },
-            ] as const
-          ).map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveGameTab(tab.id)}
-              className={`px-2.5 py-1 rounded-md text-xs font-semibold whitespace-nowrap transition-colors ${
-                activeGameTab === tab.id
-                  ? 'bg-white text-slate-900'
-                  : 'text-slate-300 hover:text-white'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div className="shrink-0 h-10 px-2 bg-slate-900 text-white flex items-center justify-between gap-1 overflow-x-auto no-scrollbar">
+          <button
+            type="button"
+            onClick={handleExitGame}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white whitespace-nowrap transition-colors shrink-0"
+            title="Terug naar de hoofdapp"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>App</span>
+          </button>
+          <div className="flex items-center gap-1 mx-auto">
+            {(
+              [
+                { id: 'skeleton', label: '1. Skelet Puzzel' },
+                { id: 'connections', label: '2. Connections' },
+                { id: 'queens', label: '3. Eliminatie Rooster' },
+                { id: 'guess', label: '4. Raad de Spier' },
+              ] as const
+            ).map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveGameTab(tab.id)}
+                className={`px-2.5 py-1 rounded-md text-xs font-semibold whitespace-nowrap transition-colors ${
+                  activeGameTab === tab.id
+                    ? 'bg-white text-slate-900'
+                    : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
         {activeGameTab === 'skeleton' && <SkeletonPuzzleGame />}
         {activeGameTab === 'connections' && <ConnectionsGame />}

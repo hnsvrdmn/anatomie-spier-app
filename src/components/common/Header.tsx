@@ -13,6 +13,31 @@ export const Header: React.FC = () => {
   const helpTapCountRef = useRef(0);
   const helpTapTimerRef = useRef<number | null>(null);
 
+  // 3x tikken op de Study ('Spieren') knop opent het verborgen Spel-gedeelte (#game)
+  const studyTapCountRef = useRef(0);
+  const studyTapTimerRef = useRef<number | null>(null);
+
+  const handleStudyButtonClick = () => {
+    setAppMode('study');
+    studyTapCountRef.current += 1;
+
+    if (studyTapTimerRef.current) {
+      window.clearTimeout(studyTapTimerRef.current);
+      studyTapTimerRef.current = null;
+    }
+
+    if (studyTapCountRef.current >= 3) {
+      studyTapCountRef.current = 0;
+      window.location.hash = '#game';
+      return;
+    }
+
+    studyTapTimerRef.current = window.setTimeout(() => {
+      studyTapCountRef.current = 0;
+      studyTapTimerRef.current = null;
+    }, 350);
+  };
+
   const handleHelpButtonClick = () => {
     helpTapCountRef.current += 1;
 
@@ -44,7 +69,7 @@ export const Header: React.FC = () => {
       label: 'Spieren',
       icon: <BookOpen className="w-5 h-5" />,
       isActive: appMode === 'study',
-      onClick: () => setAppMode('study'),
+      onClick: handleStudyButtonClick,
     },
     {
       id: 'bones',
@@ -91,7 +116,7 @@ export const Header: React.FC = () => {
       label: 'Spieren',
       icon: <BookOpen className="w-4 h-4" />,
       isActive: appMode === 'study',
-      onClick: () => setAppMode('study'),
+      onClick: handleStudyButtonClick,
     },
     {
       id: 'bones',
