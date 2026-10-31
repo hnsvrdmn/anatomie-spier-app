@@ -28,6 +28,15 @@ interface SavedSetProgress {
 
 const STORAGE_KEY_PROGRESS = 'pmt_flashcards_progress_v1';
 
+function resolveAssetUrl(url?: string): string | undefined {
+  if (!url) return undefined;
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+    return url;
+  }
+  const base = import.meta.env.BASE_URL || '/';
+  return `${base.replace(/\/$/, '')}/${url.replace(/^\//, '')}`;
+}
+
 export const FlashcardsView: React.FC = () => {
   // Start altijd op de landingspagina (null) zodat je eerst zelf een set kiest
   const [activeSetId, setActiveSetId] = useState<string | null>(null);
@@ -660,7 +669,7 @@ export const FlashcardsView: React.FC = () => {
                       </span>
                     </div>
 
-                    <div className="flex-1 min-h-0 py-2 flex flex-col items-center justify-center gap-2.5 text-center overflow-y-auto">
+                    <div className="flex-1 min-h-0 py-1.5 flex flex-col items-center justify-center gap-2.5 text-center overflow-y-auto">
                       <p
                         className={`font-bold text-slate-900 leading-snug whitespace-pre-line shrink-0 ${
                           currentCard.imageUrl
@@ -672,20 +681,20 @@ export const FlashcardsView: React.FC = () => {
                       </p>
 
                       {currentCard.imageUrl && (
-                        <div className="relative flex-1 min-h-[110px] max-h-52 sm:max-h-64 w-full max-w-md mx-auto flex items-center justify-center bg-slate-50 border border-slate-200/80 rounded-2xl p-1.5 overflow-hidden">
+                        <div className="relative shrink-0 w-full max-w-md mx-auto flex items-center justify-center bg-slate-50 border border-slate-200/80 rounded-2xl p-2 overflow-hidden">
                           <img
-                            src={currentCard.imageUrl}
+                            src={resolveAssetUrl(currentCard.imageUrl)}
                             alt=""
-                            className="max-h-full max-w-full w-auto h-auto object-contain rounded-xl select-none"
+                            className="max-h-[34dvh] sm:max-h-[40dvh] w-auto max-w-full h-auto object-contain rounded-xl select-none"
                             draggable={false}
                           />
                           <button
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setZoomedImage(currentCard.imageUrl!);
+                              setZoomedImage(resolveAssetUrl(currentCard.imageUrl)!);
                             }}
-                            className="absolute bottom-1.5 right-1.5 w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-slate-900/80 text-white flex items-center justify-center shadow-sm hover:bg-slate-900 active:scale-95 transition"
+                            className="absolute bottom-2 right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-slate-900/80 text-white flex items-center justify-center shadow-sm hover:bg-slate-900 active:scale-95 transition"
                             title="Vergroot"
                           >
                             <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -713,7 +722,7 @@ export const FlashcardsView: React.FC = () => {
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setZoomedImage(currentCard.imageUrl!);
+                            setZoomedImage(resolveAssetUrl(currentCard.imageUrl)!);
                           }}
                           className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition shrink-0"
                           title="Figuur"
@@ -723,10 +732,20 @@ export const FlashcardsView: React.FC = () => {
                       )}
                     </div>
 
-                    <div className="flex-1 min-h-0 py-2 flex items-center justify-center overflow-y-auto">
-                      <p className="text-xs sm:text-base md:text-lg font-semibold text-white leading-relaxed whitespace-pre-line text-left max-w-xl my-auto">
+                    <div className="flex-1 min-h-0 py-2 flex flex-col items-center justify-center gap-3 overflow-y-auto">
+                      <p className="text-xs sm:text-base md:text-lg font-semibold text-white leading-relaxed whitespace-pre-line text-left max-w-xl">
                         {currentCard.answer}
                       </p>
+                      {currentCard.imageUrl && (
+                        <div className="relative shrink-0 w-full max-w-xs sm:max-w-sm mx-auto flex items-center justify-center bg-white rounded-2xl p-1.5 overflow-hidden">
+                          <img
+                            src={resolveAssetUrl(currentCard.imageUrl)}
+                            alt=""
+                            className="max-h-[24dvh] sm:max-h-[28dvh] w-auto max-w-full h-auto object-contain rounded-lg select-none"
+                            draggable={false}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
