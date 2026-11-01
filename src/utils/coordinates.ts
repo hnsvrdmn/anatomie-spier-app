@@ -228,28 +228,21 @@ export function getDistinctTargets(
     (l) => l.type === targetType && l.points && l.points.length >= 2
   );
 
-  const map = new Map<string, DistinctTarget>();
+  const targets: DistinctTarget[] = [];
 
   targetPoints.forEach((pt, idx) => {
     const rawName = (pt.name || '').trim();
-    const key = rawName ? rawName.toLowerCase() : `__pt_${idx}`;
-    const existing = map.get(key);
-    if (existing) {
-      existing.points.push(pt);
-    } else {
-      const matchedLine = rawName
-        ? matchingLines.find((l) => (l.name || '').trim().toLowerCase() === key)
-        : undefined;
-      map.set(key, {
-        key,
-        name: rawName,
-        points: [pt],
-        line: matchedLine,
-      });
-    }
+    const key = `pt_${idx}_${rawName.toLowerCase()}`;
+    const matchedLine = rawName
+      ? matchingLines.find((l) => (l.name || '').trim().toLowerCase() === rawName.toLowerCase())
+      : undefined;
+    targets.push({
+      key,
+      name: rawName,
+      points: [pt],
+      line: matchedLine,
+    });
   });
-
-  const targets = Array.from(map.values());
 
   // Indien er slechts 1 uniek doelpunt is en 1 lijn van hetzelfde type zonder exacte naammatch, koppel ze
   if (targets.length === 1 && !targets[0].line && matchingLines.length === 1) {
@@ -278,13 +271,7 @@ export function getDistinctTargets(
  */
 export function getDistinctTargetCount(points?: Point2D[]): number {
   if (!points || points.length === 0) return 1;
-  const keys = new Set(
-    points.map((pt, idx) => {
-      const n = (pt.name || '').trim().toLowerCase();
-      return n || `__pt_${idx}`;
-    })
-  );
-  return Math.max(1, keys.size);
+  return Math.max(1, points.length);
 }
 
 /**

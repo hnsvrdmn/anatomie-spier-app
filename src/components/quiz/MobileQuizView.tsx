@@ -98,6 +98,8 @@ interface MobileQuizViewProps {
   onToggleAutoRotate?: () => void;
   autoZoom?: boolean;
   onToggleAutoZoom?: () => void;
+  autoSwitchPointType?: boolean;
+  onToggleAutoSwitch?: () => void;
 }
 
 export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
@@ -151,6 +153,8 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
   onToggleAutoRotate,
   autoZoom = true,
   onToggleAutoZoom,
+  autoSwitchPointType = true,
+  onToggleAutoSwitch,
 }) => {
   const { quizOpenOptionsTrigger } = useMuscles();
 
@@ -510,37 +514,65 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                 </div>
               )}
 
-              {/* Minimalistische toggle voor automatisch roteren van aanzicht */}
-              {onToggleAutoRotate && (
-                <div className="flex items-center justify-between px-1 pt-1.5 border-t border-slate-200">
-                  <span className="text-xs text-slate-600 font-medium">Aanzicht autom. roteren:</span>
+              {/* Compacte balk met toggles voor automatisch roteren, inzoomen en type-switch */}
+              <div className="pt-2 border-t border-slate-200 grid grid-cols-3 gap-1.5 text-[10px]">
+                {onToggleAutoRotate && (
                   <button
                     type="button"
                     onClick={onToggleAutoRotate}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
-                      autoRotateView ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-200 text-slate-700'
+                    className={`flex flex-col items-center justify-center p-1.5 rounded-lg border transition ${
+                      autoRotateView
+                        ? 'bg-blue-50 border-blue-200 text-blue-800'
+                        : 'bg-slate-50 border-slate-200 text-slate-500'
                     }`}
                   >
-                    <span>{autoRotateView ? 'Aan' : 'Uit'}</span>
+                    <span className="font-medium text-[10px] leading-tight">Roteren</span>
+                    <span className={`mt-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded ${
+                      autoRotateView ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
+                    }`}>
+                      {autoRotateView ? 'Aan' : 'Uit'}
+                    </span>
                   </button>
-                </div>
-              )}
+                )}
 
-              {/* Minimalistische toggle voor automatisch inzoomen */}
-              {onToggleAutoZoom && (
-                <div className="flex items-center justify-between px-1 pt-1.5 border-t border-slate-200">
-                  <span className="text-xs text-slate-600 font-medium">Automatisch inzoomen:</span>
+                {onToggleAutoZoom && (
                   <button
                     type="button"
                     onClick={onToggleAutoZoom}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
-                      autoZoom ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-200 text-slate-700'
+                    className={`flex flex-col items-center justify-center p-1.5 rounded-lg border transition ${
+                      autoZoom
+                        ? 'bg-blue-50 border-blue-200 text-blue-800'
+                        : 'bg-slate-50 border-slate-200 text-slate-500'
                     }`}
                   >
-                    <span>{autoZoom ? 'Aan' : 'Uit'}</span>
+                    <span className="font-medium text-[10px] leading-tight">Zoomen</span>
+                    <span className={`mt-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded ${
+                      autoZoom ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
+                    }`}>
+                      {autoZoom ? 'Aan' : 'Uit'}
+                    </span>
                   </button>
-                </div>
-              )}
+                )}
+
+                {onToggleAutoSwitch && (
+                  <button
+                    type="button"
+                    onClick={onToggleAutoSwitch}
+                    className={`flex flex-col items-center justify-center p-1.5 rounded-lg border transition ${
+                      autoSwitchPointType
+                        ? 'bg-blue-50 border-blue-200 text-blue-800'
+                        : 'bg-slate-50 border-slate-200 text-slate-500'
+                    }`}
+                  >
+                    <span className="font-medium text-[10px] leading-tight">Switch</span>
+                    <span className={`mt-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded ${
+                      autoSwitchPointType ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
+                    }`}>
+                      {autoSwitchPointType ? 'Aan' : 'Uit'}
+                    </span>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         )}

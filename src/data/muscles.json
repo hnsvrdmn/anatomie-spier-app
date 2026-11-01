@@ -1178,12 +1178,12 @@
           {
             "x": 0.3198,
             "y": 0.2688,
-            "name": "1e tot 9e costa (rib)"
+            "name": "1e-4e costa (craniaal)"
           },
           {
             "x": 0.3128,
             "y": 0.3259,
-            "name": "1e tot 9e costa (rib)"
+            "name": "5e-9e costa (caudaal)"
           }
         ],
         "insertions": [
@@ -1206,14 +1206,26 @@
         "musclePath": [],
         "attachmentLines": [
           {
-            "id": "line-serratus-orig-left",
-            "name": "1e tot 9e costa (rib)",
+            "id": "line-serratus-orig-cran-left",
+            "name": "1e-4e costa (craniaal)",
             "type": "origin",
             "points": [
               {
                 "x": 0.35,
                 "y": 0.22
               },
+              {
+                "x": 0.3198,
+                "y": 0.2688
+              }
+            ],
+            "tolerance": 0.028
+          },
+          {
+            "id": "line-serratus-orig-caud-left",
+            "name": "5e-9e costa (caudaal)",
+            "type": "origin",
+            "points": [
               {
                 "x": 0.3198,
                 "y": 0.2688
@@ -1256,12 +1268,12 @@
           {
             "x": 0.6802,
             "y": 0.2688,
-            "name": "1e tot 9e costa (rib)"
+            "name": "1e-4e costa (craniaal)"
           },
           {
             "x": 0.6872,
             "y": 0.3259,
-            "name": "1e tot 9e costa (rib)"
+            "name": "5e-9e costa (caudaal)"
           }
         ],
         "insertions": [
@@ -1284,14 +1296,26 @@
         "musclePath": [],
         "attachmentLines": [
           {
-            "id": "line-serratus-orig-right",
-            "name": "1e tot 9e costa (rib)",
+            "id": "line-serratus-orig-cran-right",
+            "name": "1e-4e costa (craniaal)",
             "type": "origin",
             "points": [
               {
                 "x": 0.65,
                 "y": 0.22
               },
+              {
+                "x": 0.6802,
+                "y": 0.2688
+              }
+            ],
+            "tolerance": 0.028
+          },
+          {
+            "id": "line-serratus-orig-caud-right",
+            "name": "5e-9e costa (caudaal)",
+            "type": "origin",
+            "points": [
               {
                 "x": 0.6802,
                 "y": 0.2688
@@ -2218,17 +2242,17 @@
           {
             "x": 0.3304,
             "y": 0.3495,
-            "name": "5e tot 12e costa"
+            "name": "5e-6e costa"
           },
           {
             "x": 0.3997,
             "y": 0.3367,
-            "name": "5e tot 12e costa"
+            "name": "7e-9e costa"
           },
           {
             "x": 0.3661,
             "y": 0.3686,
-            "name": "5e tot 12e costa"
+            "name": "10e-12e costa"
           }
         ],
         "insertions": [
@@ -2240,19 +2264,19 @@
           {
             "x": 0.4981,
             "y": 0.3559,
-            "name": "linea alba"
+            "name": "linea alba (craniaal)"
           },
           {
             "x": 0.4979,
             "y": 0.4086,
-            "name": "linea alba"
+            "name": "linea alba (caudaal)"
           }
         ],
         "musclePath": [],
         "attachmentLines": [
           {
-            "id": "line-obliq-ext-ribs-right",
-            "name": "5e tot 12e costa",
+            "id": "line-obliq-ext-ribs-1-right",
+            "name": "5e-6e costa",
             "type": "origin",
             "points": [
               {
@@ -2262,7 +2286,31 @@
               {
                 "x": 0.3997,
                 "y": 0.3367
+              }
+            ],
+            "tolerance": 0.03
+          },
+          {
+            "id": "line-obliq-ext-ribs-2-right",
+            "name": "7e-9e costa",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.3997,
+                "y": 0.3367
               },
+              {
+                "x": 0.3304,
+                "y": 0.3495
+              }
+            ],
+            "tolerance": 0.03
+          },
+          {
+            "id": "line-obliq-ext-ribs-3-right",
+            "name": "10e-12e costa",
+            "type": "origin",
+            "points": [
               {
                 "x": 0.3304,
                 "y": 0.3495
@@ -2299,8 +2347,8 @@
             "tolerance": 0.024
           },
           {
-            "id": "line-obliq-ext-linea-right",
-            "name": "linea alba",
+            "id": "line-obliq-ext-linea-cran-right",
+            "name": "linea alba (craniaal)",
             "type": "insertion",
             "points": [
               {
@@ -2310,6 +2358,22 @@
               {
                 "x": 0.4981,
                 "y": 0.3559
+              },
+              {
+                "x": 0.4979,
+                "y": 0.38
+              }
+            ],
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-obliq-ext-linea-caud-right",
+            "name": "linea alba (caudaal)",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.4979,
+                "y": 0.38
               },
               {
                 "x": 0.4979,
@@ -2329,17 +2393,17 @@
           {
             "x": 0.6696,
             "y": 0.3495,
-            "name": "5e tot 12e costa"
+            "name": "5e-6e costa"
           },
           {
             "x": 0.6003,
             "y": 0.3367,
-            "name": "5e tot 12e costa"
+            "name": "7e-9e costa"
           },
           {
             "x": 0.6339,
             "y": 0.3686,
-            "name": "5e tot 12e costa"
+            "name": "10e-12e costa"
           }
         ],
         "insertions": [
@@ -2351,19 +2415,19 @@
           {
             "x": 0.5019,
             "y": 0.3559,
-            "name": "linea alba"
+            "name": "linea alba (craniaal)"
           },
           {
             "x": 0.5021,
             "y": 0.4086,
-            "name": "linea alba"
+            "name": "linea alba (caudaal)"
           }
         ],
         "musclePath": [],
         "attachmentLines": [
           {
-            "id": "line-obliq-ext-ribs-left",
-            "name": "5e tot 12e costa",
+            "id": "line-obliq-ext-ribs-1-left",
+            "name": "5e-6e costa",
             "type": "origin",
             "points": [
               {
@@ -2373,7 +2437,31 @@
               {
                 "x": 0.6003,
                 "y": 0.3367
+              }
+            ],
+            "tolerance": 0.03
+          },
+          {
+            "id": "line-obliq-ext-ribs-2-left",
+            "name": "7e-9e costa",
+            "type": "origin",
+            "points": [
+              {
+                "x": 0.6003,
+                "y": 0.3367
               },
+              {
+                "x": 0.6696,
+                "y": 0.3495
+              }
+            ],
+            "tolerance": 0.03
+          },
+          {
+            "id": "line-obliq-ext-ribs-3-left",
+            "name": "10e-12e costa",
+            "type": "origin",
+            "points": [
               {
                 "x": 0.6696,
                 "y": 0.3495
@@ -2410,8 +2498,8 @@
             "tolerance": 0.024
           },
           {
-            "id": "line-obliq-ext-linea-left",
-            "name": "linea alba",
+            "id": "line-obliq-ext-linea-cran-left",
+            "name": "linea alba (craniaal)",
             "type": "insertion",
             "points": [
               {
@@ -2421,6 +2509,22 @@
               {
                 "x": 0.5019,
                 "y": 0.3559
+              },
+              {
+                "x": 0.5021,
+                "y": 0.38
+              }
+            ],
+            "tolerance": 0.022
+          },
+          {
+            "id": "line-obliq-ext-linea-caud-left",
+            "name": "linea alba (caudaal)",
+            "type": "insertion",
+            "points": [
+              {
+                "x": 0.5021,
+                "y": 0.38
               },
               {
                 "x": 0.5021,

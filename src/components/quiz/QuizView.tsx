@@ -159,6 +159,20 @@ export const QuizView: React.FC = () => {
     });
   }, []);
 
+  // Automatisch wisselen van intekentool (origo -> insertie) zodra alle origo's zijn geplaatst
+  const [autoSwitchPointType, setAutoSwitchPointType] = useState<boolean>(() => {
+    const saved = localStorage.getItem('pmt_auto_switch_point_type');
+    return saved !== null ? saved === 'true' : true;
+  });
+
+  const handleToggleAutoSwitch = useCallback(() => {
+    setAutoSwitchPointType((prev) => {
+      const next = !prev;
+      localStorage.setItem('pmt_auto_switch_point_type', String(next));
+      return next;
+    });
+  }, []);
+
   // Voor 'free' modus: welk quiztype? 'full' (Origo én insertie plaatsen over alle spieren) is de standaard!
   const [freeQuizType, setFreeQuizType] = useState<QuizType | 'all'>('full');
 
@@ -1150,19 +1164,26 @@ export const QuizView: React.FC = () => {
         }
       } else {
         // 'joint' / 'full'
-        if (nextOrigins.length >= 1 && nextInsertions.length >= 1) {
+        if (nextOrigins.length >= expectedCounts.origins && nextInsertions.length >= expectedCounts.insertions) {
           evaluateAttempt(nextOrigins, nextInsertions);
-        } else if (toolToUse === 'origin' && nextOrigins.length >= 1 && nextInsertions.length === 0) {
+        } else if (
+          autoSwitchPointType &&
+          toolToUse === 'origin' &&
+          nextOrigins.length === expectedCounts.origins &&
+          nextInsertions.length < expectedCounts.insertions
+        ) {
           setActiveQuizTool('insertion');
         }
       }
     } else if (
+      autoSwitchPointType &&
       toolToUse === 'origin' &&
       expectedCounts.insertions > 0 &&
-      nextOrigins.length >= expectedCounts.origins &&
-      nextInsertions.length === 0
+      nextOrigins.length === expectedCounts.origins &&
+      nextInsertions.length < expectedCounts.insertions
     ) {
-      // Wissel ook bij spieren met 2 origo's automatisch naar insertie zodra de verwachte origo's geplaatst zijn
+      // Wissel bij alle spieren (inclusief multi-point zoals serratus anterior, iliopsoas) pas naar insertie
+      // zodra EXACT het verwachte aantal origo's is geplaatst
       setActiveQuizTool('insertion');
     }
   };
@@ -1423,6 +1444,8 @@ export const QuizView: React.FC = () => {
         onToggleAutoRotate={handleToggleAutoRotate}
         autoZoom={autoZoom}
         onToggleAutoZoom={handleToggleAutoZoom}
+        autoSwitchPointType={autoSwitchPointType}
+        onToggleAutoSwitch={handleToggleAutoSwitch}
         evaluatedSide={evaluatedSide}
         isEvaluated={isEvaluated}
         isPlacementSuccess={isPlacementSuccess}
@@ -1761,32 +1784,59 @@ export const QuizView: React.FC = () => {
             </select>
           )}
 
-          {/* Subtiele toggles voor automatisch meedraaien en automatisch inzoomen */}
-          <div className="pt-1.5 border-t border-clinical-100 space-y-1.5 text-[11px]">
-            <div className="flex items-center justify-between px-1">
-              <span className="text-slate-600 font-medium">Aanzicht autom. roteren</span>
-              <button
-                type="button"
-                onClick={handleToggleAutoRotate}
-                className={`px-2.5 py-0.5 rounded-lg font-bold transition ${
-                  autoRotateView ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-200 text-slate-700'
-                }`}
-              >
+          {/* Compacte balk met switches voor automatisch roteren, inzoomen en type-switch */}
+          <div className="pt-2 border-t border-clinical-100 grid grid-cols-3 gap-1.5 text-[10px]">
+            <button
+              type="button"
+              onClick={handleToggleAutoRotate}
+              className={`flex flex-col items-center justify-center p-1.5 rounded-lg border transition ${
+                autoRotateView
+                  ? 'bg-blue-50 border-blue-200 text-blue-800'
+                  : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
+              }`}
+              title="Aanzicht automatisch roteren bij een nieuwe vraag"
+            >
+              <span className="font-semibold text-[10px] leading-tight">Autom. roteren</span>
+              <span className={`mt-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded ${
+                autoRotateView ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
+              }`}>
                 {autoRotateView ? 'Aan' : 'Uit'}
-              </button>
-            </div>
-            <div className="flex items-center justify-between px-1">
-              <span className="text-slate-600 font-medium">Automatisch inzoomen</span>
-              <button
-                type="button"
-                onClick={handleToggleAutoZoom}
-                className={`px-2.5 py-0.5 rounded-lg font-bold transition ${
-                  autoZoom ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-200 text-slate-700'
-                }`}
-              >
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={handleToggleAutoZoom}
+              className={`flex flex-col items-center justify-center p-1.5 rounded-lg border transition ${
+                autoZoom
+                  ? 'bg-blue-50 border-blue-200 text-blue-800'
+                  : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
+              }`}
+              title="Automatisch inzoomen op de actieve spierzone"
+            >
+              <span className="font-semibold text-[10px] leading-tight">Autom. zoomen</span>
+              <span className={`mt-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded ${
+                autoZoom ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
+              }`}>
                 {autoZoom ? 'Aan' : 'Uit'}
-              </button>
-            </div>
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={handleToggleAutoSwitch}
+              className={`flex flex-col items-center justify-center p-1.5 rounded-lg border transition ${
+                autoSwitchPointType
+                  ? 'bg-blue-50 border-blue-200 text-blue-800'
+                  : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
+              }`}
+              title="Automatisch wisselen naar insertie zodra alle origo's geplaatst zijn"
+            >
+              <span className="font-semibold text-[10px] leading-tight">Autom. switch</span>
+              <span className={`mt-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded ${
+                autoSwitchPointType ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
+              }`}>
+                {autoSwitchPointType ? 'Aan' : 'Uit'}
+              </span>
+            </button>
           </div>
 
           {/* Voortgangsbalk bij joint of full_all */}

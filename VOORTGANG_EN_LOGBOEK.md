@@ -1266,3 +1266,41 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
      - `debouncedSaveToDisk` (400ms) geïmplementeerd zodat frequente sleep- en tekenbewerkingen vloeiend in het geheugen en localStorage worden bijgewerkt zonder onnodig de schijf te overbelasten.
   4. **Build & Validatie:**
      - `npm run build` geslaagd met 0 fouten.
+
+
+## 33. Herstel Automatische Origo/Insertie-Switch bij Multi-Origo Spieren & Compacte Toggle-Balk [2026-11-01]
+- **Melding van de gebruiker:**
+  1. **Te vroege switch in de Oefen/Test-tab:** Bij het intekenen van aanhechtingen bij bijv. de *m. serratus anterior* (en andere spieren met meerdere origo's, zoals *iliopsoas*) versprong de tool na het plaatsen van slechts 1 origo al direct naar insertie. Dit moet pas gebeuren zodra het *exacte* vereiste aantal origo's is geplaatst (bijv. 2 bij serratus anterior, 3 bij iliopsoas).
+  2. **Optie toevoegen om automatische switch aan/uit te zetten:** In het onderste controlepaneel (bij "aanzicht automatisch roteren" en "automatisch inzoomen") moet een optie komen om het automatisch wisselen van het gereedschapstype (origo -> insertie) in of uit te schakelen.
+  3. **Interface compacter maken:** De drie switches nemen momenteel te veel verticale ruimte in beslag (drie losse gestapelde regels). Maak deze drie schakelaars compacter zodat ze in 1 nette horizontale balk/grid passen.
+  4. **Pushen naar Git:** Zodra alles afgerond en getest is, direct pushen naar GitHub.
+
+- **Actuele status van het onderzoek & reeds uitgevoerde stappen:**
+  1. **Diepere oorzaak van het vroege switchen opgespoord:**
+     - In `src/utils/coordinates.ts` bevatte de functie `getDistinctTargetCount` een groepering op basis van de genormaliseerde naam: `points.map(pt => pt.name.toLowerCase())`.
+     - In `src/data/muscles.json` hadden beide origo-punten van *m. serratus anterior* exact dezelfde naam: `"1e tot 9e costa (rib)"`.
+     - Hierdoor vatte `getDistinctTargetCount` deze 2 punten samen tot een set van grootte 1! Als gevolg daarvan berekende `expectedCounts.origins` de benodigde hoeveelheid origo's als 1 in plaats van 2.
+     - Zodra de gebruiker 1 punt plaatste, dacht het systeem dat alle origo's voldaan waren en werd direct omgeschakeld naar insertie.
+     - Hetzelfde gold voor *m. obliquus externus abdominis* (waar 3 rib-origo's dezelfde naam deelden).
+  2. **Reeds uitgevoerde aanpassingen:**
+     - `src/utils/coordinates.ts`:
+       - `getDistinctTargetCount` gecorrigeerd zodat deze altijd de werkelijke lengte van de puntenreeks (`points.length`) hanteert.
+       - `getDistinctTargets` geüpdatet zodat elk punt in een meerpuntsstructuur een eigen unieke doel-identificatie (`pt_${idx}_${name}`) krijgt en 1-op-1 bipartiet gekoppeld wordt.
+     - `src/data/muscles.json`:
+       - *m. serratus anterior* (links en rechts) opgesplitst in herkenbare deelnamen en corresponderende lijnen: `"1e-4e costa (craniaal)"` en `"5e-9e costa (caudaal)"`.
+       - *m. obliquus externus abdominis* (links en rechts) voorzien van unieke zonelijnen: `"5e-6e costa"`, `"7e-9e costa"`, `"10e-12e costa"` en voor insertie `"crista iliaca"`, `"linea alba (craniaal)"`, `"linea alba (caudaal)"`.
+  3. **Huidige werkzaamheden (in actieve uitvoering):**
+     - Toevoegen van `autoSwitchPointType` state in `QuizView.tsx` (met persistentie in `localStorage` onder `pmt_auto_switch_point_type`, standaard `true`).
+     - Aanpassen van `handleCanvasClick` in `QuizView.tsx` zodat de switch uitsluitend plaatsvindt als `autoSwitchPointType === true` EN `nextOrigins.length === expectedCounts.origins` (en nog niet alle inserties geplaatst zijn).
+     - Herschalen van de 3 toggles in `QuizView.tsx` en `MobileQuizView.tsx` naar een gestroomlijnd 3-koloms grid:
+       - `Autom. roteren` [Aan / Uit]
+       - `Autom. zoomen` [Aan / Uit]
+       - `Autom. switch` [Aan / Uit]
+     - TypeScript compilatiecontrole (`npm run build`) en aansluitend `git push origin main`.
+
+  4. **Afronding & Validatie [2026-11-01 20:26]:**
+     - `autoSwitchPointType` succesvol geïmplementeerd en gekoppeld aan `localStorage` (`pmt_auto_switch_point_type`, standaard aan).
+     - Wisseling van 'origin' naar 'insertion' activeert uitsluitend als `nextOrigins.length === expectedCounts.origins` én `autoSwitchPointType === true`.
+     - De interface controls (Autom. roteren, Autom. zoomen, Autom. switch) zijn zowel op desktop (`QuizView.tsx`) als mobiel (`MobileQuizView.tsx`) compact samengebracht in 1 overzichtelijke rij van 3 kolommen met duidelijke actieve statussen ('Aan' / 'Uit').
+     - `npm run build` geslaagd zonder enige TypeScript fouten (code 0).
+     - Wijzigingen gereed om te committen en te pushen naar GitHub zoals door de gebruiker verzocht.
