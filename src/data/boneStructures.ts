@@ -1715,8 +1715,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Costae verae (ware ribben 1-7, 7x)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.585,
-    "y": 0.245
+    "x": 0.5673,
+    "y": 0.2455
   },
   {
     "id": "costa_verae_l_v",
@@ -1737,8 +1737,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Costae verae (ware ribben 1-7, 7x)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.415,
-    "y": 0.245
+    "x": 0.4327,
+    "y": 0.2455
   },
   {
     "id": "costa_spuriae_r_v",
@@ -1759,8 +1759,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Costae spuriae (valse ribben 8-10, 3x)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.5941,
-    "y": 0.3155
+    "x": 0.5987,
+    "y": 0.3162
   },
   {
     "id": "costa_spuriae_l_v",
@@ -1781,8 +1781,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Costae spuriae (valse ribben 8-10, 3x)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.4059,
-    "y": 0.3155
+    "x": 0.4013,
+    "y": 0.3162
   },
   {
     "id": "costa_fluctuantes_r_v",
@@ -2111,8 +2111,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Os ilium (darmbeen) met: SIAS, SIAI, SIPS, SIPI & crista iliaca",
     "view": "dorsal",
     "side": "right",
-    "x": 0.565,
-    "y": 0.442
+    "x": 0.5563,
+    "y": 0.4499
   },
   {
     "id": "coxae_sipi_l_d",
@@ -2122,8 +2122,48 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Os ilium (darmbeen) met: SIAS, SIAI, SIPS, SIPI & crista iliaca",
     "view": "dorsal",
     "side": "left",
-    "x": 0.435,
-    "y": 0.442
+    "x": 0.4437,
+    "y": 0.4499
+  },
+  {
+    "id": "os_coxae_test_3056_r_v",
+    "boneId": "os_coxae",
+    "name": "test",
+    "fullName": "test",
+    "view": "ventral",
+    "side": "right",
+    "x": 0.1236,
+    "y": 0.0614
+  },
+  {
+    "id": "os_coxae_test_3056_l_v",
+    "boneId": "os_coxae",
+    "name": "test",
+    "fullName": "test",
+    "view": "ventral",
+    "side": "left",
+    "x": 0.8764,
+    "y": 0.0614
+  },
+  {
+    "id": "os_coxae_test_3056_l_d",
+    "boneId": "os_coxae",
+    "name": "test",
+    "fullName": "test",
+    "view": "dorsal",
+    "side": "left",
+    "x": 0.1181,
+    "y": 0.0653
+  },
+  {
+    "id": "os_coxae_test_3056_r_d",
+    "boneId": "os_coxae",
+    "name": "test",
+    "fullName": "test",
+    "view": "dorsal",
+    "side": "right",
+    "x": 0.8819,
+    "y": 0.0653
   }
 ];
 

@@ -30,7 +30,8 @@ export const READER_BONES: Bone[] = [
       "Acetabulum (heupkom)",
       "Os pubis (schaambeen)",
       "Os ilium (darmbeen) met: SIAS, SIAI, SIPS, SIPI & crista iliaca",
-      "Os ischium (zitbeen) met: tuber ischiadicum"
+      "Os ischium (zitbeen) met: tuber ischiadicum",
+      "test"
     ],
     "primaryView": "both",
     "markers": [
@@ -674,15 +675,15 @@ export const READER_BONES: Bone[] = [
       {
         "side": "left",
         "view": "dorsal",
-        "x": 0.435,
-        "y": 0.355,
+        "x": 0.4286,
+        "y": 0.3439,
         "subpart": "Costae fluctuantes (zwevende ribben 11-12)"
       },
       {
         "side": "right",
         "view": "dorsal",
-        "x": 0.565,
-        "y": 0.355,
+        "x": 0.5646,
+        "y": 0.3421,
         "subpart": "Costae fluctuantes (zwevende ribben 11-12)"
       },
       {

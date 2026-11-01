@@ -1964,3 +1964,27 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
   - E2E getoetst via geautomatiseerde CDP headless browser tests: toevoegen van een nieuwe botstructuur met 4 gekoppelde punten (ventraal L+R en dorsaal L+R), symmetrische berekening (`x + mirroredX = 1.0`), correcte ID-stems en rendering.
   - `npm run build` geslaagd zonder TypeScript fouten (`✓ built in 4.08s`).
 
+
+## 59. Direct Verwijderen van Punten via Prullenbak-Knop (Zonder Tekstlabel) [2026-11-02 00:35]
+- **Vraag van de gebruiker:**
+  - *"ik kan niet bij de verwijder knop komen van een nieuw punt omdat de popup verdwijnt zodra ik mijn muis beweeg. De mouse over langer laten hangen is ook geen goed idee. Kan je een optie maken voor een 'delete mode' (niet zo noemen, icoontje van een prullenbak ofzo is genoeg) waardoor ik een punt kan aankliken om het te deleten."*
+- **Probleemanalyse:**
+  - Het verwijderknopje zat voorheen ín de muisover-tooltip. Zodra de muis van het bolletje bewoog richting de knop, vuurde `onMouseLeave` en verdween de pop-up direct, waardoor de knop onbereikbaar was.
+- **Doorgevoerde oplossingen:**
+  1. **Prullenbak-Knop in de Toolbar ([BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx)):**
+     - Nieuwe knop met alleen een `<Trash2 />` prullenbak-icoon (zonder tekstlabel conform verzoek) direct naast de knop *Structuur toevoegen*.
+     - Actieve toestand: kleurt helder rood (`bg-rose-600 text-white ring-2 ring-rose-300`).
+     - Eenvoudig uit te schakelen door nogmaals te klikken of door op de `Escape`-toets te drukken.
+  2. **Duidelijke Visuele Feedback tijdens Verwijderstand:**
+     - Bovenin de skeletviewers verschijnt een rode indicatiebadge: `"Klik op een punt om te verwijderen"`.
+     - Zodra de muis over een marker beweegt, licht de marker rood op (`#ef4444`) met een subtiele rode gloed en `cursor-pointer`.
+     - In de tooltip staat direct: `"Klik om te verwijderen"`.
+  3. **Directe Klik-Verwijdering:**
+     - Het onbereikbare knopje in de zwevende tooltip is verwijderd.
+     - Als de prullenbak-stand aanstaat, kan men direct op het bolletje op het skelet klikken.
+     - Vraagt bevestiging met de naam van de structuur (ter bescherming tegen misklikken) en verwijdert bij akkoord direct de structuur inclusief gekoppelde L+R en V+D punten.
+     - De hover-tooltip wordt direct gewist zodat er geen zwevend spookelement overblijft.
+- **Verificatie:**
+  - Getoetst via geautomatiseerde end-to-end browser test met headless Edge: structuur toevoegen, prullenbak-stand activeren, marker direct aanklikken, bevestigen dat alle 4 gekoppelde punten zijn verwijderd uit `localStorage`, en uitschakelen via `Escape`.
+  - `npm run build` succesvol gedraaid (`0 errors`, 3.95s).
+

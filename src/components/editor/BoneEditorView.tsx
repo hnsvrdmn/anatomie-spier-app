@@ -47,7 +47,8 @@ interface DraggableSkeletonProps {
   onDragEnd?: () => void;
   isPlacingPoint?: boolean;
   onPlacePoint?: (view: 'ventral' | 'dorsal', x: number, y: number) => void;
-  onDeleteStructure?: (structureName: string, boneId: string) => void;
+  isDeleteMode?: boolean;
+  onDeletePoint?: (point: EditablePoint) => void;
 }
 
 const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
@@ -60,7 +61,8 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
   onDragEnd,
   isPlacingPoint = false,
   onPlacePoint,
-  onDeleteStructure,
+  isDeleteMode = false,
+  onDeletePoint,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -103,9 +105,18 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
     return () => el.removeEventListener('wheel', handleWheel);
   }, []);
 
-  // Marker drag start
+  // Marker drag start of verwijderen in delete-modus
   const handlePointerDownMarker = (e: React.PointerEvent, pt: EditablePoint) => {
     if (isPlacingPoint) return;
+    if (isDeleteMode) {
+      if (e.button === 0) {
+        e.stopPropagation();
+        e.preventDefault();
+        setHoveredPoint(null);
+        onDeletePoint?.(pt);
+      }
+      return;
+    }
     e.stopPropagation();
     isDraggingMarkerRef.current = true;
     dragStartRef.current = {
@@ -317,6 +328,14 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
           </div>
         )}
 
+        {/* Richtinggevende badge bij het verwijderen van een punt */}
+        {isDeleteMode && (
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 z-30 bg-rose-600 text-white px-3 py-1 rounded-full text-[11px] font-bold shadow-md flex items-center gap-1.5 pointer-events-none animate-pulse whitespace-nowrap">
+            <Trash2 className="w-3.5 h-3.5" />
+            <span>Klik op een punt om te verwijderen</span>
+          </div>
+        )}
+
         {/* Skelet afbeelding (in flow met object-contain) */}
         <img
           src={
@@ -349,20 +368,30 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
             const radius = (isDragging ? baseRadius + 1.5 : isHovered ? baseRadius + 1 : baseRadius) / zoom;
             const hitRadius = (isStructure ? 26 : 34) / zoom;
 
-            const fillColor = isDragging
+            const fillColor = isDeleteMode
+              ? isHovered
+                ? '#ef4444'
+                : '#f87171'
+              : isDragging
               ? '#0284c7'
               : isHovered
               ? '#0ea5e9'
               : isStructure
               ? '#64748b'
               : '#1993f2';
-            const strokeColor = '#ffffff';
-            const strokeWidth = (isDragging ? 2.5 : isStructure ? 1.5 : 2.5) / zoom;
+            const strokeColor = isDeleteMode && isHovered ? '#b91c1c' : '#ffffff';
+            const strokeWidth = (isDeleteMode ? (isHovered ? 2.5 : 2) : isDragging ? 2.5 : isStructure ? 1.5 : 2.5) / zoom;
 
             return (
               <g
                 key={pt.id}
-                className={isPlacingPoint ? 'pointer-events-none' : 'pointer-events-auto cursor-grab active:cursor-grabbing'}
+                className={
+                  isPlacingPoint
+                    ? 'pointer-events-none'
+                    : isDeleteMode
+                    ? 'pointer-events-auto cursor-pointer'
+                    : 'pointer-events-auto cursor-grab active:cursor-grabbing'
+                }
                 onPointerDown={(e) => handlePointerDownMarker(e, pt)}
                 onMouseEnter={() => setHoveredPoint(pt)}
                 onMouseLeave={() => {
@@ -383,7 +412,9 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
                   className="transition-colors duration-150"
                   style={{
                     filter:
-                      isDragging || isHovered
+                      isDeleteMode && isHovered
+                        ? 'drop-shadow(0px 2px 8px rgba(239, 68, 68, 0.6))'
+                        : isDragging || isHovered
                         ? 'drop-shadow(0px 2px 5px rgba(0, 0, 0, 0.35))'
                         : 'drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.25))',
                   }}
@@ -429,22 +460,11 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
                   <div className="text-[11px] font-mono text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md mt-1 border border-slate-700">
                     x: {hoveredPoint.x.toFixed(4)}, y: {hoveredPoint.y.toFixed(4)} • {hoveredPoint.side || 'midline'}
                   </div>
-                  {hoveredPoint.type === 'structure' && onDeleteStructure && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (confirm(`Weet je zeker dat je structuur '${hoveredPoint.name}' wilt verwijderen (links én rechts)?`)) {
-                          onDeleteStructure(hoveredPoint.rawName || hoveredPoint.name, hoveredPoint.boneId);
-                          setHoveredPoint(null);
-                        }
-                      }}
-                      className="mt-1.5 px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/40 text-[11px] font-bold transition flex items-center gap-1 active:scale-95 cursor-pointer"
-                      title="Verwijder deze structuur (L + R)"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                      <span>Verwijder (L + R)</span>
-                    </button>
+                  {isDeleteMode && (
+                    <div className="mt-1.5 px-2.5 py-1 rounded-lg bg-rose-600/30 text-rose-300 border border-rose-500/40 text-[11px] font-bold flex items-center gap-1.5">
+                      <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                      <span>Klik om te verwijderen</span>
+                    </div>
                   )}
                 </div>
                 {!isNearTop && (
@@ -462,6 +482,7 @@ export const BoneEditorView: React.FC = () => {
   const {
     bones,
     updateBonePoints,
+    deleteBonePoint,
     resetBones,
     exportBonesJson,
     importBonesJson,
@@ -494,6 +515,21 @@ export const BoneEditorView: React.FC = () => {
   const [newStructName, setNewStructName] = useState('');
   const [newStructBoneId, setNewStructBoneId] = useState<string>('os_coxae');
   const [newStructViewMode, setNewStructViewMode] = useState<'ventral' | 'dorsal' | 'both'>('both');
+
+  // Verwijder-modus via klik op een punt (icoontje van prullenbak)
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
+
+  // Escape toets om delete-modus of toevoegen-paneel te sluiten
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsDeleteMode(false);
+        setIsAddingStructure(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   useEffect(() => {
     if (selectedFilterBone !== 'all') {
@@ -978,12 +1014,23 @@ export const BoneEditorView: React.FC = () => {
     [newStructName, newStructBoneId, newStructViewMode, addStructurePoints, selectedFilterBone, bones, showToast]
   );
 
-  const handleDeleteStructure = useCallback(
-    (structureName: string, boneId: string) => {
-      deleteStructurePoints(structureName, boneId);
-      showToast(`Structuur '${structureName}' verwijderd (L + R)`, 'info');
+  // Verwijderen van punt via directe klik in de prullenbak-modus
+  const handleDeletePoint = useCallback(
+    (pt: EditablePoint) => {
+      if (pt.type === 'structure') {
+        const name = pt.rawName || pt.name;
+        if (confirm(`Weet je zeker dat je structuur '${name}' wilt verwijderen (links én rechts)?`)) {
+          deleteStructurePoints(name, pt.boneId);
+          showToast(`Structuur '${name}' verwijderd (L + R)`, 'info');
+        }
+      } else if (pt.type === 'bone' && pt.markerIndex !== undefined) {
+        if (confirm(`Weet je zeker dat je botpunt '${pt.name}' wilt verwijderen?`)) {
+          deleteBonePoint(pt.boneId, pt.markerIndex);
+          showToast(`Botpunt '${pt.name}' verwijderd`, 'info');
+        }
+      }
     },
-    [deleteStructurePoints, showToast]
+    [deleteStructurePoints, deleteBonePoint, showToast]
   );
 
   return (
@@ -1058,6 +1105,7 @@ export const BoneEditorView: React.FC = () => {
                   setNewStructBoneId(selectedFilterBone);
                 }
                 setIsAddingStructure((prev) => !prev);
+                if (isDeleteMode) setIsDeleteMode(false);
               }}
               className={`px-2.5 py-1 rounded-xl border font-bold text-xs flex items-center gap-1.5 shadow-2xs transition active:scale-95 ${
                 isAddingStructure
@@ -1070,6 +1118,23 @@ export const BoneEditorView: React.FC = () => {
               <span>Structuur toevoegen</span>
             </button>
           )}
+
+          {/* Knop: Prullenbak / Verwijderstand (geen label conform instructie gebruiker) */}
+          <button
+            type="button"
+            onClick={() => {
+              setIsDeleteMode((prev) => !prev);
+              if (isAddingStructure) setIsAddingStructure(false);
+            }}
+            className={`p-1.5 rounded-xl border font-bold text-xs flex items-center justify-center shadow-2xs transition active:scale-95 ${
+              isDeleteMode
+                ? 'bg-rose-600 text-white border-rose-600 ring-2 ring-rose-300 shadow-md'
+                : 'bg-white hover:bg-rose-50 text-slate-500 hover:text-rose-600 border-slate-200 hover:border-rose-300'
+            }`}
+            title={isDeleteMode ? 'Verwijderen uitschakelen (Esc)' : 'Klik op een punt om te verwijderen'}
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
 
         </div>
 
@@ -1375,7 +1440,8 @@ export const BoneEditorView: React.FC = () => {
             onDragEnd={handleDragEnd}
             isPlacingPoint={isAddingStructure}
             onPlacePoint={handleCreateStructureAt}
-            onDeleteStructure={handleDeleteStructure}
+            isDeleteMode={isDeleteMode}
+            onDeletePoint={handleDeletePoint}
           />
         </div>
 
@@ -1394,7 +1460,8 @@ export const BoneEditorView: React.FC = () => {
             onDragEnd={handleDragEnd}
             isPlacingPoint={isAddingStructure}
             onPlacePoint={handleCreateStructureAt}
-            onDeleteStructure={handleDeleteStructure}
+            isDeleteMode={isDeleteMode}
+            onDeletePoint={handleDeletePoint}
           />
         </div>
       </div>
