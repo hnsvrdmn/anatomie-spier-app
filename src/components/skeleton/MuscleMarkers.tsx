@@ -348,43 +348,6 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
               >
                 {showReferenceGhost ? '🎯' : 'O'}
               </text>
-
-              {/* Zwevende badge onder het juiste referentiepunt (Origo) */}
-              {showReferenceGhost && (
-                <g className="pointer-events-none select-none">
-                  {(() => {
-                    const badgeText = `🎯 Juist: ${origName.length > 22 ? origName.slice(0, 20) + '...' : origName}`;
-                    const pw = Math.max(70, badgeText.length * 6.2 + 18) / zoom;
-                    const ph = 18 / zoom;
-                    const by = cy + (24 / zoom);
-                    return (
-                      <>
-                        <rect
-                          x={cx - pw / 2}
-                          y={by - ph / 2}
-                          width={pw}
-                          height={ph}
-                          rx={ph / 2}
-                          fill="rgba(15, 23, 42, 0.94)"
-                          stroke="#38bdf8"
-                          strokeWidth={1.5 / zoom}
-                        />
-                        <text
-                          x={cx}
-                          y={by + (0.5 / zoom)}
-                          textAnchor="middle"
-                          dominantBaseline="middle"
-                          fill="#38bdf8"
-                          fontSize={Math.round(9.5 / zoom)}
-                          fontWeight="bold"
-                        >
-                          {badgeText}
-                        </text>
-                      </>
-                    );
-                  })()}
-                </g>
-              )}
             </g>
           );
         });
@@ -472,43 +435,6 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
               >
                 {showReferenceGhost ? '🎯' : 'I'}
               </text>
-
-              {/* Zwevende badge onder het juiste referentiepunt (Insertie) */}
-              {showReferenceGhost && (
-                <g className="pointer-events-none select-none">
-                  {(() => {
-                    const badgeText = `🎯 Juist: ${insName.length > 22 ? insName.slice(0, 20) + '...' : insName}`;
-                    const pw = Math.max(70, badgeText.length * 6.2 + 18) / zoom;
-                    const ph = 18 / zoom;
-                    const by = cy + (24 / zoom);
-                    return (
-                      <>
-                        <rect
-                          x={cx - pw / 2}
-                          y={by - ph / 2}
-                          width={pw}
-                          height={ph}
-                          rx={ph / 2}
-                          fill="rgba(15, 23, 42, 0.94)"
-                          stroke="#f43f5e"
-                          strokeWidth={1.5 / zoom}
-                        />
-                        <text
-                          x={cx}
-                          y={by + (0.5 / zoom)}
-                          textAnchor="middle"
-                          dominantBaseline="middle"
-                          fill="#fda4af"
-                          fontSize={Math.round(9.5 / zoom)}
-                          fontWeight="bold"
-                        >
-                          {badgeText}
-                        </text>
-                      </>
-                    );
-                  })()}
-                </g>
-              )}
             </g>
           );
         });

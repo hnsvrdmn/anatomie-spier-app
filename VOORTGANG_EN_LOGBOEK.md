@@ -1393,3 +1393,13 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
     - **`Strikt`** (1.5% marge, hoge botprecisie)
   - Aangepast in `QuizView.tsx`, `MobileQuizView.tsx` en `HelpModal.tsx`.
 - **Git Status:** Wijzigingen succesvol gepusht naar GitHub (`main`).
+
+## 37. Verwijderen Legenda-HUD en Zwevende Punt-Badges [2026-11-01 20:48]
+- **Instructie van de gebruiker:**
+  - De 'Legenda Vergelijking' overlay linksboven in beeld moet eruit (was niet om gevraagd).
+  - De zwevende tekst-popups/badges met de namen boven en onder de aanhechtingspunten moeten er eveneens uit om het beeld strak en rustig te houden.
+- **Uit te voeren acties:**
+  - `SkeletonViewer.tsx`: De floating legenda overlay (`top-3 left-3`) volledig verwijderen.
+  - `SkeletonViewer.tsx`: De zwevende labels (`Jouw O: ...` en `Jouw I: ...`) boven de gebruikerspunten verwijderen.
+  - `MuscleMarkers.tsx`: De zwevende badges (`🎯 Juist: ...`) onder de referentiepunten verwijderen.
+  - Het strakke visuele onderscheid (gestippelde indigolijn voor de gebruiker vs massieve rode anatomische lijn, en markering in de stippen zelf) blijft behouden zonder storende tekstballonnen op het skelet.

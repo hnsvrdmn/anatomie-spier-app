@@ -683,9 +683,6 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
 
               const badgeColor = acc === 'correct' ? '#16a34a' : acc === 'close' ? '#d97706' : '#dc2626';
               const badgeSymbol = acc === 'correct' ? '✓' : acc === 'close' ? '~' : '✗';
-              const badgeLabel = `Jouw O${effectiveOrigins.length > 1 ? idx + 1 : ''}: ${
-                acc === 'correct' ? '✓ Juist' : acc === 'close' ? '~ Bijna' : '✗ Fout'
-              }`;
 
               return (
                 <g 
@@ -743,42 +740,6 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                   >
                     {isEval ? badgeSymbol : `O${effectiveOrigins.length > 1 ? idx + 1 : ''}`}
                   </text>
-
-                  {/* Zwevende identificatietag BOVEN het gebruikerspunt na controle */}
-                  {isEval && (
-                    <g className="pointer-events-none select-none">
-                      {(() => {
-                        const pw = Math.max(76, badgeLabel.length * 6.2 + 16) / zoom;
-                        const ph = 18 / zoom;
-                        const by = cy - (25 / zoom);
-                        return (
-                          <>
-                            <rect
-                              x={cx - pw / 2}
-                              y={by - ph / 2}
-                              width={pw}
-                              height={ph}
-                              rx={ph / 2}
-                              fill="rgba(15, 23, 42, 0.94)"
-                              stroke={badgeColor}
-                              strokeWidth={1.5 / zoom}
-                            />
-                            <text
-                              x={cx}
-                              y={by + (0.5 / zoom)}
-                              textAnchor="middle"
-                              dominantBaseline="middle"
-                              fill="#ffffff"
-                              fontSize={Math.round(9 / zoom)}
-                              fontWeight="bold"
-                            >
-                              {badgeLabel}
-                            </text>
-                          </>
-                        );
-                      })()}
-                    </g>
-                  )}
                 </g>
               );
             })}
@@ -807,9 +768,6 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
 
               const badgeColor = acc === 'correct' ? '#16a34a' : acc === 'close' ? '#d97706' : '#dc2626';
               const badgeSymbol = acc === 'correct' ? '✓' : acc === 'close' ? '~' : '✗';
-              const badgeLabel = `Jouw I${effectiveInsertions.length > 1 ? idx + 1 : ''}: ${
-                acc === 'correct' ? '✓ Juist' : acc === 'close' ? '~ Bijna' : '✗ Fout'
-              }`;
 
               return (
                 <g 
@@ -867,42 +825,6 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                   >
                     {isEval ? badgeSymbol : `I${effectiveInsertions.length > 1 ? idx + 1 : ''}`}
                   </text>
-
-                  {/* Zwevende identificatietag BOVEN het gebruikerspunt na controle */}
-                  {isEval && (
-                    <g className="pointer-events-none select-none">
-                      {(() => {
-                        const pw = Math.max(76, badgeLabel.length * 6.2 + 16) / zoom;
-                        const ph = 18 / zoom;
-                        const by = cy - (25 / zoom);
-                        return (
-                          <>
-                            <rect
-                              x={cx - pw / 2}
-                              y={by - ph / 2}
-                              width={pw}
-                              height={ph}
-                              rx={ph / 2}
-                              fill="rgba(15, 23, 42, 0.94)"
-                              stroke={badgeColor}
-                              strokeWidth={1.5 / zoom}
-                            />
-                            <text
-                              x={cx}
-                              y={by + (0.5 / zoom)}
-                              textAnchor="middle"
-                              dominantBaseline="middle"
-                              fill="#ffffff"
-                              fontSize={Math.round(9 / zoom)}
-                              fontWeight="bold"
-                            >
-                              {badgeLabel}
-                            </text>
-                          </>
-                        );
-                      })()}
-                    </g>
-                  )}
                 </g>
               );
             })}
@@ -1088,25 +1010,6 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
             >
               {effectiveShowTooltip ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
             </button>
-          </div>
-        )}
-
-        {/* Floating Legenda overlay na controle: toont haarscherp het verschil tussen 'Jouw invoer' en 'Juiste anatomie' */}
-        {showReferenceGhost && (effectiveOrigins.length > 0 || effectiveInsertions.length > 0) && (
-          <div className="absolute top-3 left-3 z-30 pointer-events-none flex flex-col gap-1.5 p-2.5 bg-slate-900/90 backdrop-blur-md text-white rounded-xl shadow-xl border border-slate-700/70 text-[11px] select-none animate-in fade-in duration-200">
-            <div className="font-bold text-[10px] uppercase tracking-wider text-slate-300 pb-1 border-b border-slate-700/60">
-              Legenda Vergelijking
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-4 h-0 border-t-2 border-dashed border-indigo-400 inline-block" />
-              <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-slate-800 border border-indigo-400 text-[9px] font-black text-indigo-300">J</span>
-              <span className="text-slate-200 font-medium">Jouw getekende spier (✓ / ✗)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-4 h-1 bg-red-600 rounded-full inline-block" />
-              <span className="text-[12px] leading-none">🎯</span>
-              <span className="text-slate-200 font-medium">Juiste anatomische referentie</span>
-            </div>
           </div>
         )}
       </div>
