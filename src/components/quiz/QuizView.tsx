@@ -1867,9 +1867,9 @@ export const QuizView: React.FC = () => {
                     ? 'bg-blue-600 text-white shadow-xs'
                     : 'bg-clinical-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
                 }`}
-                title="Laag: ruime marge (3.5%)"
+                title="Ruim: ruime marge (3.5%), vergevingsgezind"
               >
-                Laag
+                Ruim
               </button>
               <button
                 type="button"

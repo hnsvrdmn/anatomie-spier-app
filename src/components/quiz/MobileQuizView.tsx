@@ -493,7 +493,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                   <span className="text-xs text-slate-600 font-medium">Nauwkeurigheid:</span>
                   <div className="flex items-center gap-1 bg-slate-200/80 p-0.5 rounded-lg">
                     {(['normal', 'strict', 'expert'] as const).map((mode) => {
-                      const labels = { normal: 'Laag', strict: 'Medium', expert: 'Strikt' };
+                      const labels = { normal: 'Ruim', strict: 'Medium', expert: 'Strikt' };
                       const isSelected = (toleranceMode || 'strict') === mode;
                       return (
                         <button

@@ -307,7 +307,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                   <li>
                     <strong>Instelbare nauwkeurigheid (tolerantie):</strong> In het testpaneel kun je de tolerantie naar wens instellen op:
                     <span className="block mt-1 pl-2 text-slate-600">
-                      • <strong>Laag</strong> (3.5% marge) – ruime marge, ideaal bij snelle oriëntatie op touchscreens.<br />
+                      • <strong>Ruim</strong> (3.5% marge) – ruime marge, vergevingsgezind bij intekenen.<br />
                       • <strong>Medium</strong> (2.5% marge) – evenwichtige academische standaard.<br />
                       • <strong>Strikt</strong> (1.5% marge) – zeer nauwkeurige test op precieze botrichels en tuberositas.
                     </span>

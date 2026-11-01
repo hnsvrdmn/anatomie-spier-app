@@ -1380,3 +1380,15 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
        - *m. latissimus dorsi* met 1 wervelpunt + 1 crista-punt -> **Goedgekeurd (isPassed: true)**.
        - *m. latissimus dorsi* met 2 wervelpunten en 0 crista-punten -> **Afgekeurd (isPassed: false, crista ontbreekt)**.
      - `npm run build` geslaagd zonder enige fouten (code 0).
+
+## 36. Verfijning Benaming Tolerantie-Knoppen: Ruim, Medium, Strikt [2026-11-01 20:38]
+- **Vraag van de gebruiker:**
+  - Bij de tolerantie-instelling stond 'Laag', 'Medium', 'Strikt'.
+  - 'Laag' is dubbelzinnig en onhandig (lage tolerantie suggereert streng, terwijl juist een ruime/makkelijke marge bedoeld werd).
+  - Gevraagd om drie passende, korte woorden die goed in de buttons passen.
+- **Keuze en doorvoering:**
+  - Gekozen voor de intuïtieve, korte en didactisch zuivere termen:
+    - **`Ruim`** (3.5% marge, vergevingsgezind)
+    - **`Medium`** (2.5% marge, academische standaard)
+    - **`Strikt`** (1.5% marge, hoge botprecisie)
+  - Aangepast in `QuizView.tsx`, `MobileQuizView.tsx` en `HelpModal.tsx`.
