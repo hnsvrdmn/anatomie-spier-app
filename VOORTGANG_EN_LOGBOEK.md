@@ -1403,3 +1403,4 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
   - `SkeletonViewer.tsx`: De zwevende labels (`Jouw O: ...` en `Jouw I: ...`) boven de gebruikerspunten verwijderen.
   - `MuscleMarkers.tsx`: De zwevende badges (`🎯 Juist: ...`) onder de referentiepunten verwijderen.
   - Het strakke visuele onderscheid (gestippelde indigolijn voor de gebruiker vs massieve rode anatomische lijn, en markering in de stippen zelf) blijft behouden zonder storende tekstballonnen op het skelet.
+- **Git Status:** Commit `35f6708` succesvol gepusht naar GitHub (`main`).
