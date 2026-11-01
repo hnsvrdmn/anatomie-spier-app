@@ -29,7 +29,7 @@ export const MULTI_MUSCLE_COLORS = [
   '#d97706', // Amber/Goud
   '#7c3aed', // Paars
   '#0891b2', // Cyaan
-  '#ea580c', // Oranje
+  '#fd9316', // Oranje
   '#db2777', // Roze
   '#4f46e5', // Indigo
   '#0d9488', // Teal
@@ -93,7 +93,7 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
           const isOrigin = line.type === 'origin';
           const strokeColor = isOppositeUnselected
             ? '#94a3b8'
-            : (isOrigin ? '#2563eb' : '#ea580c');
+            : (isOrigin ? '#2563eb' : '#fd9316');
 
           const pathD = `M ${toSvgX(pts[0].x)} ${toSvgY(pts[0].y)} ` +
             pts.slice(1).map(p => `L ${toSvgX(p.x)} ${toSvgY(p.y)}`).join(' ');
@@ -105,7 +105,7 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                 <path
                   d={pathD}
                   fill="none"
-                  stroke={isOrigin ? '#3b82f6' : '#f97316'}
+                  stroke={isOrigin ? '#3b82f6' : '#fd9316'}
                   strokeWidth={22 / zoom}
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -194,8 +194,30 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                 pathD = `M ${toSvgX(orig.x)} ${toSvgY(orig.y)} L ${toSvgX(ins.x)} ${toSvgY(ins.y)}`;
               }
 
+              const gradId = `muscle-line-grad-${muscle.id}-${side}-${oIdx}-${iIdx}`;
+              const isSelectedMuscle = !isDimmed;
+              const useGradient = (isSelectedMuscle || showReferenceGhost) && !isOppositeUnselected;
+              const lineStroke = isOppositeUnselected
+                ? '#94a3b8'
+                : useGradient
+                ? `url(#${gradId})`
+                : (color || '#94a3b8');
+
               return (
                 <React.Fragment key={`line-frag-${side}-${oIdx}-${iIdx}`}>
+                  <defs>
+                    <linearGradient
+                      id={gradId}
+                      x1={toSvgX(orig.x)}
+                      y1={toSvgY(orig.y)}
+                      x2={toSvgX(ins.x)}
+                      y2={toSvgY(ins.y)}
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <stop offset="0%" stopColor="#2563eb" />
+                      <stop offset="100%" stopColor="#fd9316" />
+                    </linearGradient>
+                  </defs>
                   {/* Brede onzichtbare klikzone voor nauwkeurige respons */}
                   {isInteractive && onSelectMuscle && (
                     <path
@@ -207,7 +229,7 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                       onPointerEnter={() => onHoverPoint?.({ 
                         point: { x: (orig.x + ins.x) / 2, y: (orig.y + ins.y) / 2 }, 
                         type: 'line', 
-                        muscle,
+                        muscle, 
                         label: muscle.name
                       })}
                       onPointerLeave={() => onHoverPoint?.(null)}
@@ -224,11 +246,11 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                     <path
                       d={pathD}
                       fill="none"
-                      stroke="#dc2626"
+                      stroke={`url(#${gradId})`}
                       strokeWidth={14 / zoom}
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      opacity={0.22}
+                      opacity={0.25}
                       className="pointer-events-none animate-pulse"
                     />
                   )}
@@ -236,7 +258,7 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                     key={`line-${side}-${oIdx}-${iIdx}`}
                     d={pathD}
                     fill="none"
-                    stroke={isOppositeUnselected ? '#94a3b8' : (color || '#e11d48')}
+                    stroke={lineStroke}
                     strokeWidth={(isOppositeView ? 4.5 : (showReferenceGhost ? 7 : 6)) / zoom}
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -280,7 +302,7 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
           const cy = toSvgY(origin.y);
           const isHighlighted = highlightedPoint?.x === origin.x && highlightedPoint?.y === origin.y;
           const origName = origin.name || muscle.originText;
-          const markerColor = isOppositeUnselected ? '#94a3b8' : (color || '#2563eb');
+          const markerColor = isOppositeUnselected ? '#94a3b8' : (!isDimmed || showReferenceGhost ? '#2563eb' : (color || '#2563eb'));
 
           return (
             <g
@@ -328,7 +350,7 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                 cx={cx}
                 cy={cy}
                 r={(isHighlighted || showReferenceGhost ? 16 : 14) / zoom}
-                fill={showReferenceGhost ? '#0284c7' : markerColor}
+                fill={showReferenceGhost ? '#2563eb' : markerColor}
                 fillOpacity={isOppositeView ? 0.75 : 1.0}
                 stroke="#ffffff"
                 strokeWidth={(isOppositeView ? 2.5 : (showReferenceGhost ? 3.5 : 3.5)) / zoom}
@@ -367,7 +389,7 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
           const cy = toSvgY(insertion.y);
           const isHighlighted = highlightedPoint?.x === insertion.x && highlightedPoint?.y === insertion.y;
           const insName = insertion.name || muscle.insertionText;
-          const markerColor = isOppositeUnselected ? '#94a3b8' : (color || '#ea580c');
+          const markerColor = isOppositeUnselected ? '#94a3b8' : (!isDimmed || showReferenceGhost ? '#fd9316' : (color || '#fd9316'));
 
           return (
             <g
@@ -395,8 +417,8 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                     cx={cx}
                     cy={cy}
                     r={26 / zoom}
-                    fill="rgba(249, 115, 22, 0.25)"
-                    stroke="#fb923c"
+                    fill="rgba(253, 147, 22, 0.22)"
+                    stroke="#fd9316"
                     strokeWidth={2 / zoom}
                     className="animate-pulse"
                   />
@@ -405,7 +427,7 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                     cy={cy}
                     r={20 / zoom}
                     fill="none"
-                    stroke="#ea580c"
+                    stroke="#fd9316"
                     strokeWidth={1.5 / zoom}
                   />
                 </>
@@ -415,7 +437,7 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                 cx={cx}
                 cy={cy}
                 r={(isHighlighted || showReferenceGhost ? 16 : 14) / zoom}
-                fill={showReferenceGhost ? '#ea580c' : markerColor}
+                fill={showReferenceGhost ? '#fd9316' : markerColor}
                 fillOpacity={isOppositeView ? 0.75 : 1.0}
                 stroke="#ffffff"
                 strokeWidth={(isOppositeView ? 2.5 : (showReferenceGhost ? 3.5 : 3.5)) / zoom}

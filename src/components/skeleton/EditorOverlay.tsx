@@ -288,8 +288,8 @@ export const EditorOverlay: React.FC<EditorOverlayProps> = ({
       {/* 0. Aanhechtingslijnen / Tolerantie-zones (Linea alba, crista iliaca, wervelkolom) */}
       {(currentVisuals.attachmentLines || []).map((line, lineIdx) => {
         const isOrigin = line.type === 'origin';
-        const strokeColor = isOrigin ? '#2563eb' : '#ea580c';
-        const haloColor = isOrigin ? '#3b82f6' : '#f97316';
+        const strokeColor = isOrigin ? '#2563eb' : '#fd9316';
+        const haloColor = isOrigin ? '#3b82f6' : '#fd9316';
         const pts = line.points || [];
         if (pts.length === 0) return null;
 
@@ -416,17 +416,34 @@ export const EditorOverlay: React.FC<EditorOverlayProps> = ({
             pathD = `M ${toSvgX(orig.x)} ${toSvgY(orig.y)} L ${toSvgX(ins.x)} ${toSvgY(ins.y)}`;
           }
 
+          const gradId = `editor-line-grad-${muscle.id}-${activeSide}-${oIdx}-${iIdx}`;
+
           return (
-            <path
-              key={`editor-line-${oIdx}-${iIdx}`}
-              d={pathD}
-              fill="none"
-              stroke="#e11d48"
-              strokeWidth={Math.max(1, 7 / zoom)}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              opacity="0.88"
-            />
+            <React.Fragment key={`editor-line-frag-${oIdx}-${iIdx}`}>
+              <defs>
+                <linearGradient
+                  id={gradId}
+                  x1={toSvgX(orig.x)}
+                  y1={toSvgY(orig.y)}
+                  x2={toSvgX(ins.x)}
+                  y2={toSvgY(ins.y)}
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop offset="0%" stopColor="#2563eb" />
+                  <stop offset="100%" stopColor="#fd9316" />
+                </linearGradient>
+              </defs>
+              <path
+                key={`editor-line-${oIdx}-${iIdx}`}
+                d={pathD}
+                fill="none"
+                stroke={`url(#${gradId})`}
+                strokeWidth={Math.max(1, 7 / zoom)}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity="0.9"
+              />
+            </React.Fragment>
           );
         });
       })()}
@@ -506,7 +523,7 @@ export const EditorOverlay: React.FC<EditorOverlayProps> = ({
                 cy={cy}
                 r={28 / zoom}
                 fill="none"
-                stroke="#f97316"
+                stroke="#fd9316"
                 strokeWidth={4 / zoom}
                 className="animate-pulse"
               />
@@ -515,7 +532,7 @@ export const EditorOverlay: React.FC<EditorOverlayProps> = ({
               cx={cx}
               cy={cy}
               r={(isSelected ? 20 : 16) / zoom}
-              fill="#ea580c"
+              fill="#fd9316"
               stroke="#ffffff"
               strokeWidth={4 / zoom}
             />

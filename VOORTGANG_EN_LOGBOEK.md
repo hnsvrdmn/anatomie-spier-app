@@ -1463,3 +1463,33 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
      - De tekst `Versleep` / `Cursor` naast het handje verwijderd; het handje is nu een compacte, stijlvolle vierkante knop (`p-1.5 rounded-lg`).
 - **Verificatie & Git:**
   - `npm run build` succesvol gedraaid (TypeScript compilatie en Vite bundeling zonder fouten).
+  - Commit `05b9dce` succesvol gepusht naar GitHub (`main`).
+
+## 41. Gradiënt Lijnen, Oranje Kleur (#fd9316) & Studiemodus Kleurcodering [2026-11-01 21:21]
+- **Vraag van de gebruiker:**
+  1. In studiemodus hebben alle spieren een andere kleur; zodra een spier geselecteerd wordt, moeten de origo en insertie voor die specifieke spier wél de juiste kleuren krijgen (blauw en oranje).
+  2. De verbindingslijn tussen de punten moet veranderen in een blauw-naar-oranje gradiënt (blauw bij de origo, oranje bij de insertie).
+  3. De oranje kleur lag nog iets te dicht bij rood; trek hem net een tikje meer naar geel/amber (**`#fd9316`**) en voer dit overal door.
+  4. Bij het evalueren van een getekende spier moeten de lijnen groen of rood worden afhankelijk van goed/fout per uiteinde:
+     - Goed - Goed: groen-naar-groen gradiënt (`#16a34a` -> `#16a34a`)
+     - Goed - Fout: groen-naar-rood gradiënt (`#16a34a` -> `#dc2626`)
+     - Fout - Goed: rood-naar-groen gradiënt (`#dc2626` -> `#16a34a`)
+     - Fout - Fout: rood-naar-rood gradiënt (`#dc2626` -> `#dc2626`)
+  5. Alles pushen naar git.
+- **Doorgevoerde aanpassingen:**
+  1. **Nieuwe Oranje Kleur (`#fd9316`):**
+     - Geüpdatet in `MuscleMarkers.tsx` (`MULTI_MUSCLE_COLORS`, insertiepunten, aanhechtingslijnen en halo's).
+     - Geüpdatet in `SkeletonViewer.tsx` (gebruikersinserties tijdens het intekenen).
+     - Geüpdatet in `EditorOverlay.tsx` en `SkeletonPuzzleGame.tsx`.
+  2. **Gradiënt Verbindingslijnen (`SkeletonViewer.tsx`):**
+     - Elke gebruikerslijn tussen origo en insertie krijgt een eigen dynamische `<linearGradient>` met `gradientUnits="userSpaceOnUse"`.
+     - Tijdens het intekenen: gradiënt verloopt van blauw (`#2563eb`) naar oranje (`#fd9316`).
+     - Na controle (`isEval`): per punt wordt de accuraatheid gecontroleerd; het beginpunt kleurt groen (`#16a34a`) of rood (`#dc2626`), en het eindpunt eveneens groen of rood. Hierdoor ontstaat direct de gevraagde groen-groen, groen-rood of rood-rood visualisatie.
+  3. **Studiemodus & Referentielijnen (`MuscleMarkers.tsx`):**
+     - Voor de geselecteerde spier (`!isDimmed`): origo is altijd blauw (`#2563eb`), insertie is altijd oranje (`#fd9316`), en de spierlijn daartussen heeft de blauw-naar-oranje gradiënt.
+     - Niet-geselecteerde spieren behouden hun individuele toebedeelde atlas-kleur.
+     - Bij het tonen van het juiste referentie-antwoord (`showReferenceGhost`) wordt tevens de blauw-naar-oranje gradiënt en een zacht pulserende gradiënt-halo gebruikt.
+  4. **Editor Gradiënt Lijnen (`EditorOverlay.tsx`):**
+     - Tussen de geplaatste origo's en inserties loopt in de editor nu eveneens de blauw-naar-oranje gradiëntlijn.
+- **Verificatie:**
+  - `npm run build` gerund en succesvol gevalideerd zonder fouten.

@@ -627,24 +627,77 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
               );
             })}
 
-            {/* Rechte verbindingslijnen tussen de geplaatste origo's en inserties (netjes parallel) */}
+            {/* Rechte verbindingslijnen tussen de geplaatste origo's en inserties (netjes parallel met gradiënt) */}
             {effectiveOrigins.length > 0 && effectiveInsertions.length > 0 && (
               <g>
                 {getMuscleConnections(effectiveOrigins, effectiveInsertions).map(({ orig, ins, oIdx, iIdx }) => {
                   const isEval = showReferenceGhost || (!!quizMatches && quizMatches.length > 0);
+
+                  // Bepaal de kleuren aan beide uiteinden van de verbindingslijn:
+                  // Niet geëvalueerd: gradiënt van blauw (#2563eb, origo) naar oranje (#fd9316, insertie)
+                  // Geëvalueerd: per punt groen (bij correct/close) of rood (bij incorrect), wat leidt tot:
+                  // groen-groen, groen-rood, rood-groen of rood-rood
+                  let origColor = '#2563eb';
+                  let insColor = '#fd9316';
+
+                  if (isEval) {
+                    const originMatches = quizMatches?.filter(m => m.targetType === 'origin' || !m.targetType) || [];
+                    let bestOrigDist = Infinity;
+                    let bestOrigAcc: 'correct' | 'close' | 'incorrect' = 'incorrect';
+                    for (const m of originMatches) {
+                      const d = Math.hypot(m.userPoint.x - orig.x, m.userPoint.y - orig.y);
+                      if (d < bestOrigDist) {
+                        bestOrigDist = d;
+                        bestOrigAcc = m.accuracy;
+                      }
+                    }
+                    origColor = (bestOrigDist < 0.04 && (bestOrigAcc === 'correct' || bestOrigAcc === 'close'))
+                      ? '#16a34a'
+                      : '#dc2626';
+
+                    const insMatches = quizMatches?.filter(m => m.targetType === 'insertion' || !m.targetType) || [];
+                    let bestInsDist = Infinity;
+                    let bestInsAcc: 'correct' | 'close' | 'incorrect' = 'incorrect';
+                    for (const m of insMatches) {
+                      const d = Math.hypot(m.userPoint.x - ins.x, m.userPoint.y - ins.y);
+                      if (d < bestInsDist) {
+                        bestInsDist = d;
+                        bestInsAcc = m.accuracy;
+                      }
+                    }
+                    insColor = (bestInsDist < 0.04 && (bestInsAcc === 'correct' || bestInsAcc === 'close'))
+                      ? '#16a34a'
+                      : '#dc2626';
+                  }
+
+                  const gradId = `user-line-grad-${oIdx}-${iIdx}`;
+
                   return (
-                    <line
-                      key={`user-line-${oIdx}-${iIdx}`}
-                      x1={orig.x * SVG_WIDTH}
-                      y1={orig.y * SVG_HEIGHT}
-                      x2={ins.x * SVG_WIDTH}
-                      y2={ins.y * SVG_HEIGHT}
-                      stroke={isEval ? "#6366f1" : "#e11d48"}
-                      strokeWidth={Math.max(1, (isEval ? 4.5 : 7) / zoom)}
-                      strokeDasharray={isEval ? `${8 / zoom} ${5 / zoom}` : "none"}
-                      strokeLinecap="round"
-                      opacity={isEval ? "0.85" : "0.9"}
-                    />
+                    <React.Fragment key={`user-line-frag-${oIdx}-${iIdx}`}>
+                      <defs>
+                        <linearGradient
+                          id={gradId}
+                          x1={orig.x * SVG_WIDTH}
+                          y1={orig.y * SVG_HEIGHT}
+                          x2={ins.x * SVG_WIDTH}
+                          y2={ins.y * SVG_HEIGHT}
+                          gradientUnits="userSpaceOnUse"
+                        >
+                          <stop offset="0%" stopColor={origColor} />
+                          <stop offset="100%" stopColor={insColor} />
+                        </linearGradient>
+                      </defs>
+                      <line
+                        x1={orig.x * SVG_WIDTH}
+                        y1={orig.y * SVG_HEIGHT}
+                        x2={ins.x * SVG_WIDTH}
+                        y2={ins.y * SVG_HEIGHT}
+                        stroke={`url(#${gradId})`}
+                        strokeWidth={Math.max(1, (isEval ? 6 : 7) / zoom)}
+                        strokeLinecap="round"
+                        opacity={isEval ? "0.95" : "0.9"}
+                      />
+                    </React.Fragment>
                   );
                 })}
               </g>
@@ -800,7 +853,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                     cx={cx}
                     cy={cy}
                     r={15 / zoom}
-                    fill={isEval ? badgeColor : "#ea580c"}
+                    fill={isEval ? badgeColor : "#fd9316"}
                     stroke="#ffffff"
                     strokeWidth={3.5 / zoom}
                   />

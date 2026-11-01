@@ -873,8 +873,8 @@ export const SkeletonPuzzleGame: React.FC = () => {
 
               let fillColor = '#2563eb';
               if (isSelO) fillColor = '#1d4ed8';
-              else if (isSelI) fillColor = '#c2410c';
-              else if (!hasO && hasI) fillColor = '#ea580c';
+              else if (isSelI) fillColor = '#ea580c';
+              else if (!hasO && hasI) fillColor = '#fd9316';
               else if (hasO && hasI) fillColor = '#7c3aed';
 
               if (isSolvedNode) {
