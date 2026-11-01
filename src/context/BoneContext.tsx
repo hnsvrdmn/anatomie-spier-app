@@ -36,7 +36,9 @@ interface BoneContextType {
   updateStructurePoint: (id: string, x: number, y: number) => void;
   updateStructurePoints: (updates: Array<{ id: string; x: number; y: number }>) => void;
   addStructurePoint: (point: BoneStructurePoint) => void;
+  addStructurePoints: (newPoints: BoneStructurePoint[], structureName?: string, boneId?: string) => void;
   deleteStructurePoint: (id: string) => void;
+  deleteStructurePoints: (structureName: string, boneId: string) => void;
   resetStructures: () => void;
   saveStructuresToDisk: () => Promise<boolean>;
   exportStructuresJson: () => void;
@@ -81,7 +83,7 @@ export const BoneProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const savedV3 = localStorage.getItem(STRUCTURES_LOCAL_STORAGE_KEY);
       if (savedV3) {
         const parsed = JSON.parse(savedV3);
-        if (Array.isArray(parsed) && parsed.length === BONE_STRUCTURES.length) {
+        if (Array.isArray(parsed) && parsed.length > 0) {
           const hasLegacyBoth = parsed.some((s: BoneStructurePoint) => (s.view as string) === 'both');
           if (!hasLegacyBoth) {
             return parsed;
@@ -335,18 +337,105 @@ export const BoneProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const addStructurePoint = useCallback(
     (point: BoneStructurePoint) => {
-      const updated = [...structures, point];
-      saveStructures(updated);
+      setStructures((prev) => {
+        const updated = [...prev, point];
+        try {
+          localStorage.setItem(STRUCTURES_LOCAL_STORAGE_KEY, JSON.stringify(updated));
+        } catch (e) {
+          console.error('Fout bij opslaan botstructuren:', e);
+        }
+        return updated;
+      });
     },
-    [structures, saveStructures]
+    []
+  );
+
+  const addStructurePoints = useCallback(
+    (newPoints: BoneStructurePoint[], structureName?: string, boneId?: string) => {
+      setStructures((prev) => {
+        const updated = [...prev, ...newPoints];
+        try {
+          localStorage.setItem(STRUCTURES_LOCAL_STORAGE_KEY, JSON.stringify(updated));
+        } catch (e) {
+          console.error('Fout bij opslaan botstructuren:', e);
+        }
+        return updated;
+      });
+
+      if (structureName && boneId) {
+        setBones((prev) => {
+          const updated = prev.map((b) => {
+            if (b.id !== boneId) return b;
+            const currentList = b.structures || [];
+            if (!currentList.some((s) => s.toLowerCase().trim() === structureName.toLowerCase().trim())) {
+              return { ...b, structures: [...currentList, structureName.trim()] };
+            }
+            return b;
+          });
+          try {
+            localStorage.setItem(BONES_LOCAL_STORAGE_KEY, JSON.stringify(updated));
+          } catch (e) {
+            console.error('Fout bij opslaan botten:', e);
+          }
+          return updated;
+        });
+      }
+    },
+    []
   );
 
   const deleteStructurePoint = useCallback(
     (id: string) => {
-      const updated = structures.filter((s) => s.id !== id);
-      saveStructures(updated);
+      setStructures((prev) => {
+        const updated = prev.filter((s) => s.id !== id);
+        try {
+          localStorage.setItem(STRUCTURES_LOCAL_STORAGE_KEY, JSON.stringify(updated));
+        } catch (e) {
+          console.error('Fout bij opslaan botstructuren:', e);
+        }
+        return updated;
+      });
     },
-    [structures, saveStructures]
+    []
+  );
+
+  const deleteStructurePoints = useCallback(
+    (structureName: string, boneId: string) => {
+      const raw = structureName.toLowerCase().trim();
+      setStructures((prev) => {
+        const updated = prev.filter(
+          (s) =>
+            !(
+              s.boneId === boneId &&
+              (s.name.toLowerCase().trim() === raw ||
+                (s.fullName && s.fullName.toLowerCase().trim() === raw))
+            )
+        );
+        try {
+          localStorage.setItem(STRUCTURES_LOCAL_STORAGE_KEY, JSON.stringify(updated));
+        } catch (e) {
+          console.error('Fout bij opslaan botstructuren:', e);
+        }
+        return updated;
+      });
+
+      setBones((prev) => {
+        const updated = prev.map((b) => {
+          if (b.id !== boneId || !b.structures) return b;
+          return {
+            ...b,
+            structures: b.structures.filter((s) => s.toLowerCase().trim() !== raw),
+          };
+        });
+        try {
+          localStorage.setItem(BONES_LOCAL_STORAGE_KEY, JSON.stringify(updated));
+        } catch (e) {
+          console.error('Fout bij opslaan botten:', e);
+        }
+        return updated;
+      });
+    },
+    []
   );
 
   const resetStructures = useCallback(() => {
@@ -552,7 +641,9 @@ export const BoneProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updateStructurePoint,
         updateStructurePoints,
         addStructurePoint,
+        addStructurePoints,
         deleteStructurePoint,
+        deleteStructurePoints,
         resetStructures,
         saveStructuresToDisk,
         exportStructuresJson,

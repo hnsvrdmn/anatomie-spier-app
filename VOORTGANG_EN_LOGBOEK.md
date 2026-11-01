@@ -1930,3 +1930,37 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
      - E2E getoetst via geautomatiseerde CDP tests in de browser (zowel desktop navigatie als mobiele iconenbalk).
      - `npm run build` geslaagd (`✓ built in 3.89s`).
      - Gecommit en gepusht naar GitHub `origin/main`.
+
+
+## 58. Nieuwe Botstructuren Toevoegen met Automatische L+R Koppeling & Aanzichtkeuze [2026-11-02 00:13]
+- **Vraag van de gebruiker:**
+  - *"bij de botstructuren moet een functie komen om botstructuren toe te voegen. Dus een punt zetten, Een optie om ze zowel eventraal als dorsaal te plaatsen (ze moeten altijd in een aanzicht zowel links als rechts geplaatst wordne) en aan te geven bij welk bot ze horen."*
+- **Doorgevoerde oplossingen:**
+  1. **Interactief Paneel 'Structuur toevoegen' ([BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx)):**
+     - Nieuwe knop `[➕ Structuur toevoegen]` in de editor-toolbar wanneer '📍 Botstructuren' actief is.
+     - Uitklapbaar formulier met:
+       - **Naam invoerveld** (bijv. "Tuberositas tibia", "Trochanter tertius", etc.).
+       - **Bot-selectie dropdown** (keuze uit alle 18 reader-botten, synchroniseert direct mee met het actieve filter).
+       - **Aanzicht-keuze**:
+         - *Zowel Ventraal als Dorsaal* (genereert automatisch 4 punten: 2 ventraal L+R en 2 dorsaal L+R).
+         - *Alleen Ventraal* (genereert 2 punten: ventraal L+R).
+         - *Alleen Dorsaal* (genereert 2 punten: dorsaal L+R).
+  2. **Twee Manieren om Punten te Plaatsen:**
+     - **Direct op het skelet klikken ("Een punt zetten"):**
+       - In plaatsingsmodus verandert de cursor in een vizier-crosshair (`cursor-crosshair`).
+       - Bovenin het skelet verschijnt een instructiebalk: *"Klik op het skelet om de structuur te plaatsen"*.
+       - Eén klik op het skelet berekent de exacte genormaliseerde `x, y` coördinaten en genereert direct de corresponderende links/rechts gespiegelde partners op basis van anatomische oriëntatie:
+         - Ventraal: Rechts op het scherm (`1 - x`) is anatomisch Links; Links op het scherm (`x`) is anatomisch Rechts.
+         - Dorsaal: Links op het scherm (`x`) is anatomisch Links; Rechts op het scherm (`1 - x`) is anatomisch Rechts.
+     - **Knop 'Centrum plaatsen':**
+       - Snelle knop om de structuur direct in het midden van het bot te plaatsen (`y = 0.5`, `x = 0.42 / 0.58`), waarna ze naar wens versleept kunnen worden.
+  3. **Structuur Verwijderen per Paar (L + R):**
+     - Bij hover over een structuur in de editor verschijnt naast de coördinaten een `🗑️ Verwijder (L + R)` knop. Hiermee kan een per ongeluk aangemaakte structuur met één klik inclusief zijn gespiegelde tegenhanger worden opgeruimd.
+  4. **State Management & Persistentie ([BoneContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/BoneContext.tsx)):**
+     - `addStructurePoints` en `deleteStructurePoints` toegevoegd aan `BoneContext`.
+     - Nieuwe structuren worden direct gesynchroniseerd in `localStorage` (`pmt_anatomie_bone_structures_v3`) en de naam wordt automatisch toegevoegd aan de structuurlijst van het betreffende bot (`bone.structures`).
+     - Met de knop *"💾 Opslaan naar bronbestand"* kunnen alle nieuw toegevoegde structuren permanent op schijf worden opgeslagen in `src/data/boneStructures.ts` via de backend endpoint `/api/save-bone-structures`.
+- **Verificatie:**
+  - E2E getoetst via geautomatiseerde CDP headless browser tests: toevoegen van een nieuwe botstructuur met 4 gekoppelde punten (ventraal L+R en dorsaal L+R), symmetrische berekening (`x + mirroredX = 1.0`), correcte ID-stems en rendering.
+  - `npm run build` geslaagd zonder TypeScript fouten (`✓ built in 4.08s`).
+

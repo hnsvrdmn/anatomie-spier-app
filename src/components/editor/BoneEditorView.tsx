@@ -1,6 +1,7 @@
 import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { useBones } from '../../context/BoneContext';
 import { useMuscles } from '../../context/MuscleContext';
+import { BoneStructurePoint } from '../../data/boneStructures';
 import { SKELETON_WIDTH, SKELETON_HEIGHT } from '../../utils/coordinates';
 import {
   RotateCcw,
@@ -14,6 +15,9 @@ import {
   ZoomOut,
   Hand,
   MousePointer,
+  Plus,
+  Trash2,
+  X,
 } from 'lucide-react';
 
 export const SVG_WIDTH = 1000;
@@ -41,6 +45,9 @@ interface DraggableSkeletonProps {
   onDragStart?: (point: EditablePoint) => void;
   onUpdatePoint: (point: EditablePoint, x: number, y: number, deltaX: number, deltaY: number) => void;
   onDragEnd?: () => void;
+  isPlacingPoint?: boolean;
+  onPlacePoint?: (view: 'ventral' | 'dorsal', x: number, y: number) => void;
+  onDeleteStructure?: (structureName: string, boneId: string) => void;
 }
 
 const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
@@ -51,6 +58,9 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
   onDragStart,
   onUpdatePoint,
   onDragEnd,
+  isPlacingPoint = false,
+  onPlacePoint,
+  onDeleteStructure,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -95,6 +105,7 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
 
   // Marker drag start
   const handlePointerDownMarker = (e: React.PointerEvent, pt: EditablePoint) => {
+    if (isPlacingPoint) return;
     e.stopPropagation();
     isDraggingMarkerRef.current = true;
     dragStartRef.current = {
@@ -113,9 +124,20 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
     }
   };
 
-  // Viewport pan start
+  // Viewport pan start / punt plaatsen
   const handlePointerDownViewport = (e: React.PointerEvent) => {
     if (e.button !== 0) return;
+    if (isPlacingPoint) {
+      if (containerRef.current && onPlacePoint) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const normX = (e.clientX - rect.left) / rect.width;
+        const normY = (e.clientY - rect.top) / rect.height;
+        const clampedX = Math.max(0.02, Math.min(0.98, Number(normX.toFixed(4))));
+        const clampedY = Math.max(0.01, Math.min(0.99, Number(normY.toFixed(4))));
+        onPlacePoint(view, clampedX, clampedY);
+      }
+      return;
+    }
     if (panMode || zoom > 1.0) {
       isPanningRef.current = true;
       panStartRef.current = {
@@ -188,7 +210,9 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
     <div
       ref={viewportRef}
       className={`relative w-full h-full overflow-hidden flex items-center justify-center select-none bg-white ${
-        panMode || (zoom > 1.0 && !isDraggingMarkerRef.current)
+        isPlacingPoint
+          ? 'cursor-crosshair ring-2 ring-inset ring-sky-400'
+          : panMode || (zoom > 1.0 && !isDraggingMarkerRef.current)
           ? 'cursor-grab active:cursor-grabbing'
           : 'cursor-default'
       }`}
@@ -285,6 +309,14 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
         }}
         className="relative max-h-full max-w-full w-auto h-auto mx-auto pointer-events-auto flex items-center justify-center"
       >
+        {/* Richtinggevende badge bij het plaatsen van een nieuw punt */}
+        {isPlacingPoint && (
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 z-30 bg-sky-600 text-white px-3 py-1 rounded-full text-[11px] font-bold shadow-md flex items-center gap-1.5 pointer-events-none animate-pulse whitespace-nowrap">
+            <Plus className="w-3.5 h-3.5" />
+            <span>Klik op skelet om te plaatsen</span>
+          </div>
+        )}
+
         {/* Skelet afbeelding (in flow met object-contain) */}
         <img
           src={
@@ -330,7 +362,7 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
             return (
               <g
                 key={pt.id}
-                className="pointer-events-auto cursor-grab active:cursor-grabbing"
+                className={isPlacingPoint ? 'pointer-events-none' : 'pointer-events-auto cursor-grab active:cursor-grabbing'}
                 onPointerDown={(e) => handlePointerDownMarker(e, pt)}
                 onMouseEnter={() => setHoveredPoint(pt)}
                 onMouseLeave={() => {
@@ -380,7 +412,7 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
                   } scale(${1 / zoom})`,
                   transformOrigin: isNearTop ? 'top center' : 'bottom center',
                 }}
-                className="z-50 pointer-events-none select-none transition-all duration-75"
+                className="z-50 pointer-events-auto select-none transition-all duration-75"
               >
                 {isNearTop && (
                   <div className="w-0 h-0 border-x-8 border-x-transparent border-b-8 border-b-slate-900/95 mx-auto" />
@@ -397,6 +429,23 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
                   <div className="text-[11px] font-mono text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md mt-1 border border-slate-700">
                     x: {hoveredPoint.x.toFixed(4)}, y: {hoveredPoint.y.toFixed(4)} • {hoveredPoint.side || 'midline'}
                   </div>
+                  {hoveredPoint.type === 'structure' && onDeleteStructure && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (confirm(`Weet je zeker dat je structuur '${hoveredPoint.name}' wilt verwijderen (links én rechts)?`)) {
+                          onDeleteStructure(hoveredPoint.rawName || hoveredPoint.name, hoveredPoint.boneId);
+                          setHoveredPoint(null);
+                        }
+                      }}
+                      className="mt-1.5 px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/40 text-[11px] font-bold transition flex items-center gap-1 active:scale-95 cursor-pointer"
+                      title="Verwijder deze structuur (L + R)"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      <span>Verwijder (L + R)</span>
+                    </button>
+                  )}
                 </div>
                 {!isNearTop && (
                   <div className="w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-slate-900/95 mx-auto" />
@@ -421,6 +470,8 @@ export const BoneEditorView: React.FC = () => {
     copyBoneView,
     structures,
     updateStructurePoints,
+    addStructurePoints,
+    deleteStructurePoints,
     resetStructures,
     saveStructuresToDisk,
     exportStructuresJson,
@@ -437,6 +488,18 @@ export const BoneEditorView: React.FC = () => {
   const [editTarget, setEditTarget] = useState<'bones' | 'structures'>('structures');
   // Optioneel filter per bot wanneer structuren worden bewerkt
   const [selectedFilterBone, setSelectedFilterBone] = useState<string>('all');
+
+  // Toevoegen van nieuwe botstructuren
+  const [isAddingStructure, setIsAddingStructure] = useState(false);
+  const [newStructName, setNewStructName] = useState('');
+  const [newStructBoneId, setNewStructBoneId] = useState<string>('os_coxae');
+  const [newStructViewMode, setNewStructViewMode] = useState<'ventral' | 'dorsal' | 'both'>('both');
+
+  useEffect(() => {
+    if (selectedFilterBone !== 'all') {
+      setNewStructBoneId(selectedFilterBone);
+    }
+  }, [selectedFilterBone]);
 
   // Weergave- en bewerkopties
   const [hidePopup, setHidePopup] = useState(false);
@@ -826,6 +889,103 @@ export const BoneEditorView: React.FC = () => {
     [updateBonePoints, updateStructurePoints, liveSymmetry, linkVentralDorsal]
   );
 
+  // Nieuwe botstructuur toevoegen op aangegeven positie
+  const handleCreateStructureAt = useCallback(
+    (_view: 'ventral' | 'dorsal', x: number, y: number) => {
+      const cleanName = newStructName.trim();
+      if (!cleanName) {
+        showToast('Vul eerst een naam in voor de nieuwe botstructuur', 'warning');
+        return;
+      }
+
+      const screenLeftX = Math.min(x, Number((1.0 - x).toFixed(4)));
+      const screenRightX = Math.max(x, Number((1.0 - x).toFixed(4)));
+      const clampedY = Math.max(0.01, Math.min(0.99, Number(y.toFixed(4))));
+
+      const slug = cleanName
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '_')
+        .replace(/_+/g, '_')
+        .replace(/^_|_$/g, '');
+      const uniqueSuffix = Date.now().toString().slice(-4);
+      const stem = `${newStructBoneId}_${slug}_${uniqueSuffix}`;
+
+      const newPoints: BoneStructurePoint[] = [];
+
+      // Ventraal: screenLeftX = anatomisch rechts, screenRightX = anatomisch links
+      if (newStructViewMode === 'ventral' || newStructViewMode === 'both') {
+        newPoints.push({
+          id: `${stem}_r_v`,
+          boneId: newStructBoneId,
+          name: cleanName,
+          fullName: cleanName,
+          view: 'ventral',
+          side: 'right',
+          x: screenLeftX,
+          y: clampedY,
+        });
+        newPoints.push({
+          id: `${stem}_l_v`,
+          boneId: newStructBoneId,
+          name: cleanName,
+          fullName: cleanName,
+          view: 'ventral',
+          side: 'left',
+          x: screenRightX,
+          y: clampedY,
+        });
+      }
+
+      // Dorsaal: screenLeftX = anatomisch links, screenRightX = anatomisch rechts
+      if (newStructViewMode === 'dorsal' || newStructViewMode === 'both') {
+        newPoints.push({
+          id: `${stem}_l_d`,
+          boneId: newStructBoneId,
+          name: cleanName,
+          fullName: cleanName,
+          view: 'dorsal',
+          side: 'left',
+          x: screenLeftX,
+          y: clampedY,
+        });
+        newPoints.push({
+          id: `${stem}_r_d`,
+          boneId: newStructBoneId,
+          name: cleanName,
+          fullName: cleanName,
+          view: 'dorsal',
+          side: 'right',
+          x: screenRightX,
+          y: clampedY,
+        });
+      }
+
+      addStructurePoints(newPoints, cleanName, newStructBoneId);
+
+      // Zorg dat het actieve filter switcht naar dit bot zodat de nieuwe punten direct zichtbaar zijn
+      if (selectedFilterBone !== 'all' && selectedFilterBone !== newStructBoneId) {
+        setSelectedFilterBone(newStructBoneId);
+      }
+
+      const boneName = bones.find((b) => b.id === newStructBoneId)?.latinName || newStructBoneId;
+      showToast(
+        `Structuur '${cleanName}' succesvol toegevoegd aan ${boneName} (${newPoints.length} punten, L & R)!`,
+        'success'
+      );
+      setIsAddingStructure(false);
+      setNewStructName('');
+    },
+    [newStructName, newStructBoneId, newStructViewMode, addStructurePoints, selectedFilterBone, bones, showToast]
+  );
+
+  const handleDeleteStructure = useCallback(
+    (structureName: string, boneId: string) => {
+      deleteStructurePoints(structureName, boneId);
+      showToast(`Structuur '${structureName}' verwijderd (L + R)`, 'info');
+    },
+    [deleteStructurePoints, showToast]
+  );
+
   return (
     <div className="flex-1 w-full max-w-7xl mx-auto px-2 sm:px-4 py-2 flex flex-col h-[calc(100vh-8.5rem)] min-h-[680px]">
       {/* Bovenste werkbalk met tabs, filters, spiegelfuncties en acties */}
@@ -889,6 +1049,27 @@ export const BoneEditorView: React.FC = () => {
             </select>
           </div>
 
+          {/* Knop: Structuur toevoegen */}
+          {editTarget === 'structures' && (
+            <button
+              type="button"
+              onClick={() => {
+                if (!isAddingStructure && selectedFilterBone !== 'all') {
+                  setNewStructBoneId(selectedFilterBone);
+                }
+                setIsAddingStructure((prev) => !prev);
+              }}
+              className={`px-2.5 py-1 rounded-xl border font-bold text-xs flex items-center gap-1.5 shadow-2xs transition active:scale-95 ${
+                isAddingStructure
+                  ? 'bg-sky-600 text-white border-sky-600 ring-2 ring-sky-300'
+                  : 'bg-white hover:bg-sky-50 text-sky-700 border-sky-300 hover:border-sky-400'
+              }`}
+              title="Voeg een nieuwe botstructuur toe (L + R, ventraal en/of dorsaal)"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Structuur toevoegen</span>
+            </button>
+          )}
 
         </div>
 
@@ -1072,6 +1253,111 @@ export const BoneEditorView: React.FC = () => {
         </div>
       </div>
 
+      {/* Paneel voor het toevoegen van een nieuwe botstructuur */}
+      {isAddingStructure && (
+        <div className="w-full bg-sky-50/95 border-2 border-sky-300 rounded-2xl p-2.5 sm:p-3 mb-2 flex flex-wrap items-center justify-between gap-3 text-xs shadow-md animate-in fade-in duration-150 shrink-0">
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* 1. Naam van de structuur */}
+            <div className="flex items-center gap-1.5">
+              <label className="font-bold text-sky-950">Naam:</label>
+              <input
+                type="text"
+                autoFocus
+                value={newStructName}
+                onChange={(e) => setNewStructName(e.target.value)}
+                placeholder="bijv. Tuberositas tibiae"
+                className="px-2.5 py-1.5 rounded-xl bg-white border border-sky-300 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500 w-44 sm:w-56 shadow-2xs"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && newStructName.trim()) {
+                    handleCreateStructureAt('ventral', 0.42, 0.5);
+                  }
+                }}
+              />
+            </div>
+
+            {/* 2. Bij welk bot hoort het */}
+            <div className="flex items-center gap-1.5">
+              <label className="font-bold text-sky-950">Bot:</label>
+              <select
+                value={newStructBoneId}
+                onChange={(e) => setNewStructBoneId(e.target.value)}
+                className="px-2.5 py-1.5 rounded-xl bg-white border border-sky-300 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer shadow-2xs"
+              >
+                {bones.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.latinName} ({b.dutchName})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* 3. Aanzicht(en): Ventraal, Dorsaal, Zowel */}
+            <div className="flex items-center gap-1 bg-white p-0.5 rounded-xl border border-sky-300 shadow-2xs">
+              <button
+                type="button"
+                onClick={() => setNewStructViewMode('both')}
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition ${
+                  newStructViewMode === 'both' ? 'bg-sky-600 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+                title="Plaats zowel op Ventraal (L+R) als op Dorsaal (L+R)"
+              >
+                Zowel V & D (4 pnt)
+              </button>
+              <button
+                type="button"
+                onClick={() => setNewStructViewMode('ventral')}
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition ${
+                  newStructViewMode === 'ventral' ? 'bg-sky-600 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+                title="Alleen op Ventraal (L+R)"
+              >
+                Ventraal (L+R)
+              </button>
+              <button
+                type="button"
+                onClick={() => setNewStructViewMode('dorsal')}
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition ${
+                  newStructViewMode === 'dorsal' ? 'bg-sky-600 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+                title="Alleen op Dorsaal (L+R)"
+              >
+                Dorsaal (L+R)
+              </button>
+            </div>
+          </div>
+
+          {/* Instructie & Knoppen */}
+          <div className="flex items-center gap-2">
+            <div className="hidden xl:flex items-center gap-1.5 text-sky-900 font-semibold text-[11px]">
+              <span>👉 Klik op skelet om te plaatsen (L & R automatisch gespiegeld) of:</span>
+            </div>
+
+            <button
+              type="button"
+              disabled={!newStructName.trim()}
+              onClick={() => handleCreateStructureAt('ventral', 0.42, 0.5)}
+              className="px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-700 disabled:opacity-50 text-white font-bold text-xs transition shadow-2xs active:scale-95 flex items-center gap-1"
+              title="Plaats direct in centrum"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Centrum plaatsen</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setIsAddingStructure(false);
+                setNewStructName('');
+              }}
+              className="p-1.5 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-sky-200/60 transition"
+              title="Annuleren"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Beide views naast elkaar: Ventraal links, Dorsaal rechts (onafhankelijk zoomen & pannen) */}
       <div className="flex-1 min-h-0 w-full bg-white rounded-3xl p-3 border border-clinical-200/90 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-4 overflow-hidden">
         {/* Ventraal links */}
@@ -1087,6 +1373,9 @@ export const BoneEditorView: React.FC = () => {
             onDragStart={handleDragStart}
             onUpdatePoint={handleUpdatePoint}
             onDragEnd={handleDragEnd}
+            isPlacingPoint={isAddingStructure}
+            onPlacePoint={handleCreateStructureAt}
+            onDeleteStructure={handleDeleteStructure}
           />
         </div>
 
@@ -1103,6 +1392,9 @@ export const BoneEditorView: React.FC = () => {
             onDragStart={handleDragStart}
             onUpdatePoint={handleUpdatePoint}
             onDragEnd={handleDragEnd}
+            isPlacingPoint={isAddingStructure}
+            onPlacePoint={handleCreateStructureAt}
+            onDeleteStructure={handleDeleteStructure}
           />
         </div>
       </div>
