@@ -639,19 +639,23 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
             {/* Rechte verbindingslijnen tussen de geplaatste origo's en inserties (netjes parallel) */}
             {effectiveOrigins.length > 0 && effectiveInsertions.length > 0 && (
               <g>
-                {getMuscleConnections(effectiveOrigins, effectiveInsertions).map(({ orig, ins, oIdx, iIdx }) => (
-                  <line
-                    key={`user-line-${oIdx}-${iIdx}`}
-                    x1={orig.x * SVG_WIDTH}
-                    y1={orig.y * SVG_HEIGHT}
-                    x2={ins.x * SVG_WIDTH}
-                    y2={ins.y * SVG_HEIGHT}
-                    stroke="#e11d48"
-                    strokeWidth={Math.max(1, 7 / zoom)}
-                    strokeLinecap="round"
-                    opacity="0.9"
-                  />
-                ))}
+                {getMuscleConnections(effectiveOrigins, effectiveInsertions).map(({ orig, ins, oIdx, iIdx }) => {
+                  const isEval = showReferenceGhost || (!!quizMatches && quizMatches.length > 0);
+                  return (
+                    <line
+                      key={`user-line-${oIdx}-${iIdx}`}
+                      x1={orig.x * SVG_WIDTH}
+                      y1={orig.y * SVG_HEIGHT}
+                      x2={ins.x * SVG_WIDTH}
+                      y2={ins.y * SVG_HEIGHT}
+                      stroke={isEval ? "#6366f1" : "#e11d48"}
+                      strokeWidth={Math.max(1, (isEval ? 4.5 : 7) / zoom)}
+                      strokeDasharray={isEval ? `${8 / zoom} ${5 / zoom}` : "none"}
+                      strokeLinecap="round"
+                      opacity={isEval ? "0.85" : "0.9"}
+                    />
+                  );
+                })}
               </g>
             )}
 
@@ -659,6 +663,30 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
             {effectiveOrigins.map((pt, idx) => {
               const cx = pt.x * SVG_WIDTH;
               const cy = pt.y * SVG_HEIGHT;
+              const isEval = showReferenceGhost || (!!quizMatches && quizMatches.length > 0);
+
+              // Bepaal de nauwkeurigheid van dit gebruikerspunt indien geëvalueerd
+              let acc: 'correct' | 'close' | 'incorrect' | null = null;
+              if (isEval) {
+                const originMatches = quizMatches?.filter(m => m.targetType === 'origin' || !m.targetType) || [];
+                let bestMatch: MatchResult | undefined;
+                let bestDist = Infinity;
+                for (const m of originMatches) {
+                  const d = Math.hypot(m.userPoint.x - pt.x, m.userPoint.y - pt.y);
+                  if (d < bestDist) {
+                    bestDist = d;
+                    bestMatch = m;
+                  }
+                }
+                acc = (bestMatch && bestDist < 0.03) ? bestMatch.accuracy : 'incorrect';
+              }
+
+              const badgeColor = acc === 'correct' ? '#16a34a' : acc === 'close' ? '#d97706' : '#dc2626';
+              const badgeSymbol = acc === 'correct' ? '✓' : acc === 'close' ? '~' : '✗';
+              const badgeLabel = `Jouw O${effectiveOrigins.length > 1 ? idx + 1 : ''}: ${
+                acc === 'correct' ? '✓ Juist' : acc === 'close' ? '~ Bijna' : '✗ Fout'
+              }`;
+
               return (
                 <g 
                   key={`user-orig-${idx}`}
@@ -678,26 +706,79 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                       fill="transparent"
                     />
                   )}
+
+                  {/* Indien geëvalueerd: gestippelde markeer-ring in de accuraatheidskleur om het punt heen */}
+                  {isEval && (
+                    <circle
+                      cx={cx}
+                      cy={cy}
+                      r={21 / zoom}
+                      fill="none"
+                      stroke={badgeColor}
+                      strokeWidth={2 / zoom}
+                      strokeDasharray={`${4 / zoom} ${3 / zoom}`}
+                    />
+                  )}
+
+                  {/* Hoofdpunt */}
                   <circle
                     cx={cx}
                     cy={cy}
                     r={15 / zoom}
-                    fill="#2563eb"
+                    fill={isEval ? badgeColor : "#2563eb"}
                     stroke="#ffffff"
                     strokeWidth={3.5 / zoom}
                   />
+
+                  {/* Tekst in het punt: '✓'/'~'/'✗' na controle, of 'O' tijdens intekenen */}
                   <text
                     x={cx}
                     y={cy + (1 / zoom)}
                     textAnchor="middle"
                     dominantBaseline="middle"
                     fill="#ffffff"
-                    fontSize={Math.round(12 / zoom)}
-                    fontWeight="bold"
+                    fontSize={Math.round((isEval ? 13 : 12) / zoom)}
+                    fontWeight="900"
                     className="pointer-events-none select-none"
                   >
-                    O{effectiveOrigins.length > 1 ? idx + 1 : ''}
+                    {isEval ? badgeSymbol : `O${effectiveOrigins.length > 1 ? idx + 1 : ''}`}
                   </text>
+
+                  {/* Zwevende identificatietag BOVEN het gebruikerspunt na controle */}
+                  {isEval && (
+                    <g className="pointer-events-none select-none">
+                      {(() => {
+                        const pw = Math.max(76, badgeLabel.length * 6.2 + 16) / zoom;
+                        const ph = 18 / zoom;
+                        const by = cy - (25 / zoom);
+                        return (
+                          <>
+                            <rect
+                              x={cx - pw / 2}
+                              y={by - ph / 2}
+                              width={pw}
+                              height={ph}
+                              rx={ph / 2}
+                              fill="rgba(15, 23, 42, 0.94)"
+                              stroke={badgeColor}
+                              strokeWidth={1.5 / zoom}
+                            />
+                            <text
+                              x={cx}
+                              y={by + (0.5 / zoom)}
+                              textAnchor="middle"
+                              dominantBaseline="middle"
+                              fill="#ffffff"
+                              fontSize={Math.round(9 / zoom)}
+                              fontWeight="bold"
+                            >
+                              {badgeLabel}
+                            </text>
+                          </>
+                        );
+                      })()}
+                    </g>
+                  )}
                 </g>
               );
             })}
@@ -706,6 +787,30 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
             {effectiveInsertions.map((pt, idx) => {
               const cx = pt.x * SVG_WIDTH;
               const cy = pt.y * SVG_HEIGHT;
+              const isEval = showReferenceGhost || (!!quizMatches && quizMatches.length > 0);
+
+              // Bepaal de nauwkeurigheid van dit gebruikerspunt indien geëvalueerd
+              let acc: 'correct' | 'close' | 'incorrect' | null = null;
+              if (isEval) {
+                const insMatches = quizMatches?.filter(m => m.targetType === 'insertion' || !m.targetType) || [];
+                let bestMatch: MatchResult | undefined;
+                let bestDist = Infinity;
+                for (const m of insMatches) {
+                  const d = Math.hypot(m.userPoint.x - pt.x, m.userPoint.y - pt.y);
+                  if (d < bestDist) {
+                    bestDist = d;
+                    bestMatch = m;
+                  }
+                }
+                acc = (bestMatch && bestDist < 0.03) ? bestMatch.accuracy : 'incorrect';
+              }
+
+              const badgeColor = acc === 'correct' ? '#16a34a' : acc === 'close' ? '#d97706' : '#dc2626';
+              const badgeSymbol = acc === 'correct' ? '✓' : acc === 'close' ? '~' : '✗';
+              const badgeLabel = `Jouw I${effectiveInsertions.length > 1 ? idx + 1 : ''}: ${
+                acc === 'correct' ? '✓ Juist' : acc === 'close' ? '~ Bijna' : '✗ Fout'
+              }`;
+
               return (
                 <g 
                   key={`user-ins-${idx}`}
@@ -725,26 +830,79 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                       fill="transparent"
                     />
                   )}
+
+                  {/* Indien geëvalueerd: gestippelde markeer-ring in de accuraatheidskleur om het punt heen */}
+                  {isEval && (
+                    <circle
+                      cx={cx}
+                      cy={cy}
+                      r={21 / zoom}
+                      fill="none"
+                      stroke={badgeColor}
+                      strokeWidth={2 / zoom}
+                      strokeDasharray={`${4 / zoom} ${3 / zoom}`}
+                    />
+                  )}
+
+                  {/* Hoofdpunt */}
                   <circle
                     cx={cx}
                     cy={cy}
                     r={15 / zoom}
-                    fill="#dc2626"
+                    fill={isEval ? badgeColor : "#dc2626"}
                     stroke="#ffffff"
                     strokeWidth={3.5 / zoom}
                   />
+
+                  {/* Tekst in het punt: '✓'/'~'/'✗' na controle, of 'I' tijdens intekenen */}
                   <text
                     x={cx}
                     y={cy + (1 / zoom)}
                     textAnchor="middle"
                     dominantBaseline="middle"
                     fill="#ffffff"
-                    fontSize={Math.round(12 / zoom)}
-                    fontWeight="bold"
+                    fontSize={Math.round((isEval ? 13 : 12) / zoom)}
+                    fontWeight="900"
                     className="pointer-events-none select-none"
                   >
-                    I{effectiveInsertions.length > 1 ? idx + 1 : ''}
+                    {isEval ? badgeSymbol : `I${effectiveInsertions.length > 1 ? idx + 1 : ''}`}
                   </text>
+
+                  {/* Zwevende identificatietag BOVEN het gebruikerspunt na controle */}
+                  {isEval && (
+                    <g className="pointer-events-none select-none">
+                      {(() => {
+                        const pw = Math.max(76, badgeLabel.length * 6.2 + 16) / zoom;
+                        const ph = 18 / zoom;
+                        const by = cy - (25 / zoom);
+                        return (
+                          <>
+                            <rect
+                              x={cx - pw / 2}
+                              y={by - ph / 2}
+                              width={pw}
+                              height={ph}
+                              rx={ph / 2}
+                              fill="rgba(15, 23, 42, 0.94)"
+                              stroke={badgeColor}
+                              strokeWidth={1.5 / zoom}
+                            />
+                            <text
+                              x={cx}
+                              y={by + (0.5 / zoom)}
+                              textAnchor="middle"
+                              dominantBaseline="middle"
+                              fill="#ffffff"
+                              fontSize={Math.round(9 / zoom)}
+                              fontWeight="bold"
+                            >
+                              {badgeLabel}
+                            </text>
+                          </>
+                        );
+                      })()}
+                    </g>
+                  )}
                 </g>
               );
             })}
@@ -930,6 +1088,25 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
             >
               {effectiveShowTooltip ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
             </button>
+          </div>
+        )}
+
+        {/* Floating Legenda overlay na controle: toont haarscherp het verschil tussen 'Jouw invoer' en 'Juiste anatomie' */}
+        {showReferenceGhost && (effectiveOrigins.length > 0 || effectiveInsertions.length > 0) && (
+          <div className="absolute top-3 left-3 z-30 pointer-events-none flex flex-col gap-1.5 p-2.5 bg-slate-900/90 backdrop-blur-md text-white rounded-xl shadow-xl border border-slate-700/70 text-[11px] select-none animate-in fade-in duration-200">
+            <div className="font-bold text-[10px] uppercase tracking-wider text-slate-300 pb-1 border-b border-slate-700/60">
+              Legenda Vergelijking
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-0 border-t-2 border-dashed border-indigo-400 inline-block" />
+              <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-slate-800 border border-indigo-400 text-[9px] font-black text-indigo-300">J</span>
+              <span className="text-slate-200 font-medium">Jouw getekende spier (✓ / ✗)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-1 bg-red-600 rounded-full inline-block" />
+              <span className="text-[12px] leading-none">🎯</span>
+              <span className="text-slate-200 font-medium">Juiste anatomische referentie</span>
+            </div>
           </div>
         )}
       </div>

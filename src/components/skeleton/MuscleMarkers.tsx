@@ -219,21 +219,34 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                       <title>{tooltipText}</title>
                     </path>
                   )}
+                  {/* Brede halo achter het juiste referentieverloop bij evaluatie */}
+                  {showReferenceGhost && (
+                    <path
+                      d={pathD}
+                      fill="none"
+                      stroke="#dc2626"
+                      strokeWidth={14 / zoom}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      opacity={0.22}
+                      className="pointer-events-none animate-pulse"
+                    />
+                  )}
                   <path
                     key={`line-${side}-${oIdx}-${iIdx}`}
                     d={pathD}
                     fill="none"
                     stroke={isOppositeUnselected ? '#94a3b8' : (color || '#e11d48')}
-                    strokeWidth={(isOppositeView ? 4.5 : 6) / zoom}
+                    strokeWidth={(isOppositeView ? 4.5 : (showReferenceGhost ? 7 : 6)) / zoom}
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    opacity={isOppositeView ? 0.6 : (showReferenceGhost ? 0.5 : 0.88)}
-                    strokeDasharray={isOppositeView ? '7 5' : (showReferenceGhost ? '10 6' : 'none')}
+                    opacity={isOppositeView ? 0.6 : (showReferenceGhost ? 0.95 : 0.88)}
+                    strokeDasharray={isOppositeView ? '7 5' : 'none'}
                     className={isInteractive || onHoverPoint ? 'cursor-pointer pointer-events-auto hover:opacity-100 hover:stroke-[8] transition-all' : ''}
                     onPointerEnter={() => onHoverPoint?.({ 
                       point: { x: (orig.x + ins.x) / 2, y: (orig.y + ins.y) / 2 }, 
                       type: 'line', 
-                      muscle,
+                      muscle, 
                       label: muscle.name
                     })}
                     onPointerLeave={() => onHoverPoint?.(null)}
@@ -290,41 +303,88 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
               <title>{`${muscle.name} (Origo: ${origName})`}</title>
               {/* Buitenste pulserende ring wanneer het juiste antwoord getoond wordt */}
               {showReferenceGhost && (
-                <circle
-                  cx={cx}
-                  cy={cy}
-                  r={26 / zoom}
-                  fill="rgba(37, 99, 235, 0.25)"
-                  stroke="#3b82f6"
-                  strokeWidth={2.5 / zoom}
-                  className="animate-pulse"
-                />
+                <>
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r={26 / zoom}
+                    fill="rgba(56, 189, 248, 0.25)"
+                    stroke="#38bdf8"
+                    strokeWidth={2 / zoom}
+                    className="animate-pulse"
+                  />
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r={20 / zoom}
+                    fill="none"
+                    stroke="#0284c7"
+                    strokeWidth={1.5 / zoom}
+                  />
+                </>
               )}
               {/* Buitenste cirkel */}
               <circle
                 cx={cx}
                 cy={cy}
-                r={(isHighlighted || showReferenceGhost ? 18 : 14) / zoom}
-                fill={showReferenceGhost ? '#2563eb' : markerColor}
+                r={(isHighlighted || showReferenceGhost ? 16 : 14) / zoom}
+                fill={showReferenceGhost ? '#0284c7' : markerColor}
                 fillOpacity={isOppositeView ? 0.75 : 1.0}
                 stroke="#ffffff"
-                strokeWidth={(isOppositeView ? 2.5 : (showReferenceGhost ? 4 : 3.5)) / zoom}
+                strokeWidth={(isOppositeView ? 2.5 : (showReferenceGhost ? 3.5 : 3.5)) / zoom}
                 strokeDasharray={isOppositeView ? "4 2" : "none"}
               />
 
-              {/* Binnenste O letter */}
+              {/* Binnenste O letter of doelwit */}
               <text
                 x={cx}
-                y={cy + (1 / zoom)}
+                y={cy + (showReferenceGhost ? 0.5 : 1) / zoom}
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fill="#ffffff"
-                fontSize={Math.round((showReferenceGhost ? 12 : 11) / zoom)}
+                fontSize={Math.round((showReferenceGhost ? 10.5 : 11) / zoom)}
                 fontWeight="black"
                 className="select-none pointer-events-none"
               >
-                O
+                {showReferenceGhost ? '🎯' : 'O'}
               </text>
+
+              {/* Zwevende badge onder het juiste referentiepunt (Origo) */}
+              {showReferenceGhost && (
+                <g className="pointer-events-none select-none">
+                  {(() => {
+                    const badgeText = `🎯 Juist: ${origName.length > 22 ? origName.slice(0, 20) + '...' : origName}`;
+                    const pw = Math.max(70, badgeText.length * 6.2 + 18) / zoom;
+                    const ph = 18 / zoom;
+                    const by = cy + (24 / zoom);
+                    return (
+                      <>
+                        <rect
+                          x={cx - pw / 2}
+                          y={by - ph / 2}
+                          width={pw}
+                          height={ph}
+                          rx={ph / 2}
+                          fill="rgba(15, 23, 42, 0.94)"
+                          stroke="#38bdf8"
+                          strokeWidth={1.5 / zoom}
+                        />
+                        <text
+                          x={cx}
+                          y={by + (0.5 / zoom)}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                          fill="#38bdf8"
+                          fontSize={Math.round(9.5 / zoom)}
+                          fontWeight="bold"
+                        >
+                          {badgeText}
+                        </text>
+                      </>
+                    );
+                  })()}
+                </g>
+              )}
             </g>
           );
         });
@@ -367,41 +427,88 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
               <title>{`${muscle.name} (Insertie: ${insName})`}</title>
               {/* Buitenste pulserende ring wanneer het juiste antwoord getoond wordt */}
               {showReferenceGhost && (
-                <circle
-                  cx={cx}
-                  cy={cy}
-                  r={26 / zoom}
-                  fill="rgba(220, 38, 38, 0.25)"
-                  stroke="#ef4444"
-                  strokeWidth={2.5 / zoom}
-                  className="animate-pulse"
-                />
+                <>
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r={26 / zoom}
+                    fill="rgba(244, 63, 94, 0.25)"
+                    stroke="#f43f5e"
+                    strokeWidth={2 / zoom}
+                    className="animate-pulse"
+                  />
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r={20 / zoom}
+                    fill="none"
+                    stroke="#e11d48"
+                    strokeWidth={1.5 / zoom}
+                  />
+                </>
               )}
               {/* Buitenste cirkel */}
               <circle
                 cx={cx}
                 cy={cy}
-                r={(isHighlighted || showReferenceGhost ? 18 : 14) / zoom}
-                fill={showReferenceGhost ? '#dc2626' : markerColor}
+                r={(isHighlighted || showReferenceGhost ? 16 : 14) / zoom}
+                fill={showReferenceGhost ? '#e11d48' : markerColor}
                 fillOpacity={isOppositeView ? 0.75 : 1.0}
                 stroke="#ffffff"
-                strokeWidth={(isOppositeView ? 2.5 : (showReferenceGhost ? 4 : 3.5)) / zoom}
+                strokeWidth={(isOppositeView ? 2.5 : (showReferenceGhost ? 3.5 : 3.5)) / zoom}
                 strokeDasharray={isOppositeView ? "4 2" : "none"}
               />
 
-              {/* Binnenste I letter */}
+              {/* Binnenste I letter of doelwit */}
               <text
                 x={cx}
-                y={cy + (1 / zoom)}
+                y={cy + (showReferenceGhost ? 0.5 : 1) / zoom}
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fill="#ffffff"
-                fontSize={Math.round((showReferenceGhost ? 12 : 11) / zoom)}
+                fontSize={Math.round((showReferenceGhost ? 10.5 : 11) / zoom)}
                 fontWeight="black"
                 className="select-none pointer-events-none"
               >
-                I
+                {showReferenceGhost ? '🎯' : 'I'}
               </text>
+
+              {/* Zwevende badge onder het juiste referentiepunt (Insertie) */}
+              {showReferenceGhost && (
+                <g className="pointer-events-none select-none">
+                  {(() => {
+                    const badgeText = `🎯 Juist: ${insName.length > 22 ? insName.slice(0, 20) + '...' : insName}`;
+                    const pw = Math.max(70, badgeText.length * 6.2 + 18) / zoom;
+                    const ph = 18 / zoom;
+                    const by = cy + (24 / zoom);
+                    return (
+                      <>
+                        <rect
+                          x={cx - pw / 2}
+                          y={by - ph / 2}
+                          width={pw}
+                          height={ph}
+                          rx={ph / 2}
+                          fill="rgba(15, 23, 42, 0.94)"
+                          stroke="#f43f5e"
+                          strokeWidth={1.5 / zoom}
+                        />
+                        <text
+                          x={cx}
+                          y={by + (0.5 / zoom)}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                          fill="#fda4af"
+                          fontSize={Math.round(9.5 / zoom)}
+                          fontWeight="bold"
+                        >
+                          {badgeText}
+                        </text>
+                      </>
+                    );
+                  })()}
+                </g>
+              )}
             </g>
           );
         });
@@ -413,13 +520,10 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
         const cy = toSvgY(m.userPoint.y);
 
         let color = '#dc2626'; // incorrect
-        let text = '✗';
         if (m.accuracy === 'correct') {
           color = '#16a34a';
-          text = '✓';
         } else if (m.accuracy === 'close') {
           color = '#eab308';
-          text = '~';
         }
 
         return (
@@ -430,29 +534,9 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
               cy={cy}
               r={TOLERANCE_VISUAL_RADIUS(m.accuracy)}
               fill={color}
-              opacity="0.2"
+              opacity="0.16"
+              className="pointer-events-none"
             />
-            {/* Marker punt */}
-            <circle
-              cx={cx}
-              cy={cy}
-              r={16 / zoom}
-              fill={color}
-              stroke="#ffffff"
-              strokeWidth={3 / zoom}
-            />
-            {/* Symbool */}
-            <text
-              x={cx}
-              y={cy + (1 / zoom)}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fill="#ffffff"
-              fontSize={Math.round(14 / zoom)}
-              fontWeight="900"
-            >
-              {text}
-            </text>
           </g>
         );
       })}

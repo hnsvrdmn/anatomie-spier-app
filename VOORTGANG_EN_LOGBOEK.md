@@ -1304,3 +1304,47 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
      - De interface controls (Autom. roteren, Autom. zoomen, Autom. switch) zijn zowel op desktop (`QuizView.tsx`) als mobiel (`MobileQuizView.tsx`) compact samengebracht in 1 overzichtelijke rij van 3 kolommen met duidelijke actieve statussen ('Aan' / 'Uit').
      - `npm run build` geslaagd zonder enige TypeScript fouten (code 0).
      - Wijzigingen gereed om te committen en te pushen naar GitHub zoals door de gebruiker verzocht.
+
+## 34. Duidelijk Visueel Onderscheid tussen 'Jouw Invoer' en 'Juiste Antwoord' [2026-11-01 20:28]
+- **Melding van de gebruiker:**
+  - Het verschil tussen de door de gebruiker getekende spier/aanhechtingspunten en het juiste antwoord is nu te moeilijk te zien; ze lijken te veel op elkaar (beide blauwe 'O', rode 'I' en rode lijnen). Het is onduidelijk welk punt door de gebruiker geplaatst is en welke het juiste antwoord voorstelt. Na afronding direct pushen naar Git.
+
+- **Analyse van het huidige visualisatieprobleem:**
+  1. *Aanhechtingspunten:*
+     - Zowel de gebruikersorigo als de correcte origo worden getoond als een blauwe cirkel met een witte 'O'.
+     - Zowel de gebruikersinsertie als de correcte insertie worden getoond als een rode cirkel met een witte 'I'.
+     - Als de gebruiker een punt net iets naast het doel plaatst, staan er twee vrijwel identieke blauwe cirkels of rode cirkels vlak naast elkaar.
+  2. *Spierverloop:*
+     - Zowel de lijn van de gebruiker als het spierverloop van het model worden in roodtinten gerenderd (`#e11d48`).
+  3. *Gebrek aan duidelijke identificatie / badges:*
+     - Er staan geen tekstlabels bij de punten ("Jouw punt" vs "Juiste aanhechting"), waardoor de student moet gokken welke van de twee markeringen van hemzelf was.
+
+- **Plan van aanpak:**
+  1. **Visuele stijl van gebruikerspunten (bij evaluatie):**
+     - Geef de gebruikerspunten een onderscheidende vorm en styling (bijv. een herkenbare ring met gebruikersindicator en scorebadge ✓ / ✗ / ~).
+     - Toon een duidelijk labeltag bij het punt: `Jouw origo` / `Jouw insertie` met de accuraatheidskleur.
+     - Geef de verbindingslijn van de gebruiker een contrasterende stijl (indigo/paars `#6366f1` gestippeld/dashed met label "Jouw lijn").
+  2. **Visuele stijl van het juiste antwoord (referentie):**
+     - Geef het juiste antwoord een prominent referentie-uiterlijk:
+       - Een doelwit/sterretje (`🎯`) met een goud/groene kwaliteitsrand en een pulserende zachte halo.
+       - Duidelijke labeltags: `🎯 Juiste origo: <anatomische naam>` en `🎯 Juiste insertie: <anatomische naam>`.
+       - Het correcte spierverloop in massief anatomisch rood (`#dc2626` / `#e11d48`) met eventuele anatomische kromming (`musclePath`).
+  3. **Canvas-legenda toevoegen na evaluatie:**
+     - Een compacte, niet-storende floating legenda op het canvas zodat in één oogopslag te zien is:
+       `🟣 Jouw punten` vs `🎯 Juiste anatomie`.
+  4. **Build & Push:**
+     - `npm run build` uitvoeren en pushen naar GitHub.
+
+  4. **Doorgevoerde oplossingen & Afronding [2026-11-01 20:30]:**
+     - **Spierverloop van de gebruiker vs referentie:**
+       - De door de gebruiker geplaatste lijn wordt na controle getoond als een duidelijke indigoblauwe stippellijn (`#6366f1`, dashed), terwijl het juiste spierverloop een massieve, dikke anatomische rode lijn (`#dc2626`) is met een zachte rode halo.
+     - **Aanhechtingspunten van de gebruiker:**
+       - Worden omringd door een gestippelde ring in de accuraatheidskleur (groen ✓, amber ~, rood ✗).
+       - Binnenin het punt staat direct het score-symbool (`✓`, `~`, of `✗`).
+       - Boven elk gebruikerspunt zweeft een donkere badge: `Jouw O: ✓ Juist` of `Jouw I: ✗ Fout`.
+     - **Juiste antwoordpunten (referentie):**
+       - Voorzien van een opvallend doelwit-icoon (`🎯`) en een dubbele concentrische ring (cyaan voor origo, rozerood voor insertie).
+       - Onder elk referentiepunt zweeft een badge met de exacte anatomische naam: `🎯 Juist: <naam>` (bijv. `🎯 Juist: SIAS`).
+     - **Floating Legenda:**
+       - Linksboven in de viewer verschijnt na controle een compacte floating legenda (HUD) die het verschil tussen 'Jouw getekende spier' en 'Juiste anatomische referentie' direct toelicht.
+     - `npm run build` geslaagd zonder fouten (code 0).
