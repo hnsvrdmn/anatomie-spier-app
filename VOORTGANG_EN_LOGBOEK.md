@@ -1392,3 +1392,4 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
     - **`Medium`** (2.5% marge, academische standaard)
     - **`Strikt`** (1.5% marge, hoge botprecisie)
   - Aangepast in `QuizView.tsx`, `MobileQuizView.tsx` en `HelpModal.tsx`.
+- **Git Status:** Wijzigingen succesvol gepusht naar GitHub (`main`).
