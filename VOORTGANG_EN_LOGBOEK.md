@@ -1893,3 +1893,25 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
      - `npm run build` geslaagd zonder waarschuwingen of fouten.
   3. **Git Commit & Push:**
      - Alle wijzigingen (ontkoppelde structuren, spiegeling & kopieer tools, fixed styling & zoom behoud, disclaimer) gecommit en gepusht naar `origin/main`.
+
+
+## 56. Prominente Disclaimers, Alert-Icoontjes & Hoofdbotten Live Symmetrie Gelijkgetrokken [2026-11-01 23:57]
+- **Vraag van de gebruiker:**
+  - *"Zet de disclaimer bovenaan zodat het duidelijk zichtbaar is, ook in de mobiele versie. Zet er ook duidelijk bij dat het nog fouter bevat. Doe hetzelfde voor de landingspagina van de flashcards. en ergens klein op het scherm vd flashcards zelf. Het icoontje mag je wel terug plaatsen. het spiegelen bij de hoofd botten is nu verouders. Zorg dat het werken van de hoofdbotten hetzelfde werkt als voor de structuren."*
+- **Doorgevoerde oplossingen:**
+  1. **Prominente Disclaimers met Waarschuwingsicoon (`AlertTriangle`):**
+     - **Bottenpagina ([BonesView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/bones/BonesView.tsx)):**
+       - *Mobiel*: Pinned banner helemaal bovenaan het scherm: `"⚠️ Let op: Botstructuren zijn in ontwikkeling en bevatten nog fouten."`
+       - *Desktop*: Prominente banner boven de layout: `"⚠️ Let op: De markeringen van de botstructuren zijn nog in ontwikkeling en bevatten nog fouten en onnauwkeurigheden. Controleer altijd met officiële anatomische bronnen."`
+     - **Flashcards Landingspagina ([FlashcardsView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/flashcards/FlashcardsView.tsx)):**
+       - Prominente amberkleurige banner direct bovenaan de set-keuze: `"⚠️ Let op: De flashcards en botstructuren zijn nog in ontwikkeling en bevatten nog fouten en onnauwkeurigheden."`
+     - **Flashcards Oefenscherm ([FlashcardsView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/flashcards/FlashcardsView.tsx)):**
+       - Subtiele, minimalistische disclaimerstrip onder de voortgangsbalk van de actieve kaart: `"⚠️ In ontwikkeling: de inhoud bevat nog fouten en onnauwkeurigheden"`.
+  2. **Hoofdbotten Editor gemoderniseerd conform Botstructuren ([BoneContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/BoneContext.tsx) & [BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx)):**
+     - `updateBonePoints(updates: Array<{ boneId, markerIndex, x, y }>)` geïmplementeerd met functionele state setter `setBones(prev => ...)`. Hierdoor kunnen actieve marker en spiegelpartners atomair in 1 transactie worden bijgewerkt zonder state-overschrijvingen.
+     - `mirrorBoneSides` en `copyBoneView` gemigreerd naar functionele state updates en nauwkeurige subpart-matching.
+     - Filter-dropdown in de toolbar is nu ook actief voor 'Hoofd-botten', waardoor men per bot kan filteren (of 'Alle botten (18 botten)').
+     - `handleDragStart` en `handleUpdatePoint` gebruiken voor hoofdbotten nu exact dezelfde delta-geankerde sessietracking als de structuren (`deltaX`, `deltaY`).
+- **Verificatie via CDP Browser Tests:**
+  - Zowel desktop als mobiel banners, flashcards landing en studie-scherm disclaimers, en hoofdbotten filter & marker rendering succesvol geverifieerd via headless browser.
+  - `npm run build` geslaagd zonder fouten (`✓ built in 3.99s`).

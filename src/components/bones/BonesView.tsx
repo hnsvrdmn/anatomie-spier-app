@@ -262,6 +262,12 @@ export const BonesView: React.FC = () => {
   if (isMobile) {
     return (
       <div className="relative w-full h-[calc(100dvh-3.5rem)] bg-white flex flex-col overflow-hidden select-none">
+        {/* Prominente disclaimer bovenaan (mobiel) */}
+        <div className="w-full bg-amber-50/95 border-b border-amber-200/90 px-3 py-1.5 flex items-center justify-center gap-1.5 text-amber-900 text-[11px] font-medium z-30 shrink-0 text-center shadow-2xs">
+          <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+          <span><strong>Let op:</strong> Botstructuren zijn in ontwikkeling en bevatten nog fouten.</span>
+        </div>
+
         {/* 1. Volledig scherm skelet met pinch-to-zoom en pan (wordt NOOIT verkleind!) */}
         <div className="flex-1 w-full h-full bg-white relative flex items-center justify-center overflow-hidden pb-24">
           {/* Draaiknop linksboven over het skelet */}
@@ -470,9 +476,20 @@ export const BonesView: React.FC = () => {
   // DESKTOP WEERGAVE
   // =========================================================================
   return (
-    <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col lg:flex-row gap-6 items-start">
-      {/* Linker kolom: Skelet met Vaste Weergave */}
-      <div className="w-full lg:flex-1 lg:sticky lg:top-4 flex flex-col items-center justify-between bg-white rounded-3xl p-3 sm:p-4 border border-clinical-200/90 shadow-sm relative h-[92vh] min-h-[760px] max-h-[1020px]">
+    <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex flex-col gap-3">
+      {/* Prominente disclaimer bovenaan (desktop) */}
+      <div className="w-full bg-amber-50/95 border border-amber-200/90 rounded-2xl px-4 py-2.5 flex items-center justify-between gap-3 text-amber-900 text-xs font-medium shadow-2xs shrink-0">
+        <div className="flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+          <span>
+            <strong>Let op:</strong> De markeringen van de botstructuren zijn nog in ontwikkeling en bevatten nog fouten en onnauwkeurigheden. Controleer altijd met officiële anatomische bronnen.
+          </span>
+        </div>
+      </div>
+
+      <div className="flex-1 w-full flex flex-col lg:flex-row gap-6 items-start">
+        {/* Linker kolom: Skelet met Vaste Weergave */}
+        <div className="w-full lg:flex-1 lg:sticky lg:top-4 flex flex-col items-center justify-between bg-white rounded-3xl p-3 sm:p-4 border border-clinical-200/90 shadow-sm relative h-[92vh] min-h-[760px] max-h-[1020px]">
         {/* Bovenbalk met gecentreerde Aanzichtwissel */}
         <div className="w-full h-12 shrink-0 flex items-center justify-between pb-2 border-b border-clinical-100 px-1">
           <div className="flex-1 min-w-0" />
@@ -644,11 +661,12 @@ export const BonesView: React.FC = () => {
             </p>
             <div className="mt-4 flex items-center gap-1.5 text-[11px] text-amber-800 bg-amber-50/90 border border-amber-200/80 px-3 py-1.5 rounded-xl font-medium">
               <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-              <span>Let op: Botstructuren zijn nog in ontwikkeling</span>
+              <span>Let op: Botstructuren zijn nog in ontwikkeling en bevatten nog fouten</span>
             </div>
           </div>
         )}
       </div>
     </div>
+  </div>
   );
 };

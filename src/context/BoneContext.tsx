@@ -20,6 +20,7 @@ interface BoneContextType {
   selectBone: (id: string) => void;
   updateBoneMarkers: (boneId: string, markers: BoneMarker[]) => void;
   updateBonePoint: (boneId: string, markerIndex: number, updatedMarker: Partial<BoneMarker>) => void;
+  updateBonePoints: (updates: Array<{ boneId: string; markerIndex: number; x: number; y: number }>) => void;
   addBonePoint: (boneId: string, marker: BoneMarker) => void;
   deleteBonePoint: (boneId: string, markerIndex: number) => void;
   resetBones: () => void;
@@ -198,17 +199,57 @@ export const BoneProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateBonePoint = useCallback(
     (boneId: string, markerIndex: number, updatedMarker: Partial<BoneMarker>) => {
-      const updated = bones.map((b) => {
-        if (b.id !== boneId) return b;
-        const newMarkers = [...b.markers];
-        if (newMarkers[markerIndex]) {
-          newMarkers[markerIndex] = { ...newMarkers[markerIndex], ...updatedMarker };
+      setBones((prev) => {
+        const updated = prev.map((b) => {
+          if (b.id !== boneId) return b;
+          const newMarkers = [...b.markers];
+          if (newMarkers[markerIndex]) {
+            newMarkers[markerIndex] = { ...newMarkers[markerIndex], ...updatedMarker };
+          }
+          return { ...b, markers: newMarkers };
+        });
+        try {
+          localStorage.setItem(BONES_LOCAL_STORAGE_KEY, JSON.stringify(updated));
+        } catch (e) {
+          console.error('Fout bij opslaan botten:', e);
         }
-        return { ...b, markers: newMarkers };
+        return updated;
       });
-      saveBones(updated);
     },
-    [bones, saveBones]
+    []
+  );
+
+  const updateBonePoints = useCallback(
+    (updates: Array<{ boneId: string; markerIndex: number; x: number; y: number }>) => {
+      setBones((prev) => {
+        // Groepeer updates per bot
+        const boneMap = new Map<string, Map<number, { x: number; y: number }>>();
+        for (const u of updates) {
+          if (!boneMap.has(u.boneId)) {
+            boneMap.set(u.boneId, new Map());
+          }
+          boneMap.get(u.boneId)!.set(u.markerIndex, { x: u.x, y: u.y });
+        }
+
+        const updated = prev.map((b) => {
+          const mUpdates = boneMap.get(b.id);
+          if (!mUpdates) return b;
+          const newMarkers = b.markers.map((m, idx) => {
+            const up = mUpdates.get(idx);
+            return up ? { ...m, x: up.x, y: up.y } : m;
+          });
+          return { ...b, markers: newMarkers };
+        });
+
+        try {
+          localStorage.setItem(BONES_LOCAL_STORAGE_KEY, JSON.stringify(updated));
+        } catch (e) {
+          console.error('Fout bij opslaan botten:', e);
+        }
+        return updated;
+      });
+    },
+    []
   );
 
   const addBonePoint = useCallback(
@@ -275,14 +316,21 @@ export const BoneProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateStructurePoints = useCallback(
     (updates: Array<{ id: string; x: number; y: number }>) => {
-      const updateMap = new Map(updates.map((u) => [u.id, u]));
-      const updated = structures.map((s) => {
-        const u = updateMap.get(s.id);
-        return u ? { ...s, x: u.x, y: u.y } : s;
+      setStructures((prev) => {
+        const updateMap = new Map(updates.map((u) => [u.id, u]));
+        const updated = prev.map((s) => {
+          const u = updateMap.get(s.id);
+          return u ? { ...s, x: u.x, y: u.y } : s;
+        });
+        try {
+          localStorage.setItem(STRUCTURES_LOCAL_STORAGE_KEY, JSON.stringify(updated));
+        } catch (e) {
+          console.error('Fout bij opslaan botstructuren:', e);
+        }
+        return updated;
       });
-      saveStructures(updated);
     },
-    [structures, saveStructures]
+    []
   );
 
   const addStructurePoint = useCallback(
@@ -327,55 +375,69 @@ export const BoneProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const mirrorBoneSides = useCallback(
     (boneId: string, view: 'ventral' | 'dorsal' | 'all', sourceSide: 'left' | 'right') => {
       const targetSide: 'left' | 'right' = sourceSide === 'left' ? 'right' : 'left';
-      const updated = bones.map((bone) => {
-        if (boneId && boneId !== 'all' && bone.id !== boneId) return bone;
-        const newMarkers = bone.markers.map((target) => {
-          if ((view !== 'all' && target.view !== view) || target.side !== targetSide) return target;
-          const match = bone.markers.find(
-            (sp) =>
-              sp.view === target.view &&
-              sp.side === sourceSide &&
-              sp.subpart?.toLowerCase() === target.subpart?.toLowerCase()
-          );
-          if (match) {
-            return { ...target, x: Number((1.0 - match.x).toFixed(4)), y: match.y };
-          }
-          return target;
+      setBones((prev) => {
+        const updated = prev.map((bone) => {
+          if (boneId && boneId !== 'all' && bone.id !== boneId) return bone;
+          const newMarkers = bone.markers.map((target) => {
+            if ((view !== 'all' && target.view !== view) || target.side !== targetSide) return target;
+            const match = bone.markers.find(
+              (sp) =>
+                sp.view === target.view &&
+                sp.side === sourceSide &&
+                (sp.subpart || '').trim().toLowerCase() === (target.subpart || '').trim().toLowerCase()
+            );
+            if (match) {
+              return { ...target, x: Number((1.0 - match.x).toFixed(4)), y: match.y };
+            }
+            return target;
+          });
+          return { ...bone, markers: newMarkers };
         });
-        return { ...bone, markers: newMarkers };
+        try {
+          localStorage.setItem(BONES_LOCAL_STORAGE_KEY, JSON.stringify(updated));
+        } catch (e) {
+          console.error('Fout bij opslaan botten:', e);
+        }
+        return updated;
       });
-      saveBones(updated);
     },
-    [bones, saveBones]
+    []
   );
 
   const copyBoneView = useCallback(
     (sourceView: 'ventral' | 'dorsal', boneId?: string) => {
       const targetView: 'ventral' | 'dorsal' = sourceView === 'ventral' ? 'dorsal' : 'ventral';
-      const updated = bones.map((bone) => {
-        if (boneId && boneId !== 'all' && bone.id !== boneId) return bone;
-        const sourceMarkers = bone.markers.filter((m) => m.view === sourceView);
-        const newMarkers = bone.markers.map((target) => {
-          if (target.view !== targetView) return target;
-          const match = sourceMarkers.find(
-            (sp) =>
-              sp.side === target.side &&
-              sp.subpart?.toLowerCase() === target.subpart?.toLowerCase()
-          );
-          if (match) {
-            const mirroredX =
-              target.side === 'left' || target.side === 'right'
-                ? Number((1.0 - match.x).toFixed(4))
-                : match.x;
-            return { ...target, x: mirroredX, y: match.y };
-          }
-          return target;
+      setBones((prev) => {
+        const updated = prev.map((bone) => {
+          if (boneId && boneId !== 'all' && bone.id !== boneId) return bone;
+          const sourceMarkers = bone.markers.filter((m) => m.view === sourceView);
+          const newMarkers = bone.markers.map((target) => {
+            if (target.view !== targetView) return target;
+            const match = sourceMarkers.find(
+              (sp) =>
+                sp.side === target.side &&
+                (sp.subpart || '').trim().toLowerCase() === (target.subpart || '').trim().toLowerCase()
+            );
+            if (match) {
+              const mirroredX =
+                target.side === 'left' || target.side === 'right'
+                  ? Number((1.0 - match.x).toFixed(4))
+                  : match.x;
+              return { ...target, x: mirroredX, y: match.y };
+            }
+            return target;
+          });
+          return { ...bone, markers: newMarkers };
         });
-        return { ...bone, markers: newMarkers };
+        try {
+          localStorage.setItem(BONES_LOCAL_STORAGE_KEY, JSON.stringify(updated));
+        } catch (e) {
+          console.error('Fout bij opslaan botten:', e);
+        }
+        return updated;
       });
-      saveBones(updated);
     },
-    [bones, saveBones]
+    []
   );
 
   const copyStructureView = useCallback(
@@ -475,6 +537,7 @@ export const BoneProvider: React.FC<{ children: React.ReactNode }> = ({ children
         selectBone,
         updateBoneMarkers,
         updateBonePoint,
+        updateBonePoints,
         addBonePoint,
         deleteBonePoint,
         resetBones,

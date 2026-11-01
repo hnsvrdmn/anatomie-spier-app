@@ -412,7 +412,7 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
 export const BoneEditorView: React.FC = () => {
   const {
     bones,
-    updateBonePoint,
+    updateBonePoints,
     resetBones,
     exportBonesJson,
     importBonesJson,
@@ -488,25 +488,27 @@ export const BoneEditorView: React.FC = () => {
   // Verzamel ventrale punten afhankelijk van editTarget
   const ventralPoints = useMemo<EditablePoint[]>(() => {
     if (editTarget === 'bones') {
-      return bones.flatMap((bone) =>
-        bone.markers
-          .map((marker, markerIndex) => ({
-            id: `bone-${bone.id}-${markerIndex}`,
-            name: bone.latinName,
-            subName: bone.dutchName + (marker.subpart ? ` • ${marker.subpart}` : ''),
-            x: marker.x,
-            y: marker.y,
-            type: 'bone' as const,
-            boneId: bone.id,
-            markerIndex,
-            side: marker.side,
-            view: marker.view === 'both' ? 'ventral' : marker.view,
-          }))
-          .filter((_, idx) => {
-            const m = bone.markers[idx];
-            return m.view === 'ventral' || m.view === 'both';
-          })
-      );
+      return bones
+        .filter((bone) => selectedFilterBone === 'all' || bone.id === selectedFilterBone)
+        .flatMap((bone) =>
+          bone.markers
+            .map((marker, markerIndex) => ({
+              id: `bone-${bone.id}-${markerIndex}`,
+              name: bone.latinName,
+              subName: bone.dutchName + (marker.subpart ? ` • ${marker.subpart}` : ''),
+              x: marker.x,
+              y: marker.y,
+              type: 'bone' as const,
+              boneId: bone.id,
+              markerIndex,
+              side: marker.side,
+              view: marker.view === 'both' ? 'ventral' : marker.view,
+            }))
+            .filter((_, idx) => {
+              const m = bone.markers[idx];
+              return m.view === 'ventral' || m.view === 'both';
+            })
+        );
     } else {
       return structures
         .filter((s) => s.view === 'ventral' || s.view === 'both')
@@ -532,25 +534,27 @@ export const BoneEditorView: React.FC = () => {
   // Verzamel dorsale punten afhankelijk van editTarget
   const dorsalPoints = useMemo<EditablePoint[]>(() => {
     if (editTarget === 'bones') {
-      return bones.flatMap((bone) =>
-        bone.markers
-          .map((marker, markerIndex) => ({
-            id: `bone-${bone.id}-${markerIndex}`,
-            name: bone.latinName,
-            subName: bone.dutchName + (marker.subpart ? ` • ${marker.subpart}` : ''),
-            x: marker.x,
-            y: marker.y,
-            type: 'bone' as const,
-            boneId: bone.id,
-            markerIndex,
-            side: marker.side,
-            view: marker.view === 'both' ? 'dorsal' : marker.view,
-          }))
-          .filter((_, idx) => {
-            const m = bone.markers[idx];
-            return m.view === 'dorsal' || m.view === 'both';
-          })
-      );
+      return bones
+        .filter((bone) => selectedFilterBone === 'all' || bone.id === selectedFilterBone)
+        .flatMap((bone) =>
+          bone.markers
+            .map((marker, markerIndex) => ({
+              id: `bone-${bone.id}-${markerIndex}`,
+              name: bone.latinName,
+              subName: bone.dutchName + (marker.subpart ? ` • ${marker.subpart}` : ''),
+              x: marker.x,
+              y: marker.y,
+              type: 'bone' as const,
+              boneId: bone.id,
+              markerIndex,
+              side: marker.side,
+              view: marker.view === 'both' ? 'dorsal' : marker.view,
+            }))
+            .filter((_, idx) => {
+              const m = bone.markers[idx];
+              return m.view === 'dorsal' || m.view === 'both';
+            })
+        );
     } else {
       return structures
         .filter((s) => s.view === 'dorsal' || s.view === 'both')
@@ -609,8 +613,8 @@ export const BoneEditorView: React.FC = () => {
             if (idx === pt.markerIndex) return false;
             if (m.side !== oppSide) return false;
             if (m.view !== pt.view) return false; // STRICT HETZELFDE AANZICHT!
-            if (m.subpart && ptMarker?.subpart) {
-              return m.subpart.toLowerCase() === ptMarker.subpart.toLowerCase();
+            if (m.subpart || ptMarker?.subpart) {
+              return (m.subpart || '').trim().toLowerCase() === (ptMarker?.subpart || '').trim().toLowerCase();
             }
             return true;
           });
@@ -627,8 +631,8 @@ export const BoneEditorView: React.FC = () => {
             if (idx === pt.markerIndex) return false;
             if (m.view !== oppView) return false;
             if (m.side !== pt.side) return false;
-            if (m.subpart && ptMarker?.subpart) {
-              return m.subpart.toLowerCase() === ptMarker.subpart.toLowerCase();
+            if (m.subpart || ptMarker?.subpart) {
+              return (m.subpart || '').trim().toLowerCase() === (ptMarker?.subpart || '').trim().toLowerCase();
             }
             return true;
           });
@@ -643,8 +647,8 @@ export const BoneEditorView: React.FC = () => {
               if (idx === pt.markerIndex) return false;
               if (m.view !== oppView) return false;
               if (m.side !== oppSide) return false;
-              if (m.subpart && ptMarker?.subpart) {
-                return m.subpart.toLowerCase() === ptMarker.subpart.toLowerCase();
+              if (m.subpart || ptMarker?.subpart) {
+                return (m.subpart || '').trim().toLowerCase() === (ptMarker?.subpart || '').trim().toLowerCase();
               }
               return true;
             });
@@ -740,7 +744,9 @@ export const BoneEditorView: React.FC = () => {
     (pt: EditablePoint, x: number, y: number, deltaX: number = 0, deltaY: number = 0) => {
       if (pt.type === 'bone') {
         if (pt.markerIndex !== undefined) {
-          updateBonePoint(pt.boneId, pt.markerIndex, { x, y });
+          const updates: Array<{ boneId: string; markerIndex: number; x: number; y: number }> = [
+            { boneId: pt.boneId, markerIndex: pt.markerIndex, x, y },
+          ];
 
           const session = activeDragSessionRef.current;
           if (session && session.pt.id === pt.id) {
@@ -748,21 +754,43 @@ export const BoneEditorView: React.FC = () => {
             if (liveSymmetry && session.partner && session.partner.markerIndex !== undefined) {
               const newPartnerX = Math.max(0.02, Math.min(0.98, Number((session.partner.x - deltaX).toFixed(4))));
               const newPartnerY = Math.max(0.01, Math.min(0.99, Number((session.partner.y + deltaY).toFixed(4))));
-              updateBonePoint(session.partner.boneId, session.partner.markerIndex, { x: newPartnerX, y: newPartnerY });
+              updates.push({
+                boneId: session.partner.boneId,
+                markerIndex: session.partner.markerIndex,
+                x: newPartnerX,
+                y: newPartnerY,
+              });
             }
             // 2. Koppel Ventraal <-> Dorsaal
             if (linkVentralDorsal && session.oppPartner && session.oppPartner.markerIndex !== undefined) {
               const newOppX = Math.max(0.02, Math.min(0.98, Number((session.oppPartner.x - deltaX).toFixed(4))));
               const newOppY = Math.max(0.01, Math.min(0.99, Number((session.oppPartner.y + deltaY).toFixed(4))));
-              updateBonePoint(session.oppPartner.boneId, session.oppPartner.markerIndex, { x: newOppX, y: newOppY });
+              updates.push({
+                boneId: session.oppPartner.boneId,
+                markerIndex: session.oppPartner.markerIndex,
+                x: newOppX,
+                y: newOppY,
+              });
             }
             // 3. Beide aan
-            if (liveSymmetry && linkVentralDorsal && session.oppBothPartner && session.oppBothPartner.markerIndex !== undefined) {
+            if (
+              liveSymmetry &&
+              linkVentralDorsal &&
+              session.oppBothPartner &&
+              session.oppBothPartner.markerIndex !== undefined
+            ) {
               const newOppBothX = Math.max(0.02, Math.min(0.98, Number((session.oppBothPartner.x + deltaX).toFixed(4))));
               const newOppBothY = Math.max(0.01, Math.min(0.99, Number((session.oppBothPartner.y + deltaY).toFixed(4))));
-              updateBonePoint(session.oppBothPartner.boneId, session.oppBothPartner.markerIndex, { x: newOppBothX, y: newOppBothY });
+              updates.push({
+                boneId: session.oppBothPartner.boneId,
+                markerIndex: session.oppBothPartner.markerIndex,
+                x: newOppBothX,
+                y: newOppBothY,
+              });
             }
           }
+
+          updateBonePoints(updates);
         }
       } else {
         // STRUCTURES
@@ -795,7 +823,7 @@ export const BoneEditorView: React.FC = () => {
         updateStructurePoints(updates);
       }
     },
-    [updateBonePoint, updateStructurePoints, liveSymmetry, linkVentralDorsal, structures, bones]
+    [updateBonePoints, updateStructurePoints, liveSymmetry, linkVentralDorsal]
   );
 
   return (
@@ -829,26 +857,37 @@ export const BoneEditorView: React.FC = () => {
             </button>
           </div>
 
-          {/* Filter per bot bij structuren */}
-          {editTarget === 'structures' && (
-            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200/90 rounded-xl px-2.5 py-1">
-              <Filter className="w-3.5 h-3.5 text-slate-500" />
-              <select
-                value={selectedFilterBone}
-                onChange={(e) => setSelectedFilterBone(e.target.value)}
-                className="text-xs font-semibold text-slate-800 bg-transparent focus:outline-none cursor-pointer"
-              >
-                <option value="all">Alle botten ({structures.length} structuren)</option>
-                {bones
-                  .filter((b) => b.structures && b.structures.length > 0)
-                  .map((b) => (
+          {/* Filter per bot */}
+          <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200/90 rounded-xl px-2.5 py-1">
+            <Filter className="w-3.5 h-3.5 text-slate-500" />
+            <select
+              value={selectedFilterBone}
+              onChange={(e) => setSelectedFilterBone(e.target.value)}
+              className="text-xs font-semibold text-slate-800 bg-transparent focus:outline-none cursor-pointer"
+            >
+              {editTarget === 'structures' ? (
+                <>
+                  <option value="all">Alle botten ({structures.length} structuren)</option>
+                  {bones
+                    .filter((b) => b.structures && b.structures.length > 0)
+                    .map((b) => (
+                      <option key={b.id} value={b.id}>
+                        {b.latinName} ({structures.filter((s) => s.boneId === b.id).length})
+                      </option>
+                    ))}
+                </>
+              ) : (
+                <>
+                  <option value="all">Alle botten ({bones.length} botten)</option>
+                  {bones.map((b) => (
                     <option key={b.id} value={b.id}>
-                      {b.latinName} ({structures.filter((s) => s.boneId === b.id).length})
+                      {b.latinName} ({b.markers.length} markers)
                     </option>
                   ))}
-              </select>
-            </div>
-          )}
+                </>
+              )}
+            </select>
+          </div>
 
 
         </div>

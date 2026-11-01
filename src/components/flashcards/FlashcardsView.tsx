@@ -18,6 +18,7 @@ import {
   Repeat,
   LayoutGrid,
   Edit3,
+  AlertTriangle,
 } from 'lucide-react';
 
 type CardResult = 'correct' | 'incorrect';
@@ -421,6 +422,14 @@ export const FlashcardsView: React.FC = () => {
             </button>
           </div>
 
+          {/* Prominente disclaimer bovenaan de sets */}
+          <div className="w-full bg-amber-50 border border-amber-200/90 rounded-2xl p-3 flex items-start gap-2.5 text-amber-900 text-xs font-medium shadow-2xs">
+            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <div className="leading-relaxed">
+              <strong className="font-bold">Let op:</strong> De flashcards en botstructuren zijn nog in ontwikkeling en bevatten nog fouten en onnauwkeurigheden.
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 gap-2 pb-4">
             {currentSets.map((set) => {
               const setRes = progressBySet[set.id]?.results || {};
@@ -642,6 +651,12 @@ export const FlashcardsView: React.FC = () => {
               {stats.roundCorrect}
             </span>
           </div>
+        </div>
+
+        {/* Subtiele disclaimer op het flashcard scherm */}
+        <div className="w-full flex items-center justify-center gap-1.5 py-1 px-2.5 bg-amber-50/80 border border-amber-200/70 rounded-xl text-amber-900 text-[10px] sm:text-[11px] font-medium shrink-0">
+          <AlertTriangle className="w-3 h-3 text-amber-600 shrink-0" />
+          <span className="truncate">In ontwikkeling: de inhoud bevat nog fouten en onnauwkeurigheden</span>
         </div>
 
         {/* MIDDEN: De Flipcard (flex-1 min-h-0 zodat deze ALTIJD exact past op elk schermformaat) */}
