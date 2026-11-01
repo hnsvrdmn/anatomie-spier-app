@@ -143,7 +143,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
   setUserOpenAnswer,
   handleOpenAnswerSubmit,
   openAnswerFeedback,
-  toleranceMode = 'normal',
+  toleranceMode = 'strict',
   setToleranceMode,
   correctCount = 0,
   incorrectCount = 0,
@@ -490,7 +490,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                   <div className="flex items-center gap-1 bg-slate-200/80 p-0.5 rounded-lg">
                     {(['normal', 'strict', 'expert'] as const).map((mode) => {
                       const labels = { normal: 'Laag', strict: 'Medium', expert: 'Strikt' };
-                      const isSelected = (toleranceMode || 'normal') === mode;
+                      const isSelected = (toleranceMode || 'strict') === mode;
                       return (
                         <button
                           key={mode}

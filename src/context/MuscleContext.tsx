@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import initialMusclesData from '../data/muscles.json';
 import { 
   Muscle, 
@@ -68,31 +68,74 @@ interface MuscleContextType {
   hideToast: () => void;
 }
 
+const FOCUSED_MUSCLE_KEY = 'pmt_anatomie_focused_muscle_id';
+
 const MuscleContext = createContext<MuscleContextType | undefined>(undefined);
 
 export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  
   const [muscles, setMuscles] = useState<Muscle[]>(() => {
     const saved = loadMusclesFromLocalStorage();
     const source = saved || (initialMusclesData as unknown as Muscle[]);
     return source.filter((m) => !isForbiddenMuscle(m));
   });
 
-  const [selectedMuscleIds, setSelectedMuscleIds] = useState<string[]>(() => {
-    const saved = loadMusclesFromLocalStorage();
-    const source = (saved || (initialMusclesData as unknown as Muscle[])).filter((m) => !isForbiddenMuscle(m));
-    return source.map((m) => m.id);
-  });
-
-  const [focusedMuscleId, setFocusedMuscleId] = useState<string>(() => {
+  const [focusedMuscleId, setFocusedMuscleIdState] = useState<string>(() => {
+    try {
+      const savedFocus = localStorage.getItem(FOCUSED_MUSCLE_KEY);
+      if (savedFocus) {
+        const saved = loadMusclesFromLocalStorage();
+        const source = (saved || (initialMusclesData as unknown as Muscle[])).filter((m) => !isForbiddenMuscle(m));
+        if (source.some((m) => m.id === savedFocus)) {
+          return savedFocus;
+        }
+      }
+    } catch {}
     const saved = loadMusclesFromLocalStorage();
     const source = (saved || (initialMusclesData as unknown as Muscle[])).filter((m) => !isForbiddenMuscle(m));
     const ventral = source.find((m) => m.view === 'ventral');
     return ventral?.id || source[0]?.id || '';
   });
 
-  const selectedMuscleId = (selectedMuscleIds.includes(focusedMuscleId) ? focusedMuscleId : selectedMuscleIds[selectedMuscleIds.length - 1]) || '';
+  const setFocusedMuscleId = useCallback((id: string) => {
+    setFocusedMuscleIdState(id);
+    try {
+      if (id) {
+        localStorage.setItem(FOCUSED_MUSCLE_KEY, id);
+      }
+    } catch {}
+  }, []);
 
-  const [currentView, setCurrentView] = useState<AnatomicalView>('ventral');
+  const [selectedMuscleIds, setSelectedMuscleIds] = useState<string[]>(() => {
+    try {
+      const savedFocus = localStorage.getItem(FOCUSED_MUSCLE_KEY);
+      if (savedFocus) {
+        const saved = loadMusclesFromLocalStorage();
+        const source = (saved || (initialMusclesData as unknown as Muscle[])).filter((m) => !isForbiddenMuscle(m));
+        if (source.some((m) => m.id === savedFocus)) {
+          return [savedFocus];
+        }
+      }
+    } catch {}
+    const saved = loadMusclesFromLocalStorage();
+    const source = (saved || (initialMusclesData as unknown as Muscle[])).filter((m) => !isForbiddenMuscle(m));
+    return source.map((m) => m.id);
+  });
+
+  const selectedMuscleId = (selectedMuscleIds.includes(focusedMuscleId) ? focusedMuscleId : selectedMuscleIds[selectedMuscleIds.length - 1]) || focusedMuscleId || '';
+
+  const [currentView, setCurrentView] = useState<AnatomicalView>(() => {
+    try {
+      const savedFocus = localStorage.getItem(FOCUSED_MUSCLE_KEY);
+      if (savedFocus) {
+        const saved = loadMusclesFromLocalStorage();
+        const source = (saved || (initialMusclesData as unknown as Muscle[])).filter((m) => !isForbiddenMuscle(m));
+        const found = source.find((m) => m.id === savedFocus);
+        if (found) return found.view;
+      }
+    } catch {}
+    return 'ventral';
+  });
   const [symmetrySide, setSymmetrySide] = useState<SymmetrySide>('both');
   const [appMode, setAppModeState] = useState<AppMode>(() => {
     try {
@@ -240,12 +283,13 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const clearSelectedMuscles = useCallback(() => {
     if (selectedMuscleId) {
       setSelectedMuscleIds([selectedMuscleId]);
+      setFocusedMuscleId(selectedMuscleId);
     } else if (muscles.length > 0) {
       const ventral = muscles.find(m => m.view === 'ventral') || muscles[0];
       setSelectedMuscleIds([ventral.id]);
       setFocusedMuscleId(ventral.id);
     }
-  }, [muscles, selectedMuscleId]);
+  }, [muscles, selectedMuscleId, setFocusedMuscleId]);
 
   // Navigatie: volgende spier
   const nextMuscle = useCallback(() => {
@@ -254,10 +298,11 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const nextIdx = (idx + 1) % muscles.length;
     const nextM = muscles[nextIdx];
     setSelectedMuscleIds([nextM.id]);
+    setFocusedMuscleId(nextM.id);
     if (appMode !== 'quiz') {
       setCurrentView(nextM.view);
     }
-  }, [muscles, selectedMuscleId, appMode]);
+  }, [muscles, selectedMuscleId, appMode, setFocusedMuscleId]);
 
   // Navigatie: vorige spier
   const prevMuscle = useCallback(() => {
@@ -266,10 +311,11 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const prevIdx = (idx - 1 + muscles.length) % muscles.length;
     const prevM = muscles[prevIdx];
     setSelectedMuscleIds([prevM.id]);
+    setFocusedMuscleId(prevM.id);
     if (appMode !== 'quiz') {
       setCurrentView(prevM.view);
     }
-  }, [muscles, selectedMuscleId, appMode]);
+  }, [muscles, selectedMuscleId, appMode, setFocusedMuscleId]);
 
   // Helper om te controleren of twee landmarknamen letterlijk hetzelfde anatomische punt betreffen
   const isSameLandmark = (nameA?: string, nameB?: string): boolean => {
@@ -284,6 +330,17 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return a === b;
   };
 
+  // Debounce ref voor saveMusclesToDisk zodat frequente updates (zoals slepen) niet continu schijftoegang forceren
+  const saveDiskTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const debouncedSaveToDisk = useCallback((updatedMuscles: Muscle[]) => {
+    if (saveDiskTimerRef.current) {
+      clearTimeout(saveDiskTimerRef.current);
+    }
+    saveDiskTimerRef.current = setTimeout(() => {
+      saveMusclesToDisk(updatedMuscles);
+    }, 400);
+  }, []);
+
   // Werk visualisaties (origo's, inserties, pad) bij voor een spier
   // Indien een punt wordt aangepast, worden ALLEEN punten met LETTERLIJK DEZELFDE NAAM gesynchroniseerd!
   const updateMuscleVisuals = useCallback((
@@ -291,6 +348,7 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     side: 'left' | 'right' | 'midline', 
     newVisuals: MuscleVisualData
   ) => {
+    setFocusedMuscleId(muscleId);
     setMuscles(prev => {
       const currentMuscle = prev.find(m => m.id === muscleId);
       if (!currentMuscle) return prev;
@@ -358,28 +416,23 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           };
         }
 
-        // Alleen synchroniseren als het een ANDERE spier is op HETZELFDE aanzicht (ventraal vs dorsaal)
-        // én als de aanhechtingspunten LETTERLIJK dezelfde naam hebben!
-        if (m.id !== muscleId && m.view === currentMuscle.view) {
-          const targetVisuals = m.visuals[side];
-          if (!targetVisuals) return m;
-
+        // Synchroniseer alleen met andere spieren indien letterlijk dezelfde anatomische naam
+        if (m.visuals[side]) {
+          const targetVisuals = m.visuals[side]!;
           let changed = false;
 
-          // 1. Coördinaten synchroniseren als naam letterlijk overeenkomt
           let updatedOrigins = targetVisuals.origins;
           let updatedInsertions = targetVisuals.insertions;
 
-          if (movedOldPoint && movedNewPoint && movedOldPoint.name) {
-            updatedOrigins = targetVisuals.origins.map(pt => {
+          if (movedOldPoint?.name && movedNewPoint) {
+            updatedOrigins = updatedOrigins.map(pt => {
               if (isSameLandmark(pt.name, movedOldPoint!.name)) {
                 changed = true;
                 return { ...pt, x: movedNewPoint!.x, y: movedNewPoint!.y };
               }
               return pt;
             });
-
-            updatedInsertions = targetVisuals.insertions.map(pt => {
+            updatedInsertions = updatedInsertions.map(pt => {
               if (isSameLandmark(pt.name, movedOldPoint!.name)) {
                 changed = true;
                 return { ...pt, x: movedNewPoint!.x, y: movedNewPoint!.y };
@@ -388,7 +441,6 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             });
           }
 
-          // 2. Naam synchroniseren als naam hernoemd is en letterlijk hetzelfde was
           if (renamedOldName && renamedNewName) {
             updatedOrigins = updatedOrigins.map(pt => {
               if (isSameLandmark(pt.name, renamedOldName)) {
@@ -437,23 +489,25 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       });
 
       saveMusclesToLocalStorage(updated);
-      saveMusclesToDisk(updated);
+      debouncedSaveToDisk(updated);
       return updated;
     });
-  }, []);
+  }, [setFocusedMuscleId, debouncedSaveToDisk]);
 
   // Update overige spiergegevens (zoals aanzicht, functies, extra info)
   const updateMuscleDetails = useCallback((muscleId: string, updates: Partial<Muscle>) => {
+    setFocusedMuscleId(muscleId);
     setMuscles(prev => {
       const updated = prev.map(m => m.id === muscleId ? { ...m, ...updates } : m);
       saveMusclesToLocalStorage(updated);
-      saveMusclesToDisk(updated);
+      debouncedSaveToDisk(updated);
       return updated;
     });
-  }, []);
+  }, [setFocusedMuscleId, debouncedSaveToDisk]);
 
   // Spiegel een zijde naar de overkant (x_nieuw = 1.0 - x_oud)
   const mirrorMuscleSide = useCallback((muscleId: string, fromSide: 'left' | 'right') => {
+    setFocusedMuscleId(muscleId);
     const toSide = fromSide === 'left' ? 'right' : 'left';
     setMuscles(prev => {
       const updated = prev.map(m => {
@@ -480,12 +534,11 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         };
       });
       saveMusclesToLocalStorage(updated);
-      saveMusclesToDisk(updated);
+      debouncedSaveToDisk(updated);
       return updated;
     });
     showToast(`Punten succesvol gespiegeld van ${fromSide === 'left' ? 'links' : 'rechts'} naar ${toSide === 'left' ? 'links' : 'rechts'}!`, 'success');
-  }, [showToast]);
-
+  }, [showToast, setFocusedMuscleId, debouncedSaveToDisk]);
   // Alle unieke bekende aanhechtingspunten over alle spieren
   const allKnownLandmarks = useMemo(() => {
     const map = new Map<string, { name: string; point: Point2D; side: 'left' | 'right' | 'midline' }>();

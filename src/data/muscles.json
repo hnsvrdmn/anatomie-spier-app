@@ -246,8 +246,8 @@
         ],
         "musclePath": [
           {
-            "x": 0.806,
-            "y": 0.2099,
+            "x": 0.8033,
+            "y": 0.2098,
             "name": "Curve-punt 1"
           }
         ],
@@ -341,71 +341,9 @@
         ],
         "musclePath": [
           {
-            "x": 0.194,
-            "y": 0.2099,
+            "x": 0.1967,
+            "y": 0.2098,
             "name": "Curve-punt 1"
-          }
-        ],
-        "attachmentLines": [
-          {
-            "id": "line-delt-clav-right",
-            "name": "Pars clavicularis: laterale 1/3 deel clavicula",
-            "type": "origin",
-            "points": [
-              {
-                "x": 0.37,
-                "y": 0.197
-              },
-              {
-                "x": 0.3349,
-                "y": 0.1957
-              },
-              {
-                "x": 0.3,
-                "y": 0.199
-              }
-            ],
-            "tolerance": 0.02
-          },
-          {
-            "id": "line-delt-spina-right",
-            "name": "Pars spinalis: spina scapula",
-            "type": "origin",
-            "points": [
-              {
-                "x": 0.355,
-                "y": 0.215
-              },
-              {
-                "x": 0.3144,
-                "y": 0.2125
-              },
-              {
-                "x": 0.288,
-                "y": 0.209
-              }
-            ],
-            "tolerance": 0.02
-          },
-          {
-            "id": "line-delt-ins-right",
-            "name": "lateraal op humerus (op 1/3 deel van corpus)",
-            "type": "insertion",
-            "points": [
-              {
-                "x": 0.2404,
-                "y": 0.242
-              },
-              {
-                "x": 0.2404,
-                "y": 0.2642
-              },
-              {
-                "x": 0.2464,
-                "y": 0.29
-              }
-            ],
-            "tolerance": 0.022
           }
         ]
       }
@@ -2950,7 +2888,7 @@
         "origins": [
           {
             "x": 0.5618,
-            "y": 0.5101,
+            "y": 0.4985,
             "name": "tuber ischiadicum (caput longum)"
           },
           {
@@ -2998,7 +2936,7 @@
         "origins": [
           {
             "x": 0.4382,
-            "y": 0.5101,
+            "y": 0.4985,
             "name": "tuber ischiadicum (caput longum)"
           },
           {
@@ -3062,8 +3000,8 @@
       "right": {
         "origins": [
           {
-            "x": 0.5664,
-            "y": 0.5134,
+            "x": 0.5876,
+            "y": 0.5,
             "name": "tuber ischiadicum"
           }
         ],
@@ -3080,14 +3018,13 @@
             "y": 0.6987,
             "name": "bocht condylus medialis"
           }
-        ],
-        "attachmentLines": []
+        ]
       },
       "left": {
         "origins": [
           {
-            "x": 0.4336,
-            "y": 0.5134,
+            "x": 0.4124,
+            "y": 0.5,
             "name": "tuber ischiadicum"
           }
         ],
@@ -3127,8 +3064,8 @@
       "right": {
         "origins": [
           {
-            "x": 0.5664,
-            "y": 0.5134,
+            "x": 0.5876,
+            "y": 0.5,
             "name": "tuber ischiadicum"
           }
         ],
@@ -3145,14 +3082,13 @@
             "y": 0.67,
             "name": "verloop naar pes anserinus"
           }
-        ],
-        "attachmentLines": []
+        ]
       },
       "left": {
         "origins": [
           {
-            "x": 0.4336,
-            "y": 0.5134,
+            "x": 0.4124,
+            "y": 0.5,
             "name": "tuber ischiadicum"
           }
         ],

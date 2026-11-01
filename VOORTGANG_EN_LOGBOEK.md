@@ -1155,3 +1155,114 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
     - `overzicht_spieren_dorsaal.png` & `overzicht_spieren_ventraal.png`: antwoordlijsten rechtsboven verwijderd en op de ventrale plaat alle ontbrekende vraagnummers (`2.`, `8.`, `9.`, `10.`, `15.`, `16.`) netjes in de vakjes geplaatst.
     - `bewegingen_cingulum.png`, `bewegingen_coxae.png`, `bewegingen_pedis.png`, `bewegingen_romp.png`: afgesneden gewrichtstitels aan de bovenrand weggesneden.
   - Productiebuild (`npm run build`) geslaagd met 0 fouten. Niet gepusht naar GitHub conform afspraak.
+
+
+## 30. Flashcards Editor (PC), Quiz Validatie & Anatomische Correcties [2026-11-01]
+- **Gebruikerswensen:**
+  1. **Flashcards Editor (alleen PC/desktop):** Een edit-functie waarin alle flashcards stuk voor stuk gewijzigd kunnen worden, en kaarten toegevoegd of verwijderd kunnen worden.
+  2. **Origo naar Insertie switch pas na alle punten:** Bij meer dan twee aanhechtingspunten (bijv. 3 bij *m. iliopsoas*) niet na 2 punten automatisch switchen naar insertie, maar pas als alle origo-punten geplaatst zijn.
+  3. **Fouten tellen in Quiz:** Zorgen dat elke foute poging altijd betrouwbaar als fout geteld wordt in de rode teller (bij zowel skeletvragen als open/invulvragen).
+  4. **Tuber ischiadicum positie:** Tuber ischiadicum stond iets te laag op het dorsale skelet; verplaatsen naar de juiste anatomische positie op het zitbeen.
+  5. **Standaard tolerantie op Medium:** De standaard nauwkeurigheid in de toets instellen op *Medium* (`strict`, 2.5% marge) in plaats van *Laag*.
+  6. **Teveel punten afkeuren:** Antwoorden met overtollige punten (bijv. 2 origo's en 2 inserties bij *m. biceps femoris* i.p.v. 2 origo's en 1 insertie) moeten als fout worden gerekend en mogen niet worden goedgekeurd.
+  7. **Dubbele punten op dezelfde lijn afkeuren:** Twee punten op dezelfde aanhechtingslijn (bijv. 2 origo's op lumbale wervels i.p.v. 1 op lumbaal en 1 op crista iliaca bij *m. latissimus dorsi*) mogen niet worden goedgekeurd; elk uniek doel vereist zijn eigen punt en duplicaten mogen ontbrekende doelen niet maskeren.
+  8. **Niet pushen naar GitHub:** Niet pushen naar GitHub tenzij de gebruiker hier expliciet om vraagt.
+
+- **Analyse & Oorzaken:**
+  - *Vroegtijdige switch & cap op 2:* In [`QuizView.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx) stond `origins = rawOrigins > 2 ? 2 : Math.max(1, rawOrigins);` en in [`coordinates.ts`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/utils/coordinates.ts) stond `requiredCount = distinctTargets.length > 2 ? 2 : distinctTargets.length;`. Hierdoor werden spieren met 3 of meer origo's (*m. iliopsoas*, *m. latissimus dorsi*, *m. deltoideus*, *m. trapezius*, etc.) afgekapt op 2.
+  - *Fouten niet geteld:* In `QuizView.tsx` stonden regels zoals `incorrectAnswers: current.incorrectAnswers + (!isSuccess && closeCount === 0 ? 1 : 0)`. Zodra een antwoord fout was maar er toevallig 1 punt 'close' was, werd de foutteller niet opgehoogd.
+  - *Overtollige punten goedgekeurd:* In `coordinates.ts` bevatte `evaluatePointSet` een secundaire lus die extra punten testte tegen reeds gematchte doelen en `isPassed` controleerde alleen `satisfiedTargets >= requiredCount` zonder te controleren of `userPoints.length === requiredCount`.
+  - *Tuber ischiadicum positie:* In `muscles.json` stonden de hamstrings (*biceps femoris*, *semitendinosus*, *semimembranosus*) op `y: 0.5101` en `y: 0.5134`, wat onder de rand van het zitbeen viel.
+
+- **Doorgevoerde aanpassingen:**
+  1. **Strict 1-op-1 Bipartiete Evaluatie & Overtollige Punten Afkeuren ([`coordinates.ts`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/utils/coordinates.ts)):**
+     - `requiredCount = distinctTargets.length` (cap op 2 verwijderd).
+     - Strict 1-op-1 matching: elk uniek anatomisch doel (punt of zone) kan door maximaal één gebruikerspunt worden verzadigd.
+     - Eventuele extra punten krijgen onvoorwaardelijk `accuracy: 'incorrect'`.
+     - `isPassed = satisfiedTargets === requiredCount && userPoints.length === requiredCount`. Overtollige punten of duplicaten op dezelfde lijn leiden nu altijd tot afkeuring (`isPassed = false`).
+  2. **Dynamische Origo/Insertie Telling & Automatische Switch ([`QuizView.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx)):**
+     - `origins = Math.max(1, rawOrigins)` en `insertions = Math.max(1, rawInsertions)`.
+     - Bij spieren met 3 origo's (zoals *m. iliopsoas*) schakelt het tekenhulpmiddel nu pas na de 3e klik over naar insertie.
+  3. **Betrouwbare Foutentelling ([`QuizView.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx)):**
+     - Zowel bij tekentoetsen als botten-/invultests ingesteld op `incorrectAnswers: current.incorrectAnswers + (isSuccess ? 0 : 1)`. Elke niet-geslaagde poging verhoogt nu altijd direct de rode foutteller.
+  4. **Standaard Tolerantie op Medium ([`QuizView.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx) & [`MobileQuizView.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/MobileQuizView.tsx)):**
+     - Standaard ingesteld op `'strict'` (*Medium*, 2.5% marge) en persistent bewaard in `localStorage` (`pmt_tolerance_mode`).
+  5. **Tuber Ischiadicum Positie Gecorrigeerd ([`muscles.json`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/muscles.json) & [`bonesData.ts`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/bonesData.ts)):**
+     - Coördinaten van `tuber ischiadicum` bij *m. biceps femoris*, *m. semitendinosus* en *m. semimembranosus* verhoogd van `y: 0.5101` / `0.5134` naar `y: 0.4985`, precies in de bolling van het tuber ischiadicum. Rechter marker in `bonesData.ts` eveneens uitgelijnd op `y: 0.498`.
+  6. **Flashcards Editor (PC/Desktop) ([`FlashcardEditorView.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/FlashcardEditorView.tsx), [`FlashcardContext.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/FlashcardContext.tsx), [`EditorView.tsx`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/EditorView.tsx), [`vite.config.ts`](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/vite.config.ts)):**
+     - Nieuwe tab *Flashcards bewerken* toegevoegd aan de editor op PC (naast *Spieren bewerken* en *Botten bewerken*).
+     - Directe bewerkknop (*Kaarten bewerken*) op de flashcards-landingspagina en in de studieweergave op desktop.
+     - Keuze uit alle 11 sets met zoekfilter op trefwoord.
+     - Linkerlijst met kaartnummers, categoriebadges, vraagfragmenten, afbeeldingsstatus en snelle verwijder-/toevoegknoppen.
+     - Rechterformulier met categorie-invoer (inclusief herbruikbare suggestiechips), vraagveld, antwoordveld met bulletpoint-ondersteuning, afbeeldingsselector met live thumbnail en live interactieve kaartpreview.
+     - Mogelijkheid om kaarten toe te voegen, te dupliceren en te verwijderen.
+     - Opslag via `localStorage`, export/import van JSON, reset naar standaard en `POST /api/save-flashcards` naar `src/data/flashcardsCustom.json`.
+  7. **Build & Validatie:**
+     - `npm run build` geslaagd met 0 fouten. Geen commits gepusht naar GitHub.
+
+
+## 31. Broncontrole Flashcards tegen Reader & Antwoorden-PDFs, Opsplitsing en Herindeling [2026-11-01]
+- **Gebruikerswensen:**
+  1. **Broncontrole:** Alle flashcards nalopen en controleren tegen het Moduulboek (2025-2026) en vooral de antwoorden-PDFs uit E:\\windesheim\\anatomie blok 1.
+  2. **Notitie document:** Als iets inhoudelijk niet lijkt te kloppen of bronnen elkaar tegenspreken, noteer dit dan in een los document dat de gebruiker kan checken; pas het niet meteen eigenhandig aan.
+  3. **Samengestelde vragen opsplitsen:** Kaarten waar meerdere dingen tegelijk worden gevraagd (zoals 'Wat is de Nederlandse naam van art. coxae en art. genus?') alvast opbreken in losse, snelle, enkelvoudige vragen.
+  4. **Verkeerd gecategoriseerde kaarten verplaatsen:** Vragen die onder het verkeerde hoofdstuk stonden (zoals gewrichtsvragen onder '3. Synoviaal gewrichten en bewegingsanalyse') verplaatsen naar hun eigen hoofdstuk (bijv. art. pedis, coxae, genus, etc.).
+  5. **Niet pushen:** Nooit zomaar pushen naar GitHub zonder expliciete vraag van de gebruiker.
+
+- **Uitgevoerde analyses en controles:**
+  - Tekst van alle 17 officiële PDFs uit E:\\windesheim\\anatomie blok 1 geëxtraheerd en geanalyseerd tegen alle oorspronkelijke flashcards.
+  - Inhoudelijke tegenstrijdigheden geïdentificeerd en vastgelegd in FLASHCARDS_CONTROLE_EN_NOTITIES.md:
+    - M. rectus abdominis: Moduulboek p. 65 stelt origo = os pubis en insertie = costae 5-7 + proc. xiphoideus, terwijl ANTWOORDEN romp.pdf p. 3 het exact omgekeerde stelt (origo = costae 5-7 + proc. xiphoideus, insertie = os pubis).
+    - Art. subtalaris vs. Art. talocalcaneonavicularis: In ANTWOORDEN synoviaal gewrichten.pdf zijn voorste en achterste per abuis omgewisseld ten opzichte van Art. pedis ANTWOORDEN.pdf en de anatomische werkelijkheid.
+    - M. iliopsoas: Romp-lesbrief vermeldt ook flexie van de wervelkolom, heuplesbrief vermeldt uitsluitend heupbewegingen.
+    - M. tensor fasciae latae: Lesbrief vermeldt alleen abductie in art. coxae.
+    - Engelse Muscle Premium (MP) termen: Komen voor in de bewegingslesbrief (avb-33 t/m avb-38).
+
+- **Doorgevoerde aanpassingen in de code:**
+  1. **Herindeling gewrichtsvragen (flashcardsPart1.ts, flashcardsPart2.ts, flashcardsPart3.ts):**
+     - syn-7 verwijderd uit Set 3 en opgesplitst: Art. coxae naar Set 4 en Art. genus naar Set 5.
+     - syn-8 (art. talocruralis) en syn-9 (onderste spronggewricht) verwijderd uit Set 3 en verplaatst naar Set 6 (Art. pedis).
+     - syn-10 verwijderd uit Set 3 en opgesplitst: Art. cubiti naar Set 7, Art. humeri naar Set 8, en Cingulum pectorale naar Set 9.
+  2. **Opsplitsing samengestelde kaarten:**
+     - Set 1: rich-8, rich-10, rich-12, rich-16, rich-22, rich-27, rich-28 en rich-32 t/m rich-45 opgesplitst in gerichte enkelvoudige vragen of overzichtelijke termenparen.
+     - Set 2: avb-5, avb-6, avb-7 (vlakken loodrecht op as + bewegingen daarin) en avb-43 (BSG vs OSG) opgesplitst in aparte kaarten.
+     - Set 3: syn-1 t/m syn-6 (Latijnse gewrichtsnaam vs aantal assen/bewegingen), syn-11 (kom vs kop) en syn-12/syn-13 (naam structuur vs functie) opgesplitst.
+     - Set 4, 8 & 10: Multi-spier kaarten (cox-35, cox-39, hum-42) en wervel/rib kaarten (romp-4, romp-5, romp-6, romp-9, romp-10, romp-11) opgedeeld in losse identificatie- en aantalvragen.
+     - Set 11: Grote overzichtsplaten (oef-25 t/m oef-38) met 4 tot 6 nummers per kaart teruggebracht naar overzichtelijke vragen van maximaal 2 logisch gekoppelde structuren.
+  3. **Storage cache bust (FlashcardContext.tsx):**
+     - Storage key verhoogd naar pmt_anatomie_flashcards_custom_v2 zodat browsers direct de nieuwe kaarten en herindeling laden.
+  4. **Build & Verificatie:**
+     - npm run build geslaagd met 0 fouten. Totaal 529 heldere, beknopte flashcards verdeeld over 11 sets (tussen de 42 en 60 kaarten per set). Geen push naar GitHub uitgevoerd.
+
+- **Verwerkte Gebruikersbeslissingen [2026-11-01 18:15]:**
+  1. *M. rectus abdominis:* Anatomisch correct ingesteld (origo: os pubis, insertie: 5e-7e ribkraakbeen en processus xiphoideus).
+  2. *Art. subtalaris vs. art. talocalcaneonavicularis:* Anatomisch correct verwerkt (art. subtalaris = achterste deel van het OSG; art. talocalcaneonavicularis = voorste deel van het OSG).
+  3. *M. tensor fasciae latae & m. gluteus medius:* Volledig verwijderd uit alle flashcardsets (theorie- en afbeeldingskaarten); SIAI-vraag richt zich nu 100% op m. rectus femoris.
+  4. *Muscle Premium (MP):* Alle 6 kaarten met Engelse MP-termen definitief verwijderd uit Set 2.
+  5. Totaal aantal kaarten na opschoning: 484 kaarten (elke set telt nu tussen de 37 en 60 kaarten).
+  6. Cache key verhoogd naar v3 in FlashcardContext.tsx.
+
+## 32. Oplossen Verspringen naar M. Deltoideus & Paginaverversing in Spiereditor [2026-11-01]
+- **Probleemomschrijving door gebruiker:**
+  - Bij het aanpassen of plaatsen van een aanhechtingspunt in de tab *Spieren bewerken* werd de wijziging wel opgeslagen, maar versprong de weergave direct naar een andere spier (*m. deltoideus*) en ververste de pagina.
+  - Gewenst gedrag: op de spier blijven die bewerkt wordt, geen paginaverversing en na afronding pushen naar GitHub.
+
+- **Technische oorzaak:**
+  1. Bij elke bewerking in de editor riep `updateMuscleVisuals` / `updateMuscleDetails` direct `saveMusclesToDisk` aan.
+  2. `saveMusclesToDisk` stuurde een POST naar `/api/save-muscles`, wat `src/data/muscles.json` op schijf overschreef.
+  3. Vite's file watcher (chokidar) had geen negeerregel voor `muscles.json`. Zodra `muscles.json` op schijf werd gewijzigd, detecteerde Vite dit als broncode-update. Omdat React Fast Refresh de context niet inline kon vervangen, stuurde Vite een `full-reload` naar de browser.
+  4. De browser voerde een harde paginaverversing uit, waardoor alle componenten opnieuw gemount werden.
+  5. In `MuscleContext.tsx` werd `focusedMuscleId` bij initialisatie standaard ingesteld op de eerste ventrale spier uit de dataset: `m. deltoideus`. Daardoor leek het alsof de editor direct naar deltoideus versprong.
+
+- **Doorgevoerde oplossingen:**
+  1. **Vite File Watcher genegeerd voor runtime databestanden (`vite.config.ts`):**
+     - `server.watch.ignored` toegevoegd voor `**/src/data/muscles.json`, `**/src/data/bonesData.ts`, `**/src/data/flashcardsCustom.json`.
+     - Hierdoor triggert het opslaan naar schijf via de interne API nooit meer een automatische paginaverversing of reload.
+  2. **Persistente focus op de actieve spier (`MuscleContext.tsx`):**
+     - `FOCUSED_MUSCLE_KEY` ('pmt_anatomie_focused_muscle_id') toegevoegd aan `localStorage`.
+     - Zowel `focusedMuscleId` als `selectedMuscleIds` en `currentView` initialiseren nu direct vanuit de opgeslagen focusspier. Zelfs als een gebruiker handmatig de pagina ververst (F5), blijft exact dezelfde spier en aanzicht actief.
+     - `setFocusedMuscleId` gekoppeld aan `selectMuscle`, `nextMuscle`, `prevMuscle`, `updateMuscleVisuals`, `updateMuscleDetails`, `mirrorMuscleSide`, `addMuscle` en `deleteMuscle`.
+  3. **Debounced achtergrondopslag naar schijf (`MuscleContext.tsx`):**
+     - `debouncedSaveToDisk` (400ms) geïmplementeerd zodat frequente sleep- en tekenbewerkingen vloeiend in het geheugen en localStorage worden bijgewerkt zonder onnodig de schijf te overbelasten.
+  4. **Build & Validatie:**
+     - `npm run build` geslaagd met 0 fouten.

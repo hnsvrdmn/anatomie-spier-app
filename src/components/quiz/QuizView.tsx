@@ -113,7 +113,22 @@ export const QuizView: React.FC = () => {
   const [shuffleCounter, setShuffleCounter] = useState(0);
 
   // Nauwkeurigheid tolerantie instelling (oorspronkelijke waarden)
-  const [toleranceMode, setToleranceMode] = useState<'normal' | 'strict' | 'expert'>('normal');
+  // Tolerantie & nauwkeurigheidsmodus (standaard Medium: 0.025 / 2.5%, onthoudt keuze in localStorage)
+  const [toleranceMode, setToleranceModeState] = useState<'normal' | 'strict' | 'expert'>(() => {
+    try {
+      const saved = localStorage.getItem('pmt_tolerance_mode');
+      if (saved === 'normal' || saved === 'strict' || saved === 'expert') return saved;
+    } catch {}
+    return 'strict';
+  });
+
+  const setToleranceMode = useCallback((mode: 'normal' | 'strict' | 'expert') => {
+    setToleranceModeState(mode);
+    try {
+      localStorage.setItem('pmt_tolerance_mode', mode);
+    } catch {}
+  }, []);
+
   const toleranceValue = toleranceMode === 'expert' ? 0.015 : toleranceMode === 'strict' ? 0.025 : 0.035;
 
   // Automatisch roteren van het aanzicht bij een nieuwe vraag
@@ -269,8 +284,8 @@ export const QuizView: React.FC = () => {
     const vis = currentQuestion.muscle.visuals[side] || { origins: [], insertions: [] };
     const rawOrigins = getDistinctTargetCount(vis.origins);
     const rawInsertions = getDistinctTargetCount(vis.insertions);
-    const origins = rawOrigins > 2 ? 2 : Math.max(1, rawOrigins);
-    const insertions = rawInsertions > 2 ? 2 : Math.max(1, rawInsertions);
+    const origins = Math.max(1, rawOrigins);
+    const insertions = Math.max(1, rawInsertions);
 
     let total = origins + insertions;
     if (currentQuestion.type === 'origins') total = origins;
@@ -1059,7 +1074,7 @@ export const QuizView: React.FC = () => {
           totalQuestions: current.totalQuestions + 1,
           correctAnswers: current.correctAnswers + (isSuccess ? 1 : 0),
           closeAnswers: current.closeAnswers + (!isSuccess && closeCount > 0 ? 1 : 0),
-          incorrectAnswers: current.incorrectAnswers + (!isSuccess && closeCount === 0 ? 1 : 0),
+          incorrectAnswers: current.incorrectAnswers + (isSuccess ? 0 : 1),
           streak: isSuccess ? current.streak + 1 : 0,
           history: [
             ...current.history,
@@ -1332,7 +1347,7 @@ export const QuizView: React.FC = () => {
           totalQuestions: current.totalQuestions + 1,
           correctAnswers: current.correctAnswers + (isSuccess ? 1 : 0),
           closeAnswers: current.closeAnswers + (!isSuccess && result.isClose ? 1 : 0),
-          incorrectAnswers: current.incorrectAnswers + (!isSuccess && !result.isClose ? 1 : 0),
+          incorrectAnswers: current.incorrectAnswers + (isSuccess ? 0 : 1),
           streak: isSuccess ? current.streak + 1 : 0,
           history: [
             ...current.history,

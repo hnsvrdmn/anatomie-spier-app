@@ -87,7 +87,7 @@ export const READER_BONES: Bone[] = [
         "side": "right",
         "view": "dorsal",
         "x": 0.584,
-        "y": 0.502,
+        "y": 0.498,
         "subpart": "Os ischium (zitbeen)"
       },
       {

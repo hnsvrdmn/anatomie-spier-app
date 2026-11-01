@@ -312,7 +312,7 @@ export function evaluatePointSet(
     };
   }
 
-  const requiredCount = distinctTargets.length > 2 ? 2 : distinctTargets.length;
+  const requiredCount = distinctTargets.length;
   const ptTolCorrect = toleranceCorrect;
   const ptTolClose = Math.max(TOLERANCE_CLOSE, toleranceCorrect * 1.6);
 
@@ -368,7 +368,7 @@ export function evaluatePointSet(
     };
   };
 
-  // Koppel gebruikerspunten optimaal aan nog niet gematchte DistinctTargets
+  // Koppel gebruikerspunten optimaal aan nog niet gematchte DistinctTargets (1-op-1 bipartiet)
   const matchedUserIndices = new Set<number>();
   const matchedTargetIndices = new Set<number>();
   const resultsByUserIdx = new Map<number, MatchResult>();
@@ -408,24 +408,26 @@ export function evaluatePointSet(
     }
   }
 
-  // Voor eventuele extra geplaatste punten (bijv. een 2e punt op dezelfde ribben- of linea alba-zone):
-  // reken goed als ze op een geldige zone of tweede vezelpunt van een reeds gematcht doel liggen
+  // Punten die niet 1-op-1 aan een uniek doel gekoppeld konden worden (te veel geplaatste punten,
+  // of dubbele punten op dezelfde lijn/aanhechting):
+  // Deze zijn ALTIJD incorrect (overtollig of dubbel op al gematcht doel).
   for (let uIdx = 0; uIdx < userPoints.length; uIdx++) {
     if (matchedUserIndices.has(uIdx)) continue;
-    let bestExtra: MatchResult | null = null;
+    let closestRes: MatchResult | null = null;
     for (let tIdx = 0; tIdx < distinctTargets.length; tIdx++) {
       const res = evalAgainstTarget(userPoints[uIdx], distinctTargets[tIdx]);
-      if (
-        !bestExtra ||
-        (res.accuracy === 'correct' && bestExtra.accuracy !== 'correct') ||
-        (res.accuracy === bestExtra.accuracy && res.distance < bestExtra.distance)
-      ) {
-        bestExtra = res;
+      if (!closestRes || res.distance < closestRes.distance) {
+        closestRes = res;
       }
     }
-    if (bestExtra) {
-      resultsByUserIdx.set(uIdx, bestExtra);
-    }
+    resultsByUserIdx.set(uIdx, {
+      userPoint: userPoints[uIdx],
+      targetPoint: closestRes ? closestRes.targetPoint : userPoints[uIdx],
+      distance: closestRes ? closestRes.distance : 1.0,
+      accuracy: 'incorrect', // Overtollig punt telt ALTIJD als fout!
+      targetType,
+      matchedLineName: closestRes?.matchedLineName,
+    });
   }
 
   const matches: MatchResult[] = [];
@@ -439,7 +441,9 @@ export function evaluatePointSet(
     else if (m.accuracy === 'close') closeCount++;
   }
 
-  const isPassed = satisfiedTargets >= requiredCount;
+  // Slaagconditie: ALLE unieke doelen moeten 1-op-1 correct geraakt zijn EN
+  // er mogen géén overtollige punten geplaatst zijn!
+  const isPassed = satisfiedTargets === requiredCount && userPoints.length === requiredCount;
 
   return {
     matches,

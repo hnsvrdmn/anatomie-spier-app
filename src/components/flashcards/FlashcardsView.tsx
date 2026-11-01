@@ -4,6 +4,8 @@ import {
   FlashcardItem,
   FlashcardSet,
 } from '../../data/flashcardsData';
+import { useFlashcards } from '../../context/FlashcardContext';
+import { useMuscles } from '../../context/MuscleContext';
 import {
   RotateCcw,
   Shuffle,
@@ -15,6 +17,7 @@ import {
   ZoomIn,
   Repeat,
   LayoutGrid,
+  Edit3,
 } from 'lucide-react';
 
 type CardResult = 'correct' | 'incorrect';
@@ -38,6 +41,10 @@ function resolveAssetUrl(url?: string): string | undefined {
 }
 
 export const FlashcardsView: React.FC = () => {
+  const { flashcardSets, setActiveSetId: setEditorActiveSetId } = useFlashcards();
+  const { setAppMode } = useMuscles();
+  const currentSets = flashcardSets && flashcardSets.length > 0 ? flashcardSets : FLASHCARD_SETS;
+
   // Start altijd op de landingspagina (null) zodat je eerst zelf een set kiest
   const [activeSetId, setActiveSetId] = useState<string | null>(null);
 
@@ -52,8 +59,8 @@ export const FlashcardsView: React.FC = () => {
   });
 
   const activeSet: FlashcardSet = useMemo(
-    () => FLASHCARD_SETS.find((s) => s.id === activeSetId) || FLASHCARD_SETS[0],
-    [activeSetId]
+    () => currentSets.find((s) => s.id === activeSetId) || currentSets[0],
+    [currentSets, activeSetId]
   );
 
   const [isFlipped, setIsFlipped] = useState(false);
@@ -389,14 +396,33 @@ export const FlashcardsView: React.FC = () => {
     return (
       <div className="w-full h-[calc(100dvh-3.5rem)] sm:h-[calc(100dvh-4rem)] flex flex-col bg-slate-100 text-slate-900 select-none overflow-y-auto">
         <div className="max-w-2xl w-full mx-auto px-3 sm:px-6 py-3 sm:py-5 flex flex-col gap-2.5">
-          <div className="px-1">
-            <h1 className="text-base sm:text-lg font-extrabold text-slate-900">
-              Kies een flashcard-set
-            </h1>
+          <div className="px-1 flex items-center justify-between">
+            <div>
+              <h1 className="text-base sm:text-lg font-extrabold text-slate-900">
+                Kies een flashcard-set
+              </h1>
+              <p className="text-[11px] sm:text-xs text-slate-500">
+                Selecteer een anatomisch thema om te oefenen
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                try {
+                  localStorage.setItem('pmt_anatomie_editor_tab', 'flashcards');
+                } catch {}
+                setAppMode('editor');
+              }}
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition shadow-2xs"
+              title="Flashcards bewerken op PC"
+            >
+              <Edit3 className="w-3.5 h-3.5" />
+              <span>Kaarten bewerken</span>
+            </button>
           </div>
 
           <div className="grid grid-cols-1 gap-2 pb-4">
-            {FLASHCARD_SETS.map((set) => {
+            {currentSets.map((set) => {
               const setRes = progressBySet[set.id]?.results || {};
               const correctCount = set.cards.filter((c) => setRes[c.id] === 'correct').length;
               const incorrectCount = set.cards.filter((c) => setRes[c.id] === 'incorrect').length;
@@ -501,7 +527,7 @@ export const FlashcardsView: React.FC = () => {
                     onClick={() => setIsDropdownOpen(false)}
                   />
                   <div className="absolute left-0 right-0 top-full mt-1 z-40 bg-white border border-slate-200 rounded-2xl shadow-xl max-h-[65dvh] overflow-y-auto p-1.5 space-y-1">
-                    {FLASHCARD_SETS.map((set) => {
+                    {currentSets.map((set) => {
                       const isSelected = set.id === activeSet.id;
                       const setRes = progressBySet[set.id]?.results || {};
                       const correctCount = set.cards.filter(
@@ -573,6 +599,21 @@ export const FlashcardsView: React.FC = () => {
               title="Reset"
             >
               <RotateCcw className="w-4 h-4" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                try {
+                  localStorage.setItem('pmt_anatomie_editor_tab', 'flashcards');
+                } catch {}
+                setEditorActiveSetId(activeSet.id);
+                setAppMode('editor');
+              }}
+              className="hidden sm:flex shrink-0 w-9 h-9 rounded-xl bg-white text-indigo-600 border border-slate-200 hover:bg-indigo-50 active:scale-95 transition items-center justify-center shadow-2xs"
+              title="Bewerk deze set in de Editor"
+            >
+              <Edit3 className="w-4 h-4" />
             </button>
           </div>
 

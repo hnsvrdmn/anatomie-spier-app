@@ -100,6 +100,39 @@ export function getBoneById(id: string): Bone | undefined {
           res.end();
         }
       });
+      // API voor opslaan van flashcards naar src/data/flashcardsCustom.json
+      server.middlewares.use('/api/save-flashcards', (req, res) => {
+        if (req.method === 'POST') {
+          let body = '';
+          req.on('data', (chunk) => {
+            body += chunk;
+          });
+          req.on('end', () => {
+            try {
+              const data = JSON.parse(body);
+              if (!Array.isArray(data) || data.length === 0) {
+                res.statusCode = 400;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'Verwacht een niet-lege array met flashcard sets' }));
+                return;
+              }
+              const filePath = path.resolve(__dirname, 'src/data/flashcardsCustom.json');
+              fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
+              const totalCards = data.reduce((sum: number, s: any) => sum + (s.cards ? s.cards.length : 0), 0);
+              res.statusCode = 200;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ success: true, setsCount: data.length, totalCards }));
+            } catch (err: any) {
+              res.statusCode = 500;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ error: err.message }));
+            }
+          });
+        } else {
+          res.statusCode = 405;
+          res.end();
+        }
+      });
     },
   };
 }
@@ -109,6 +142,16 @@ export default defineConfig({
   base: process.env.NODE_ENV === 'production' ? '/anatomie-spier-app/' : '/',
   plugins: [react(), saveDataPlugin()],
   server: {
+    watch: {
+      ignored: [
+        '**/src/data/muscles.json',
+        '**/src/data/bonesData.ts',
+        '**/src/data/flashcardsCustom.json',
+        '**/muscles.json',
+        '**/bonesData.ts',
+        '**/flashcardsCustom.json',
+      ],
+    },
     port: 3000,
     open: false,
     host: true,

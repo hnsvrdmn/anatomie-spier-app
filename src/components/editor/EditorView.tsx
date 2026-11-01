@@ -5,13 +5,14 @@ import { EditorOverlay } from '../skeleton/EditorOverlay';
 import { ViewToggle } from '../common/ViewToggle';
 import { EditorControls } from './EditorControls';
 import { BoneEditorView } from './BoneEditorView';
+import { FlashcardEditorView } from './FlashcardEditorView';
 import { 
   EditorTool, 
   EditSymmetrySide, 
   Point2D, 
   MuscleVisualData 
 } from '../../types/anatomy';
-import { Activity, Bone as BoneIcon } from 'lucide-react';
+import { Activity, Bone as BoneIcon, FileQuestion } from 'lucide-react';
 
 export const EditorView: React.FC = () => {
   const { 
@@ -22,16 +23,16 @@ export const EditorView: React.FC = () => {
     showToast
   } = useMuscles();
 
-  // Schakelaar tussen Spieren bewerken en Botten bewerken (onthoudt keuze in localStorage)
-  const [editorTab, setEditorTabState] = useState<'muscles' | 'bones'>(() => {
+  // Schakelaar tussen Spieren bewerken, Botten bewerken en Flashcards bewerken (onthoudt keuze in localStorage)
+  const [editorTab, setEditorTabState] = useState<'muscles' | 'bones' | 'flashcards'>(() => {
     try {
       const saved = localStorage.getItem('pmt_anatomie_editor_tab');
-      if (saved === 'bones' || saved === 'muscles') return saved;
+      if (saved === 'bones' || saved === 'muscles' || saved === 'flashcards') return saved;
     } catch {}
     return 'muscles';
   });
 
-  const setEditorTab = useCallback((tab: 'muscles' | 'bones') => {
+  const setEditorTab = useCallback((tab: 'muscles' | 'bones' | 'flashcards') => {
     setEditorTabState(tab);
     try {
       localStorage.setItem('pmt_anatomie_editor_tab', tab);
@@ -254,11 +255,26 @@ export const EditorView: React.FC = () => {
             <BoneIcon className="w-4 h-4 text-sky-600" />
             <span>Botten bewerken</span>
           </button>
+
+          <button
+            type="button"
+            onClick={() => setEditorTab('flashcards')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+              editorTab === 'flashcards'
+                ? 'bg-white text-clinical-950 shadow-sm border border-clinical-200/80'
+                : 'text-clinical-600 hover:text-clinical-900 hover:bg-white/60'
+            }`}
+          >
+            <FileQuestion className="w-4 h-4 text-indigo-600" />
+            <span>Flashcards bewerken</span>
+          </button>
         </div>
       </div>
 
       {/* Inhoud op basis van de gekozen tab */}
-      {editorTab === 'bones' ? (
+      {editorTab === 'flashcards' ? (
+        <FlashcardEditorView />
+      ) : editorTab === 'bones' ? (
         <BoneEditorView />
       ) : !selectedMuscle ? (
         <div className="p-10 text-center text-clinical-400">

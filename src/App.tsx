@@ -10,6 +10,7 @@ import { BonesView } from './components/bones/BonesView';
 import { EditorView } from './components/editor/EditorView';
 import { FlashcardsView } from './components/flashcards/FlashcardsView';
 import { BoneProvider } from './context/BoneContext';
+import { FlashcardProvider } from './context/FlashcardContext';
 import { SkeletonPuzzleGame } from './components/game/SkeletonPuzzleGame';
 import { ConnectionsGame } from './components/game/ConnectionsGame';
 import { QueensGridGame } from './components/game/QueensGridGame';
@@ -115,7 +116,9 @@ export function App() {
   return (
     <MuscleProvider>
       <BoneProvider>
-        <AppContent />
+        <FlashcardProvider>
+          <AppContent />
+        </FlashcardProvider>
       </BoneProvider>
     </MuscleProvider>
   );
