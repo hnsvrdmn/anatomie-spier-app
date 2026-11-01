@@ -183,7 +183,7 @@ export const MuscleSearch: React.FC = () => {
                   {isSelected && selectedMuscleIds.length > 1 && (
                     <span
                       className="w-2.5 h-2.5 rounded-full inline-block border-2 border-white shadow-xs shrink-0"
-                      style={{ backgroundColor: color || '#2563eb' }}
+                      style={{ backgroundColor: color || '#1993f2' }}
                     />
                   )}
 

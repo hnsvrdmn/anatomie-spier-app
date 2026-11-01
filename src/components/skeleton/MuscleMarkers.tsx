@@ -11,6 +11,7 @@ interface MuscleMarkersProps {
   quizMatches?: MatchResult[];
   showReferenceGhost?: boolean;
   color?: string;
+  uniformColor?: string;
   isDimmed?: boolean;
   isOppositeView?: boolean;
   opacity?: number;
@@ -23,13 +24,13 @@ export const SVG_WIDTH = 1000;
 export const SVG_HEIGHT = 2374.54;
 
 export const MULTI_MUSCLE_COLORS = [
-  '#2563eb', // Blauw
+  '#1993f2', // Blauw
   '#e11d48', // Rood/Rose
   '#059669', // Smaragdgroen
   '#d97706', // Amber/Goud
   '#7c3aed', // Paars
   '#0891b2', // Cyaan
-  '#fd9316', // Oranje
+  '#ea580c', // Oranje
   '#db2777', // Roze
   '#4f46e5', // Indigo
   '#0d9488', // Teal
@@ -42,6 +43,7 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
   quizMatches,
   showReferenceGhost = false,
   color,
+  uniformColor,
   isDimmed = false,
   isOppositeView = false,
   opacity,
@@ -72,15 +74,100 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
   const isOppositeUnselected = isDimmed && isOppositeView;
 
   // Bepaal de effectieve groep-opacity:
-  // Niet-geselecteerde spieren in het actieve aanzicht zijn gekleurd en iets transparant (0.42).
-  // Niet-geselecteerde spieren aan de andere kant zijn grijs en nog iets transparanter (0.24).
+  // Geselecteerde spier staat altijd scherp en op de voorgrond (1.0).
+  // Niet-geselecteerde spieren zijn zacht getoond zonder storende desaturatie.
   const effectiveGroupOpacity = isDimmed
-    ? (isOppositeView ? 0.24 : 0.42)
-    : (isOppositeView ? 0.55 : (opacity !== undefined ? opacity : 1.0));
+    ? (isOppositeView ? 0.38 : 0.65)
+    : (isOppositeView ? 0.6 : (opacity !== undefined ? opacity : 1.0));
+
+  const isSelectedMuscle = !isDimmed;
+  const useGradient = !uniformColor && (isSelectedMuscle || showReferenceGhost) && !isOppositeUnselected;
+
+  // Afmetingen: bolletjes net een tikje kleiner en fijne naadloze outline
+  const rBase = (highlightedPoint || showReferenceGhost ? 11.5 : 10) / zoom;
+  const outlinePadding = 1.6 / zoom;
+  const outlineR = rBase + outlinePadding;
+
+  const lineWidth = (isOppositeView ? 4.5 : (showReferenceGhost ? 8.5 : (isSelectedMuscle ? 7.5 : 4.5))) / zoom;
+  const outlineLineWidth = lineWidth + (outlinePadding * 2);
+
+  // Kleurbepaling:
+  // 1. In bewegingstab (uniformColor): ALLES zuiver uniformColor (#1993f2)
+  // 2. In study tab voor niet-geselecteerde spieren (isDimmed): strak grijs (#94a3b8)
+  // 3. Voor geselecteerde spier: origo blauw (#1993f2) en insertie oranje (#ea580c)
+  const defaultGray = '#94a3b8';
+  const origColor = uniformColor
+    ? uniformColor
+    : isDimmed
+    ? defaultGray
+    : isOppositeUnselected
+    ? defaultGray
+    : (!isDimmed || showReferenceGhost ? '#1993f2' : (color || '#1993f2'));
+
+  const insColor = uniformColor
+    ? uniformColor
+    : isDimmed
+    ? defaultGray
+    : isOppositeUnselected
+    ? defaultGray
+    : (!isDimmed || showReferenceGhost ? '#ea580c' : (color || '#ea580c'));
+
+  // Bereken alle geometrische elementen per zijde
+  const sideData = sidesToRender.map((side) => {
+    const visual = muscle.visuals[side];
+    if (!visual || !visual.origins?.length || !visual.insertions?.length) return null;
+
+    const origins = isOppositeView
+      ? visual.origins.map(mirrorPoint)
+      : visual.origins;
+    const insertions = isOppositeView
+      ? visual.insertions.map(mirrorPoint)
+      : visual.insertions;
+    const pathPoints = isOppositeView
+      ? (visual.musclePath || []).map(mirrorPoint)
+      : (visual.musclePath || []);
+
+    const connections = getMuscleConnections(origins, insertions);
+
+    const pathDList = connections.map(({ orig, ins }) => {
+      if (pathPoints.length === 1) {
+        const ctrl = pathPoints[0];
+        return `M ${toSvgX(orig.x)} ${toSvgY(orig.y)} Q ${toSvgX(ctrl.x)} ${toSvgY(ctrl.y)} ${toSvgX(ins.x)} ${toSvgY(ins.y)}`;
+      } else if (pathPoints.length === 2) {
+        const c1 = pathPoints[0];
+        const c2 = pathPoints[1];
+        return `M ${toSvgX(orig.x)} ${toSvgY(orig.y)} C ${toSvgX(c1.x)} ${toSvgY(c1.y)} ${toSvgX(c2.x)} ${toSvgY(c2.y)} ${toSvgX(ins.x)} ${toSvgY(ins.y)}`;
+      } else if (pathPoints.length > 2) {
+        return `M ${toSvgX(orig.x)} ${toSvgY(orig.y)} ` +
+          pathPoints.map(p => `L ${toSvgX(p.x)} ${toSvgY(p.y)}`).join(' ') +
+          ` L ${toSvgX(ins.x)} ${toSvgY(ins.y)}`;
+      } else {
+        return `M ${toSvgX(orig.x)} ${toSvgY(orig.y)} L ${toSvgX(ins.x)} ${toSvgY(ins.y)}`;
+      }
+    });
+
+    return {
+      side,
+      visual,
+      origins,
+      insertions,
+      pathPoints,
+      connections,
+      pathDList,
+    };
+  }).filter(Boolean) as {
+    side: 'left' | 'right' | 'midline';
+    visual: NonNullable<Muscle['visuals']['left']>;
+    origins: Point2D[];
+    insertions: Point2D[];
+    pathPoints: Point2D[];
+    connections: ReturnType<typeof getMuscleConnections>;
+    pathDList: string[];
+  }[];
 
   return (
     <g className={`muscle-markers-group ${isInteractive ? 'pointer-events-auto' : 'pointer-events-none'} transition-opacity duration-300`} opacity={effectiveGroupOpacity}>
-      {/* 0. Aanhechtingslijnen / Zones (in leermodus als rode of blauwe stippellijn onder het verloop en de punten) */}
+      {/* 0. Aanhechtingslijnen / Zones (in leermodus als rode of blauwe stippellijn) */}
       {sidesToRender.map((side) => {
         const visual = muscle.visuals[side];
         if (!visual || !visual.attachmentLines || visual.attachmentLines.length === 0) return null;
@@ -91,21 +178,24 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
 
           const pts = isOppositeView ? rawPts.map(mirrorPoint) : rawPts;
           const isOrigin = line.type === 'origin';
-          const strokeColor = isOppositeUnselected
-            ? '#94a3b8'
-            : (isOrigin ? '#2563eb' : '#fd9316');
+          const strokeColor = uniformColor
+            ? uniformColor
+            : isDimmed
+            ? defaultGray
+            : isOppositeUnselected
+            ? defaultGray
+            : (isOrigin ? '#1993f2' : '#ea580c');
 
           const pathD = `M ${toSvgX(pts[0].x)} ${toSvgY(pts[0].y)} ` +
             pts.slice(1).map(p => `L ${toSvgX(p.x)} ${toSvgY(p.y)}`).join(' ');
 
           return (
             <g key={`marker-attach-line-${side}-${line.id || lIdx}`}>
-              {/* Subtiele gekleurde zone-band wanneer na controle het juiste antwoord wordt getoond */}
               {showReferenceGhost && (
                 <path
                   d={pathD}
                   fill="none"
-                  stroke={isOrigin ? '#3b82f6' : '#fd9316'}
+                  stroke={isOrigin ? '#1993f2' : '#ea580c'}
                   strokeWidth={22 / zoom}
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -124,7 +214,6 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                 opacity={isOppositeView ? 0.45 : 0.85}
                 className="pointer-events-none"
               />
-              {/* Rode of blauwe stippellijn (of grijs indien niet-geselecteerd op ander aanzicht) */}
               <path
                 d={pathD}
                 fill="none"
@@ -156,311 +245,297 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
         });
       })}
 
-      {/* 1. Spierverloop (rechte lijnen of curves tussen alle origo's en inserties) */}
-      {sidesToRender.map((side) => {
-        const visual = muscle.visuals[side];
-        if (!visual || !visual.origins?.length || !visual.insertions?.length) return null;
+      {/* Gradiënten voor de spierverlooplijnen */}
+      <defs>
+        {sideData.map(({ side, connections }) =>
+          connections.map(({ orig, ins, oIdx, iIdx }) => {
+            const gradId = `muscle-line-grad-${muscle.id}-${side}-${oIdx}-${iIdx}`;
+            return (
+              <linearGradient
+                key={gradId}
+                id={gradId}
+                x1={toSvgX(orig.x)}
+                y1={toSvgY(orig.y)}
+                x2={toSvgX(ins.x)}
+                y2={toSvgY(ins.y)}
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop offset="0%" stopColor="#1993f2" />
+                <stop offset="100%" stopColor="#ea580c" />
+              </linearGradient>
+            );
+          })
+        )}
+      </defs>
 
-        // Als de spier op het andere aanzicht ligt (bijv. dorsaal bekeken vanaf ventraal),
-        // projecteren we de punten door het sagittale vlak heen (x = 1.0 - x)
-        const origins = isOppositeView
-          ? visual.origins.map(mirrorPoint)
-          : visual.origins;
-        const insertions = isOppositeView
-          ? visual.insertions.map(mirrorPoint)
-          : visual.insertions;
-        const pathPoints = isOppositeView
-          ? (visual.musclePath || []).map(mirrorPoint)
-          : (visual.musclePath || []);
+      {/* Halo's bij tonen van het juiste antwoord (ghost evaluatie) */}
+      {showReferenceGhost && (
+        <g className="pointer-events-none">
+          {sideData.map(({ side, connections, origins, insertions, pathDList }) => (
+            <React.Fragment key={`ghost-${side}`}>
+              {connections.map((_, cIdx) => (
+                <path
+                  key={`ghost-line-${side}-${cIdx}`}
+                  d={pathDList[cIdx]}
+                  fill="none"
+                  stroke="#ea580c"
+                  strokeWidth={14 / zoom}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  opacity={0.25}
+                  className="animate-pulse"
+                />
+              ))}
+              {origins.map((orig, idx) => (
+                <circle
+                  key={`ghost-orig-${side}-${idx}`}
+                  cx={toSvgX(orig.x)}
+                  cy={toSvgY(orig.y)}
+                  r={22 / zoom}
+                  fill="rgba(25, 147, 242, 0.22)"
+                  stroke="#1993f2"
+                  strokeWidth={1.5 / zoom}
+                  className="animate-pulse"
+                />
+              ))}
+              {insertions.map((ins, idx) => (
+                <circle
+                  key={`ghost-ins-${side}-${idx}`}
+                  cx={toSvgX(ins.x)}
+                  cy={toSvgY(ins.y)}
+                  r={22 / zoom}
+                  fill="rgba(234, 88, 12, 0.22)"
+                  stroke="#ea580c"
+                  strokeWidth={1.5 / zoom}
+                  className="animate-pulse"
+                />
+              ))}
+            </React.Fragment>
+          ))}
+        </g>
+      )}
 
-        const connections = getMuscleConnections(origins, insertions);
+      {/* LAAG 1: Volledig doorlopende witte outline achter de hele spier (lijnen EN bolletjes)
+          Doordat alle witte lijnen en cirkels in één laag vóór alle kleuren getekend worden,
+          ontstaat één naadloos silhouet om de gehele spier en overlappen er NOOIT witte lijnen intern! */}
+      <g className="pointer-events-none transition-opacity duration-200">
+        {sideData.map(({ side, connections, origins, insertions, pathDList }) => (
+          <React.Fragment key={`outline-${side}`}>
+            {/* Lijnen outline */}
+            {connections.map((_, cIdx) => (
+              <path
+                key={`outline-line-${side}-${cIdx}`}
+                d={pathDList[cIdx]}
+                fill="none"
+                stroke="#ffffff"
+                strokeWidth={outlineLineWidth}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity={isOppositeView ? 0.6 : 0.95}
+              />
+            ))}
+            {/* Origo cirkels outline */}
+            {origins.map((origin, idx) => (
+              <circle
+                key={`outline-orig-${side}-${idx}`}
+                cx={toSvgX(origin.x)}
+                cy={toSvgY(origin.y)}
+                r={outlineR}
+                fill="#ffffff"
+                fillOpacity={isOppositeView ? 0.75 : 1.0}
+              />
+            ))}
+            {/* Insertie cirkels outline */}
+            {insertions.map((insertion, idx) => (
+              <circle
+                key={`outline-ins-${side}-${idx}`}
+                cx={toSvgX(insertion.x)}
+                cy={toSvgY(insertion.y)}
+                r={outlineR}
+                fill="#ffffff"
+                fillOpacity={isOppositeView ? 0.75 : 1.0}
+              />
+            ))}
+          </React.Fragment>
+        ))}
+      </g>
 
-        return (
-          <g key={`lines-${side}`} className="transition-opacity duration-200">
-            {connections.map(({ orig, ins, oIdx, iIdx }) => {
-              let pathD = '';
-              if (pathPoints.length === 1) {
-                const ctrl = pathPoints[0];
-                pathD = `M ${toSvgX(orig.x)} ${toSvgY(orig.y)} Q ${toSvgX(ctrl.x)} ${toSvgY(ctrl.y)} ${toSvgX(ins.x)} ${toSvgY(ins.y)}`;
-              } else if (pathPoints.length === 2) {
-                const c1 = pathPoints[0];
-                const c2 = pathPoints[1];
-                pathD = `M ${toSvgX(orig.x)} ${toSvgY(orig.y)} C ${toSvgX(c1.x)} ${toSvgY(c1.y)} ${toSvgX(c2.x)} ${toSvgY(c2.y)} ${toSvgX(ins.x)} ${toSvgY(ins.y)}`;
-              } else if (pathPoints.length > 2) {
-                pathD = `M ${toSvgX(orig.x)} ${toSvgY(orig.y)} ` +
-                  pathPoints.map(p => `L ${toSvgX(p.x)} ${toSvgY(p.y)}`).join(' ') +
-                  ` L ${toSvgX(ins.x)} ${toSvgY(ins.y)}`;
-              } else {
-                pathD = `M ${toSvgX(orig.x)} ${toSvgY(orig.y)} L ${toSvgX(ins.x)} ${toSvgY(ins.y)}`;
-              }
-
+      {/* LAAG 2: Gekleurde vulling van de spier (lijnen en bolletjes)
+          Ligt bovenop de witte silhouette; lijnen vloeien direct naadloos over in de aanhechtingspunten */}
+      <g className="transition-opacity duration-200">
+        {sideData.map(({ side, connections, origins, insertions, pathDList }) => (
+          <React.Fragment key={`fill-${side}`}>
+            {/* Gekleurde verbindingslijnen */}
+            {connections.map(({ oIdx, iIdx }, cIdx) => {
               const gradId = `muscle-line-grad-${muscle.id}-${side}-${oIdx}-${iIdx}`;
-              const isSelectedMuscle = !isDimmed;
-              const useGradient = (isSelectedMuscle || showReferenceGhost) && !isOppositeUnselected;
-              const lineStroke = isOppositeUnselected
-                ? '#94a3b8'
+              const lineStroke = uniformColor
+                ? uniformColor
+                : isDimmed
+                ? defaultGray
+                : isOppositeUnselected
+                ? defaultGray
                 : useGradient
                 ? `url(#${gradId})`
-                : (color || '#94a3b8');
+                : (color || defaultGray);
 
               return (
-                <React.Fragment key={`line-frag-${side}-${oIdx}-${iIdx}`}>
-                  <defs>
-                    <linearGradient
-                      id={gradId}
-                      x1={toSvgX(orig.x)}
-                      y1={toSvgY(orig.y)}
-                      x2={toSvgX(ins.x)}
-                      y2={toSvgY(ins.y)}
-                      gradientUnits="userSpaceOnUse"
-                    >
-                      <stop offset="0%" stopColor="#2563eb" />
-                      <stop offset="100%" stopColor="#fd9316" />
-                    </linearGradient>
-                  </defs>
-                  {/* Brede onzichtbare klikzone voor nauwkeurige respons */}
-                  {isInteractive && onSelectMuscle && (
-                    <path
-                      d={pathD}
-                      fill="none"
-                      stroke="transparent"
-                      strokeWidth="32"
-                      className="cursor-pointer pointer-events-auto"
-                      onPointerEnter={() => onHoverPoint?.({ 
-                        point: { x: (orig.x + ins.x) / 2, y: (orig.y + ins.y) / 2 }, 
-                        type: 'line', 
-                        muscle, 
-                        label: muscle.name
-                      })}
-                      onPointerLeave={() => onHoverPoint?.(null)}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onSelectMuscle(muscle.id);
-                      }}
-                    >
-                      <title>{tooltipText}</title>
-                    </path>
-                  )}
-                  {/* Brede halo achter het juiste referentieverloop bij evaluatie */}
-                  {showReferenceGhost && (
-                    <path
-                      d={pathD}
-                      fill="none"
-                      stroke={`url(#${gradId})`}
-                      strokeWidth={14 / zoom}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      opacity={0.25}
-                      className="pointer-events-none animate-pulse"
-                    />
-                  )}
-                  <path
-                    key={`line-${side}-${oIdx}-${iIdx}`}
-                    d={pathD}
-                    fill="none"
-                    stroke={lineStroke}
-                    strokeWidth={(isOppositeView ? 4.5 : (showReferenceGhost ? 7 : 6)) / zoom}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    opacity={isOppositeView ? 0.6 : (showReferenceGhost ? 0.95 : 0.88)}
-                    strokeDasharray={isOppositeView ? '7 5' : 'none'}
-                    className={isInteractive || onHoverPoint ? 'cursor-pointer pointer-events-auto hover:opacity-100 hover:stroke-[8] transition-all' : ''}
-                    onPointerEnter={() => onHoverPoint?.({ 
-                      point: { x: (orig.x + ins.x) / 2, y: (orig.y + ins.y) / 2 }, 
-                      type: 'line', 
-                      muscle, 
-                      label: muscle.name
-                    })}
-                    onPointerLeave={() => onHoverPoint?.(null)}
-                    onClick={(e) => {
-                      if (isInteractive && onSelectMuscle) {
-                        e.stopPropagation();
-                        onSelectMuscle(muscle.id);
-                      }
-                    }}
-                  >
-                    <title>{tooltipText}</title>
-                  </path>
-                </React.Fragment>
+                <path
+                  key={`fill-line-${side}-${cIdx}`}
+                  d={pathDList[cIdx]}
+                  fill="none"
+                  stroke={lineStroke}
+                  strokeWidth={lineWidth}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  opacity={isOppositeView ? 0.6 : (showReferenceGhost ? 0.95 : 0.92)}
+                  strokeDasharray={isOppositeView ? '7 5' : 'none'}
+                  className="pointer-events-none"
+                />
               );
             })}
-          </g>
-        );
-      })}
 
-      {/* 2. Origo's (Cirkels met O aanduiding, in de spierkleur bij meervoudige selectie) */}
-      {sidesToRender.map((side) => {
-        const visual = muscle.visuals[side];
-        if (!visual || !visual.origins) return null;
+            {/* Origo bolletjes (blauw #1993f2 of paletkleur bij meervoudige selectie) */}
+            {origins.map((origin, idx) => {
+              const cx = toSvgX(origin.x);
+              const cy = toSvgY(origin.y);
+              return (
+                <circle
+                  key={`fill-orig-${side}-${idx}`}
+                  cx={cx}
+                  cy={cy}
+                  r={rBase}
+                  fill={showReferenceGhost ? '#1993f2' : origColor}
+                  fillOpacity={isOppositeView ? 0.75 : 1.0}
+                  stroke={isOppositeView ? '#ffffff' : 'none'}
+                  strokeWidth={isOppositeView ? 1.5 / zoom : 0}
+                  strokeDasharray={isOppositeView ? "3 2" : "none"}
+                  className="pointer-events-none"
+                />
+              );
+            })}
 
-        const origins = isOppositeView
-          ? visual.origins.map(mirrorPoint)
-          : visual.origins;
+            {/* Insertie bolletjes (oranje #ea580c of paletkleur bij meervoudige selectie) */}
+            {insertions.map((insertion, idx) => {
+              const cx = toSvgX(insertion.x);
+              const cy = toSvgY(insertion.y);
+              return (
+                <circle
+                  key={`fill-ins-${side}-${idx}`}
+                  cx={cx}
+                  cy={cy}
+                  r={rBase}
+                  fill={showReferenceGhost ? '#ea580c' : insColor}
+                  fillOpacity={isOppositeView ? 0.75 : 1.0}
+                  stroke={isOppositeView ? '#ffffff' : 'none'}
+                  strokeWidth={isOppositeView ? 1.5 / zoom : 0}
+                  strokeDasharray={isOppositeView ? "3 2" : "none"}
+                  className="pointer-events-none"
+                />
+              );
+            })}
+          </React.Fragment>
+        ))}
+      </g>
 
-        return origins.map((origin, idx) => {
-          const cx = toSvgX(origin.x);
-          const cy = toSvgY(origin.y);
-          const isHighlighted = highlightedPoint?.x === origin.x && highlightedPoint?.y === origin.y;
-          const origName = origin.name || muscle.originText;
-          const markerColor = isOppositeUnselected ? '#94a3b8' : (!isDimmed || showReferenceGhost ? '#2563eb' : (color || '#2563eb'));
-
-          return (
-            <g
-              key={`origin-${side}-${idx}`}
-              className={`group ${isInteractive || onHoverPoint ? 'pointer-events-auto cursor-pointer' : 'pointer-events-none'}`}
-              onPointerEnter={() => onHoverPoint?.({ 
-                point: origin, 
-                type: 'origin', 
-                muscle, 
-                label: origName 
-              })}
-              onPointerLeave={() => onHoverPoint?.(null)}
-              onClick={(e) => {
-                if (isInteractive && onSelectMuscle) {
-                  e.stopPropagation();
-                  onSelectMuscle(muscle.id);
-                }
-              }}
-            >
-              <title>{`${muscle.name} (Origo: ${origName})`}</title>
-              {/* Buitenste pulserende ring wanneer het juiste antwoord getoond wordt */}
-              {showReferenceGhost && (
-                <>
-                  <circle
-                    cx={cx}
-                    cy={cy}
-                    r={26 / zoom}
-                    fill="rgba(56, 189, 248, 0.25)"
-                    stroke="#38bdf8"
-                    strokeWidth={2 / zoom}
-                    className="animate-pulse"
-                  />
-                  <circle
-                    cx={cx}
-                    cy={cy}
-                    r={20 / zoom}
-                    fill="none"
-                    stroke="#0284c7"
-                    strokeWidth={1.5 / zoom}
-                  />
-                </>
-              )}
-              {/* Buitenste cirkel */}
-              <circle
-                cx={cx}
-                cy={cy}
-                r={(isHighlighted || showReferenceGhost ? 16 : 14) / zoom}
-                fill={showReferenceGhost ? '#2563eb' : markerColor}
-                fillOpacity={isOppositeView ? 0.75 : 1.0}
-                stroke="#ffffff"
-                strokeWidth={(isOppositeView ? 2.5 : (showReferenceGhost ? 3.5 : 3.5)) / zoom}
-                strokeDasharray={isOppositeView ? "4 2" : "none"}
-              />
-
-              {/* Binnenste O letter */}
-              <text
-                x={cx}
-                y={cy + (1 / zoom)}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fill="#ffffff"
-                fontSize={Math.round(11 / zoom)}
-                fontWeight="black"
-                className="select-none pointer-events-none"
+      {/* LAAG 3: Interactieve klikzones, tooltips en hover handlers */}
+      <g>
+        {sideData.map(({ side, connections, origins, insertions, pathDList }) => (
+          <React.Fragment key={`hit-${side}`}>
+            {/* Klikzones voor spierverlooplijnen */}
+            {isInteractive && connections.map(({ orig, ins }, cIdx) => (
+              <path
+                key={`hit-line-${side}-${cIdx}`}
+                d={pathDList[cIdx]}
+                fill="none"
+                stroke="transparent"
+                strokeWidth={Math.max(28, 36 / zoom)}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="cursor-pointer pointer-events-auto"
+                onPointerEnter={() => onHoverPoint?.({
+                  point: { x: (orig.x + ins.x) / 2, y: (orig.y + ins.y) / 2 },
+                  type: 'line',
+                  muscle,
+                  label: muscle.name,
+                })}
+                onPointerLeave={() => onHoverPoint?.(null)}
+                onClick={(e) => {
+                  if (onSelectMuscle) {
+                    e.stopPropagation();
+                    onSelectMuscle(muscle.id);
+                  }
+                }}
               >
-                O
-              </text>
-            </g>
-          );
-        });
-      })}
+                <title>{tooltipText}</title>
+              </path>
+            ))}
 
-      {/* 3. Inserties (Cirkels met I aanduiding, in de spierkleur bij meervoudige selectie) */}
-      {sidesToRender.map((side) => {
-        const visual = muscle.visuals[side];
-        if (!visual || !visual.insertions) return null;
+            {/* Klikzones en hover voor Origo's */}
+            {origins.map((origin, idx) => {
+              const cx = toSvgX(origin.x);
+              const cy = toSvgY(origin.y);
+              const origName = origin.name || muscle.originText;
+              return (
+                <circle
+                  key={`hit-orig-${side}-${idx}`}
+                  cx={cx}
+                  cy={cy}
+                  r={Math.max(22, 26 / zoom)}
+                  fill="transparent"
+                  className={isInteractive || onHoverPoint ? 'pointer-events-auto cursor-pointer' : 'pointer-events-none'}
+                  onPointerEnter={() => onHoverPoint?.({
+                    point: origin,
+                    type: 'origin',
+                    muscle,
+                    label: origName,
+                  })}
+                  onPointerLeave={() => onHoverPoint?.(null)}
+                  onClick={(e) => {
+                    if (isInteractive && onSelectMuscle) {
+                      e.stopPropagation();
+                      onSelectMuscle(muscle.id);
+                    }
+                  }}
+                >
+                  <title>{`${muscle.name} (Origo: ${origName})`}</title>
+                </circle>
+              );
+            })}
 
-        const insertions = isOppositeView
-          ? visual.insertions.map(mirrorPoint)
-          : visual.insertions;
-
-        return insertions.map((insertion, idx) => {
-          const cx = toSvgX(insertion.x);
-          const cy = toSvgY(insertion.y);
-          const isHighlighted = highlightedPoint?.x === insertion.x && highlightedPoint?.y === insertion.y;
-          const insName = insertion.name || muscle.insertionText;
-          const markerColor = isOppositeUnselected ? '#94a3b8' : (!isDimmed || showReferenceGhost ? '#fd9316' : (color || '#fd9316'));
-
-          return (
-            <g
-              key={`insertion-${side}-${idx}`}
-              className={`group ${isInteractive || onHoverPoint ? 'pointer-events-auto cursor-pointer' : 'pointer-events-none'}`}
-              onPointerEnter={() => onHoverPoint?.({ 
-                point: insertion, 
-                type: 'insertion', 
-                muscle, 
-                label: insName 
-              })}
-              onPointerLeave={() => onHoverPoint?.(null)}
-              onClick={(e) => {
-                if (isInteractive && onSelectMuscle) {
-                  e.stopPropagation();
-                  onSelectMuscle(muscle.id);
-                }
-              }}
-            >
-              <title>{`${muscle.name} (Insertie: ${insName})`}</title>
-              {/* Buitenste pulserende ring wanneer het juiste antwoord getoond wordt */}
-              {showReferenceGhost && (
-                <>
-                  <circle
-                    cx={cx}
-                    cy={cy}
-                    r={26 / zoom}
-                    fill="rgba(253, 147, 22, 0.22)"
-                    stroke="#fd9316"
-                    strokeWidth={2 / zoom}
-                    className="animate-pulse"
-                  />
-                  <circle
-                    cx={cx}
-                    cy={cy}
-                    r={20 / zoom}
-                    fill="none"
-                    stroke="#fd9316"
-                    strokeWidth={1.5 / zoom}
-                  />
-                </>
-              )}
-              {/* Buitenste cirkel */}
-              <circle
-                cx={cx}
-                cy={cy}
-                r={(isHighlighted || showReferenceGhost ? 16 : 14) / zoom}
-                fill={showReferenceGhost ? '#fd9316' : markerColor}
-                fillOpacity={isOppositeView ? 0.75 : 1.0}
-                stroke="#ffffff"
-                strokeWidth={(isOppositeView ? 2.5 : (showReferenceGhost ? 3.5 : 3.5)) / zoom}
-                strokeDasharray={isOppositeView ? "4 2" : "none"}
-              />
-
-              {/* Binnenste I letter */}
-              <text
-                x={cx}
-                y={cy + (1 / zoom)}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fill="#ffffff"
-                fontSize={Math.round(11 / zoom)}
-                fontWeight="black"
-                className="select-none pointer-events-none"
-              >
-                I
-              </text>
-            </g>
-          );
-        });
-      })}
+            {/* Klikzones en hover voor Inserties */}
+            {insertions.map((insertion, idx) => {
+              const cx = toSvgX(insertion.x);
+              const cy = toSvgY(insertion.y);
+              const insName = insertion.name || muscle.insertionText;
+              return (
+                <circle
+                  key={`hit-ins-${side}-${idx}`}
+                  cx={cx}
+                  cy={cy}
+                  r={Math.max(22, 26 / zoom)}
+                  fill="transparent"
+                  className={isInteractive || onHoverPoint ? 'pointer-events-auto cursor-pointer' : 'pointer-events-none'}
+                  onPointerEnter={() => onHoverPoint?.({
+                    point: insertion,
+                    type: 'insertion',
+                    muscle,
+                    label: insName,
+                  })}
+                  onPointerLeave={() => onHoverPoint?.(null)}
+                  onClick={(e) => {
+                    if (isInteractive && onSelectMuscle) {
+                      e.stopPropagation();
+                      onSelectMuscle(muscle.id);
+                    }
+                  }}
+                >
+                  <title>{`${muscle.name} (Insertie: ${insName})`}</title>
+                </circle>
+              );
+            })}
+          </React.Fragment>
+        ))}
+      </g>
 
       {/* 4. Quiz resultaten overlays (indien aanwezig) */}
       {quizMatches && quizMatches.map((m, idx) => {

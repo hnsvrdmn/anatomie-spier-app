@@ -133,6 +133,58 @@ export function getBoneById(id: string): Bone | undefined {
           res.end();
         }
       });
+      // API voor opslaan van botstructuren naar src/data/boneStructures.ts
+      server.middlewares.use('/api/save-bone-structures', (req, res) => {
+        if (req.method === 'POST') {
+          let body = '';
+          req.on('data', (chunk) => {
+            body += chunk;
+          });
+          req.on('end', () => {
+            try {
+              const data = JSON.parse(body);
+              if (!Array.isArray(data)) {
+                res.statusCode = 400;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'Verwacht een array met botstructuren' }));
+                return;
+              }
+              const filePath = path.resolve(__dirname, 'src/data/boneStructures.ts');
+              const fileContent = `import { AnatomicalView } from '../types/anatomy';
+
+export interface BoneStructurePoint {
+  id: string;
+  boneId: string;
+  name: string;
+  fullName?: string;
+  parentStructure?: string;
+  view: AnatomicalView | 'both';
+  side: 'left' | 'right' | 'midline';
+  x: number;
+  y: number;
+}
+
+export const BONE_STRUCTURES: BoneStructurePoint[] = ${JSON.stringify(data, null, 2)};
+
+export function getStructuresForBone(boneId: string, view: AnatomicalView): BoneStructurePoint[] {
+  return BONE_STRUCTURES.filter(s => s.boneId === boneId && (s.view === view || s.view === 'both'));
+}
+`;
+              fs.writeFileSync(filePath, fileContent, 'utf-8');
+              res.statusCode = 200;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ success: true, count: data.length }));
+            } catch (err: any) {
+              res.statusCode = 500;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ error: err.message }));
+            }
+          });
+        } else {
+          res.statusCode = 405;
+          res.end();
+        }
+      });
     },
   };
 }
@@ -146,9 +198,11 @@ export default defineConfig({
       ignored: [
         '**/src/data/muscles.json',
         '**/src/data/bonesData.ts',
+        '**/src/data/boneStructures.ts',
         '**/src/data/flashcardsCustom.json',
         '**/muscles.json',
         '**/bonesData.ts',
+        '**/boneStructures.ts',
         '**/flashcardsCustom.json',
       ],
     },

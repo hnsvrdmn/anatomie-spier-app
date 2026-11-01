@@ -288,8 +288,8 @@ export const EditorOverlay: React.FC<EditorOverlayProps> = ({
       {/* 0. Aanhechtingslijnen / Tolerantie-zones (Linea alba, crista iliaca, wervelkolom) */}
       {(currentVisuals.attachmentLines || []).map((line, lineIdx) => {
         const isOrigin = line.type === 'origin';
-        const strokeColor = isOrigin ? '#2563eb' : '#fd9316';
-        const haloColor = isOrigin ? '#3b82f6' : '#fd9316';
+        const strokeColor = isOrigin ? '#1993f2' : '#ea580c';
+        const haloColor = isOrigin ? '#1993f2' : '#ea580c';
         const pts = line.points || [];
         if (pts.length === 0) return null;
 
@@ -429,19 +429,29 @@ export const EditorOverlay: React.FC<EditorOverlayProps> = ({
                   y2={toSvgY(ins.y)}
                   gradientUnits="userSpaceOnUse"
                 >
-                  <stop offset="0%" stopColor="#2563eb" />
-                  <stop offset="100%" stopColor="#fd9316" />
+                  <stop offset="0%" stopColor="#1993f2" />
+                  <stop offset="100%" stopColor="#ea580c" />
                 </linearGradient>
               </defs>
+              {/* Witte outline onder de verbindingslijn */}
+              <path
+                d={pathD}
+                fill="none"
+                stroke="#ffffff"
+                strokeWidth={Math.max(2.5, 11.5 / zoom)}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity="0.95"
+              />
               <path
                 key={`editor-line-${oIdx}-${iIdx}`}
                 d={pathD}
                 fill="none"
                 stroke={`url(#${gradId})`}
-                strokeWidth={Math.max(1, 7 / zoom)}
+                strokeWidth={Math.max(1, 8.5 / zoom)}
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                opacity="0.9"
+                opacity="0.92"
               />
             </React.Fragment>
           );
@@ -479,11 +489,11 @@ export const EditorOverlay: React.FC<EditorOverlayProps> = ({
               cx={cx}
               cy={cy}
               r={(isSelected ? 20 : 16) / zoom}
-              fill="#2563eb"
+              fill="#1993f2"
               stroke="#ffffff"
               strokeWidth={4 / zoom}
             />
-            <circle cx={cx} cy={cy} r={5 / zoom} fill="#ffffff" />
+            
             <text
               x={cx + (24 / zoom)}
               y={cy + (5 / zoom)}
@@ -523,7 +533,7 @@ export const EditorOverlay: React.FC<EditorOverlayProps> = ({
                 cy={cy}
                 r={28 / zoom}
                 fill="none"
-                stroke="#fd9316"
+                stroke="#ea580c"
                 strokeWidth={4 / zoom}
                 className="animate-pulse"
               />
@@ -532,18 +542,11 @@ export const EditorOverlay: React.FC<EditorOverlayProps> = ({
               cx={cx}
               cy={cy}
               r={(isSelected ? 20 : 16) / zoom}
-              fill="#fd9316"
+              fill="#ea580c"
               stroke="#ffffff"
               strokeWidth={4 / zoom}
             />
-            <rect
-              x={cx - (4 / zoom)}
-              y={cy - (4 / zoom)}
-              width={8 / zoom}
-              height={8 / zoom}
-              fill="#ffffff"
-              transform={`rotate(45 ${cx} ${cy})`}
-            />
+
             <text
               x={cx + (24 / zoom)}
               y={cy + (5 / zoom)}

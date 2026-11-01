@@ -70,7 +70,7 @@ export const StudyView: React.FC = () => {
                 activeSide={symmetrySide}
                 interactive={false}
                 onSelectMuscle={(id) => selectMuscle(id, true)}
-                resetOnMuscleChange={true}
+                resetOnMuscleChange={false}
               />
             </div>
             <div className="relative w-full h-full flex flex-col items-center justify-center pl-2">
@@ -84,7 +84,7 @@ export const StudyView: React.FC = () => {
                 activeSide={symmetrySide}
                 interactive={false}
                 onSelectMuscle={(id) => selectMuscle(id, true)}
-                resetOnMuscleChange={true}
+                resetOnMuscleChange={false}
               />
             </div>
           </div>
@@ -96,7 +96,7 @@ export const StudyView: React.FC = () => {
               activeMuscles={selectedMuscles}
               activeSide={symmetrySide}
               interactive={false}
-              resetOnMuscleChange={true}
+              resetOnMuscleChange={false}
               onSelectMuscle={(id) => {
                 const target = muscles.find(m => m.id === id);
                 if (target && currentView !== target.view) {
@@ -111,11 +111,11 @@ export const StudyView: React.FC = () => {
         {/* Onderbalk met anatomische legenda (origo en insertie) */}
         <div className="w-full h-8 shrink-0 flex items-center justify-center gap-6 pt-2 border-t border-clinical-100 text-xs text-clinical-600">
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-blue-600 shadow-xs" />
+            <span className="w-3 h-3 rounded-full shadow-xs" style={{ backgroundColor: '#1993f2' }} />
             <span className="font-semibold text-clinical-700">Origo</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-red-600 shadow-xs" />
+            <span className="w-3 h-3 rounded-full shadow-xs" style={{ backgroundColor: '#ea580c' }} />
             <span className="font-semibold text-clinical-700">Insertie</span>
           </div>
         </div>

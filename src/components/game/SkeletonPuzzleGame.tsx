@@ -871,10 +871,10 @@ export const SkeletonPuzzleGame: React.FC = () => {
               const hasO = (state?.remainingOrigins || 0) > 0;
               const hasI = (state?.remainingInsertions || 0) > 0;
 
-              let fillColor = '#2563eb';
+              let fillColor = '#1993f2';
               if (isSelO) fillColor = '#1d4ed8';
               else if (isSelI) fillColor = '#ea580c';
-              else if (!hasO && hasI) fillColor = '#fd9316';
+              else if (!hasO && hasI) fillColor = '#ea580c';
               else if (hasO && hasI) fillColor = '#7c3aed';
 
               if (isSolvedNode) {
@@ -908,7 +908,7 @@ export const SkeletonPuzzleGame: React.FC = () => {
                       cy={cy}
                       r={24 / zoom}
                       fill="none"
-                      stroke={isSelO ? '#2563eb' : '#dc2626'}
+                      stroke={isSelO ? '#1993f2' : '#dc2626'}
                       strokeWidth={3 / zoom}
                     />
                   )}

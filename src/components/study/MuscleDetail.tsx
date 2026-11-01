@@ -51,23 +51,23 @@ export const MuscleDetail: React.FC = () => {
       {/* Anatomische Aanhechtingen & Functie */}
       <div className="space-y-2.5 pt-1 border-t border-clinical-100">
         {/* Origo (Blauw) */}
-        <div className="p-3.5 rounded-xl bg-blue-50/70 border border-blue-100 space-y-1">
+        <div className="p-3.5 rounded-xl bg-sky-50/70 border border-sky-100 space-y-1">
           <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-blue-600 shrink-0 shadow-xs" />
-            <h3 className="text-xs font-bold text-blue-950 uppercase tracking-wider flex items-center gap-1">
-              <Pin className="w-3 h-3 text-blue-600 rotate-45" />
+            <span className="w-3 h-3 rounded-full shrink-0 shadow-xs" style={{ backgroundColor: '#1993f2' }} />
+            <h3 className="text-xs font-bold text-sky-950 uppercase tracking-wider flex items-center gap-1">
+              <Pin className="w-3 h-3 text-sky-600 rotate-45" />
               Origo
             </h3>
           </div>
-          <p className="text-xs sm:text-sm text-blue-950 font-medium leading-relaxed pl-5">
+          <p className="text-xs sm:text-sm text-sky-950 font-medium leading-relaxed pl-5">
             {displayedMuscle.originText}
           </p>
         </div>
 
-        {/* Insertie (Oranje) */}
+        {/* Insertie (Oranje #ea580c) */}
         <div className="p-3.5 rounded-xl bg-orange-50/70 border border-orange-100 space-y-1">
           <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-orange-500 shrink-0 shadow-xs" />
+            <span className="w-3 h-3 rounded-full shrink-0 shadow-xs" style={{ backgroundColor: '#ea580c' }} />
             <h3 className="text-xs font-bold text-orange-950 uppercase tracking-wider flex items-center gap-1">
               <ArrowDownRight className="w-3.5 h-3.5 text-orange-600" />
               Insertie

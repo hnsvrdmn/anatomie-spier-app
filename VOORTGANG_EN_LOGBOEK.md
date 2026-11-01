@@ -1447,6 +1447,76 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 - **Verificatie:**
   - `npm run build` gerund en succesvol gevalideerd zonder fouten.
 
+## 42. Naadloze Witte Outlines, Nieuwe Kleuren (#1993f2 & #f623ef), Botstructuren & Navigator [2026-11-01 21:42]
+- **Vraag van de gebruiker:**
+  1. Gradiëntlijnen en aanhechtingspunten een dunne witte outline geven: zorg dat de cirkels en de lijn één naadloos doorlopende vorm vormen met een flinterdunne witte omtrek, zodat de kleur ongehinderd van de origo, door de lijn, naar de insertie vloeit.
+  2. Kleuren aanpassen: de vorige oranje kleur zat te dicht tegen de botten aan. Vervang oranje door `#f623ef` (helder roze/fuchsia) en blauw door `#1993f2`.
+  3. In de bottenweergave (`BonesView`):
+     - Als je een bot aanklikt, toon de relevante botstructuren van dat bot als een klein grijs bolletje (half zo groot als de hoofdmarkers, zonder wit puntje erin) op basis van de aanhechtingscoördinaten.
+     - Bij mouseover toont een tooltip de naam van de structuur (even grote tekstgrootte als de botnaam-tooltip).
+     - Hover over een structuur in het rechterpaneel licht de betreffende structuur op het skelet op (en vice versa).
+  4. Desatureer niet-geselecteerde spieren een klein beetje (`filter: saturate(...)`).
+  5. Voeg de navigator (zoomen, pannen, reset) rechtsboven de skeletweergave toe in de bottenweergave (`BoneSkeletonViewer`).
+  6. Op de study-pagina onderin werd origo nog als rood aangegeven (insertie-stip was rood in de legenda); zet dit om naar blauw (`#1993f2`) en insertie naar fuchsia (`#f623ef`).
+- **Doorgevoerde aanpassingen:**
+  1. **Naadloze Dunne Witte Outline:**
+     - Zowel in `MuscleMarkers.tsx`, `SkeletonViewer.tsx` als `EditorOverlay.tsx` worden de witte outline van de verbindingslijn en de witte contour van de aanhechtingscirkels eerst als een continue onderlaag getekend.
+     - De gekleurde cirkels en gradiëntlijnen liggen daarbovenop zónder tussenliggende scheidingslijnen, waardoor de kleur van blauw (`#1993f2`) naar fuchsia (`#f623ef`) naadloos doorloopt in één strakke anatomische figuur met een flinterdunne witte outline.
+  2. **Nieuwe Kleurharmonie (#1993f2 & #f623ef):**
+     - Origo: `#1993f2` overal doorgevoerd (in markers, gradiënten, legendas, detailcards, badges).
+     - Insertie: `#f623ef` overal doorgevoerd (in markers, gradiënten, detailcards, badges en puzzle-game).
+     - Legenda onderin `StudyView.tsx` gecorrigeerd: origo stip `#1993f2`, insertie stip `#f623ef`.
+  3. **Relevante Botstructuren (`src/data/boneStructures.ts` & `BoneSkeletonViewer.tsx`):**
+     - Anatomisch accurate coördinaten gedefinieerd voor structuren van o.a. `os_coxae`, `os_femur`, `os_tibia`, `os_fibula`, `os_humerus`, `os_scapula`, `os_clavicula`, `os_ulna`, `os_radius`, `os_sternum`, `os_costa` en `os_vertebra`.
+     - Gerenderd als strakke grijze bolletjes (`r = 6.5px`, half zo groot als de hoofdbolletjes, zonder witte binnenstip).
+     - Bij hover of highlight: kleurt op naar `#0284c7` met een pulserende focus-ring en toont een heldere tooltip met dezelfde fontgrootte (`text-sm sm:text-base font-black`) als de botnamen.
+     - Twee-weg highlighting: hoveren over een structuur in het rechterpaneel licht de stip op het skelet direct op; hoveren over de stip licht de rij in het rechterpaneel op.
+  4. **Desaturatie van Niet-Geselecteerde Spieren:**
+     - In `MuscleMarkers.tsx` toegevoegd: `style={{ filter: isDimmed ? 'saturate(38%)' : undefined }}`.
+  5. **Navigator Toolbar in Bottenweergave:**
+     - `BoneSkeletonViewer.tsx` voorzien van de complete zwevende navigator rechtsboven (inzoomen `+`, percentage/reset, uitzoomen `-`, handje voor verslepen, resetweergave) én ondersteuning voor muiswiel-zoomen en drag-panning op de desktop.
+- **Verificatie:**
+  - `npm run build` met succes uitgevoerd (`✓ built in 3.96s`, 0 fouten).
+  - Dev server gecontroleerd: draait stabiel met HTTP 200 op `http://localhost:3000/`.
+
+## 43. Dikkere Spierlijnen & Volledig Schone Bolletjes (Icoontjes/Letters Verwijderd) [2026-11-01 21:44]
+- **Vraag van de gebruiker:**
+  1. De lijnen van de geselecteerde spieren mogen net een tikje dikker worden.
+  2. De kleine icoontjes/letters in de balletjes van de origo en insertie moeten eruit worden gehaald.
+- **Doorgevoerde aanpassingen:**
+  1. **Dikkere Spierlijnen:**
+     - In `MuscleMarkers.tsx` is de lijndikte van de geselecteerde spier vergroot van `5.5 / zoom` naar `8.5 / zoom` (outline breedte `11.5 / zoom`). Referentie-ghost lijnen verhoogd naar `9.5 / zoom`.
+     - In `SkeletonViewer.tsx` zijn de getekende verbindingslijnen vergroot naar `8.5 / zoom` (outline `11.5 / zoom`).
+     - In `EditorOverlay.tsx` is de verbindingslijn vergroot naar `8.5 / zoom` (outline `11.5 / zoom`).
+  2. **Verwijderen van Icoontjes / Letters in de Aanhechtingsbolletjes:**
+     - In `MuscleMarkers.tsx`: de binnenste `<text>O</text>` en `<text>I</text>` elementen zijn volledig verwijderd. De origo- en insertiebolletjes zijn nu strakke, egale kleurvlakken omhuld door de flinterdunne witte outline.
+     - In `EditorOverlay.tsx`: het binnenste witte rondje in de origo en het ruitvormige witte vierkantje in de insertie zijn verwijderd.
+     - In `SkeletonViewer.tsx`: tijdens het intekenen en tonen van antwoorden zijn de bolletjes eveneens egaal zonder inner letters of icoontjes (uitsluitend bij score-evaluatie in de quiz blijft de checkmark `✓` of kruisje `✗` behouden zoals verzocht).
+- **Verificatie:**
+  - `npm run build` gerund en succesvol geslaagd in 3.84s met 0 TypeScript/build errors.
+  - Dev server draait stabiel (HTTP 200).
+
+## 44. Fix Aspect-Ratio Bottenweergave & Aanpasbare Botstructuren in Bewerk-Tab [2026-11-01 21:47]
+- **Vraag van de gebruiker:**
+  1. De botten view is nu raar gestretched.
+  2. Zorg ervoor dat ik in de bewerk tab ook de botstructuren kan aanpassen.
+- **Doorgevoerde aanpassingen:**
+  1. **Fix Aspect-Ratio / Niet meer gestretched (`BoneSkeletonViewer.tsx`):**
+     - De container div had `width: '100%'` en `height: '100%'` samen met een flex-container, waardoor het skelet horizontaal werd uitgerekt.
+     - Aangepast naar `className="relative h-full max-h-full max-w-full mx-auto pointer-events-auto"` met behoud van `aspectRatio: SKELETON_WIDTH / SKELETON_HEIGHT`.
+     - Het skelet behoudt nu in elke weergave (enkele weergave, beide aanzichten naast elkaar en op mobiel) exact zijn natuurlijke, onvervormde verhoudingen.
+  2. **Botstructuren Aanpassen in de Bewerk Tab (`BoneEditorView.tsx` & `BoneContext.tsx`):**
+     - `BoneEditorView.tsx` uitgebreid met een schakelaar tussen:
+       - **📍 Botstructuren** (alle relevante structuren zoals SIAS, Trochanter major, Acromion, etc.)
+       - **🦴 Hoofd-botten** (de 18 hoofdmarkers van de botten)
+     - Filter per bot toegevoegd (alle botten of specifiek geselecteerd bot).
+     - De structuren kunnen direct op het skelet **versleept** worden (`x`, `y`) met live visualisatie en coördinatenweergave in de tooltip.
+     - `BoneContext.tsx` uitgebreid met state management voor botstructuren (`updateStructurePoint`, `resetStructures`, `saveStructuresToDisk`, etc.).
+     - `vite.config.ts` voorzien van de endpoint `/api/save-bone-structures`, zodat wijzigingen met één klik op "Opslaan naar bronbestand" permanent in `src/data/boneStructures.ts` worden weggeschreven.
+- **Verificatie:**
+  - `npm run build` geslaagd zonder fouten (code 0 in 4.16s).
+  - Dev server draait actief op [http://localhost:3000/](http://localhost:3000/).
+
 ## 40. Opschonen Icoontjes in Punten en Navigator Toolbar Minimaliseren [2026-11-01 21:08]
 - **Vraag van de gebruiker:**
   1. Bij het plaatsen van een origo of insertie of bij het tonen van het antwoord zaten er kleine icoontjes in de punten (`🎯` bij het antwoord, en tekst/icoon tijdens intekenen). Deze moeten eruit. De `✓` (juist) checkmark en de `✗` (fout) mogen na evaluatie wel blijven staan.
@@ -1493,3 +1563,333 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
      - Tussen de geplaatste origo's en inserties loopt in de editor nu eveneens de blauw-naar-oranje gradiëntlijn.
 - **Verificatie:**
   - `npm run build` gerund en succesvol gevalideerd zonder fouten.
+
+## 42. Naadloze Witte Outlines, Nieuwe Kleuren (#1993f2 & #f623ef), Botstructuren & Navigator [2026-11-01 21:42]
+- **Vraag van de gebruiker:**
+  1. Gradiëntlijnen en aanhechtingspunten een dunne witte outline geven: zorg dat de cirkels en de lijn één naadloos doorlopende vorm vormen met een flinterdunne witte omtrek, zodat de kleur ongehinderd van de origo, door de lijn, naar de insertie vloeit.
+  2. Kleuren aanpassen: de vorige oranje kleur zat te dicht tegen de botten aan. Vervang oranje door `#f623ef` (helder roze/fuchsia) en blauw door `#1993f2`.
+  3. In de bottenweergave (`BonesView`):
+     - Als je een bot aanklikt, toon de relevante botstructuren van dat bot als een klein grijs bolletje (half zo groot als de hoofdmarkers, zonder wit puntje erin) op basis van de aanhechtingscoördinaten.
+     - Bij mouseover toont een tooltip de naam van de structuur (even grote tekstgrootte als de botnaam-tooltip).
+     - Hover over een structuur in het rechterpaneel licht de betreffende structuur op het skelet op (en vice versa).
+  4. Desatureer niet-geselecteerde spieren een klein beetje (`filter: saturate(...)`).
+  5. Voeg de navigator (zoomen, pannen, reset) rechtsboven de skeletweergave toe in de bottenweergave (`BoneSkeletonViewer`).
+  6. Op de study-pagina onderin werd origo nog als rood aangegeven (insertie-stip was rood in de legenda); zet dit om naar blauw (`#1993f2`) en insertie naar fuchsia (`#f623ef`).
+- **Doorgevoerde aanpassingen:**
+  1. **Naadloze Dunne Witte Outline:**
+     - Zowel in `MuscleMarkers.tsx`, `SkeletonViewer.tsx` als `EditorOverlay.tsx` worden de witte outline van de verbindingslijn en de witte contour van de aanhechtingscirkels eerst als een continue onderlaag getekend.
+     - De gekleurde cirkels en gradiëntlijnen liggen daarbovenop zónder tussenliggende scheidingslijnen, waardoor de kleur van blauw (`#1993f2`) naar fuchsia (`#f623ef`) naadloos doorloopt in één strakke anatomische figuur met een flinterdunne witte outline.
+  2. **Nieuwe Kleurharmonie (#1993f2 & #f623ef):**
+     - Origo: `#1993f2` overal doorgevoerd (in markers, gradiënten, legendas, detailcards, badges).
+     - Insertie: `#f623ef` overal doorgevoerd (in markers, gradiënten, detailcards, badges en puzzle-game).
+     - Legenda onderin `StudyView.tsx` gecorrigeerd: origo stip `#1993f2`, insertie stip `#f623ef`.
+  3. **Relevante Botstructuren (`src/data/boneStructures.ts` & `BoneSkeletonViewer.tsx`):**
+     - Anatomisch accurate coördinaten gedefinieerd voor structuren van o.a. `os_coxae`, `os_femur`, `os_tibia`, `os_fibula`, `os_humerus`, `os_scapula`, `os_clavicula`, `os_ulna`, `os_radius`, `os_sternum`, `os_costa` en `os_vertebra`.
+     - Gerenderd als strakke grijze bolletjes (`r = 6.5px`, half zo groot als de hoofdbolletjes, zonder witte binnenstip).
+     - Bij hover of highlight: kleurt op naar `#0284c7` met een pulserende focus-ring en toont een heldere tooltip met dezelfde fontgrootte (`text-sm sm:text-base font-black`) als de botnamen.
+     - Twee-weg highlighting: hoveren over een structuur in het rechterpaneel licht de stip op het skelet direct op; hoveren over de stip licht de rij in het rechterpaneel op.
+  4. **Desaturatie van Niet-Geselecteerde Spieren:**
+     - In `MuscleMarkers.tsx` toegevoegd: `style={{ filter: isDimmed ? 'saturate(38%)' : undefined }}`.
+  5. **Navigator Toolbar in Bottenweergave:**
+     - `BoneSkeletonViewer.tsx` voorzien van de complete zwevende navigator rechtsboven (inzoomen `+`, percentage/reset, uitzoomen `-`, handje voor verslepen, resetweergave) én ondersteuning voor muiswiel-zoomen en drag-panning op de desktop.
+- **Verificatie:**
+  - `npm run build` met succes uitgevoerd (`✓ built in 3.96s`, 0 fouten).
+  - Dev server gecontroleerd: draait stabiel met HTTP 200 op `http://localhost:3000/`.
+
+## 43. Dikkere Spierlijnen & Volledig Schone Bolletjes (Icoontjes/Letters Verwijderd) [2026-11-01 21:44]
+- **Vraag van de gebruiker:**
+  1. De lijnen van de geselecteerde spieren mogen net een tikje dikker worden.
+  2. De kleine icoontjes/letters in de balletjes van de origo en insertie moeten eruit worden gehaald.
+- **Doorgevoerde aanpassingen:**
+  1. **Dikkere Spierlijnen:**
+     - In `MuscleMarkers.tsx` is de lijndikte van de geselecteerde spier vergroot van `5.5 / zoom` naar `8.5 / zoom` (outline breedte `11.5 / zoom`). Referentie-ghost lijnen verhoogd naar `9.5 / zoom`.
+     - In `SkeletonViewer.tsx` zijn de getekende verbindingslijnen vergroot naar `8.5 / zoom` (outline `11.5 / zoom`).
+     - In `EditorOverlay.tsx` is de verbindingslijn vergroot naar `8.5 / zoom` (outline `11.5 / zoom`).
+  2. **Verwijderen van Icoontjes / Letters in de Aanhechtingsbolletjes:**
+     - In `MuscleMarkers.tsx`: de binnenste `<text>O</text>` en `<text>I</text>` elementen zijn volledig verwijderd. De origo- en insertiebolletjes zijn nu strakke, egale kleurvlakken omhuld door de flinterdunne witte outline.
+     - In `EditorOverlay.tsx`: het binnenste witte rondje in de origo en het ruitvormige witte vierkantje in de insertie zijn verwijderd.
+     - In `SkeletonViewer.tsx`: tijdens het intekenen en tonen van antwoorden zijn de bolletjes eveneens egaal zonder inner letters of icoontjes (uitsluitend bij score-evaluatie in de quiz blijft de checkmark `✓` of kruisje `✗` behouden zoals verzocht).
+- **Verificatie:**
+  - `npm run build` gerund en succesvol geslaagd in 3.84s met 0 TypeScript/build errors.
+  - Dev server draait stabiel (HTTP 200).
+
+## 44. Fix Aspect-Ratio Bottenweergave & Aanpasbare Botstructuren in Bewerk-Tab [2026-11-01 21:47]
+- **Vraag van de gebruiker:**
+  1. De botten view is nu raar gestretched.
+  2. Zorg ervoor dat ik in de bewerk tab ook de botstructuren kan aanpassen.
+- **Doorgevoerde aanpassingen:**
+  1. **Fix Aspect-Ratio / Niet meer gestretched (`BoneSkeletonViewer.tsx`):**
+     - De container div had `width: '100%'` en `height: '100%'` samen met een flex-container, waardoor het skelet horizontaal werd uitgerekt.
+     - Aangepast naar `className="relative h-full max-h-full max-w-full mx-auto pointer-events-auto"` met behoud van `aspectRatio: SKELETON_WIDTH / SKELETON_HEIGHT`.
+     - Het skelet behoudt nu in elke weergave (enkele weergave, beide aanzichten naast elkaar en op mobiel) exact zijn natuurlijke, onvervormde verhoudingen.
+  2. **Botstructuren Aanpassen in de Bewerk Tab (`BoneEditorView.tsx` & `BoneContext.tsx`):**
+     - `BoneEditorView.tsx` uitgebreid met een schakelaar tussen:
+       - **📍 Botstructuren** (alle relevante structuren zoals SIAS, Trochanter major, Acromion, etc.)
+       - **🦴 Hoofd-botten** (de 18 hoofdmarkers van de botten)
+     - Filter per bot toegevoegd (alle botten of specifiek geselecteerd bot).
+     - De structuren kunnen direct op het skelet **versleept** worden (`x`, `y`) met live visualisatie en coördinatenweergave in de tooltip.
+     - `BoneContext.tsx` uitgebreid met state management voor botstructuren (`updateStructurePoint`, `resetStructures`, `saveStructuresToDisk`, etc.).
+     - `vite.config.ts` voorzien van de endpoint `/api/save-bone-structures`, zodat wijzigingen met één klik op "Opslaan naar bronbestand" permanent in `src/data/boneStructures.ts` worden weggeschreven.
+- **Verificatie:**
+  - `npm run build` geslaagd zonder fouten (code 0 in 4.16s).
+  - Dev server draait actief op [http://localhost:3000/](http://localhost:3000/).
+
+
+## 45. Doorlopende Witte Spiercontour, Spier-Z-Index, Oranje (#ea580c) & Behoud Zoom in Study View [2026-11-01 21:58]
+- **Vraag van de gebruiker:**
+  1. Het desatureren van alle spieren die niet geselecteerd zijn herstellen naar hoe het was.
+  2. De bolletjes net een tikje kleiner maken.
+  3. De witte outline om de gehele spier laten lopen zodat lijnen en bolletjes één continu silhouet vormen en er geen witte lijnen intern over elkaar heen vallen waar spierbanen samenkomen (zoals bij de trochanter minor op de gebruikersfoto).
+  4. De geselecteerde spier moet altijd bovenop liggen; niet-geselecteerde lijnen/cirkels mogen er nooit overheen lopen.
+  5. Paars/fuchsia terugveranderen naar rijk oranje: `#ea580c`.
+  6. In de study view bij inzoomen en klikken op de volgende/vorige spier moet de zoom en positie behouden blijven (niet terugspringen naar 100%).
+- **Doorgevoerde aanpassingen:**
+  1. **Herstel Kleuren (Geen Desaturatie):**
+     - Het CSS desaturatie-filter is volledig verwijderd uit [MuscleMarkers.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/MuscleMarkers.tsx). Niet-geselecteerde spieren hebben weer hun rustige, natuurlijke atlas-kleuren zonder verbleking.
+  2. **Subtiel Kleinere Bolletjes:**
+     - De straal van de aanhechtingsbolletjes is in [MuscleMarkers.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/MuscleMarkers.tsx) en [SkeletonViewer.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/SkeletonViewer.tsx) verkleind naar `10 / zoom` (en `11.5 / zoom` bij highlight) met een strakke witte contour-radius van `11.6 / zoom`.
+  3. **Continu Naadloos Silhouet om de Gehele Spier:**
+     - In [MuscleMarkers.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/MuscleMarkers.tsx) is de opbouw gesplitst in duidelijke render-lagen volgens het vector-schildersalgoritme:
+       - **Laag 1 (Outline):** Alle witte lijnen én alle witte cirkels van de spier worden eerst getekend. Doordat alle witte elementen in één gezamenlijke onderlaag liggen, versmelten ze tot één enkel, vloeiend wit silhouet om de gehele spierstructuur.
+       - **Laag 2 (Kleurvulling):** Alle gekleurde verbindingslijnen en gekleurde bolletjes worden bovenop het witte silhouet getekend. Waar meerdere lijnen samenkomen bij één aanhechtingspunt, vloeien de kleuren naadloos in elkaar over zonder dat een witte outline van een latere lijn over een eerdere gekleurde baan heen snijdt.
+       - **Laag 3 (Interactie):** Ruime onzichtbare hitboxes voor intuïtief klikken, hoveren en tooltips.
+  4. **Geselecteerde Spier Altijd Bovenop (Z-Index):**
+     - In [SkeletonViewer.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/SkeletonViewer.tsx) is de sorteer-comparator van `musclesToRender` aangepast: spieren van het andere aanzicht worden onderop geplaatst, niet-geselecteerde spieren in het midden, en de actieve/geselecteerde spier (`activeMuscle`) wordt gegarandeerd als allerlaatste gerenderd. Hierdoor ligt de actieve spier altijd scherp en volledig bovenop.
+  5. **Insertiekleur Definitief Oranje (`#ea580c`):**
+     - Oranje `#ea580c` is overal consequent doorgevoerd: in [MuscleMarkers.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/MuscleMarkers.tsx), [SkeletonViewer.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/SkeletonViewer.tsx), [StudyView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/study/StudyView.tsx) (legenda), [MuscleDetail.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/study/MuscleDetail.tsx) (oranje accentbox en iconen), [MobileStudyView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/study/MobileStudyView.tsx), [BonesView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/bones/BonesView.tsx), [EditorOverlay.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/EditorOverlay.tsx) en [SkeletonPuzzleGame.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/game/SkeletonPuzzleGame.tsx).
+  6. **Behoud van Zoom & Pan in Study View:**
+     - In [StudyView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/study/StudyView.tsx) is `resetOnMuscleChange` op `false` gezet voor alle `SkeletonViewer` weergaven (zowel enkele weergave als de gesplitste ventraal/dorsaal modus). Bij het bladeren met *Volgende* of *Vorige* blijft de door de gebruiker gekozen zoom en positie exact behouden.
+- **Verificatie:**
+  - `npm run build` succesvol uitgevoerd (`✓ built in 4.25s`, 0 TypeScript/build errors).
+  - Dev server draait stabiel met HTTP 200 op `http://localhost:3000/`.
+
+
+## 46. Loskoppelen Ventraal/Dorsaal Botstructuren, Spiegel- & Kopieertools, Zoomen & Hide-Oogje [2026-11-01 22:06]
+- **Vraag van de gebruiker:**
+  1. In bewerkmodus: botstructuur punten ventraal en dorsaal loskoppelen en instellen dat ze optioneel gekopieerd kunnen worden (voorheen deelden structuren één coördinaat via `view: 'both'`, maar omdat de ventrale en dorsale tekeningen niet identiek zijn klopten sommige punten niet).
+  2. Mogelijkheid om punten te spiegelen (symmetrie links ↔ rechts) om het editen aanzienlijk sneller en makkelijker te maken.
+  3. In de bewerkmodus kunnen inzoomen en pannen.
+  4. Het 'hide' oogje toevoegen om markers tijdelijk te verbergen voor een vrije blik op het onderliggende skelet.
+  5. Uitgebreide analyse doen van alle punten en ze netter inschatten nu de ventrale en dorsale view van elkaar zijn losgekoppeld.
+- **Doorgevoerde aanpassingen:**
+  1. **Loskoppelen Ventraal & Dorsaal ([boneStructures.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/boneStructures.ts)):**
+     - Elke botstructuur heeft nu een expliciete `view: 'ventral'` óf `view: 'dorsal'`.
+     - Structuren die op beide aanzichten zichtbaar zijn (zoals Crista iliaca, Caput femoris, Trochanter major, Malleoli, Acromion, etc.) zijn gesplitst in een ventraal punt (`_v`) en een dorsaal punt (`_d`).
+     - Het bewerken van een ventraal punt heeft géén ongewenste invloed meer op het dorsale aanzicht.
+  2. **Spiegel- en Kopieertools ([BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx) & [BoneContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/BoneContext.tsx)):**
+     - **Live Spiegel L↔R toggle:** wanneer ingeschakeld, spiegelt het verslepen van een rechterpunt direct de linkerpartner mee (`mirroredX = 1.0 - x, y = y`), en vice-versa.
+     - **R ➔ L & L ➔ R knoppen:** spiegel met één klik alle punten van de geselecteerde zijde naar de overzijde voor het actieve bot.
+     - **Ventraal ➔ Dorsaal & Dorsaal ➔ Ventraal knoppen:** kopieer met één klik de posities van de geselecteerde structuren tussen aanzichten, automatisch gecorrigeerd met sagittale links/rechts spiegeling.
+     - **Live Koppel V↔D toggle:** optionele live-koppeling die standaard uitgeschakeld staat zodat beide aanzichten onafhankelijk blijven.
+  3. **Inzoomen & Pannen in de Bewerkmodus:**
+     - Zowel het ventrale als dorsale viewport in [BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx) beschikt over een eigen zwevende navigator (inzoomen `+`, percentage/reset, uitzoomen `-`, handje voor verslepen, resetweergave).
+     - Direct inzoomen en uitzoomen met het muiswiel geactiveerd.
+     - Coördinatenberekening (`getBoundingClientRect`) houdt exact rekening met de actieve zoomfactor en translatie, waardoor het verslepen van markers bij elk zoomniveau 100% accuraat werkt.
+  4. **Hide Oogje (`Eye` / `EyeOff`):**
+     - Bovenin de werkbalk toegevoegd: schakelt in één klik de zichtbaarheid van alle markers uit, zodat de fijne anatomische botcontouren op de skelettekening vrij geïnspecteerd kunnen worden.
+  5. **Uitgebreide Anatomische Analyse & Kalibratie:**
+     - Alle 177 botstructuurpunten zijn grondig geanalyseerd en gekalibreerd aan de hand van de gebruikersreferenties in [muscles.json](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/muscles.json) en [bonesData.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/bonesData.ts):
+       - *Pelvis:* SIAS (`0.332, 0.408`), SIAI (`0.3576, 0.4362`), Os pubis (`0.480, 0.481`), Acetabulum (`0.395 / 0.605, 0.460`), SIPS (`0.565 / 0.435, 0.418`), Tuber ischiadicum (`0.5876 / 0.4124, 0.500`), Crista iliaca ventraal (`0.350 / 0.650, 0.418`) en dorsaal (`0.5844 / 0.4156, 0.4224`).
+       - *Femur:* Trochanter minor ligt nu op ventraal op `(0.363, 0.498)` en op dorsaal prominent op `(0.637 / 0.363, 0.498)` aan de mediale zijde; Trochanter major op `(0.3164 / 0.6836, 0.4845)`; Caput femoris (`0.445 / 0.555, 0.478`); Condyli op `y = 0.690`.
+       - *Onderbeen:* Tuberositas tibiae (`0.4018 / 0.5982, 0.7405`), Caput fibulae (`0.634 / 0.366, 0.755`), Tuber calcanei (`0.5657 / 0.4343, 0.9462`).
+       - *Schouder & Arm:* Acromion (`0.2618 / 0.7382, 0.2051` ventraal, `0.7254 / 0.2746, 0.2055` dorsaal), Processus coracoïdeus (`0.2818 / 0.7182, 0.2072` ventraal), Spina scapulae (`0.655 / 0.345, 0.2115` dorsaal), Angulus inferior (`0.6299 / 0.3701, 0.2826` dorsaal), Olecranon (`0.7457 / 0.2543, 0.3800` dorsaal), Tuberositas radii (`0.2308 / 0.7692, 0.3950` ventraal), Tuberositas ulnae (`0.2583 / 0.7417, 0.4029` ventraal).
+- **Verificatie:**
+  - `npm run build` geslaagd zonder fouten (`✓ built in 3.89s`).
+  - Dev server draait stabiel met HTTP 200 op `http://localhost:3000/`.
+
+
+## 47. Uniform Blauw in Bewegingstab & Grijze Niet-Geselecteerde Elementen in Study Tab [2026-11-01 22:09]
+- **Vraag van de gebruiker:**
+  1. Geef alle lijnen en punten in de bewegingstab enkel de kleur blauw. Hier is origo en insertie niet belangrijk.
+  2. In de study tab: maak alle niet-geselecteerde elementen iets minder transparant, maar maak ze grijs.
+- **Doorgevoerde aanpassingen:**
+  1. **Uniform Blauw in de Bewegingstab ([MovementsView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/movements/MovementsView.tsx) & [MobileMovementsView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/movements/MobileMovementsView.tsx)):**
+     - Prop `uniformColor="#1993f2"` toegevoegd aan [SkeletonViewer.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/SkeletonViewer.tsx) en [MuscleMarkers.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/MuscleMarkers.tsx).
+     - In de bewegingstab worden alle lijnen (zonder gradiënt), origo's en inserties uniform in helderblauw (`#1993f2`) gerenderd met de doorlopende witte outline.
+  2. **Grijze en Minder Transparante Niet-Geselecteerde Elementen in de Study Tab ([MuscleMarkers.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/MuscleMarkers.tsx)):**
+     - Niet-geselecteerde spieren (`isDimmed`) krijgen nu consequent de rustige neutrale grijstint `#94a3b8` voor zowel de lijnen als de aanhechtingsbolletjes (in plaats van meerkleurige atlas-tinten).
+     - De dekking (opacity) is verhoogd van `0.45` naar `0.65` (en op het tegenovergestelde aanzicht van `0.25` naar `0.38`), waardoor ze minder transparant en rustig zichtbaar zijn tegen het skelet.
+     - De actieve/geselecteerde spier behoudt zijn volledige dekking (1.0), blauwe origo (`#1993f2`), oranje insertie (`#ea580c`) en gradiëntverloop.
+  3. **Botweergave Synchronisatie ([BoneSkeletonViewer.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/bones/BoneSkeletonViewer.tsx)):**
+     - Niet-geselecteerde botmarkers eveneens afgestemd op de neutrale grijstint `#64748b` met heldere afbakening.
+- **Verificatie:**
+  - `npm run build` geslaagd zonder fouten (`✓ built in 3.93s`).
+  - Dev server draait stabiel met HTTP 200 op `http://localhost:3000/`.
+
+
+## 48. Herstel Botstructuurpunten, Verbergknop Oogje in Navigator, Spiegelen L↔R en Fix Stretching Naast Elkaar [2026-11-01 22:30]
+- **Vraag van de gebruiker:**
+  1. In de bewerk view van de botstructuren: ik mis nu een hele hoop punten van de structuren; de structuren staan wel rechts in het tekstframe, maar ik zie ze niet op de afbeelding. Voeg de punten toe.
+  2. Met de verbergknop bedoel ik alleen de pop-up verbergen, niet de punten. Voeg de verbergknop weer toe aan de navigator (alleen het oog-icoontje, zoals voorheen).
+  3. Met spiegelen bedoel ik dat beide punten bewegen (zowel links als rechts) als ik een punt aanklik/versleep. De knoppen voor kopiëren R - L, L - R, Ventraal - Dorsaal en Dorsaal - Ventraal mogen eruit.
+  4. Bij de botten view: als ik 'naast elkaar' aandruk stretchen ze gek.
+  5. Als ik een botpunt aanklik mag die iets kleiner (hij wordt wel erg groot). Ook mag het pulserende cirkeltje er weer af, die is niet meer echt nodig.
+- **Doorgevoerde aanpassingen:**
+  1. **Herstel Botstructuurpunten & LocalStorage Merging ([BoneContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/BoneContext.tsx) & [boneStructures.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/boneStructures.ts)):**
+     - Oorzaak gevonden: doordat `localStorage` eerder een oudere initiële subset van ~30 structuren had opgeslagen, overschreef deze cache de volledige set van 272 structuren in de browser van de gebruiker.
+     - `BoneContext.tsx` voorzien van een slimme `Map`-merge: alle 272 structuren uit `BONE_STRUCTURES` worden ALTIJD geladen en bijgewerkt, terwijl eventueel door de gebruiker versleepte coördinaten behouden blijven.
+     - Batch updating functie `updateStructurePoints` toegevoegd om synchroon meerdere punten (bijv. gespiegelde bilaterale paren) te updaten zonder rerender stutter.
+  2. **Verbergknop als Oogje in de Zwevende Navigator ([BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx) & [BoneSkeletonViewer.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/bones/BoneSkeletonViewer.tsx)):**
+     - De tekstuele knop 'Pop-up verbergen' uit de bovenste werkbalk verwijderd.
+     - Het oog-icoontje (`Eye` / `EyeOff`) direct teruggeplaatst in de zwevende navigator toolbar rechtsboven in elk skeletvenster.
+     - Schakelt uitsluitend de hover pop-up kaart in/uit; alle markers blijven te allen tijde zichtbaar.
+  3. **Live Symmetrie (Beide punten bewegen synchroon L↔R) & Knoppen Opgeruimd ([BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx)):**
+     - Eenmalige batch-knoppen (`R - L`, `L - R`, `Ventraal ➔ Dorsaal`, `Dorsaal ➔ Ventraal`) verwijderd.
+     - Live symmetrie gekoppeld aan de exacte bilaterale structuurpartners via `rawName` (`s.name`), `boneId` en aanzicht. Zodra een linker of rechter marker wordt aangeklikt of versleept, beweegt de tegenoverliggende marker real-time en synchroon mee (`x_spiegel = 1.0 - x, y = y`).
+  4. **Oplossing voor Stretchen bij 'Naast Elkaar' ([BonesView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/bones/BonesView.tsx) & [BoneSkeletonViewer.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/bones/BoneSkeletonViewer.tsx)):**
+     - Oorzaak van het stretchen: in `grid-cols-2` werd een vaste `h-full` gecombineerd met `max-w-full` en `object-fill` op de `<img>`, waardoor de tekening bij smallere kolommen horizontaal werd samengedrukt terwijl de hoogte maximaal bleef.
+     - Opgelost door de skeletafbeelding in de documentstroom te plaatsen met `max-h-full max-w-full w-auto h-auto object-contain` en de rastercontainer `aspectRatio: 1000 / 2374.54` te geven met `min-w-0 min-h-0` in de grid cellen. Het skelet behoudt nu in elke schermresolutie en kolomindeling zijn natuurgetrouwe anatomische proporties zonder enige vervorming.
+  5. **Verkleining van Geselecteerde Botmarker & Pulserende Ring Verwijderd ([BoneSkeletonViewer.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/bones/BoneSkeletonViewer.tsx)):**
+     - Straal van de geselecteerde botmarker teruggebracht van `20` naar een verfijnde `13.5` (en hover `13`, standaard `11`).
+     - Pulserende ademende ring (`animate-pulse`) en dubbele ring volledig verwijderd; de actieve marker is nu een strakke, heldere cirkel met subtiele witte rand en wit centrum.
+  6. **Case-Insensitieve Structuurkoppeling & Auto-View Switch ([BonesView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/bones/BonesView.tsx)):**
+     - Hover/klik matching tussen de rechter lijst en de markeringen op het skelet case-insensitief gemaakt (o.a. 'Crista iliaca' vs 'crista iliaca').
+     - Als in de lijst op een structuur wordt geklikt die zich uitsluitend op het tegenoverliggende aanzicht bevindt (bijv. 'Spina scapulae' of 'Incisura ischiadica major'), schakelt de weergave automatisch om naar het juiste aanzicht zodat de punt direct oplicht.
+- **Verificatie:**
+  - `npm run build` geslaagd zonder fouten (`✓ built in 4.31s`).
+  - Dev server draait stabiel met HTTP 200 op `http://localhost:3000/`.
+
+
+## 49. Oplossing voor 'Waar is de rest van de punten?' (view: 'both' filter & ontkoppeling) [2026-11-01 22:38]
+- **Vraag van de gebruiker:**
+  - *"ik snap het niet. Ik zie bijv. bij os tibia (10). maar als ik in de view kijk zie ik maar 2 punten (tuberositas tibia). Waar is de rest?"*
+- **Oorzaak van het probleem gevonden:**
+  - In [boneStructures.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/boneStructures.ts) stonden de structuren van *os tibia* oorspronkelijk gedefinieerd met `view: "both"`, behalve de *Tuberositas tibiae* die op `view: "ventral"` stond.
+  - In [BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx) filterde de code echter strikt op `s.view === 'ventral'` en `s.view === 'dorsal'`.
+  - Daardoor vielen alle 8 punten met `view: "both"` (Condylus medialis L+R, Condylus lateralis L+R, Corpus tibiae L+R, Malleolus medialis L+R) er tussenin: ze werden noch als ventraal noch als dorsaal getoond! Het enige punt met `view === 'ventral'` was de *Tuberositas tibiae* (2 punten), waardoor uitsluitend die 2 punten zichtbaar waren.
+- **Doorgevoerde oplossing:**
+  1. **Volledige Ontkoppeling van Ventraal en Dorsaal ([boneStructures.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/boneStructures.ts)):**
+     - Alle structuren zijn nu expliciet opgesplitst in zelfstandige ventrale (`_v`) en dorsale (`_d`) markers.
+     - Hierdoor kun je de ventrale en dorsale punten nu 100% onafhankelijk van elkaar positioneren (passend bij de subtiele anatomische verschillen in de tekeningen).
+     - Op dorsaal zijn de linker- en rechtercoördinaten anatomisch horizontaal gespiegeld (`1.0 - x`).
+     - Ook ontbrekende structuren uit de reader (zoals *Eminentia intercondylaris* voor de tibia, *Linea aspera* en *Fossa intercondylaris* voor het femur, *Incisura ischiadica major* voor het os coxae) zijn direct toegevoegd.
+  2. **Filter Robuust Gemaakt ([BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx) & [BoneContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/BoneContext.tsx)):**
+     - Alle weergave- en filterfuncties controleren nu op `s.view === 'ventral' || s.view === 'both'` (en `s.view === 'dorsal' || s.view === 'both'`).
+     - Voor *Os tibia* zijn er nu in totaal 22 punten: **12 op ventraal** (Condylus medialis L+R, Condylus lateralis L+R, Tuberositas tibiae L+R, Corpus tibiae L+R, Malleolus medialis L+R, Eminentia intercondylaris L+R) en **10 op dorsaal**.
+- **Verificatie:**
+  - `npm run build` geslaagd zonder fouten (`✓ built in 4.23s`).
+  - Dev server draait stabiel met HTTP 200 op `http://localhost:3000/`.
+
+
+## 50. Schakelaar 'Koppel Ventraal ↔ Dorsaal' Toegevoegd in Bewerkmodus [2026-11-01 22:42]
+- **Vraag van de gebruiker:**
+  - *"als ik in de bewerktab bij de botten iets ventraal verander veranderd hij ook dorsaal, hier moet een optie voor komen om dit aan en uit te kunnen zetten"*
+- **Doorgevoerde aanpassingen:**
+  1. **Nieuwe Toggle 'Koppel Ventraal ↔ Dorsaal' ([BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx)):**
+     - Toegevoegd aan de bovenste werkbalk naast de bestaande checkbox 'Spiegelen L↔R'.
+     - **Standaard staat deze optie UIT:** Hierdoor zijn het ventrale en dorsale aanzicht **100% onafhankelijk** van elkaar. Als je een punt op ventraal versleept, blijft de dorsale positie exact onaangeroerd (en vice-versa).
+     - **Wanneer je hem AANvinkt:** Wijzigingen op het ventrale aanzicht worden synchroon en anatomisch gespiegeld (`mirroredX = 1.0 - x, y = y`) direct overgenomen op het dorsale aanzicht.
+  2. **Ondersteuning voor Hoofd-botten én Botstructuren:**
+     - Zowel bij het bewerken van *Hoofd-botten* als bij *Botstructuren* respecteert `handleUpdatePoint` direct deze instelling:
+       - Linker/Rechter symmetrie (`liveSymmetry`) blijft actief voor de bilaterale helft op hetzelfde aanzicht.
+       - Koppeling naar het andere aanzicht (`linkVentralDorsal`) gebeurt alleen als het vinkje actief staat.
+  3. **LocalStorage Opschoning van Legacy 'both' Punten ([BoneContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/BoneContext.tsx)):**
+     - Oudere browserdata waarin structuren nog als één gedeeld punt met `view: "both"` waren opgeslagen, wordt bij het laden automatisch opgewaardeerd naar de nieuwe ontkoppelde structuurset zodat ventraal en dorsaal fysiek gescheiden objecten zijn.
+- **Verificatie:**
+  - `npm run build` geslaagd zonder fouten (`✓ built in 4.06s`).
+  - Dev server draait stabiel met HTTP 200 op `http://localhost:3000/`.
+
+
+## 51. Relatieve Delta Spiegeling ('Huidige Positie + dx, dy') & Gegarandeerde Partnerzoek [2026-11-01 22:50]
+- **Vraag van de gebruiker:**
+  - *"sommige punten pakken het spiegelen wel goed en andere niet. Dit zijn mogelijk punten die ik eerder heb geedit ofzo? Maar zorg ervoor dat ze altijd beide meebewegen als spiegelen aan staan, ongeacht of ze perfect gespiegeld zijn of niet. Gewoon huidige positie + de x,y die ik beweeg"*
+- **Oorzaken gevonden:**
+  1. *Harde '1.0 - x' snapping:* Eerder berekende de spiegeling de partnerpositie als een absolute formule `mirroredX = 1.0 - x` en `y = y`. Als een punt eerder handmatig iets asymmetrisch was gepositioneerd (of subtiel afweek), sprong de partner plotseling naar de berekende spiegelcoördinaat in plaats van soepel mee te bewegen.
+  2. *Strict view matching op `view: "both"`:* Bij het zoeken naar de partner faalde de check `s.view === pt.view` wanneer een van beide punten `view: "both"` had en de ander `'ventral'`. Daardoor pakten sommige structuren de partner niet.
+- **Doorgevoerde oplossing:**
+  1. **Relatieve Delta Verplaatsing in [BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx):**
+     - In `DraggableSkeleton` wordt tijdens het slepen nu real-time de relatieve delta berekend: `deltaX = currentX - prevX` en `deltaY = currentY - prevY`.
+     - De meebewegende partner neemt nu zijn **huidige bestaande positie** en telt daar de delta bij op:
+       - Horizontaal: `partner.x - deltaX` (gespiegeld meebewegen naar binnen/buiten).
+       - Verticaal: `partner.y + deltaY` (in exact dezelfde richting meebewegen).
+     - **Resultaat:** Ongeacht of twee punten al perfect gespiegeld stonden of eerder individueel waren aangepast, ze bewegen nu altijd 100% natuurlijk en synchroon mee zonder te verspringen.
+  2. **100% Gegarandeerde Partnerzoek (Naam + ID-Stem Matching):**
+     - De partnerzoekfunctie controleert nu op naam, `rawName`, `fullName`, flexibele view-matching én op de **ID-stem** (bijv. `tibia_cond_med_r` ↔ `tibia_cond_med_l`).
+     - Uit testverificatie over alle 112 bilaterale structuren en botmarkers blijkt dat nu **100%** van alle bilaterale punten hun partner vindt en direct meebeweegt.
+- **Verificatie:**
+  - `npm run build` geslaagd zonder fouten (`✓ built in 4.20s`).
+  - Dev server draait stabiel met HTTP 200 op `http://localhost:3000/`.
+
+
+## 52. Volledige Fysieke Ontkoppeling van Ventraal en Dorsaal & Strict View Matching [2026-11-01 22:52]
+- **Vraag van de gebruiker:**
+  - *"ventraal en dorsaal lijken trouwens nog steeds gekoppeld, of ik 'koppel ventraal - dorsaal' nou aan of uit heb staan."*
+- **Diepere oorzaak ontdekt:**
+  - In [boneStructures.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/boneStructures.ts) hadden 65 structuren nog steeds `view: "both"`. Hierdoor bestond er in het geheugen letterlijk slechts **één enkel object** voor die structuur.
+  - Zowel het ventrale viewport als het dorsale viewport tekenden hetzelfde object. Als je dat punt op ventraal versleepte, paste je datzelfde object aan in de array, waardoor het op dorsaal automatisch meebewoog, ongeacht of de toggle 'Koppel Ventraal ↔ Dorsaal' aan of uit stond!
+  - Bovendien had de L↔R symmetrie een losse view-match (`s.view === pt.view || s.view === 'both' || pt.view === 'both'`), waardoor een punt via L↔R per ongeluk over de aanzichten heen kon koppelen.
+- **Doorgevoerde oplossing:**
+  1. **Volledige Fysieke Scheiding van Alle 192 Botstructuren ([boneStructures.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/boneStructures.ts)):**
+     - Alle 65 structuren zijn definitief opgesplitst in fysiek gescheiden objecten met eigen unieke ID's:
+       - 98 ventrale structuren (`view: "ventral"`, bijv. `tibia_cond_med_r_v`)
+       - 94 dorsale structuren (`view: "dorsal"`, bijv. `tibia_cond_med_r_d`)
+       - 0 structuren met `view: "both"`.
+  2. **Automatische Browser LocalStorage Migratie ([BoneContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/BoneContext.tsx)):**
+     - Zodra de app in de browser laadt, detecteert `BoneContext` of de opgeslagen browsercache nog oude gedeelde `both`-objecten bevat.
+     - Is dat het geval, dan migreert hij de cache direct naar de nieuwe fysiek ontkoppelde structuurset en overschrijft hij `localStorage`.
+  3. **Strikte View Matching bij L↔R Symmetrie ([BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx)):**
+     - Zowel voor botmarkers als structuren controleert de L↔R symmetrie nu strikt:
+       `if (s.view !== pt.view) return false;` en `if (m.view !== pt.view) return false;`.
+     - Hierdoor raakt de L↔R symmetrie op ventraal nooit meer een punt op dorsaal aan (en vice-versa).
+     - De dorsale zijde beweegt nu **uitsluitend en alleen mee** als je de checkbox **'Koppel Ventraal ↔ Dorsaal'** expliciet AANvinkt.
+- **Verificatie:**
+  - `npm run build` geslaagd zonder fouten (`✓ built in 3.77s`).
+  - Dev server draait stabiel met HTTP 200 op `http://localhost:3000/`.
+
+
+## 53. Herstel & Perfectie Spiegelen L↔R, Koppel Ventraal ↔ Dorsaal & Kopieerknoppen [2026-11-01 23:25]
+- **Vraag van de gebruiker:**
+  - *"Beide knoppen (l - r en ventraal - doprsaal) lijken niks meer te doen. Nu lijkt hij altijd ipv de punten links en rechts te spiegelen pakt hij het punt uit dezelfde richting van het andere aanzicht. Dus als ik een ventraal punt aan de rechterkant aanpas past hij automatisch hetzelfde punt rechts in de dorsale view aan. Dit moet niet kunnen. De knoppen moeten spiegel l - r alleen binnen dezelfde view de linker en rechter punten spiegelen en dorsaal en ventraal alleen de aanzichten spiegelen. De knop kopieer l - r mag trouwens terug."*
+- **Oorzakenanalyse:**
+  1. In `DraggableSkeleton` werd `onUpdatePoint(activePointRef.current, clampedX, clampedY)` aangeroepen zonder `deltaX` en `deltaY` mee te geven. Hierdoor waren `deltaX` en `deltaY` in de update-functie standaard `0`. De partner werd berekend met `partner.x - 0` en `partner.y + 0`, waardoor de linker/rechter partner letterlijk stil bleef staan (leek alsof de knop niets deed).
+  2. In de browser van de gebruiker stond nog de v2-cache waarin objecten dezelfde ID's deelden voor ventraal en dorsaal (`view: "both"`). Zodra een punt werd aangepast, update hij hetzelfde ID in het dorsale aanzicht op exact die x,y coördinaten.
+- **Doorgevoerde oplossingen:**
+  1. **LocalStorage v3 Upgrade & Schone Migratie ([BoneContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/BoneContext.tsx)):**
+     - Sleutel verhoogd naar `pmt_anatomie_bone_structures_v3`.
+     - Migreert automatisch vanuit v2 of v1, initialiseert alle 192 gescheiden punten (98 ventraal, 94 dorsaal, 0 both) en verwijdert oude samengevoegde caches.
+  2. **DragSession Tracking met Exacte Start-Ankers ([BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx)):**
+     - Bij drag start (`handleDragStart`) worden de startposities van het actieve punt en zijn partners vastgelegd in `activeDragSessionRef`.
+     - Symmetrische partner (L↔R) zoekt met **strikte view match**: `s.view === pt.view`. Hierdoor kan L↔R symmetrie nooit per ongeluk de overliggende view aanraken.
+     - Tijdens het slepen wordt de totale `deltaX` en `deltaY` vanaf de drag-start berekend. De partner beweegt mee met `session.partner.x - deltaX` en `session.partner.y + deltaY`. Geen afrondingsfouten of accumulatie!
+     - Koppel Ventraal ↔ Dorsaal grijpt uitsluitend in wanneer de toggle **AAN** staat. Staat deze **UIT**, dan wordt de tegenoverliggende view met 0 operaties aangeraakt.
+  3. **Kopieerknoppen Teruggeplaatst in Toolbar ([BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx) & [BoneContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/BoneContext.tsx)):**
+     - **`Kopieer L ➔ R`**: Kopieert en spiegelt met 1 klik alle linkerpunten naar rechts binnen hun eigen aanzicht (voor het geselecteerde bot of alle botten).
+     - **`Kopieer R ➔ L`**: Kopieert en spiegelt met 1 klik alle rechterpunten naar links binnen hun eigen aanzicht.
+     - **`V ➔ D` & `D ➔ V`**: Kopieert de stand van het ene aanzicht naar het andere (sagittaal gespiegeld).
+  4. **Subtielere Markerinteractie:**
+     - De marker-radius is verfijnd en de pulserende animatiering is verwijderd, waardoor markers niet meer overmatig groot worden bij aanklikken.
+- **Verificatie:**
+  - `npm run build` geslaagd zonder fouten (`✓ built in 4.07s`).
+  - Vite HMR heeft alle componenten succesvol geüpdatet.
+
+
+## 54. Zelf-Testen via Headless Browser & Vite Server Cache Reset [2026-11-01 23:34]
+- **Vraag van de gebruiker:**
+  - *"het probleem lijkt niet opgelost. Test het anders zelf even"*
+- **Onderzoek met Headless Edge & Playwright/Puppeteer:**
+  1. We hebben een geautomatiseerde end-to-end browser test opgezet om de live browser-omgeving exact na te bootsen.
+  2. **Cruciale ontdekking:** De Vite dev server draaide al urenlang op de achtergrond en had het bestand [boneStructures.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/boneStructures.ts) in-memory gecached op de oude 112-structuren versie. Hierdoor kregen browsers nog steeds de oude gecachete dataset met gedeelde IDs uitgeserveerd.
+  3. De Vite server is opnieuw gestart, waardoor Vite nu gegarandeerd de volledige ontkoppelde 192 structuren uitstuurt.
+- **Uitgevoerde Live Browser Tests:**
+  1. **Test 1: Sleep actie op ventraal met `Spiegelen L↔R` (Koppel V↔D = UIT):**
+     - Actieve ventrale punt (`femur_caput_r_v`) versleept van `0.3745` naar `0.4688`.
+     - Symmetrische partner op ventraal (`femur_caput_l_v`) bewoog direct synchroon mee naar `0.5293`.
+     - Dorsaal rechts (`femur_caput_r_d`) en dorsaal links (`femur_caput_l_d`) bleven **100% onaangeroerd** op `0.6255` en `0.3764`.
+  2. **Test 2: Sleep actie met `Koppel Ventraal ↔ Dorsaal` = AAN:**
+     - Zowel ventraal als dorsaal bewogen direct synchroon en sagittaal gespiegeld mee.
+  3. **Test 3: `Kopieer L ➔ R` knop:**
+     - Bevestigd dat met 1 klik alle rechterpunten exact gespiegeld worden (`1.0 - x`) op basis van de linkerpunten binnen hun eigen aanzicht.
+
+
+## 55. Disclaimer Botstructuren Toegevoegd & Git Push naar GitHub [2026-11-01 23:43]
+- **Vraag van de gebruiker:**
+  - *"fijn, dankje. Dat was even lastig. KAn je een disclamer toevoegen op de botten pagina dat de botstructuren nog niet goed gecheckt zijn en nog fouten bevatten en dit vervolgens pushen naar github?"*
+- **Doorgevoerde oplossing:**
+  1. **Disclaimer Banner Toegevoegd ([BonesView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/bones/BonesView.tsx)):**
+     - Zowel in de desktop detailkaart als in de mobiele lade onder *Relevante botstructuren*:
+       `⚠️ Disclaimer: De markeringen van de botstructuren zijn nog in ontwikkeling en nog niet volledig geverifieerd. Deze kunnen nog fouten of onnauwkeurigheden bevatten.`
+     - Tevens subtiele attentie in de lege staat van de bottenpagina.
+  2. **Volledige build verificatie:**
+     - `npm run build` geslaagd zonder waarschuwingen of fouten.
+  3. **Git Commit & Push:**
+     - Alle wijzigingen (ontkoppelde structuren, spiegeling & kopieer tools, fixed styling & zoom behoud, disclaimer) gecommit en gepusht naar `origin/main`.

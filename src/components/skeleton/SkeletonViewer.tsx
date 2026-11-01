@@ -46,6 +46,7 @@ interface SkeletonViewerProps {
   autoCenterMuscle?: boolean;
   resetOnMuscleChange?: boolean;
   hideMuscleMarkers?: boolean;
+  uniformColor?: string;
 }
 
 export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
@@ -74,6 +75,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
   autoCenterMuscle = false,
   resetOnMuscleChange = false,
   hideMuscleMarkers = false,
+  uniformColor,
 }) => {
   const localContainerRef = useRef<HTMLDivElement>(null);
   const containerRef = innerRef || localContainerRef;
@@ -516,10 +518,15 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
       : (activeMuscle ? [activeMuscle] : []);
 
     // Sorteer zodat spieren van het tegenovergestelde aanzicht eerst (onderop) worden getekend
+    // en de actieve/geselecteerde spier altijd als allerlaatste (helemaal bovenop) ligt!
     return [...list].sort((a, b) => {
       const aOpp = a.view !== currentView ? 0 : 1;
       const bOpp = b.view !== currentView ? 0 : 1;
-      return aOpp - bOpp;
+      if (aOpp !== bOpp) return aOpp - bOpp;
+
+      const aFocused = a.id === activeMuscle?.id ? 1 : 0;
+      const bFocused = b.id === activeMuscle?.id ? 1 : 0;
+      return aFocused - bFocused;
     });
   }, [hideMuscleMarkers, activeMuscles, activeMuscle, currentView]);
 
@@ -623,6 +630,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                   onSelectMuscle={onSelectMuscle}
                   isInteractive={!!onSelectMuscle}
                   onHoverPoint={setHoveredInfo}
+                  uniformColor={uniformColor}
                 />
               );
             })}
@@ -634,11 +642,11 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                   const isEval = showReferenceGhost || (!!quizMatches && quizMatches.length > 0);
 
                   // Bepaal de kleuren aan beide uiteinden van de verbindingslijn:
-                  // Niet geëvalueerd: gradiënt van blauw (#2563eb, origo) naar oranje (#fd9316, insertie)
+                  // Niet geëvalueerd: gradiënt van blauw (#1993f2, origo) naar oranje (#ea580c, insertie)
                   // Geëvalueerd: per punt groen (bij correct/close) of rood (bij incorrect), wat leidt tot:
                   // groen-groen, groen-rood, rood-groen of rood-rood
-                  let origColor = '#2563eb';
-                  let insColor = '#fd9316';
+                  let origColor = '#1993f2';
+                  let insColor = '#ea580c';
 
                   if (isEval) {
                     const originMatches = quizMatches?.filter(m => m.targetType === 'origin' || !m.targetType) || [];
@@ -687,15 +695,26 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                           <stop offset="100%" stopColor={insColor} />
                         </linearGradient>
                       </defs>
+                      {/* Dunne witte outline onder de verbindingslijn */}
+                      <line
+                        x1={orig.x * SVG_WIDTH}
+                        y1={orig.y * SVG_HEIGHT}
+                        x2={ins.x * SVG_WIDTH}
+                        y2={ins.y * SVG_HEIGHT}
+                        stroke="#ffffff"
+                        strokeWidth={Math.max(2.5, ((isEval ? 8 : 8.5) + 3) / zoom)}
+                        strokeLinecap="round"
+                        opacity={0.95}
+                      />
                       <line
                         x1={orig.x * SVG_WIDTH}
                         y1={orig.y * SVG_HEIGHT}
                         x2={ins.x * SVG_WIDTH}
                         y2={ins.y * SVG_HEIGHT}
                         stroke={`url(#${gradId})`}
-                        strokeWidth={Math.max(1, (isEval ? 6 : 7) / zoom)}
+                        strokeWidth={Math.max(1, (isEval ? 8 : 8.5) / zoom)}
                         strokeLinecap="round"
-                        opacity={isEval ? "0.95" : "0.9"}
+                        opacity={isEval ? "0.95" : "0.92"}
                       />
                     </React.Fragment>
                   );
@@ -761,14 +780,20 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                     />
                   )}
 
+                  {/* Witte buitencontour naadloos aansluitend op verbindingslijn */}
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r={Math.max(2.5, 12.3 / zoom)}
+                    fill="#ffffff"
+                  />
                   {/* Hoofdpunt */}
                   <circle
                     cx={cx}
                     cy={cy}
-                    r={15 / zoom}
-                    fill={isEval ? badgeColor : "#2563eb"}
-                    stroke="#ffffff"
-                    strokeWidth={3.5 / zoom}
+                    r={Math.max(2, 10.5 / zoom)}
+                    fill={isEval ? badgeColor : "#1993f2"}
+                    stroke="none"
                   />
 
                   {/* Resultaat-status in het punt na controle: '✓' (juist) of '✗' (fout). Geen tekst/icoon tijdens intekenen */}
@@ -848,14 +873,20 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                     />
                   )}
 
+                  {/* Witte buitencontour naadloos aansluitend op verbindingslijn */}
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r={Math.max(2.5, 12.3 / zoom)}
+                    fill="#ffffff"
+                  />
                   {/* Hoofdpunt */}
                   <circle
                     cx={cx}
                     cy={cy}
-                    r={15 / zoom}
-                    fill={isEval ? badgeColor : "#fd9316"}
-                    stroke="#ffffff"
-                    strokeWidth={3.5 / zoom}
+                    r={Math.max(2, 10.5 / zoom)}
+                    fill={isEval ? badgeColor : "#ea580c"}
+                    stroke="none"
                   />
 
                   {/* Resultaat-status in het punt na controle: '✓' (juist) of '✗' (fout). Geen tekst/icoon tijdens intekenen */}
@@ -907,7 +938,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                   cx={targetBoneMarker.x * SVG_WIDTH}
                   cy={targetBoneMarker.y * SVG_HEIGHT}
                   r={16 / zoom}
-                  fill="#2563eb"
+                  fill="#1993f2"
                   stroke="#ffffff"
                   strokeWidth={4 / zoom}
                   style={{ filter: 'drop-shadow(0px 2px 6px rgba(0, 0, 0, 0.4))' }}

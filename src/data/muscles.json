@@ -2991,8 +2991,8 @@
       "right": {
         "origins": [
           {
-            "x": 0.5618,
-            "y": 0.4985,
+            "x": 0.5859,
+            "y": 0.5022,
             "name": "tuber ischiadicum (caput longum)"
           },
           {
@@ -3008,39 +3008,13 @@
             "name": "caput fibulae"
           }
         ],
-        "musclePath": [],
-        "attachmentLines": [
-          {
-            "id": "line-biceps-fem-shaft-right",
-            "name": "middelste derde dorsale deel van femur (caput brevis)",
-            "type": "origin",
-            "points": [
-              {
-                "x": 0.652,
-                "y": 0.535
-              },
-              {
-                "x": 0.64,
-                "y": 0.568
-              },
-              {
-                "x": 0.6323,
-                "y": 0.5931
-              },
-              {
-                "x": 0.618,
-                "y": 0.645
-              }
-            ],
-            "tolerance": 0.024
-          }
-        ]
+        "musclePath": []
       },
       "left": {
         "origins": [
           {
-            "x": 0.4382,
-            "y": 0.4985,
+            "x": 0.4141,
+            "y": 0.5022,
             "name": "tuber ischiadicum (caput longum)"
           },
           {

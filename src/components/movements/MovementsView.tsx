@@ -85,6 +85,7 @@ export const MovementsView: React.FC = () => {
                 activeMuscles={selectedMuscles}
                 activeSide="both"
                 interactive={false}
+                uniformColor="#1993f2"
               />
             </div>
             <div className="relative w-full h-full flex flex-col items-center justify-center pl-2">
@@ -96,6 +97,7 @@ export const MovementsView: React.FC = () => {
                 activeMuscles={selectedMuscles}
                 activeSide="both"
                 interactive={false}
+                uniformColor="#1993f2"
               />
             </div>
           </div>
@@ -106,6 +108,7 @@ export const MovementsView: React.FC = () => {
               activeMuscles={selectedMuscles}
               activeSide="both"
               interactive={false}
+              uniformColor="#1993f2"
             />
           </div>
         )}

@@ -78,6 +78,7 @@ export const MobileMovementsView: React.FC = () => {
           interactive={false}
           hideZoomToolbar={true}
           isMobile={true}
+          uniformColor="#1993f2"
         />
       </div>
 

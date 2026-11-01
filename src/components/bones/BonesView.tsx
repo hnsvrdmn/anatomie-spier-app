@@ -7,7 +7,7 @@ import { AnatomicalView } from '../../types/anatomy';
 import { BoneSkeletonViewer } from './BoneSkeletonViewer';
 import { ViewToggle, ViewLayoutMode } from '../common/ViewToggle';
 import { useIsMobile } from '../../hooks/useIsMobile';
-import { RotateCw, X, ArrowRight, ChevronUp, ChevronLeft, ChevronRight } from 'lucide-react';
+import { RotateCw, X, ArrowRight, ChevronUp, ChevronLeft, ChevronRight, AlertTriangle } from 'lucide-react';
 
 interface BoneAttachmentsCardProps {
   boneId: string;
@@ -47,8 +47,8 @@ const BoneAttachmentsCard: React.FC<BoneAttachmentsCardProps> = ({ boneId, onSel
       {/* Origo lijst */}
       {hasOrigins && (
         <div className="space-y-1.5">
-          <div className="text-[11px] font-bold text-blue-800 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-blue-600 shrink-0" />
+          <div className="text-[11px] font-bold text-sky-900 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: '#1993f2' }} />
             <span>Origo:</span>
           </div>
           <div className="space-y-1.5">
@@ -56,21 +56,21 @@ const BoneAttachmentsCard: React.FC<BoneAttachmentsCardProps> = ({ boneId, onSel
               <div
                 key={`${att.muscleId}-${idx}`}
                 onClick={() => onSelectMuscle?.(att.muscleId)}
-                className={`p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/70 text-xs transition flex flex-col gap-0.5 group ${
-                  onSelectMuscle ? 'hover:bg-blue-100/80 hover:border-blue-300 cursor-pointer' : ''
+                className={`p-2.5 rounded-xl bg-sky-50/70 border border-sky-200/70 text-xs transition flex flex-col gap-0.5 group ${
+                  onSelectMuscle ? 'hover:bg-sky-100/80 hover:border-sky-300 cursor-pointer' : ''
                 }`}
                 title={onSelectMuscle ? `Bekijk ${att.muscleName} in de spierenatlas` : undefined}
               >
-                <div className="font-black text-blue-950 flex items-center justify-between">
+                <div className="font-black text-sky-950 flex items-center justify-between">
                   <span>{att.muscleName}</span>
                   <div className="flex items-center gap-1">
                     {att.part && (
-                      <span className="text-[10px] font-semibold text-blue-800 bg-blue-100 px-1.5 py-0.5 rounded-md">
+                      <span className="text-[10px] font-semibold text-sky-800 bg-sky-100 px-1.5 py-0.5 rounded-md">
                         {att.part}
                       </span>
                     )}
                     {onSelectMuscle && (
-                      <ArrowRight className="w-3 h-3 text-blue-400 group-hover:text-blue-700 transition transform group-hover:translate-x-0.5" />
+                      <ArrowRight className="w-3 h-3 text-sky-400 group-hover:text-sky-700 transition transform group-hover:translate-x-0.5" />
                     )}
                   </div>
                 </div>
@@ -86,8 +86,8 @@ const BoneAttachmentsCard: React.FC<BoneAttachmentsCardProps> = ({ boneId, onSel
       {/* Insertie lijst */}
       {hasInsertions && (
         <div className="space-y-1.5">
-          <div className="text-[11px] font-bold text-orange-800 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-orange-500 shrink-0" />
+          <div className="text-[11px] font-bold text-orange-900 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: '#ea580c' }} />
             <span>Insertie:</span>
           </div>
           <div className="space-y-1.5">
@@ -127,15 +127,16 @@ const BoneAttachmentsCard: React.FC<BoneAttachmentsCardProps> = ({ boneId, onSel
 
 export const BonesView: React.FC = () => {
   const isMobile = useIsMobile();
-  const { bones } = useBones();
+  const { bones, structures } = useBones();
   const { selectMuscle, setAppMode } = useMuscles();
 
   // Weergave (Ventraal of Dorsaal)
   const [currentView, setCurrentView] = useState<AnatomicalView>('ventral');
   const [viewLayout, setViewLayout] = useState<ViewLayoutMode>('ventral');
 
-  // Geselecteerd bot
+  // Geselecteerd bot & gehighlighte structuur
   const [selectedBone, setSelectedBone] = useState<Bone | null>(null);
+  const [highlightedStructureName, setHighlightedStructureName] = useState<string | null>(null);
 
   // Uitschuifbaar paneel onderin (mobiel)
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
@@ -280,6 +281,8 @@ export const BonesView: React.FC = () => {
             selectedBone={selectedBone}
             onSelectBone={handleSelectBone}
             isMobile={true}
+            highlightedStructureName={highlightedStructureName}
+            onHoverStructure={setHighlightedStructureName}
           />
         </div>
 
@@ -390,16 +393,57 @@ export const BonesView: React.FC = () => {
                           {selectedBone.structures.length} {selectedBone.structures.length === 1 ? 'structuur' : 'structuren'}
                         </span>
                       </div>
+                      {/* Disclaimer botstructuren */}
+                      <div className="flex items-start gap-2 p-2.5 rounded-xl bg-amber-50/90 border border-amber-200/80 text-amber-900 text-[11px] leading-relaxed">
+                        <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
+                        <span>
+                          <strong>Disclaimer:</strong> De markeringen van de botstructuren zijn nog in ontwikkeling en nog niet volledig geverifieerd. Deze kunnen nog fouten of onnauwkeurigheden bevatten.
+                        </span>
+                      </div>
                       <div className="grid grid-cols-1 gap-1.5">
-                        {selectedBone.structures.map((struct, idx) => (
-                          <div
-                            key={idx}
-                            className="text-xs font-semibold text-slate-800 bg-slate-50/90 border border-slate-200/90 rounded-xl px-2.5 py-1.5 flex items-center gap-2"
-                          >
-                            <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
-                            <span>{struct}</span>
-                          </div>
-                        ))}
+                        {selectedBone.structures.map((struct, idx) => {
+                          const isHighlighted = Boolean(
+                            highlightedStructureName &&
+                              (() => {
+                                const hl = highlightedStructureName.toLowerCase();
+                                const st = struct.toLowerCase();
+                                return hl === st || hl.includes(st) || st.includes(hl);
+                              })()
+                          );
+                          return (
+                            <div
+                              key={idx}
+                              onMouseEnter={() => setHighlightedStructureName(struct)}
+                              onMouseLeave={() => setHighlightedStructureName(null)}
+                              onClick={() => {
+                                setHighlightedStructureName((prev) => (prev === struct ? null : struct));
+                                if (viewLayout !== 'both') {
+                                  const structPoints = structures.filter(
+                                    (s) =>
+                                      s.boneId === selectedBone.id &&
+                                      (s.name.toLowerCase() === struct.toLowerCase() ||
+                                        (s.fullName && s.fullName.toLowerCase() === struct.toLowerCase()) ||
+                                        (s.parentStructure && s.parentStructure.toLowerCase() === struct.toLowerCase()) ||
+                                        struct.toLowerCase().includes(s.name.toLowerCase()) ||
+                                        (s.fullName && struct.toLowerCase().includes(s.fullName.toLowerCase())))
+                                  );
+                                  const hasCurrentView = structPoints.some((s) => s.view === currentView);
+                                  if (!hasCurrentView && structPoints.length > 0) {
+                                    if (structPoints[0].view === 'ventral' || structPoints[0].view === 'dorsal') { setCurrentView(structPoints[0].view); }
+                                  }
+                                }
+                              }}
+                              className={`text-xs font-semibold rounded-xl px-2.5 py-1.5 flex items-center gap-2 cursor-pointer transition-all ${
+                                isHighlighted
+                                  ? 'bg-sky-100 text-sky-950 border border-sky-300 shadow-xs'
+                                  : 'text-slate-800 bg-slate-50/90 border border-slate-200/90 hover:bg-sky-50/80 hover:border-sky-200'
+                              }`}
+                            >
+                              <span className={`w-2 h-2 rounded-full shrink-0 transition-all ${isHighlighted ? 'bg-sky-600 ring-2 ring-sky-300 scale-125' : 'bg-slate-400'}`} />
+                              <span>{struct}</span>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -448,33 +492,39 @@ export const BonesView: React.FC = () => {
         {/* Skelet Container met witte achtergrond (beide weergaven of enkelvoudig) */}
         {viewLayout === 'both' ? (
           <div className="flex-1 min-h-0 w-full h-full grid grid-cols-2 gap-4 py-1 overflow-hidden bg-white">
-            <div className="relative w-full h-full flex flex-col items-center justify-center border-r border-slate-100 pr-2">
+            <div className="relative w-full h-full min-w-0 min-h-0 flex flex-col items-center justify-center border-r border-slate-100 pr-2 overflow-hidden">
               <BoneSkeletonViewer
                 currentView="ventral"
                 bones={bones}
                 selectedBone={selectedBone}
                 onSelectBone={handleSelectBone}
                 isMobile={false}
+                highlightedStructureName={highlightedStructureName}
+                onHoverStructure={setHighlightedStructureName}
               />
             </div>
-            <div className="relative w-full h-full flex flex-col items-center justify-center pl-2">
+            <div className="relative w-full h-full min-w-0 min-h-0 flex flex-col items-center justify-center pl-2 overflow-hidden">
               <BoneSkeletonViewer
                 currentView="dorsal"
                 bones={bones}
                 selectedBone={selectedBone}
                 onSelectBone={handleSelectBone}
                 isMobile={false}
+                highlightedStructureName={highlightedStructureName}
+                onHoverStructure={setHighlightedStructureName}
               />
             </div>
           </div>
         ) : (
-          <div className="flex-1 min-h-0 w-full h-full flex items-center justify-center py-1 overflow-hidden bg-white">
+          <div className="flex-1 min-h-0 w-full h-full min-w-0 min-h-0 flex items-center justify-center py-1 overflow-hidden bg-white">
             <BoneSkeletonViewer
               currentView={currentView}
               bones={bones}
               selectedBone={selectedBone}
               onSelectBone={handleSelectBone}
               isMobile={false}
+              highlightedStructureName={highlightedStructureName}
+              onHoverStructure={setHighlightedStructureName}
             />
           </div>
         )}
@@ -522,16 +572,57 @@ export const BonesView: React.FC = () => {
                     {selectedBone.structures.length} {selectedBone.structures.length === 1 ? 'structuur' : 'structuren'}
                   </span>
                 </div>
+                {/* Disclaimer botstructuren */}
+                <div className="flex items-start gap-2 p-2.5 rounded-xl bg-amber-50/90 border border-amber-200/80 text-amber-900 text-[11px] leading-relaxed">
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
+                  <span>
+                    <strong>Disclaimer:</strong> De markeringen van de botstructuren zijn nog in ontwikkeling en nog niet volledig geverifieerd. Deze kunnen nog fouten of onnauwkeurigheden bevatten.
+                  </span>
+                </div>
                 <div className="grid grid-cols-1 gap-1.5">
-                  {selectedBone.structures.map((struct, idx) => (
-                    <div
-                      key={idx}
-                      className="text-xs font-semibold text-slate-800 bg-slate-50/90 border border-slate-200/90 rounded-xl px-2.5 py-1.5 flex items-center gap-2"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
-                      <span>{struct}</span>
-                    </div>
-                  ))}
+                  {selectedBone.structures.map((struct, idx) => {
+                    const isHighlighted = Boolean(
+                      highlightedStructureName &&
+                        (() => {
+                          const hl = highlightedStructureName.toLowerCase();
+                          const st = struct.toLowerCase();
+                          return hl === st || hl.includes(st) || st.includes(hl);
+                        })()
+                    );
+                    return (
+                      <div
+                        key={idx}
+                        onMouseEnter={() => setHighlightedStructureName(struct)}
+                        onMouseLeave={() => setHighlightedStructureName(null)}
+                        onClick={() => {
+                          setHighlightedStructureName((prev) => (prev === struct ? null : struct));
+                          if (viewLayout !== 'both') {
+                            const structPoints = structures.filter(
+                              (s) =>
+                                s.boneId === selectedBone.id &&
+                                (s.name.toLowerCase() === struct.toLowerCase() ||
+                                  (s.fullName && s.fullName.toLowerCase() === struct.toLowerCase()) ||
+                                  (s.parentStructure && s.parentStructure.toLowerCase() === struct.toLowerCase()) ||
+                                  struct.toLowerCase().includes(s.name.toLowerCase()) ||
+                                  (s.fullName && struct.toLowerCase().includes(s.fullName.toLowerCase())))
+                            );
+                            const hasCurrentView = structPoints.some((s) => s.view === currentView);
+                            if (!hasCurrentView && structPoints.length > 0) {
+                              if (structPoints[0].view === 'ventral' || structPoints[0].view === 'dorsal') { setCurrentView(structPoints[0].view); }
+                            }
+                          }
+                        }}
+                        className={`text-xs font-semibold rounded-xl px-2.5 py-1.5 flex items-center gap-2 cursor-pointer transition-all ${
+                          isHighlighted
+                            ? 'bg-sky-100 text-sky-950 border border-sky-300 shadow-xs'
+                            : 'text-slate-800 bg-slate-50/90 border border-slate-200/90 hover:bg-sky-50/80 hover:border-sky-200'
+                        }`}
+                      >
+                        <span className={`w-2 h-2 rounded-full shrink-0 transition-all ${isHighlighted ? 'bg-sky-600 ring-2 ring-sky-300 scale-125' : 'bg-slate-400'}`} />
+                        <span>{struct}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -551,6 +642,10 @@ export const BonesView: React.FC = () => {
             <p className="text-xs text-slate-500 max-w-[260px] leading-relaxed">
               Beweeg over de punten op het skelet om de botten te zien, of klik op een punt voor de beschrijving en aanhechtende origo&apos;s en inserties.
             </p>
+            <div className="mt-4 flex items-center gap-1.5 text-[11px] text-amber-800 bg-amber-50/90 border border-amber-200/80 px-3 py-1.5 rounded-xl font-medium">
+              <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+              <span>Let op: Botstructuren zijn nog in ontwikkeling</span>
+            </div>
           </div>
         )}
       </div>

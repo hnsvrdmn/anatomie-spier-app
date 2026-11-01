@@ -458,11 +458,11 @@ export const MobileStudyView: React.FC = () => {
           {!isDrawerOpen && activeMuscle && (
             <div className="mt-2 space-y-1 text-xs leading-snug px-1">
               <div className="flex items-start gap-1.5 text-slate-800">
-                <span className="font-bold text-blue-700 text-xs shrink-0 mt-0.5">O:</span>
+                <span className="font-bold text-xs shrink-0 mt-0.5" style={{ color: '#1993f2' }}>O:</span>
                 <span className="text-slate-700 font-medium break-words leading-tight">{activeMuscle.originText}</span>
               </div>
               <div className="flex items-start gap-1.5 text-slate-800">
-                <span className="font-bold text-orange-600 text-xs shrink-0 mt-0.5">I:</span>
+                <span className="font-bold text-xs shrink-0 mt-0.5" style={{ color: '#ea580c' }}>I:</span>
                 <span className="text-slate-700 font-medium break-words leading-tight">{activeMuscle.insertionText}</span>
               </div>
               {(() => {

@@ -1,43 +1,111 @@
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { useBones } from '../../context/BoneContext';
 import { useMuscles } from '../../context/MuscleContext';
-import { BoneMarker } from '../../data/bonesData';
-import { SKELETON_WIDTH, SKELETON_HEIGHT, clientToNormalized } from '../../utils/coordinates';
-import { RotateCcw, Download, Upload, Save } from 'lucide-react';
+import { SKELETON_WIDTH, SKELETON_HEIGHT } from '../../utils/coordinates';
+import {
+  RotateCcw,
+  Download,
+  Upload,
+  Save,
+  Filter,
+  Eye,
+  EyeOff,
+  ZoomIn,
+  ZoomOut,
+  Hand,
+  MousePointer,
+} from 'lucide-react';
 
 export const SVG_WIDTH = 1000;
 export const SVG_HEIGHT = 2374.54;
 
-interface DraggableBoneMarker extends BoneMarker {
+interface EditablePoint {
+  id: string;
+  name: string;
+  rawName?: string;
+  subName?: string;
+  x: number;
+  y: number;
+  type: 'bone' | 'structure';
   boneId: string;
-  boneName: string;
-  dutchName: string;
-  markerIndex: number;
+  markerIndex?: number;
+  side?: 'left' | 'right' | 'midline';
+  view?: 'ventral' | 'dorsal' | 'both';
 }
 
 interface DraggableSkeletonProps {
   view: 'ventral' | 'dorsal';
-  markers: DraggableBoneMarker[];
-  onUpdateMarker: (boneId: string, markerIndex: number, x: number, y: number) => void;
+  points: EditablePoint[];
+  hidePopup?: boolean;
+  onToggleHidePopup?: () => void;
+  onDragStart?: (point: EditablePoint) => void;
+  onUpdatePoint: (point: EditablePoint, x: number, y: number, deltaX: number, deltaY: number) => void;
+  onDragEnd?: () => void;
 }
 
 const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
   view,
-  markers,
-  onUpdateMarker,
+  points,
+  hidePopup = false,
+  onToggleHidePopup,
+  onDragStart,
+  onUpdatePoint,
+  onDragEnd,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [draggingMarker, setDraggingMarker] = useState<DraggableBoneMarker | null>(null);
-  const [hoveredMarker, setHoveredMarker] = useState<DraggableBoneMarker | null>(null);
-  const isDraggingRef = useRef(false);
-  const activeMarkerRef = useRef<DraggableBoneMarker | null>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
 
-  const handlePointerDown = (e: React.PointerEvent, marker: DraggableBoneMarker) => {
+  // Zoom & Pan state
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [panMode, setPanMode] = useState(false);
+
+  const [draggingPoint, setDraggingPoint] = useState<EditablePoint | null>(null);
+  const [hoveredPoint, setHoveredPoint] = useState<EditablePoint | null>(null);
+
+  const isDraggingMarkerRef = useRef(false);
+  const isPanningRef = useRef(false);
+  const panStartRef = useRef<{ clientX: number; clientY: number; panX: number; panY: number } | null>(null);
+  const dragStartRef = useRef<{
+    point: EditablePoint;
+    startX: number;
+    startY: number;
+  } | null>(null);
+  const activePointRef = useRef<EditablePoint | null>(null);
+
+  // Direct zoomen met het muiswiel (zonder verplichte Ctrl)
+  useEffect(() => {
+    const el = viewportRef.current;
+    if (!el) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const delta = -Math.sign(e.deltaY) * 0.25;
+      setZoom((z) => {
+        const next = Math.max(1.0, Math.min(3.5, Number((z + delta).toFixed(2))));
+        if (next === 1.0) setPan({ x: 0, y: 0 });
+        return next;
+      });
+    };
+
+    el.addEventListener('wheel', handleWheel, { passive: false });
+    return () => el.removeEventListener('wheel', handleWheel);
+  }, []);
+
+  // Marker drag start
+  const handlePointerDownMarker = (e: React.PointerEvent, pt: EditablePoint) => {
     e.stopPropagation();
-    isDraggingRef.current = true;
-    activeMarkerRef.current = marker;
-    setDraggingMarker(marker);
-    setHoveredMarker(marker);
+    isDraggingMarkerRef.current = true;
+    dragStartRef.current = {
+      point: pt,
+      startX: pt.x,
+      startY: pt.y,
+    };
+    activePointRef.current = pt;
+    setDraggingPoint(pt);
+    setHoveredPoint(pt);
+    onDragStart?.(pt);
     try {
       (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     } catch {
@@ -45,23 +113,69 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
     }
   };
 
+  // Viewport pan start
+  const handlePointerDownViewport = (e: React.PointerEvent) => {
+    if (e.button !== 0) return;
+    if (panMode || zoom > 1.0) {
+      isPanningRef.current = true;
+      panStartRef.current = {
+        clientX: e.clientX,
+        clientY: e.clientY,
+        panX: pan.x,
+        panY: pan.y,
+      };
+      try {
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      } catch {
+        // fallback
+      }
+    }
+  };
+
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDraggingRef.current || !activeMarkerRef.current || !containerRef.current) return;
+    // 1. Marker verslepen
+    if (isDraggingMarkerRef.current && dragStartRef.current && containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const normX = (e.clientX - rect.left) / rect.width;
+      const normY = (e.clientY - rect.top) / rect.height;
 
-    const rect = containerRef.current.getBoundingClientRect();
-    const norm = clientToNormalized(e.clientX, e.clientY, rect);
+      const clampedX = Math.max(0.02, Math.min(0.98, Number(normX.toFixed(4))));
+      const clampedY = Math.max(0.01, Math.min(0.99, Number(normY.toFixed(4))));
 
-    const clampedX = Math.max(0.05, Math.min(0.95, Number(norm.x.toFixed(3))));
-    const clampedY = Math.max(0.02, Math.min(0.99, Number(norm.y.toFixed(3))));
+      const deltaX = Number((clampedX - dragStartRef.current.startX).toFixed(4));
+      const deltaY = Number((clampedY - dragStartRef.current.startY).toFixed(4));
 
-    onUpdateMarker(activeMarkerRef.current.boneId, activeMarkerRef.current.markerIndex, clampedX, clampedY);
+      onUpdatePoint(dragStartRef.current.point, clampedX, clampedY, deltaX, deltaY);
+      return;
+    }
+
+    // 2. Viewport pannen
+    if (isPanningRef.current && panStartRef.current) {
+      const dx = e.clientX - panStartRef.current.clientX;
+      const dy = e.clientY - panStartRef.current.clientY;
+      setPan({
+        x: panStartRef.current.panX + dx,
+        y: panStartRef.current.panY + dy,
+      });
+    }
   };
 
   const handlePointerUp = (e: React.PointerEvent) => {
-    if (isDraggingRef.current) {
-      isDraggingRef.current = false;
-      activeMarkerRef.current = null;
-      setDraggingMarker(null);
+    if (isDraggingMarkerRef.current) {
+      isDraggingMarkerRef.current = false;
+      dragStartRef.current = null;
+      activePointRef.current = null;
+      setDraggingPoint(null);
+      onDragEnd?.();
+      try {
+        (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+      } catch {
+        // ignore
+      }
+    }
+    if (isPanningRef.current) {
+      isPanningRef.current = false;
+      panStartRef.current = null;
       try {
         (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
       } catch {
@@ -72,26 +186,116 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
 
   return (
     <div
-      className="relative w-full h-full overflow-hidden flex items-center justify-center select-none bg-white"
+      ref={viewportRef}
+      className={`relative w-full h-full overflow-hidden flex items-center justify-center select-none bg-white ${
+        panMode || (zoom > 1.0 && !isDraggingMarkerRef.current)
+          ? 'cursor-grab active:cursor-grabbing'
+          : 'cursor-default'
+      }`}
+      onPointerDown={handlePointerDownViewport}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
     >
+      {/* Zwevende Navigator Toolbar rechtsboven per paneel */}
+      <div className="absolute top-2.5 right-2.5 z-30 flex items-center gap-1 bg-white/95 backdrop-blur-md p-1 rounded-xl border border-slate-200/90 shadow-md text-slate-700 pointer-events-auto">
+        <button
+          type="button"
+          onClick={() => setZoom((z) => Math.min(3.5, Number((z + 0.35).toFixed(2))))}
+          title="Inzoomen (+)"
+          className="p-1 rounded-lg hover:bg-slate-100 active:bg-slate-200 transition-colors text-slate-700"
+        >
+          <ZoomIn className="w-3.5 h-3.5" />
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setZoom(1);
+            setPan({ x: 0, y: 0 });
+            setPanMode(false);
+          }}
+          title="Klik om te resetten naar 100%"
+          className="px-1.5 py-0.5 text-[11px] font-bold rounded-lg hover:bg-slate-100 transition-colors text-slate-700 min-w-[40px] text-center font-mono"
+        >
+          {Math.round(zoom * 100)}%
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setZoom((z) => {
+              const next = Math.max(1.0, Number((z - 0.35).toFixed(2)));
+              if (next === 1.0) setPan({ x: 0, y: 0 });
+              return next;
+            });
+          }}
+          title="Uitzoomen (-)"
+          className="p-1 rounded-lg hover:bg-slate-100 active:bg-slate-200 transition-colors text-slate-700"
+        >
+          <ZoomOut className="w-3.5 h-3.5" />
+        </button>
+
+        <div className="w-[1px] h-3.5 bg-slate-200" />
+        <button
+          type="button"
+          onClick={onToggleHidePopup}
+          title={hidePopup ? "Toon pop-up informatie" : "Verberg pop-up (markers blijven altijd zichtbaar)"}
+          className={`p-1 rounded-lg transition-colors flex items-center justify-center ${
+            hidePopup ? 'bg-amber-100 text-amber-700' : 'hover:bg-slate-100 text-slate-600'
+          }`}
+        >
+          {hidePopup ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+        </button>
+
+        {zoom > 1.0 && (
+          <>
+            <div className="w-[1px] h-3.5 bg-slate-200" />
+            <button
+              type="button"
+              onClick={() => setPanMode((p) => !p)}
+              title={panMode ? 'Skelet verslepen actief' : 'Activeer versleep modus'}
+              className={`p-1 rounded-lg transition-colors ${
+                panMode ? 'bg-slate-200 text-slate-900' : 'hover:bg-slate-100 text-slate-600'
+              }`}
+            >
+              {panMode ? <MousePointer className="w-3.5 h-3.5" /> : <Hand className="w-3.5 h-3.5" />}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setZoom(1);
+                setPan({ x: 0, y: 0 });
+                setPanMode(false);
+              }}
+              title="Volledige weergave herstellen"
+              className="p-1 rounded-lg hover:bg-slate-100 text-slate-600"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Geometrische Skeletcontainer (geschaald & getransleerd bij zoom/pan met perfecte verhouding) */}
       <div
         ref={containerRef}
         style={{
           aspectRatio: `${SKELETON_WIDTH} / ${SKELETON_HEIGHT}`,
+          transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+          transformOrigin: 'center center',
+          transition: isPanningRef.current ? 'none' : 'transform 0.08s ease-out',
         }}
-        className="relative h-full max-h-full max-w-full mx-auto"
+        className="relative max-h-full max-w-full w-auto h-auto mx-auto pointer-events-auto flex items-center justify-center"
       >
-        {/* Skelet afbeelding */}
+        {/* Skelet afbeelding (in flow met object-contain) */}
         <img
-          src={view === 'ventral' 
-            ? `${import.meta.env.BASE_URL}images/skeleton_ventral.png`
-            : `${import.meta.env.BASE_URL}images/skeleton_dorsal.png`}
+          src={
+            view === 'ventral'
+              ? `${import.meta.env.BASE_URL}images/skeleton_ventral.png`
+              : `${import.meta.env.BASE_URL}images/skeleton_dorsal.png`
+          }
           alt={`Skelet - ${view === 'ventral' ? 'Ventraal' : 'Dorsaal'}`}
           width={SKELETON_WIDTH}
           height={SKELETON_HEIGHT}
-          className="absolute inset-0 w-full h-full object-fill block select-none pointer-events-none"
+          className="max-h-full max-w-full w-auto h-auto object-contain block select-none pointer-events-none"
           draggable={false}
         />
 
@@ -99,44 +303,42 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
         <svg
           viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
           preserveAspectRatio="none"
-          className="absolute inset-0 z-10 w-full h-full pointer-events-none"
+          className="absolute inset-0 z-10 w-full h-full pointer-events-none transition-opacity duration-200"
         >
-          {markers.map((marker) => {
-            const cx = marker.x * SVG_WIDTH;
-            const cy = marker.y * SVG_HEIGHT;
-            const isDragging = draggingMarker?.boneId === marker.boneId && draggingMarker?.markerIndex === marker.markerIndex;
-            const isHovered = hoveredMarker?.boneId === marker.boneId && hoveredMarker?.markerIndex === marker.markerIndex;
+          {points.map((pt) => {
+            const cx = pt.x * SVG_WIDTH;
+            const cy = pt.y * SVG_HEIGHT;
+            const isDragging = draggingPoint?.id === pt.id;
+            const isHovered = hoveredPoint?.id === pt.id;
+            const isStructure = pt.type === 'structure';
 
-            const radius = isDragging ? 17 : isHovered ? 14 : 10;
-            const hitRadius = 34;
+            // Subtiele, strakke grootte (niet te groot bij aanklikken, geen pulserend cirkeltje)
+            const baseRadius = isStructure ? 6 : 9;
+            const radius = (isDragging ? baseRadius + 1.5 : isHovered ? baseRadius + 1 : baseRadius) / zoom;
+            const hitRadius = (isStructure ? 26 : 34) / zoom;
 
-            const fillColor = isDragging ? '#0284c7' : isHovered ? '#0ea5e9' : '#334155';
+            const fillColor = isDragging
+              ? '#0284c7'
+              : isHovered
+              ? '#0ea5e9'
+              : isStructure
+              ? '#64748b'
+              : '#1993f2';
             const strokeColor = '#ffffff';
-            const strokeWidth = isDragging ? 4 : 3;
+            const strokeWidth = (isDragging ? 2.5 : isStructure ? 1.5 : 2.5) / zoom;
 
             return (
               <g
-                key={`${marker.boneId}-${marker.markerIndex}`}
+                key={pt.id}
                 className="pointer-events-auto cursor-grab active:cursor-grabbing"
-                onPointerDown={(e) => handlePointerDown(e, marker)}
-                onMouseEnter={() => setHoveredMarker(marker)}
+                onPointerDown={(e) => handlePointerDownMarker(e, pt)}
+                onMouseEnter={() => setHoveredPoint(pt)}
                 onMouseLeave={() => {
-                  if (!isDraggingRef.current) setHoveredMarker(null);
+                  if (!isDraggingMarkerRef.current) setHoveredPoint(null);
                 }}
               >
                 {/* Ruim klik- en sleepgebied */}
                 <circle cx={cx} cy={cy} r={hitRadius} fill="transparent" />
-
-                {/* Oplichtende ring bij verslepen of hover */}
-                {(isDragging || isHovered) && (
-                  <circle
-                    cx={cx}
-                    cy={cy}
-                    r={radius * 1.8}
-                    fill="#38bdf8"
-                    opacity="0.3"
-                  />
-                )}
 
                 {/* Hoofdmarker cirkel */}
                 <circle
@@ -147,68 +349,110 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
                   stroke={strokeColor}
                   strokeWidth={strokeWidth}
                   className="transition-colors duration-150"
+                  style={{
+                    filter:
+                      isDragging || isHovered
+                        ? 'drop-shadow(0px 2px 5px rgba(0, 0, 0, 0.35))'
+                        : 'drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.25))',
+                  }}
                 />
 
-                {/* Wit centrum */}
-                <circle cx={cx} cy={cy} r={radius * 0.35} fill="#ffffff" />
+                {/* Wit centrum ALLEEN voor hoofd-botten (structuren blijven egaal zonder witte stip) */}
+                {!isStructure && <circle cx={cx} cy={cy} r={radius * 0.35} fill="#ffffff" />}
               </g>
             );
           })}
         </svg>
 
         {/* Grote, duidelijke muisover pop-up */}
-        {hoveredMarker && (() => {
-          const isNearTop = hoveredMarker.y < 0.18;
-          return (
-            <div
-              style={{
-                position: 'absolute',
-                left: `${hoveredMarker.x * 100}%`,
-                top: `${hoveredMarker.y * 100}%`,
-                transform: isNearTop ? 'translate(-50%, 18px)' : 'translate(-50%, calc(-100% - 18px))',
-                transformOrigin: isNearTop ? 'top center' : 'bottom center',
-              }}
-              className="z-50 pointer-events-none select-none transition-all duration-75"
-            >
-              {isNearTop && (
-                <div className="w-0 h-0 border-x-8 border-x-transparent border-b-8 border-b-slate-900/95 mx-auto" />
-              )}
-              <div className="bg-slate-900/95 text-white px-5 py-3 rounded-2xl shadow-2xl border border-sky-400/60 backdrop-blur-md flex flex-col items-center gap-1 min-w-[220px] max-w-[380px] text-center">
-                <div className="text-xl font-black text-white tracking-wide">
-                  {hoveredMarker.boneName}
-                </div>
-                <div className="text-base font-bold text-sky-300">
-                  {hoveredMarker.dutchName}
-                </div>
-                {hoveredMarker.subpart && (
-                  <div className="text-sm font-extrabold text-amber-300 bg-amber-950/90 px-3 py-1 rounded-lg border border-amber-500/40 mt-1">
-                    {hoveredMarker.subpart}
+        {!hidePopup &&
+          hoveredPoint &&
+          (() => {
+            const isNearTop = hoveredPoint.y < 0.18;
+            return (
+              <div
+                style={{
+                  position: 'absolute',
+                  left: `${hoveredPoint.x * 100}%`,
+                  top: `${hoveredPoint.y * 100}%`,
+                  transform: `${
+                    isNearTop ? 'translate(-50%, 18px)' : 'translate(-50%, calc(-100% - 18px))'
+                  } scale(${1 / zoom})`,
+                  transformOrigin: isNearTop ? 'top center' : 'bottom center',
+                }}
+                className="z-50 pointer-events-none select-none transition-all duration-75"
+              >
+                {isNearTop && (
+                  <div className="w-0 h-0 border-x-8 border-x-transparent border-b-8 border-b-slate-900/95 mx-auto" />
+                )}
+                <div className="bg-slate-900/95 text-white px-5 py-3 rounded-2xl shadow-2xl border border-sky-400/60 backdrop-blur-md flex flex-col items-center gap-1 min-w-[220px] max-w-[380px] text-center">
+                  <div className="text-lg sm:text-xl font-black text-white tracking-wide leading-tight">
+                    {hoveredPoint.name}
                   </div>
+                  {hoveredPoint.subName && (
+                    <div className="text-xs sm:text-sm font-bold text-sky-300 leading-tight">
+                      {hoveredPoint.subName}
+                    </div>
+                  )}
+                  <div className="text-[11px] font-mono text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md mt-1 border border-slate-700">
+                    x: {hoveredPoint.x.toFixed(4)}, y: {hoveredPoint.y.toFixed(4)} • {hoveredPoint.side || 'midline'}
+                  </div>
+                </div>
+                {!isNearTop && (
+                  <div className="w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-slate-900/95 mx-auto" />
                 )}
               </div>
-              {!isNearTop && (
-                <div className="w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-slate-900/95 mx-auto" />
-              )}
-            </div>
-          );
-        })()}
+            );
+          })()}
       </div>
     </div>
   );
 };
 
 export const BoneEditorView: React.FC = () => {
-  const { bones, updateBonePoint, resetBones, exportBonesJson, importBonesJson, saveBonesToDisk } = useBones();
+  const {
+    bones,
+    updateBonePoint,
+    resetBones,
+    exportBonesJson,
+    importBonesJson,
+    saveBonesToDisk,
+    mirrorBoneSides,
+    copyBoneView,
+    structures,
+    updateStructurePoints,
+    resetStructures,
+    saveStructuresToDisk,
+    exportStructuresJson,
+    importStructuresJson,
+    copyStructureView,
+    mirrorStructureSides,
+  } = useBones();
   const { showToast } = useMuscles();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  // Keuze tussen het bewerken van 'bones' (hoofd-botposities) of 'structures' (relevante botstructuren)
+  const [editTarget, setEditTarget] = useState<'bones' | 'structures'>('structures');
+  // Optioneel filter per bot wanneer structuren worden bewerkt
+  const [selectedFilterBone, setSelectedFilterBone] = useState<string>('all');
+
+  // Weergave- en bewerkopties
+  const [hidePopup, setHidePopup] = useState(false);
+  const [liveSymmetry, setLiveSymmetry] = useState(true);
+  // Optie om aanpassingen tussen ventraal en dorsaal te koppelen (standaard uit: onafhankelijk)
+  const [linkVentralDorsal, setLinkVentralDorsal] = useState(false);
+
   const handleSaveToDisk = async () => {
     setIsSaving(true);
-    const ok = await saveBonesToDisk();
+    const okBones = await saveBonesToDisk();
+    const okStructures = await saveStructuresToDisk();
     setIsSaving(false);
-    if (ok) {
-      showToast('Botposities permanent opgeslagen in src/data/bonesData.ts op schijf!', 'success');
+    if (okBones && okStructures) {
+      showToast('Botten en botstructuren permanent opgeslagen in de broncode op schijf!', 'success');
+    } else if (okBones || okStructures) {
+      showToast('Succesvol opgeslagen op schijf!', 'success');
     } else {
       showToast('Opslaan naar schijf mislukt (alleen beschikbaar via lokale dev server)', 'warning');
     }
@@ -223,10 +467,15 @@ export const BoneEditorView: React.FC = () => {
         const text = event.target?.result as string;
         const parsed = JSON.parse(text);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          importBonesJson(parsed);
-          showToast('Botten dataset succesvol geïmporteerd!', 'success');
+          if (editTarget === 'bones') {
+            importBonesJson(parsed);
+            showToast('Botten dataset succesvol geïmporteerd!', 'success');
+          } else {
+            importStructuresJson(parsed);
+            showToast('Botstructuren dataset succesvol geïmporteerd!', 'success');
+          }
         } else {
-          showToast('Ongeldig JSON-formaat voor botten dataset.', 'error');
+          showToast('Ongeldig JSON-formaat.', 'error');
         }
       } catch {
         showToast('Fout bij importeren van JSON-bestand.', 'error');
@@ -236,58 +485,495 @@ export const BoneEditorView: React.FC = () => {
     e.target.value = '';
   };
 
-  // Alle markers voor het ventrale aanzicht
-  const ventralMarkers = useMemo(() => {
-    return bones.flatMap(bone =>
-      bone.markers
-        .map((marker, markerIndex) => ({
-          ...marker,
-          boneId: bone.id,
-          boneName: bone.latinName,
-          dutchName: bone.dutchName,
-          markerIndex,
-        }))
-        .filter(m => m.view === 'ventral')
-    );
-  }, [bones]);
+  // Verzamel ventrale punten afhankelijk van editTarget
+  const ventralPoints = useMemo<EditablePoint[]>(() => {
+    if (editTarget === 'bones') {
+      return bones.flatMap((bone) =>
+        bone.markers
+          .map((marker, markerIndex) => ({
+            id: `bone-${bone.id}-${markerIndex}`,
+            name: bone.latinName,
+            subName: bone.dutchName + (marker.subpart ? ` • ${marker.subpart}` : ''),
+            x: marker.x,
+            y: marker.y,
+            type: 'bone' as const,
+            boneId: bone.id,
+            markerIndex,
+            side: marker.side,
+            view: marker.view === 'both' ? 'ventral' : marker.view,
+          }))
+          .filter((_, idx) => {
+            const m = bone.markers[idx];
+            return m.view === 'ventral' || m.view === 'both';
+          })
+      );
+    } else {
+      return structures
+        .filter((s) => s.view === 'ventral' || s.view === 'both')
+        .filter((s) => selectedFilterBone === 'all' || s.boneId === selectedFilterBone)
+        .map((s) => {
+          const bone = bones.find((b) => b.id === s.boneId);
+          return {
+            id: s.id,
+            name: s.fullName || s.name,
+            rawName: s.name,
+            subName: bone ? `Botstructuur • ${bone.latinName}` : undefined,
+            x: s.x,
+            y: s.y,
+            type: 'structure' as const,
+            boneId: s.boneId,
+            side: s.side,
+            view: s.view === 'both' ? 'ventral' : s.view,
+          };
+        });
+    }
+  }, [editTarget, bones, structures, selectedFilterBone]);
 
-  // Alle markers voor het dorsale aanzicht
-  const dorsalMarkers = useMemo(() => {
-    return bones.flatMap(bone =>
-      bone.markers
-        .map((marker, markerIndex) => ({
-          ...marker,
-          boneId: bone.id,
-          boneName: bone.latinName,
-          dutchName: bone.dutchName,
-          markerIndex,
-        }))
-        .filter(m => m.view === 'dorsal')
-    );
-  }, [bones]);
+  // Verzamel dorsale punten afhankelijk van editTarget
+  const dorsalPoints = useMemo<EditablePoint[]>(() => {
+    if (editTarget === 'bones') {
+      return bones.flatMap((bone) =>
+        bone.markers
+          .map((marker, markerIndex) => ({
+            id: `bone-${bone.id}-${markerIndex}`,
+            name: bone.latinName,
+            subName: bone.dutchName + (marker.subpart ? ` • ${marker.subpart}` : ''),
+            x: marker.x,
+            y: marker.y,
+            type: 'bone' as const,
+            boneId: bone.id,
+            markerIndex,
+            side: marker.side,
+            view: marker.view === 'both' ? 'dorsal' : marker.view,
+          }))
+          .filter((_, idx) => {
+            const m = bone.markers[idx];
+            return m.view === 'dorsal' || m.view === 'both';
+          })
+      );
+    } else {
+      return structures
+        .filter((s) => s.view === 'dorsal' || s.view === 'both')
+        .filter((s) => selectedFilterBone === 'all' || s.boneId === selectedFilterBone)
+        .map((s) => {
+          const bone = bones.find((b) => b.id === s.boneId);
+          return {
+            id: s.id,
+            name: s.fullName || s.name,
+            rawName: s.name,
+            subName: bone ? `Botstructuur • ${bone.latinName}` : undefined,
+            x: s.x,
+            y: s.y,
+            type: 'structure' as const,
+            boneId: s.boneId,
+            side: s.side,
+            view: s.view === 'both' ? 'dorsal' : s.view,
+          };
+        });
+    }
+  }, [editTarget, bones, structures, selectedFilterBone]);
 
-  const handleUpdateMarker = useCallback((boneId: string, markerIndex: number, x: number, y: number) => {
-    updateBonePoint(boneId, markerIndex, { x, y });
-  }, [updateBonePoint]);
+  // Refs voor drag sessie (legt beginposities van symmetrische partners vast bij drag-start)
+  interface DragPartnerInfo {
+    id: string;
+    boneId: string;
+    markerIndex?: number;
+    x: number;
+    y: number;
+  }
+
+  interface DragSession {
+    pt: EditablePoint;
+    partner?: DragPartnerInfo;
+    oppPartner?: DragPartnerInfo;
+    oppBothPartner?: DragPartnerInfo;
+  }
+
+  const activeDragSessionRef = useRef<DragSession | null>(null);
+
+  const handleDragStart = useCallback(
+    (pt: EditablePoint) => {
+      if (pt.type === 'bone') {
+        const bone = bones.find((b) => b.id === pt.boneId);
+        if (!bone || pt.markerIndex === undefined) return;
+        const ptMarker = bone.markers[pt.markerIndex];
+
+        let partnerInfo: DragPartnerInfo | undefined;
+        let oppPartnerInfo: DragPartnerInfo | undefined;
+        let oppBothPartnerInfo: DragPartnerInfo | undefined;
+
+        // 1. Symmetrische partner (L <-> R binnen HETZELFDE aanzicht)
+        if (liveSymmetry && pt.side && pt.side !== 'midline') {
+          const oppSide: 'left' | 'right' = pt.side === 'left' ? 'right' : 'left';
+          const partnerIdx = bone.markers.findIndex((m, idx) => {
+            if (idx === pt.markerIndex) return false;
+            if (m.side !== oppSide) return false;
+            if (m.view !== pt.view) return false; // STRICT HETZELFDE AANZICHT!
+            if (m.subpart && ptMarker?.subpart) {
+              return m.subpart.toLowerCase() === ptMarker.subpart.toLowerCase();
+            }
+            return true;
+          });
+          if (partnerIdx !== -1) {
+            const m = bone.markers[partnerIdx];
+            partnerInfo = { id: `bone-${pt.boneId}-${partnerIdx}`, boneId: pt.boneId, markerIndex: partnerIdx, x: m.x, y: m.y };
+          }
+        }
+
+        // 2. Koppel Ventraal <-> Dorsaal (alleen als linkVentralDorsal aan staat!)
+        if (linkVentralDorsal && pt.view) {
+          const oppView: 'ventral' | 'dorsal' = pt.view === 'ventral' ? 'dorsal' : 'ventral';
+          const oppIdx = bone.markers.findIndex((m, idx) => {
+            if (idx === pt.markerIndex) return false;
+            if (m.view !== oppView) return false;
+            if (m.side !== pt.side) return false;
+            if (m.subpart && ptMarker?.subpart) {
+              return m.subpart.toLowerCase() === ptMarker.subpart.toLowerCase();
+            }
+            return true;
+          });
+          if (oppIdx !== -1) {
+            const m = bone.markers[oppIdx];
+            oppPartnerInfo = { id: `bone-${pt.boneId}-${oppIdx}`, boneId: pt.boneId, markerIndex: oppIdx, x: m.x, y: m.y };
+          }
+
+          if (liveSymmetry && pt.side && pt.side !== 'midline') {
+            const oppSide: 'left' | 'right' = pt.side === 'left' ? 'right' : 'left';
+            const oppBothIdx = bone.markers.findIndex((m, idx) => {
+              if (idx === pt.markerIndex) return false;
+              if (m.view !== oppView) return false;
+              if (m.side !== oppSide) return false;
+              if (m.subpart && ptMarker?.subpart) {
+                return m.subpart.toLowerCase() === ptMarker.subpart.toLowerCase();
+              }
+              return true;
+            });
+            if (oppBothIdx !== -1) {
+              const m = bone.markers[oppBothIdx];
+              oppBothPartnerInfo = { id: `bone-${pt.boneId}-${oppBothIdx}`, boneId: pt.boneId, markerIndex: oppBothIdx, x: m.x, y: m.y };
+            }
+          }
+        }
+
+        activeDragSessionRef.current = {
+          pt,
+          partner: partnerInfo,
+          oppPartner: oppPartnerInfo,
+          oppBothPartner: oppBothPartnerInfo,
+        };
+      } else {
+        // STRUCTURES
+        let partnerInfo: DragPartnerInfo | undefined;
+        let oppPartnerInfo: DragPartnerInfo | undefined;
+        let oppBothPartnerInfo: DragPartnerInfo | undefined;
+
+        const ptRaw = (pt.rawName || pt.name).toLowerCase();
+        const ptStem = pt.id.replace(/_[lr](?:_[vd])?$/, '');
+
+        // 1. Symmetrische partner (L <-> R binnen HETZELFDE aanzicht!)
+        if (liveSymmetry && pt.side && pt.side !== 'midline') {
+          const oppSide: 'left' | 'right' = pt.side === 'left' ? 'right' : 'left';
+          const partner = structures.find((s) => {
+            if (s.id === pt.id) return false;
+            if (s.boneId !== pt.boneId) return false;
+            if (s.view !== pt.view) return false; // STRICT HETZELFDE AANZICHT!
+            if (s.side !== oppSide) return false;
+            const sRaw = s.name.toLowerCase();
+            const sStem = s.id.replace(/_[lr](?:_[vd])?$/, '');
+            return sRaw === ptRaw || sStem === ptStem;
+          });
+          if (partner) {
+            partnerInfo = { id: partner.id, boneId: partner.boneId, x: partner.x, y: partner.y };
+          }
+        }
+
+        // 2. Koppel Ventraal <-> Dorsaal (alleen als linkVentralDorsal aan staat!)
+        if (linkVentralDorsal && pt.view) {
+          const oppView: 'ventral' | 'dorsal' = pt.view === 'ventral' ? 'dorsal' : 'ventral';
+          const oppPartner = structures.find((s) => {
+            if (s.id === pt.id) return false;
+            if (s.boneId !== pt.boneId) return false;
+            if (s.view !== oppView) return false; // STRICT TEGENOVERGESTELDE VIEW!
+            if (s.side !== pt.side) return false; // DEZELFDE KANT!
+            const sRaw = s.name.toLowerCase();
+            const sStem = s.id.replace(/_[lr]?(?:_[vd])?$/, '');
+            return sRaw === ptRaw || sStem === ptStem;
+          });
+          if (oppPartner) {
+            oppPartnerInfo = { id: oppPartner.id, boneId: oppPartner.boneId, x: oppPartner.x, y: oppPartner.y };
+          }
+
+          if (liveSymmetry && pt.side && pt.side !== 'midline') {
+            const oppSide: 'left' | 'right' = pt.side === 'left' ? 'right' : 'left';
+            const oppBothPartner = structures.find((s) => {
+              if (s.id === pt.id) return false;
+              if (s.boneId !== pt.boneId) return false;
+              if (s.view !== oppView) return false;
+              if (s.side !== oppSide) return false;
+              const sRaw = s.name.toLowerCase();
+              const sStem = s.id.replace(/_[lr](?:_[vd])?$/, '');
+              return sRaw === ptRaw || sStem === ptStem;
+            });
+            if (oppBothPartner) {
+              oppBothPartnerInfo = { id: oppBothPartner.id, boneId: oppBothPartner.boneId, x: oppBothPartner.x, y: oppBothPartner.y };
+            }
+          }
+        }
+
+        activeDragSessionRef.current = {
+          pt,
+          partner: partnerInfo,
+          oppPartner: oppPartnerInfo,
+          oppBothPartner: oppBothPartnerInfo,
+        };
+      }
+    },
+    [bones, structures, liveSymmetry, linkVentralDorsal]
+  );
+
+  const handleDragEnd = useCallback(() => {
+    activeDragSessionRef.current = null;
+  }, []);
+
+  // Algemene update handler met relatieve delta (huidige positie + dx, dy)
+  const handleUpdatePoint = useCallback(
+    (pt: EditablePoint, x: number, y: number, deltaX: number = 0, deltaY: number = 0) => {
+      if (pt.type === 'bone') {
+        if (pt.markerIndex !== undefined) {
+          updateBonePoint(pt.boneId, pt.markerIndex, { x, y });
+
+          const session = activeDragSessionRef.current;
+          if (session && session.pt.id === pt.id) {
+            // 1. Symmetrische partner (L <-> R binnen HETZELFDE aanzicht)
+            if (liveSymmetry && session.partner && session.partner.markerIndex !== undefined) {
+              const newPartnerX = Math.max(0.02, Math.min(0.98, Number((session.partner.x - deltaX).toFixed(4))));
+              const newPartnerY = Math.max(0.01, Math.min(0.99, Number((session.partner.y + deltaY).toFixed(4))));
+              updateBonePoint(session.partner.boneId, session.partner.markerIndex, { x: newPartnerX, y: newPartnerY });
+            }
+            // 2. Koppel Ventraal <-> Dorsaal
+            if (linkVentralDorsal && session.oppPartner && session.oppPartner.markerIndex !== undefined) {
+              const newOppX = Math.max(0.02, Math.min(0.98, Number((session.oppPartner.x - deltaX).toFixed(4))));
+              const newOppY = Math.max(0.01, Math.min(0.99, Number((session.oppPartner.y + deltaY).toFixed(4))));
+              updateBonePoint(session.oppPartner.boneId, session.oppPartner.markerIndex, { x: newOppX, y: newOppY });
+            }
+            // 3. Beide aan
+            if (liveSymmetry && linkVentralDorsal && session.oppBothPartner && session.oppBothPartner.markerIndex !== undefined) {
+              const newOppBothX = Math.max(0.02, Math.min(0.98, Number((session.oppBothPartner.x + deltaX).toFixed(4))));
+              const newOppBothY = Math.max(0.01, Math.min(0.99, Number((session.oppBothPartner.y + deltaY).toFixed(4))));
+              updateBonePoint(session.oppBothPartner.boneId, session.oppBothPartner.markerIndex, { x: newOppBothX, y: newOppBothY });
+            }
+          }
+        }
+      } else {
+        // STRUCTURES
+        const updates: Array<{ id: string; x: number; y: number }> = [{ id: pt.id, x, y }];
+        const session = activeDragSessionRef.current;
+
+        if (session && session.pt.id === pt.id) {
+          // 1. Live Symmetrie L <-> R (STRIKT BINNEN HETZELFDE AANZICHT!)
+          if (liveSymmetry && session.partner) {
+            const newPartnerX = Math.max(0.02, Math.min(0.98, Number((session.partner.x - deltaX).toFixed(4))));
+            const newPartnerY = Math.max(0.01, Math.min(0.99, Number((session.partner.y + deltaY).toFixed(4))));
+            updates.push({ id: session.partner.id, x: newPartnerX, y: newPartnerY });
+          }
+
+          // 2. Koppel Ventraal <-> Dorsaal (alleen als linkVentralDorsal aan staat!)
+          if (linkVentralDorsal && session.oppPartner) {
+            const newOppX = Math.max(0.02, Math.min(0.98, Number((session.oppPartner.x - deltaX).toFixed(4))));
+            const newOppY = Math.max(0.01, Math.min(0.99, Number((session.oppPartner.y + deltaY).toFixed(4))));
+            updates.push({ id: session.oppPartner.id, x: newOppX, y: newOppY });
+          }
+
+          // 3. Beide aan
+          if (liveSymmetry && linkVentralDorsal && session.oppBothPartner) {
+            const newOppBothX = Math.max(0.02, Math.min(0.98, Number((session.oppBothPartner.x + deltaX).toFixed(4))));
+            const newOppBothY = Math.max(0.01, Math.min(0.99, Number((session.oppBothPartner.y + deltaY).toFixed(4))));
+            updates.push({ id: session.oppBothPartner.id, x: newOppBothX, y: newOppBothY });
+          }
+        }
+
+        updateStructurePoints(updates);
+      }
+    },
+    [updateBonePoint, updateStructurePoints, liveSymmetry, linkVentralDorsal, structures, bones]
+  );
 
   return (
-    <div className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 py-2 flex flex-col h-[calc(100vh-8.5rem)] min-h-[680px]">
-      {/* Subtiele instructiebalk met herstel & export opties */}
-      <div className="w-full flex items-center justify-between pb-2 mb-2 border-b border-clinical-100 text-xs">
-        <div className="flex items-center gap-2 text-slate-700 font-semibold">
-          <span className="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse" />
-          <span>
-            Beide weergaven naast elkaar. Sleep een willekeurig punt om de positie direct aan te passen.
-          </span>
+    <div className="flex-1 w-full max-w-7xl mx-auto px-2 sm:px-4 py-2 flex flex-col h-[calc(100vh-8.5rem)] min-h-[680px]">
+      {/* Bovenste werkbalk met tabs, filters, spiegelfuncties en acties */}
+      <div className="w-full flex flex-wrap items-center justify-between gap-2 pb-2 mb-2 border-b border-clinical-100 text-xs">
+        {/* Linkerzijde: Schakelaar tussen Botten en Botstructuren + Filter */}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => setEditTarget('structures')}
+              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition ${
+                editTarget === 'structures'
+                  ? 'bg-white text-sky-950 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              📍 Botstructuren ({structures.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setEditTarget('bones')}
+              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition ${
+                editTarget === 'bones'
+                  ? 'bg-white text-sky-950 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              🦴 Hoofd-botten ({bones.length})
+            </button>
+          </div>
+
+          {/* Filter per bot bij structuren */}
+          {editTarget === 'structures' && (
+            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200/90 rounded-xl px-2.5 py-1">
+              <Filter className="w-3.5 h-3.5 text-slate-500" />
+              <select
+                value={selectedFilterBone}
+                onChange={(e) => setSelectedFilterBone(e.target.value)}
+                className="text-xs font-semibold text-slate-800 bg-transparent focus:outline-none cursor-pointer"
+              >
+                <option value="all">Alle botten ({structures.length} structuren)</option>
+                {bones
+                  .filter((b) => b.structures && b.structures.length > 0)
+                  .map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.latinName} ({structures.filter((s) => s.boneId === b.id).length})
+                    </option>
+                  ))}
+              </select>
+            </div>
+          )}
+
+
         </div>
 
+        {/* Midden tools: Spiegelen L↔R en optionele koppeling Ventraal ↔ Dorsaal */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          <div className="flex items-center gap-1 bg-slate-50 border border-slate-200/90 rounded-xl px-2.5 py-1">
+            <label
+              className="flex items-center gap-1.5 cursor-pointer select-none text-[11px] font-bold text-slate-700"
+              title="Wanneer actief: bij het verslepen van een punt (links of rechts) beweegt het tegenoverliggende punt binnen DITZELFDE aanzicht synchroon mee"
+            >
+              <input
+                type="checkbox"
+                checked={liveSymmetry}
+                onChange={(e) => setLiveSymmetry(e.target.checked)}
+                className="w-3.5 h-3.5 text-sky-600 rounded accent-sky-600"
+              />
+              <span>Spiegelen L↔R</span>
+            </label>
+          </div>
+
+          <div className="flex items-center gap-1 bg-slate-50 border border-slate-200/90 rounded-xl px-2.5 py-1">
+            <label
+              className="flex items-center gap-1.5 cursor-pointer select-none text-[11px] font-bold text-slate-700"
+              title="Wanneer UIT (standaard): ventraal en dorsaal zijn 100% onafhankelijk. Wanneer AAN: aanpassingen op ventraal worden ook automatisch gespiegeld naar dorsaal overgenomen."
+            >
+              <input
+                type="checkbox"
+                checked={linkVentralDorsal}
+                onChange={(e) => setLinkVentralDorsal(e.target.checked)}
+                className="w-3.5 h-3.5 text-sky-600 rounded accent-sky-600"
+              />
+              <span>Koppel Ventraal ↔ Dorsaal</span>
+            </label>
+          </div>
+
+          {/* Knoppen Kopieer L ➔ R, R ➔ L en aanzichten */}
+          <div className="flex items-center gap-1 bg-slate-50 border border-slate-200/90 rounded-xl px-2 py-0.5">
+            <button
+              type="button"
+              onClick={() => {
+                if (editTarget === 'structures') {
+                  mirrorStructureSides(selectedFilterBone, 'all', 'left');
+                  showToast(
+                    selectedFilterBone === 'all'
+                      ? 'Alle linkerpunten gekopieerd en gespiegeld naar rechts'
+                      : `Linkerpunten naar rechts gespiegeld (${bones.find((b) => b.id === selectedFilterBone)?.latinName})`,
+                    'success'
+                  );
+                } else {
+                  mirrorBoneSides(selectedFilterBone, 'all', 'left');
+                  showToast('Linker botpunten naar rechts gespiegeld', 'success');
+                }
+              }}
+              className="px-2 py-1 rounded-lg bg-white hover:bg-sky-50 hover:text-sky-700 text-slate-700 font-bold border border-slate-200 shadow-2xs transition flex items-center gap-1 text-[11px] active:scale-95"
+              title="Kopieer alle punten van Links naar Rechts (horizontaal gespiegeld binnen hun eigen aanzicht)"
+            >
+              <span>Kopieer L ➔ R</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (editTarget === 'structures') {
+                  mirrorStructureSides(selectedFilterBone, 'all', 'right');
+                  showToast(
+                    selectedFilterBone === 'all'
+                      ? 'Alle rechterpunten gekopieerd en gespiegeld naar links'
+                      : `Rechterpunten naar links gespiegeld (${bones.find((b) => b.id === selectedFilterBone)?.latinName})`,
+                    'success'
+                  );
+                } else {
+                  mirrorBoneSides(selectedFilterBone, 'all', 'right');
+                  showToast('Rechter botpunten naar links gespiegeld', 'success');
+                }
+              }}
+              className="px-2 py-1 rounded-lg bg-white hover:bg-sky-50 hover:text-sky-700 text-slate-700 font-bold border border-slate-200 shadow-2xs transition flex items-center gap-1 text-[11px] active:scale-95"
+              title="Kopieer alle punten van Rechts naar Links (horizontaal gespiegeld binnen hun eigen aanzicht)"
+            >
+              <span>Kopieer R ➔ L</span>
+            </button>
+
+            <div className="w-[1px] h-3.5 bg-slate-300 mx-0.5" />
+            <button
+              type="button"
+              onClick={() => {
+                if (editTarget === 'structures') {
+                  copyStructureView('ventral', selectedFilterBone);
+                  showToast('Ventrale structuren gekopieerd naar dorsaal', 'success');
+                } else {
+                  copyBoneView('ventral', selectedFilterBone);
+                  showToast('Ventrale botten gekopieerd naar dorsaal', 'success');
+                }
+              }}
+              className="px-1.5 py-1 rounded-lg hover:bg-sky-50 hover:text-sky-700 text-slate-600 font-semibold transition text-[10.5px] active:scale-95"
+              title="Kopieer ventrale aanzichtposities naar het dorsale aanzicht (sagittaal gespiegeld)"
+            >
+              <span>V ➔ D</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (editTarget === 'structures') {
+                  copyStructureView('dorsal', selectedFilterBone);
+                  showToast('Dorsale structuren gekopieerd naar ventraal', 'success');
+                } else {
+                  copyBoneView('dorsal', selectedFilterBone);
+                  showToast('Dorsale botten gekopieerd naar ventraal', 'success');
+                }
+              }}
+              className="px-1.5 py-1 rounded-lg hover:bg-sky-50 hover:text-sky-700 text-slate-600 font-semibold transition text-[10.5px] active:scale-95"
+              title="Kopieer dorsale aanzichtposities naar het ventrale aanzicht (sagittaal gespiegeld)"
+            >
+              <span>D ➔ V</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Rechterzijde: Knoppen voor Opslaan, Herstellen en JSON */}
         <div className="flex items-center gap-2">
           <button
             type="button"
             disabled={isSaving}
             onClick={handleSaveToDisk}
-            className="px-3.5 py-1.5 rounded-xl border border-emerald-300 bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition flex items-center gap-1.5 shadow-sm active:scale-95"
-            title="Sla huidige botposities permanent op in src/data/bonesData.ts op schijf"
+            className="px-3 py-1.5 rounded-xl border border-emerald-300 bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition flex items-center gap-1.5 shadow-sm active:scale-95"
+            title="Sla huidige posities permanent op in de broncode op schijf"
           >
             <Save className="w-3.5 h-3.5" />
             <span>{isSaving ? 'Opslaan...' : 'Opslaan naar bronbestand'}</span>
@@ -296,35 +982,45 @@ export const BoneEditorView: React.FC = () => {
           <button
             type="button"
             onClick={() => {
-              if (confirm('Weet je zeker dat je alle botpunten wilt herstellen naar de standaardwaarden?')) {
-                resetBones();
-                showToast('Standaardpunten hersteld', 'info');
+              if (
+                confirm(
+                  editTarget === 'bones'
+                    ? 'Weet je zeker dat je alle botpunten wilt herstellen naar de standaardwaarden?'
+                    : 'Weet je zeker dat je alle botstructuren wilt herstellen naar de standaardwaarden?'
+                )
+              ) {
+                if (editTarget === 'bones') {
+                  resetBones();
+                } else {
+                  resetStructures();
+                }
+                showToast('Standaardwaarden hersteld', 'info');
               }
             }}
-            className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold transition flex items-center gap-1.5 shadow-2xs"
+            className="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold transition flex items-center gap-1.5 shadow-2xs"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>Standaardpunten herstellen</span>
+            <span>Herstellen</span>
           </button>
 
           <button
             type="button"
-            onClick={exportBonesJson}
-            className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold transition flex items-center gap-1.5 shadow-2xs"
-            title="Download huidige botten data als JSON bestand"
+            onClick={editTarget === 'bones' ? exportBonesJson : exportStructuresJson}
+            className="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold transition flex items-center gap-1.5 shadow-2xs"
+            title="Download huidige data als JSON bestand"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>Exporteer JSON</span>
+            <span className="hidden sm:inline">Exporteer</span>
           </button>
 
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="px-3 py-1.5 rounded-xl border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold transition flex items-center gap-1.5 shadow-2xs"
-            title="Upload een eerder opgeslagen botten JSON bestand"
+            className="px-2.5 py-1.5 rounded-xl border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold transition flex items-center gap-1.5 shadow-2xs"
+            title="Upload een eerder opgeslagen JSON bestand"
           >
             <Upload className="w-3.5 h-3.5" />
-            <span>Importeer JSON</span>
+            <span className="hidden sm:inline">Importeer</span>
           </button>
 
           <input
@@ -337,29 +1033,37 @@ export const BoneEditorView: React.FC = () => {
         </div>
       </div>
 
-      {/* Beide views naast elkaar: Ventraal links, Dorsaal rechts */}
+      {/* Beide views naast elkaar: Ventraal links, Dorsaal rechts (onafhankelijk zoomen & pannen) */}
       <div className="flex-1 min-h-0 w-full bg-white rounded-3xl p-3 border border-clinical-200/90 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-4 overflow-hidden">
         {/* Ventraal links */}
-        <div className="relative w-full h-full flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-slate-100 pr-0 md:pr-2">
+        <div className="relative w-full h-full min-w-0 min-h-0 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-slate-100 pr-0 md:pr-2 overflow-hidden">
           <span className="absolute top-2 left-3 text-[11px] font-black uppercase tracking-wider text-slate-500 bg-slate-100/90 px-2.5 py-1 rounded-md z-20 shadow-2xs">
-            Ventraal ({ventralMarkers.length} punten)
+            Ventraal ({ventralPoints.length} punten)
           </span>
           <DraggableSkeleton
             view="ventral"
-            markers={ventralMarkers}
-            onUpdateMarker={handleUpdateMarker}
+            points={ventralPoints}
+            hidePopup={hidePopup}
+            onToggleHidePopup={() => setHidePopup((h) => !h)}
+            onDragStart={handleDragStart}
+            onUpdatePoint={handleUpdatePoint}
+            onDragEnd={handleDragEnd}
           />
         </div>
 
         {/* Dorsaal rechts */}
-        <div className="relative w-full h-full flex flex-col items-center justify-center pl-0 md:pl-2">
+        <div className="relative w-full h-full min-w-0 min-h-0 flex flex-col items-center justify-center pl-0 md:pl-2 overflow-hidden">
           <span className="absolute top-2 left-3 text-[11px] font-black uppercase tracking-wider text-slate-500 bg-slate-100/90 px-2.5 py-1 rounded-md z-20 shadow-2xs">
-            Dorsaal ({dorsalMarkers.length} punten)
+            Dorsaal ({dorsalPoints.length} punten)
           </span>
           <DraggableSkeleton
             view="dorsal"
-            markers={dorsalMarkers}
-            onUpdateMarker={handleUpdateMarker}
+            points={dorsalPoints}
+            hidePopup={hidePopup}
+            onToggleHidePopup={() => setHidePopup((h) => !h)}
+            onDragStart={handleDragStart}
+            onUpdatePoint={handleUpdatePoint}
+            onDragEnd={handleDragEnd}
           />
         </div>
       </div>
