@@ -1915,3 +1915,18 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 - **Verificatie via CDP Browser Tests:**
   - Zowel desktop als mobiel banners, flashcards landing en studie-scherm disclaimers, en hoofdbotten filter & marker rendering succesvol geverifieerd via headless browser.
   - `npm run build` geslaagd zonder fouten (`✓ built in 3.99s`).
+
+
+## 57. Flashcards Knop en Icoontje Teruggeplaatst in het Menu [2026-11-02 00:01]
+- **Vraag van de gebruiker:**
+  - *"het icoontje van de flashcards mag terug in het menu"*
+- **Doorgevoerde oplossing:**
+  1. **Menu-navigatie geüpdatet ([Header.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/common/Header.tsx)):**
+     - Het `<Layers />` (stapel kaarten) icoontje is toegevoegd aan zowel `desktopNavItems` als `mobileNavItems`.
+     - *Desktop:* `Spieren`, `Botten`, `Bewegingen`, `Flashcards`, `Oefenen`, `Testen`, `Bewerken`.
+     - *Mobiel:* Duidelijk herkenbaar card-deck icoon tussen `Bewegingen` en `Oefen`.
+     - De `?` help-knop opent direct het interactieve helpvenster.
+  2. **Verificatie & Push:**
+     - E2E getoetst via geautomatiseerde CDP tests in de browser (zowel desktop navigatie als mobiele iconenbalk).
+     - `npm run build` geslaagd (`✓ built in 3.89s`).
+     - Gecommit en gepusht naar GitHub `origin/main`.

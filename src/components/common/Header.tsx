@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useMuscles } from '../../context/MuscleContext';
-import { BookOpen, GraduationCap, Edit3, ListChecks, Activity, Bone, HelpCircle } from 'lucide-react';
+import { BookOpen, GraduationCap, Edit3, ListChecks, Activity, Bone, HelpCircle, Layers } from 'lucide-react';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { HelpModal } from './HelpModal';
 
@@ -8,10 +8,6 @@ export const Header: React.FC = () => {
   const { appMode, setAppMode, quizPracticeMode, setQuizPracticeMode, triggerQuizOpenOptions } = useMuscles();
   const isMobile = useIsMobile();
   const [isHelpOpen, setIsHelpOpen] = useState(false);
-
-  // 3x tikken op het ? icoontje opent verborgen Flashcards modus
-  const helpTapCountRef = useRef(0);
-  const helpTapTimerRef = useRef<number | null>(null);
 
   // 3x tikken op de Study ('Spieren') knop opent het verborgen Spel-gedeelte (#game)
   const studyTapCountRef = useRef(0);
@@ -38,31 +34,7 @@ export const Header: React.FC = () => {
     }, 350);
   };
 
-  const handleHelpButtonClick = () => {
-    helpTapCountRef.current += 1;
-
-    if (helpTapTimerRef.current) {
-      window.clearTimeout(helpTapTimerRef.current);
-      helpTapTimerRef.current = null;
-    }
-
-    if (helpTapCountRef.current >= 3) {
-      helpTapCountRef.current = 0;
-      setIsHelpOpen(false);
-      setAppMode('flashcards');
-      return;
-    }
-
-    helpTapTimerRef.current = window.setTimeout(() => {
-      if (helpTapCountRef.current > 0 && helpTapCountRef.current < 3) {
-        setIsHelpOpen(true);
-      }
-      helpTapCountRef.current = 0;
-      helpTapTimerRef.current = null;
-    }, 320);
-  };
-
-  // Mobiele navigatie: Spieren, Botten, Bewegingen, Oefen, Test (alleen duidelijke iconen)
+  // Mobiele navigatie: Spieren, Botten, Bewegingen, Flashcards, Oefen, Test (alleen duidelijke iconen)
   const mobileNavItems = [
     {
       id: 'study',
@@ -84,6 +56,13 @@ export const Header: React.FC = () => {
       icon: <Activity className="w-5 h-5" />,
       isActive: appMode === 'movements',
       onClick: () => setAppMode('movements'),
+    },
+    {
+      id: 'flashcards',
+      label: 'Flashcards',
+      icon: <Layers className="w-5 h-5" />,
+      isActive: appMode === 'flashcards',
+      onClick: () => setAppMode('flashcards'),
     },
     {
       id: 'quiz-joint',
@@ -109,7 +88,7 @@ export const Header: React.FC = () => {
     },
   ];
 
-  // Desktop navigatie: Spieren, Botten, Bewegingen, Oefenen, Testen, Bewerken
+  // Desktop navigatie: Spieren, Botten, Bewegingen, Flashcards, Oefenen, Testen, Bewerken
   const desktopNavItems = [
     {
       id: 'study',
@@ -131,6 +110,13 @@ export const Header: React.FC = () => {
       icon: <Activity className="w-4 h-4" />,
       isActive: appMode === 'movements',
       onClick: () => setAppMode('movements'),
+    },
+    {
+      id: 'flashcards',
+      label: 'Flashcards',
+      icon: <Layers className="w-4 h-4" />,
+      isActive: appMode === 'flashcards',
+      onClick: () => setAppMode('flashcards'),
     },
     {
       id: 'quiz-joint',
@@ -189,7 +175,7 @@ export const Header: React.FC = () => {
                   <button
                     key={item.id}
                     onClick={item.onClick}
-                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
+                    className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 lg:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
                       item.isActive
                         ? 'bg-blue-600 text-white shadow-sm ring-1 ring-blue-400'
                         : 'text-clinical-400 hover:text-white hover:bg-clinical-800/60'
@@ -202,11 +188,11 @@ export const Header: React.FC = () => {
               )}
             </nav>
 
-            {/* Hulpknop met ? icoontje rechts in de header (3x tikken opent verborgen Flashcards) */}
+            {/* Hulpknop met ? icoontje rechts in de header */}
             <div className="absolute right-1 sm:right-2 flex items-center">
               <button
                 type="button"
-                onClick={handleHelpButtonClick}
+                onClick={() => setIsHelpOpen(true)}
                 className="p-1.5 sm:p-2 rounded-xl text-clinical-300 hover:text-white hover:bg-clinical-800 transition active:scale-95"
                 title="Hulp & Uitleg (?)"
                 aria-label="Hulp & Uitleg"
