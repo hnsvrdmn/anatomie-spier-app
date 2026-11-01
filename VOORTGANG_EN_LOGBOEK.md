@@ -1348,3 +1348,35 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
      - **Floating Legenda:**
        - Linksboven in de viewer verschijnt na controle een compacte floating legenda (HUD) die het verschil tussen 'Jouw getekende spier' en 'Juiste anatomische referentie' direct toelicht.
      - `npm run build` geslaagd zonder fouten (code 0).
+
+## 35. Flexibele Beoordeling van Meerpunts- en Zone-Aanhechtingen (bijv. Iliopsoas Wervels & Os Ilium) [2026-11-01 20:34]
+- **Feedback & instructie van de gebruiker:**
+  - Bij langgerekte aanhechtingen (zones zoals wervels, ribben, darmbeen, linea alba) is het voor een student niet vanzelfsprekend hoeveel discrete punten er exact moeten worden gezet.
+  - De automatische switch en de getoonde referentie-antwoorden moeten blijven werken zoals ingetekend in de bewerk-tab (bijv. 3 punten bij iliopsoas, 2 bij serratus anterior).
+  - De **beoordeling** moet echter flexibel zijn voor zones:
+    - Als een student bijv. bij de *m. iliopsoas* vanaf elke wervel een lijn trekt (veel punten) of slechts één punt op de wervels zet (minder punten), moet dit in beide gevallen goed worden gerekend.
+    - WÉL moet elke afzonderlijke anatomische zone van de spier minimaal één keer geraakt zijn: bij *iliopsoas* moet dus zowel de wervelzone (T12/lumbales) als het ventrale vlak van het os ilium geraakt zijn. Twee punten op de wervels en nul op het os ilium mag dus niet worden goedgekeurd.
+    - Dit geldt voor alle spieren met aanhechtingszones (zoals wervelkolom, crista iliaca, ribben, linea alba, scapularand).
+
+- **Ontwerp van het zone-evaluatie-algoritme:**
+  1. **Anatomische Zone-Identificatie (`zoneId`):**
+     - Punten die tot dezelfde anatomische structuur behoren (zoals T12 en lumbale wervels) delen dezelfde `zoneId` (`"vertebrae"`).
+     - Aanhechtingslijnen en zones worden gekoppeld aan hun overkoepelende botzone.
+  2. **Zone-tevredenheid:**
+     - Een zone geldt als voldaan zodra er *minimaal 1 gebruikerspunt* met accuraatheid `'correct'` binnen de zone/lijn valt.
+     - Meerdere geplaatste punten binnen dezelfde zone (bijv. 4 punten langs de lumbale wervels) zijn allemaal anatomisch correct en worden niet meer als overtollig/fout afgekeurd.
+  3. **Slaagconditie (`isPassed`):**
+     - Alle unieke anatomische zones van de spier moeten geraakt zijn (`satisfiedZones.size === requiredZones.size`).
+     - Er mogen géén foutieve punten buiten de anatomische zones zijn geplaatst (`hasNoIncorrectPoints`).
+     - Als hieraan voldaan is, slaagt de student, ongeacht of hij 1, 2 of 5 punten over de zone heeft verdeeld.
+  4. **Behoud van editor en auto-switch:**
+     - `expectedCounts` blijft gekoppeld aan de daadwerkelijk ingetekende punten in de bewerk-tab (`origins.length`), zodat de automatische switch exact blijft functioneren zoals de docent de spier heeft ingetekend.
+
+  5. **Verificatie & Validatie van de Zone-Evaluatie [2026-11-01 20:37]:**
+     - Geautomatiseerde tests uitgevoerd op echte spiergegevens:
+       - *m. iliopsoas* met 1 wervelpunt + 1 darmbeenpunt -> **Goedgekeurd (isPassed: true)**.
+       - *m. iliopsoas* met 4 wervelpunten + 1 darmbeenpunt -> **Alle 5 punten goedgekeurd (isPassed: true, correctCount: 5)**.
+       - *m. iliopsoas* met 2 wervelpunten en 0 darmbeenpunten -> **Afgekeurd (isPassed: false, darmbeen ontbreekt)**.
+       - *m. latissimus dorsi* met 1 wervelpunt + 1 crista-punt -> **Goedgekeurd (isPassed: true)**.
+       - *m. latissimus dorsi* met 2 wervelpunten en 0 crista-punten -> **Afgekeurd (isPassed: false, crista ontbreekt)**.
+     - `npm run build` geslaagd zonder enige fouten (code 0).

@@ -11,6 +11,7 @@ export interface Point2D {
   y: number; // 0.0 - 1.0 (craniaal naar caudaal)
   id?: string;
   name?: string; // Optionele annotatienaam
+  zone?: string; // Optionele overkoepelende anatomische zone (bijv. 'vertebrae', 'os_ilium', 'costae')
   view?: AnatomicalView; // Ventraal of dorsaal aanzicht waarin het punt is geplaatst
   side?: SymmetrySide | EditSymmetrySide;
 }

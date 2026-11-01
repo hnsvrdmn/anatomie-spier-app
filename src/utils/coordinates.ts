@@ -211,13 +211,76 @@ export interface DistinctTarget {
   name: string;
   points: Point2D[];
   line?: AttachmentLine;
+  zoneId: string;
+  isZone: boolean;
 }
 
 /**
- * Groepeert doelpunten en aanhechtingslijnen tot unieke anatomische doelen (1-op-1 op naam).
- * Hierdoor tellen meervoudige vezelpunten met dezelfde naam (zoals '5e tot 12e costa' of 'linea alba')
- * als één anatomische structuur (zone), terwijl losse punten met verschillende namen (zoals 'SIAS' of
- * 'processus coracoideus' + 'tuberculum supraglenoidale') elk een eigen doel blijven.
+ * Bepaalt de overkoepelende anatomische zone voor een aanhechtingspunt of lijn.
+ * Dit groepeert bijv. thoracale en lumbale wervels tot één wervelzone,
+ * en ribsegmenten tot één ribzone, zodat een student flexibel meerdere of minder
+ * punten langs een zone mag zetten zolang elke unieke zone maar minimaal 1x geraakt is.
+ */
+export function resolveZoneKey(name: string = '', lineName?: string, explicitZone?: string): string {
+  if (explicitZone) return explicitZone.toLowerCase().trim();
+
+  const text = `${name} ${lineName || ''}`.toLowerCase();
+
+  // Wervels & wervelkolom (thoracaal, lumbaal, cervicaal, wervels, proc. spinosus, proc. transversus)
+  if (
+    text.includes('wervel') ||
+    text.includes('vertebra') ||
+    text.includes('spinosus') ||
+    text.includes('transversus van') ||
+    text.includes('thoracalis') ||
+    text.includes('lumbales') ||
+    text.includes('cervicales')
+  ) {
+    return 'zone_vertebrae';
+  }
+  // Os ilium / fossa iliaca
+  if (text.includes('os ilium') || text.includes('fossa iliaca') || text.includes('ventrale vlak os ilium')) {
+    return 'zone_os_ilium';
+  }
+  // Crista iliaca
+  if (text.includes('crista iliaca')) {
+    return 'zone_crista_iliaca';
+  }
+  // SIAS / SIAI / SIPS
+  if (text.includes('sias')) return 'zone_sias';
+  if (text.includes('siai')) return 'zone_siai';
+  if (text.includes('sips')) return 'zone_sips';
+  // Ribben (costae)
+  if (text.includes('costa') || text.includes('rib')) {
+    return 'zone_costae';
+  }
+  // Linea alba
+  if (text.includes('linea alba')) {
+    return 'zone_linea_alba';
+  }
+  // Scapula rand (margo medialis / angulus superior / angulus inferior)
+  if (text.includes('margo medialis') || text.includes('angulus superior') || text.includes('angulus inferior')) {
+    return 'zone_margo_medialis_scapula';
+  }
+  // Os pubis
+  if (text.includes('os pubis')) return 'zone_os_pubis';
+  // Os ischii / tuber ischiadicum
+  if (text.includes('tuber ischiadicum')) return 'zone_tuber_ischiadicum';
+  if (text.includes('os ischii')) return 'zone_os_ischii';
+  // Corpus femoris
+  if (text.includes('corpus femoris')) return 'zone_corpus_femoris';
+  // Clavicula / Sternum / Acromion / Spina scapula
+  if (text.includes('clavicula')) return 'zone_clavicula';
+  if (text.includes('sternum')) return 'zone_sternum';
+  if (text.includes('acromion')) return 'zone_acromion';
+  if (text.includes('spina scapula')) return 'zone_spina_scapula';
+
+  // Standaard fallback: de genormaliseerde lijnsnaam of puntnaam
+  return lineName ? lineName.toLowerCase().trim() : name.toLowerCase().trim();
+}
+
+/**
+ * Groepeert doelpunten en aanhechtingslijnen tot unieke anatomische doelen.
  */
 export function getDistinctTargets(
   targetPoints: Point2D[] = [],
@@ -236,29 +299,39 @@ export function getDistinctTargets(
     const matchedLine = rawName
       ? matchingLines.find((l) => (l.name || '').trim().toLowerCase() === rawName.toLowerCase())
       : undefined;
+    const zoneId = resolveZoneKey(rawName, matchedLine?.name, pt.zone);
+    const isZone = !!matchedLine || !!pt.zone || zoneId.startsWith('zone_');
+
     targets.push({
       key,
       name: rawName,
       points: [pt],
       line: matchedLine,
+      zoneId,
+      isZone,
     });
   });
 
   // Indien er slechts 1 uniek doelpunt is en 1 lijn van hetzelfde type zonder exacte naammatch, koppel ze
   if (targets.length === 1 && !targets[0].line && matchingLines.length === 1) {
     targets[0].line = matchingLines[0];
+    targets[0].isZone = true;
+    targets[0].zoneId = resolveZoneKey(targets[0].name, matchingLines[0].name, targets[0].points[0]?.zone);
   }
 
   // Indien er geen discrete punten zijn maar wel lijnen
   if (targets.length === 0 && matchingLines.length > 0) {
     matchingLines.forEach((line, idx) => {
       const rawName = (line.name || '').trim();
-      const key = rawName ? rawName.toLowerCase() : `__line_${idx}`;
+      const key = `__line_${idx}`;
+      const zoneId = resolveZoneKey(rawName, line.name);
       targets.push({
         key,
         name: rawName,
         points: [],
         line,
+        zoneId,
+        isZone: true,
       });
     });
   }
@@ -275,10 +348,12 @@ export function getDistinctTargetCount(points?: Point2D[]): number {
 }
 
 /**
- * Evalueert een set gebruikerspunten tegen unieke anatomische doelen:
+ * Evalueert een set gebruikerspunten tegen unieke anatomische doelen en zones:
  * - Korte/kleine botpunten (zoals condylus, SIAS, SIAI, tuberositas, olecranon) worden als punt geëvalueerd.
- * - Lange botregio's (zoals corpus femoris, linea alba, crista iliaca, margo medialis scapulae, ribben, wervels)
- *   hebben een gekoppelde AttachmentLine en worden over de gehele botzone als 100% correct gerekend.
+ * - Lange botregio's en zones (zoals wervels, crista iliaca, ribben, linea alba, margo medialis scapulae)
+ *   staan toe dat een student flexibel één of meerdere punten plaatst.
+ * - ZOLANG ELKE UNIEKE ANATOMISCHE ZONE MAAR MINIMAAL 1x CORRECT IS GERAAKT
+ *   (bijv. bij m. iliopsoas: minimaal 1 punt op wervels EN minimaal 1 punt op os ilium).
  */
 export function evaluatePointSet(
   userPoints: Point2D[],
@@ -299,7 +374,13 @@ export function evaluatePointSet(
     };
   }
 
-  const requiredCount = distinctTargets.length;
+  // Bepaal alle overkoepelende anatomische zones die geraakt moeten worden
+  const requiredZones = new Set<string>();
+  distinctTargets.forEach((t) => {
+    requiredZones.add(t.zoneId || t.key);
+  });
+  const requiredCount = requiredZones.size;
+
   const ptTolCorrect = toleranceCorrect;
   const ptTolClose = Math.max(TOLERANCE_CLOSE, toleranceCorrect * 1.6);
 
@@ -355,9 +436,10 @@ export function evaluatePointSet(
     };
   };
 
-  // Koppel gebruikerspunten optimaal aan nog niet gematchte DistinctTargets (1-op-1 bipartiet)
+  // Koppel gebruikerspunten optimaal aan doelen
   const matchedUserIndices = new Set<number>();
   const matchedTargetIndices = new Set<number>();
+  const satisfiedZones = new Set<string>();
   const resultsByUserIdx = new Map<number, MatchResult>();
 
   // Bereken alle mogelijke paren (userIdx, targetIdx)
@@ -383,38 +465,66 @@ export function evaluatePointSet(
     return a.res.distance - b.res.distance;
   });
 
-  let satisfiedTargets = 0;
-
+  // Pas 1: 1-op-1 toewijzing om zoveel mogelijk unieke doelen en zones te dekken
   for (const pair of pairs) {
     if (matchedUserIndices.has(pair.uIdx) || matchedTargetIndices.has(pair.tIdx)) continue;
     matchedUserIndices.add(pair.uIdx);
     matchedTargetIndices.add(pair.tIdx);
     resultsByUserIdx.set(pair.uIdx, pair.res);
     if (pair.res.accuracy === 'correct') {
-      satisfiedTargets++;
+      const tgt = distinctTargets[pair.tIdx];
+      satisfiedZones.add(tgt.zoneId || tgt.key);
     }
   }
 
-  // Punten die niet 1-op-1 aan een uniek doel gekoppeld konden worden (te veel geplaatste punten,
-  // of dubbele punten op dezelfde lijn/aanhechting):
-  // Deze zijn ALTIJD incorrect (overtollig of dubbel op al gematcht doel).
+  // Pas 2: voor resterende geplaatste punten (bijv. student heeft meerdere punten langs dezelfde zone gezet)
   for (let uIdx = 0; uIdx < userPoints.length; uIdx++) {
     if (matchedUserIndices.has(uIdx)) continue;
-    let closestRes: MatchResult | null = null;
+
+    // Test of dit extra punt binnen een geldige zone (met lijn of isZone) valt
+    let bestZoneRes: MatchResult | null = null;
+    let bestZoneDist = Infinity;
+    let matchedZoneTarget: DistinctTarget | null = null;
+
     for (let tIdx = 0; tIdx < distinctTargets.length; tIdx++) {
-      const res = evalAgainstTarget(userPoints[uIdx], distinctTargets[tIdx]);
-      if (!closestRes || res.distance < closestRes.distance) {
-        closestRes = res;
+      const tgt = distinctTargets[tIdx];
+      if (tgt.isZone || tgt.line) {
+        const res = evalAgainstTarget(userPoints[uIdx], tgt);
+        if (res.accuracy === 'correct' || res.accuracy === 'close') {
+          if (res.distance < bestZoneDist) {
+            bestZoneDist = res.distance;
+            bestZoneRes = res;
+            matchedZoneTarget = tgt;
+          }
+        }
       }
     }
-    resultsByUserIdx.set(uIdx, {
-      userPoint: userPoints[uIdx],
-      targetPoint: closestRes ? closestRes.targetPoint : userPoints[uIdx],
-      distance: closestRes ? closestRes.distance : 1.0,
-      accuracy: 'incorrect', // Overtollig punt telt ALTIJD als fout!
-      targetType,
-      matchedLineName: closestRes?.matchedLineName,
-    });
+
+    if (bestZoneRes && matchedZoneTarget) {
+      // Dit extra punt ligt netjes op een geldige zone (bijv. extra wervelpunt of extra ribpunt)!
+      matchedUserIndices.add(uIdx);
+      resultsByUserIdx.set(uIdx, bestZoneRes);
+      if (bestZoneRes.accuracy === 'correct') {
+        satisfiedZones.add(matchedZoneTarget.zoneId || matchedZoneTarget.key);
+      }
+    } else {
+      // Het punt valt buiten alle geldige doelen en zones: telt als incorrect/fout
+      let closestRes: MatchResult | null = null;
+      for (let tIdx = 0; tIdx < distinctTargets.length; tIdx++) {
+        const res = evalAgainstTarget(userPoints[uIdx], distinctTargets[tIdx]);
+        if (!closestRes || res.distance < closestRes.distance) {
+          closestRes = res;
+        }
+      }
+      resultsByUserIdx.set(uIdx, {
+        userPoint: userPoints[uIdx],
+        targetPoint: closestRes ? closestRes.targetPoint : userPoints[uIdx],
+        distance: closestRes ? closestRes.distance : 1.0,
+        accuracy: 'incorrect',
+        targetType,
+        matchedLineName: closestRes?.matchedLineName,
+      });
+    }
   }
 
   const matches: MatchResult[] = [];
@@ -428,9 +538,13 @@ export function evaluatePointSet(
     else if (m.accuracy === 'close') closeCount++;
   }
 
-  // Slaagconditie: ALLE unieke doelen moeten 1-op-1 correct geraakt zijn EN
-  // er mogen géén overtollige punten geplaatst zijn!
-  const isPassed = satisfiedTargets === requiredCount && userPoints.length === requiredCount;
+  // Slaagconditie:
+  // 1. Alle unieke anatomische zones moeten minimaal 1x correct geraakt zijn
+  //    (bijv. bij iliopsoas: minimaal 1 op wervels én minimaal 1 op os ilium).
+  // 2. Er mogen géén foutieve punten buiten de anatomische zones geplaatst zijn.
+  const allZonesSatisfied = Array.from(requiredZones).every((z) => satisfiedZones.has(z));
+  const hasNoIncorrectPoints = matches.every((m) => m.accuracy !== 'incorrect');
+  const isPassed = allZonesSatisfied && hasNoIncorrectPoints && userPoints.length > 0;
 
   return {
     matches,
@@ -441,10 +555,6 @@ export function evaluatePointSet(
   };
 }
 
-/**
- * Converteert client (scherm) coördinaten van een PointerEvent naar genormaliseerde coördinaten (0.0 tot 1.0)
- * gebaseerd op de bounding client rect van de skeletcontainer.
- */
 export function clientToNormalized(
   clientX: number,
   clientY: number,
