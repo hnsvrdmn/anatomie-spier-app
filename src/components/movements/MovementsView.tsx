@@ -278,7 +278,7 @@ export const MovementsView: React.FC = () => {
                       {muscle.originText}
                     </div>
                     <div className="break-words">
-                      <span className="font-bold text-rose-600">Insertie: </span>
+                      <span className="font-bold text-orange-600">Insertie: </span>
                       {muscle.insertionText}
                     </div>
                   </div>

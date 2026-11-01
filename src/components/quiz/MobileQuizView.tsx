@@ -296,12 +296,12 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
               <button
                 type="button"
                 onClick={() => setActiveQuizTool('insertion')}
-                title="Plaats Insertie (rood)"
+                title="Plaats Insertie (oranje)"
                 aria-label="Insertie"
                 className={`w-7 h-7 rounded-lg text-xs font-black transition-all flex items-center justify-center ${
                   activeQuizTool === 'insertion'
-                    ? 'bg-red-600 text-white shadow-sm ring-2 ring-rose-400'
-                    : 'text-rose-400 hover:bg-slate-800'
+                    ? 'bg-orange-600 text-white shadow-sm ring-2 ring-orange-400'
+                    : 'text-orange-400 hover:bg-slate-800'
                 }`}
               >
                 I
@@ -476,7 +476,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                   }}
                   className="w-full px-3 py-2 bg-slate-100 border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:bg-white cursor-pointer"
                 >
-                  <option value="mixed">Gemengde toets (alle testen door elkaar)</option>
+                  <option value="mixed">Gemengde toets</option>
                   <option value="bone">Bot benoemen</option>
                   <option value="full">Origo en insertie plaatsen</option>
                   <option value="landmark">Vind aanhechtingspunt</option>
@@ -714,8 +714,8 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
             ) : (
               <div className="text-xs text-slate-500 font-medium py-1 text-center">
                 {currentQuestion.landmarkType === 'origin' && 'Plaats de origo (blauw)'}
-                {currentQuestion.landmarkType === 'insertion' && 'Plaats de insertie (rood)'}
-                {!currentQuestion.landmarkType && 'Plaats origo (blauw) en insertie (rood)'}
+                {currentQuestion.landmarkType === 'insertion' && 'Plaats de insertie (oranje)'}
+                {!currentQuestion.landmarkType && 'Plaats origo (blauw) en insertie (oranje)'}
               </div>
             )}
           </div>
@@ -876,8 +876,8 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                     <span className="font-bold text-blue-700">Origo: </span>
                     {muscle?.originText}
                   </p>
-                  <p className="text-[11px] sm:text-xs text-rose-950 leading-snug break-words">
-                    <span className="font-bold text-rose-700">Insertie: </span>
+                  <p className="text-[11px] sm:text-xs text-orange-950 leading-snug break-words">
+                    <span className="font-bold text-orange-700">Insertie: </span>
                     {muscle?.insertionText}
                   </p>
                 </div>

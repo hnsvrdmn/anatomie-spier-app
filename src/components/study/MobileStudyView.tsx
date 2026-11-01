@@ -462,7 +462,7 @@ export const MobileStudyView: React.FC = () => {
                 <span className="text-slate-700 font-medium break-words leading-tight">{activeMuscle.originText}</span>
               </div>
               <div className="flex items-start gap-1.5 text-slate-800">
-                <span className="font-bold text-rose-600 text-xs shrink-0 mt-0.5">I:</span>
+                <span className="font-bold text-orange-600 text-xs shrink-0 mt-0.5">I:</span>
                 <span className="text-slate-700 font-medium break-words leading-tight">{activeMuscle.insertionText}</span>
               </div>
               {(() => {

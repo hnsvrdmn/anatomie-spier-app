@@ -86,8 +86,8 @@ const BoneAttachmentsCard: React.FC<BoneAttachmentsCardProps> = ({ boneId, onSel
       {/* Insertie lijst */}
       {hasInsertions && (
         <div className="space-y-1.5">
-          <div className="text-[11px] font-bold text-rose-800 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-red-600 shrink-0" />
+          <div className="text-[11px] font-bold text-orange-800 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-orange-500 shrink-0" />
             <span>Insertie:</span>
           </div>
           <div className="space-y-1.5">
@@ -95,21 +95,21 @@ const BoneAttachmentsCard: React.FC<BoneAttachmentsCardProps> = ({ boneId, onSel
               <div
                 key={`${att.muscleId}-${idx}`}
                 onClick={() => onSelectMuscle?.(att.muscleId)}
-                className={`p-2.5 rounded-xl bg-rose-50/70 border border-rose-200/70 text-xs transition flex flex-col gap-0.5 group ${
-                  onSelectMuscle ? 'hover:bg-rose-100/80 hover:border-rose-300 cursor-pointer' : ''
+                className={`p-2.5 rounded-xl bg-orange-50/70 border border-orange-200/70 text-xs transition flex flex-col gap-0.5 group ${
+                  onSelectMuscle ? 'hover:bg-orange-100/80 hover:border-orange-300 cursor-pointer' : ''
                 }`}
                 title={onSelectMuscle ? `Bekijk ${att.muscleName} in de spierenatlas` : undefined}
               >
-                <div className="font-black text-rose-950 flex items-center justify-between">
+                <div className="font-black text-orange-950 flex items-center justify-between">
                   <span>{att.muscleName}</span>
                   <div className="flex items-center gap-1">
                     {att.part && (
-                      <span className="text-[10px] font-semibold text-rose-800 bg-rose-100 px-1.5 py-0.5 rounded-md">
+                      <span className="text-[10px] font-semibold text-orange-800 bg-orange-100 px-1.5 py-0.5 rounded-md">
                         {att.part}
                       </span>
                     )}
                     {onSelectMuscle && (
-                      <ArrowRight className="w-3 h-3 text-rose-400 group-hover:text-rose-700 transition transform group-hover:translate-x-0.5" />
+                      <ArrowRight className="w-3 h-3 text-orange-400 group-hover:text-orange-700 transition transform group-hover:translate-x-0.5" />
                     )}
                   </div>
                 </div>

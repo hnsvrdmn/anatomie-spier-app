@@ -573,7 +573,7 @@ export const SkeletonPuzzleGame: React.FC = () => {
     }
 
     if (selectedOriginNodeIds.length === 0 || selectedInsertionNodeIds.length === 0) {
-      setFeedbackMsg('Tik eerst op het skelet een origo (blauw) en insertie (rood) aan');
+      setFeedbackMsg('Tik eerst op het skelet een origo (blauw) en insertie (oranje) aan');
       return;
     }
 
@@ -873,8 +873,8 @@ export const SkeletonPuzzleGame: React.FC = () => {
 
               let fillColor = '#2563eb';
               if (isSelO) fillColor = '#1d4ed8';
-              else if (isSelI) fillColor = '#b91c1c';
-              else if (!hasO && hasI) fillColor = '#dc2626';
+              else if (isSelI) fillColor = '#c2410c';
+              else if (!hasO && hasI) fillColor = '#ea580c';
               else if (hasO && hasI) fillColor = '#7c3aed';
 
               if (isSolvedNode) {
@@ -1007,7 +1007,7 @@ export const SkeletonPuzzleGame: React.FC = () => {
                       {spec.insertionNodeIds.map((_, i) => (
                         <span
                           key={`i-${i}`}
-                          className="w-1.5 h-1.5 rounded-full bg-rose-500 inline-block"
+                          className="w-1.5 h-1.5 rounded-full bg-orange-500 inline-block"
                         />
                       ))}
                     </span>

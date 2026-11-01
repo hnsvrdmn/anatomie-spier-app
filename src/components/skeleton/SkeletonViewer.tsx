@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useMemo, createContext, useContext 
 import { AnatomicalView, Muscle, SymmetrySide, Point2D, MatchResult } from '../../types/anatomy';
 import { MuscleMarkers, SVG_WIDTH, SVG_HEIGHT, MULTI_MUSCLE_COLORS } from './MuscleMarkers';
 import { SKELETON_WIDTH, SKELETON_HEIGHT, clientToNormalized, getMuscleConnections } from '../../utils/coordinates';
-import { ZoomIn, ZoomOut, RotateCcw, Hand, Eye, EyeOff, MousePointer } from 'lucide-react';
+import { ZoomIn, ZoomOut, RotateCcw, Hand, MousePointer } from 'lucide-react';
 
 export interface ViewerContextValue {
   zoom: number;
@@ -69,7 +69,6 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
   children,
   innerRef,
   showTooltip: externalShowTooltip,
-  onToggleTooltip,
   hideZoomToolbar = false,
   isMobile = false,
   autoCenterMuscle = false,
@@ -113,17 +112,9 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [panMode, setPanMode] = useState(false);
-  const [internalShowTooltip, setInternalShowTooltip] = useState(true);
+  const [internalShowTooltip] = useState(true);
 
   const effectiveShowTooltip = externalShowTooltip !== undefined ? externalShowTooltip : internalShowTooltip;
-
-  const handleToggleTooltip = () => {
-    if (onToggleTooltip) {
-      onToggleTooltip(!effectiveShowTooltip);
-    } else {
-      setInternalShowTooltip(v => !v);
-    }
-  };
 
   // Hover item toestand voor studiemodus
   const [hoveredInfo, setHoveredInfo] = useState<{
@@ -727,19 +718,21 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                     strokeWidth={3.5 / zoom}
                   />
 
-                  {/* Tekst in het punt: '✓'/'~'/'✗' na controle, of 'O' tijdens intekenen */}
-                  <text
-                    x={cx}
-                    y={cy + (1 / zoom)}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fill="#ffffff"
-                    fontSize={Math.round((isEval ? 13 : 12) / zoom)}
-                    fontWeight="900"
-                    className="pointer-events-none select-none"
-                  >
-                    {isEval ? badgeSymbol : `O${effectiveOrigins.length > 1 ? idx + 1 : ''}`}
-                  </text>
+                  {/* Resultaat-status in het punt na controle: '✓' (juist) of '✗' (fout). Geen tekst/icoon tijdens intekenen */}
+                  {isEval && (
+                    <text
+                      x={cx}
+                      y={cy + (1 / zoom)}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fill="#ffffff"
+                      fontSize={Math.round(13 / zoom)}
+                      fontWeight="900"
+                      className="pointer-events-none select-none"
+                    >
+                      {badgeSymbol}
+                    </text>
+                  )}
                 </g>
               );
             })}
@@ -807,24 +800,26 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                     cx={cx}
                     cy={cy}
                     r={15 / zoom}
-                    fill={isEval ? badgeColor : "#dc2626"}
+                    fill={isEval ? badgeColor : "#ea580c"}
                     stroke="#ffffff"
                     strokeWidth={3.5 / zoom}
                   />
 
-                  {/* Tekst in het punt: '✓'/'~'/'✗' na controle, of 'I' tijdens intekenen */}
-                  <text
-                    x={cx}
-                    y={cy + (1 / zoom)}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fill="#ffffff"
-                    fontSize={Math.round((isEval ? 13 : 12) / zoom)}
-                    fontWeight="900"
-                    className="pointer-events-none select-none"
-                  >
-                    {isEval ? badgeSymbol : `I${effectiveInsertions.length > 1 ? idx + 1 : ''}`}
-                  </text>
+                  {/* Resultaat-status in het punt na controle: '✓' (juist) of '✗' (fout). Geen tekst/icoon tijdens intekenen */}
+                  {isEval && (
+                    <text
+                      x={cx}
+                      y={cy + (1 / zoom)}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fill="#ffffff"
+                      fontSize={Math.round(13 / zoom)}
+                      fontWeight="900"
+                      className="pointer-events-none select-none"
+                    >
+                      {badgeSymbol}
+                    </text>
+                  )}
                 </g>
               );
             })}
@@ -899,7 +894,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                   <div className="flex items-center gap-2 text-xs text-slate-200 font-medium">
                     <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${
                       hoveredInfo.type === 'origin' ? 'bg-blue-500 ring-2 ring-blue-400/50' :
-                      'bg-red-500 ring-2 ring-red-400/50'
+                      'bg-orange-500 ring-2 ring-orange-400/50'
                     }`} />
                     <span className="leading-snug">
                       {hoveredInfo.type === 'origin' && `Origo: ${hoveredInfo.label || hoveredInfo.muscle.originText}`}
@@ -970,22 +965,16 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                   type="button"
                   onClick={() => setPanMode(p => !p)}
                   title={panMode ? "Klik om terug te keren naar de normale cursor" : "Skelet verslepen"}
-                  className={`px-2 py-1 text-xs rounded-lg transition-colors flex items-center gap-1 ${
+                  className={`p-1.5 rounded-lg transition-colors flex items-center justify-center ${
                     panMode
                       ? 'bg-slate-200 text-slate-900 font-semibold'
                       : 'hover:bg-slate-100 text-slate-600 font-medium'
                   }`}
                 >
                   {panMode ? (
-                    <>
-                      <MousePointer className="w-3.5 h-3.5" />
-                      <span>Cursor</span>
-                    </>
+                    <MousePointer className="w-3.5 h-3.5" />
                   ) : (
-                    <>
-                      <Hand className="w-3.5 h-3.5" />
-                      <span>Versleep</span>
-                    </>
+                    <Hand className="w-3.5 h-3.5" />
                   )}
                 </button>
                 <button
@@ -998,18 +987,6 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                 </button>
               </>
             )}
-
-            <div className="w-[1px] h-4 bg-slate-200" />
-            <button
-              type="button"
-              onClick={handleToggleTooltip}
-              title={effectiveShowTooltip ? "Hover-informatie verbergen" : "Hover-informatie tonen"}
-              className={`p-1.5 rounded-lg transition-colors ${
-                effectiveShowTooltip ? 'text-blue-600 bg-blue-50' : 'text-slate-400 hover:bg-slate-100'
-              }`}
-            >
-              {effectiveShowTooltip ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-            </button>
           </div>
         )}
       </div>

@@ -1403,4 +1403,63 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
   - `SkeletonViewer.tsx`: De zwevende labels (`Jouw O: ...` en `Jouw I: ...`) boven de gebruikerspunten verwijderen.
   - `MuscleMarkers.tsx`: De zwevende badges (`🎯 Juist: ...`) onder de referentiepunten verwijderen.
   - Het strakke visuele onderscheid (gestippelde indigolijn voor de gebruiker vs massieve rode anatomische lijn, en markering in de stippen zelf) blijft behouden zonder storende tekstballonnen op het skelet.
-- **Git Status:** Commit `35f6708` succesvol gepusht naar GitHub (`main`).
+- **Git Status:** Commit `35f6708` en aansluitend `7511bbe` succesvol gepusht naar GitHub (`main`).
+
+## 38. Standaard Toetstype naar 'Gemengde toets' & Afstandsweergave in CM [2026-11-01 20:56]
+- **Vraag van de gebruiker:**
+  1. Onder 'Testen' moet de standaard geselecteerde test 'Gemengde toets' zijn; de toevoeging `(alle testen door elkaar)` erachter mag weg.
+  2. Bij het feedbackscherm na oefenen/testen stond nog de ruwe fractie `< 0.035 afstand` (bijv. "3/4 punten exact geplaatst (< 0.035 afstand)"). Deze afstand moet net zoals de individuele punten worden uitgedrukt in werkelijke centimeters (**cm**).
+- **Doorgevoerde aanpassingen:**
+  1. **Standaard Toetstype:**
+     - `src/components/quiz/QuizView.tsx`: Initiële state van `freeQuizType` gewijzigd van `'full'` naar `'mixed'`.
+     - `src/components/quiz/QuizView.tsx` & `src/components/quiz/MobileQuizView.tsx`: De optietekst aangepast van `Gemengde toets (alle testen door elkaar)` naar bondig `Gemengde toets`.
+  2. **Afstand in Centimeters in Feedbackscherm:**
+     - `src/components/quiz/QuizFeedback.tsx`:
+       - `toleranceValue` toegevoegd aan `QuizFeedbackProps`.
+       - Berekening van afstanden via de skelet-conversiefactor (`SKELETON_REAL_HEIGHT_CM = 170 cm`):
+         - Exacte drempel: `(toleranceValue * 170).toFixed(1)` cm (bijv. `< 4.3 cm` bij Medium, `< 6.0 cm` bij Ruim, `< 2.6 cm` bij Strikt).
+         - Bijna-goed drempel: `(toleranceValue * 2 * 170).toFixed(1)` cm (bijv. binnen `8.5 cm`).
+       - Tekst aangepast van `X/Y punten exact geplaatst (< 0.035 afstand)` naar `X/Y punten exact geplaatst (< X.X cm)`.
+     - `src/components/quiz/QuizView.tsx`: Actuele `toleranceValue` doorgegeven aan `<QuizFeedback />`.
+- **Verificatie:**
+  - `npm run build` succesvol gedraaid (TypeScript compilatie en Vite bundeling zonder fouten).
+
+## 39. Kleurcodering Insertie Gewijzigd naar Oranje [2026-11-01 21:04]
+- **Vraag van de gebruiker:**
+  - De kleur van de insertie overal in de app aanpassen naar **oranje** zodat deze duidelijk contrasteert met de rode 'fout' / 'afwijkend' markers (voorheen waren beide rood, wat voor verwarring zorgde).
+- **Doorgevoerde aanpassingen over alle componenten:**
+  1. **Skelet & Markers (`SkeletonViewer.tsx`, `MuscleMarkers.tsx`, `EditorOverlay.tsx`):**
+     - Gebruikerspunten voor insertie tijdens het intekenen van `#dc2626` (rood) gewijzigd naar `#ea580c` (oranje).
+     - Referentie insertiepunten en pulserende doelen (`showReferenceGhost`) omgezet naar oranje tinten (`#ea580c` / `#fb923c` / `rgba(249, 115, 22, 0.25)`).
+     - Insertie aanhechtingslijnen/zones in leermodus en editor omgezet naar oranje `#ea580c` met halo `#f97316`.
+     - Hover-labels op het skelet tonen nu een oranje bolletje (`bg-orange-500`) voor inserties.
+  2. **Toets & Quiz Views (`QuizView.tsx`, `MobileQuizView.tsx`, `QuizFeedback.tsx`):**
+     - Omschakel-knoppen voor *Insertie* aangepast naar oranje stijlen (`bg-orange-600`, oranje ring, oranje indicator-stip).
+     - Op mobiel: I-knop en tooltip/instructieteksten (`Plaats de insertie (oranje)`) aangepast.
+     - `QuizFeedback.tsx`: De referentie-insertiekaart heeft nu een oranje thema (`bg-orange-50`, `border-orange-100`, `bg-orange-500`, `text-orange-950`) waardoor deze direct te onderscheiden is van de rode 'Helaas niet juist' foutmelding.
+  3. **Studie, Botten, Bewegingen & Puzzel (`MuscleDetail.tsx`, `MobileStudyView.tsx`, `MovementsView.tsx`, `BonesView.tsx`, `SkeletonPuzzleGame.tsx`, `HelpModal.tsx`):**
+     - In `MuscleDetail.tsx`: Insertiekaart omgezet naar oranje.
+     - In `MobileStudyView.tsx`: Label `I:` in de ingeklapte lade omgezet naar `text-orange-600`.
+     - In `MovementsView.tsx`: `Insertie:` label omgezet naar `text-orange-600`.
+     - In `BonesView.tsx`: Insertiekaartjes bij aanhechtende spieren voorzien van oranje accenten.
+     - In `SkeletonPuzzleGame.tsx`: Insertie-pinnen en indicatorstipjes omgezet naar oranje `#ea580c`.
+     - In `HelpModal.tsx`: Alle help- en instructieteksten bijgewerkt naar *Insertie (oranje)* en *I-knop (oranje)*.
+- **Verificatie:**
+  - `npm run build` gerund en succesvol gevalideerd zonder fouten.
+
+## 40. Opschonen Icoontjes in Punten en Navigator Toolbar Minimaliseren [2026-11-01 21:08]
+- **Vraag van de gebruiker:**
+  1. Bij het plaatsen van een origo of insertie of bij het tonen van het antwoord zaten er kleine icoontjes in de punten (`🎯` bij het antwoord, en tekst/icoon tijdens intekenen). Deze moeten eruit. De `✓` (juist) checkmark en de `✗` (fout) mogen na evaluatie wel blijven staan.
+  2. In de zwevende navigator toolbar (rechtsboven over de afbeelding met zoompercentage):
+     - Het oogje (`Eye`/`EyeOff` knop voor hover-tooltip toggle) mag weg.
+     - Naast het handje mag de tekst `Versleep` (en `Cursor`) weg, zodat het een minimalistische icoonknop is.
+  3. Alles pushen naar git.
+- **Doorgevoerde aanpassingen:**
+  1. **Punten op het skelet (`SkeletonViewer.tsx` & `MuscleMarkers.tsx`):**
+     - `SkeletonViewer.tsx`: Tijdens het intekenen (`!isEval`) wordt er géén letter of icoontje meer getoond binnenin het gebruikerspunt; het is nu een strakke, egale gekleurde stip met witte rand. Pas na evaluatie (`isEval`) wordt de statusindicator getoond: `✓` (correct) of `✗` (fout).
+     - `MuscleMarkers.tsx`: Het `🎯` doelwit-icoon bij het tonen van het juiste referentieantwoord (`showReferenceGhost`) is verwijderd en vervangen door de heldere letters `O` en `I`.
+  2. **Navigator Zoom Toolbar (`SkeletonViewer.tsx`):**
+     - Oog-icoonknop en de bijbehorende scheidingslijn verwijderd.
+     - De tekst `Versleep` / `Cursor` naast het handje verwijderd; het handje is nu een compacte, stijlvolle vierkante knop (`p-1.5 rounded-lg`).
+- **Verificatie & Git:**
+  - `npm run build` succesvol gedraaid (TypeScript compilatie en Vite bundeling zonder fouten).

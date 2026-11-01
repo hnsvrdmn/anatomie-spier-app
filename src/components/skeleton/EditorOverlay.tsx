@@ -288,8 +288,8 @@ export const EditorOverlay: React.FC<EditorOverlayProps> = ({
       {/* 0. Aanhechtingslijnen / Tolerantie-zones (Linea alba, crista iliaca, wervelkolom) */}
       {(currentVisuals.attachmentLines || []).map((line, lineIdx) => {
         const isOrigin = line.type === 'origin';
-        const strokeColor = isOrigin ? '#2563eb' : '#dc2626';
-        const haloColor = isOrigin ? '#3b82f6' : '#ef4444';
+        const strokeColor = isOrigin ? '#2563eb' : '#ea580c';
+        const haloColor = isOrigin ? '#3b82f6' : '#f97316';
         const pts = line.points || [];
         if (pts.length === 0) return null;
 
@@ -506,7 +506,7 @@ export const EditorOverlay: React.FC<EditorOverlayProps> = ({
                 cy={cy}
                 r={28 / zoom}
                 fill="none"
-                stroke="#ef4444"
+                stroke="#f97316"
                 strokeWidth={4 / zoom}
                 className="animate-pulse"
               />
@@ -515,7 +515,7 @@ export const EditorOverlay: React.FC<EditorOverlayProps> = ({
               cx={cx}
               cy={cy}
               r={(isSelected ? 20 : 16) / zoom}
-              fill="#dc2626"
+              fill="#ea580c"
               stroke="#ffffff"
               strokeWidth={4 / zoom}
             />
@@ -615,7 +615,7 @@ export const EditorOverlay: React.FC<EditorOverlayProps> = ({
           <div className="flex items-center gap-2">
             <span className={`w-3 h-3 rounded-full shrink-0 ${
               hoveredPoint.type === 'origin' ? 'bg-blue-500 ring-2 ring-blue-400/50' :
-              hoveredPoint.type === 'insertion' ? 'bg-red-500 ring-2 ring-red-400/50' :
+              hoveredPoint.type === 'insertion' ? 'bg-orange-500 ring-2 ring-orange-400/50' :
               hoveredPoint.type === 'line_point' ? 'bg-indigo-400 ring-2 ring-indigo-300/50' :
               'bg-amber-400 ring-2 ring-amber-300/50'
             }`} />

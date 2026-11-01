@@ -173,8 +173,8 @@ export const QuizView: React.FC = () => {
     });
   }, []);
 
-  // Voor 'free' modus: welk quiztype? 'full' (Origo én insertie plaatsen over alle spieren) is de standaard!
-  const [freeQuizType, setFreeQuizType] = useState<QuizType | 'all'>('full');
+  // Voor 'free' modus: welk quiztype? 'mixed' (Gemengde toets) is de standaard!
+  const [freeQuizType, setFreeQuizType] = useState<QuizType | 'all'>('mixed');
 
   // Actieve vraag
   const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
@@ -1564,11 +1564,11 @@ export const QuizView: React.FC = () => {
                 onClick={() => setActiveQuizTool('insertion')}
                 className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-all ${
                   activeQuizTool === 'insertion'
-                    ? 'bg-red-600 text-white border-red-600 shadow-xs ring-2 ring-red-400'
-                    : 'bg-white text-rose-800 border-rose-200 hover:bg-rose-50'
+                    ? 'bg-orange-600 text-white border-orange-600 shadow-xs ring-2 ring-orange-400'
+                    : 'bg-white text-orange-800 border-orange-200 hover:bg-orange-50'
                 } ${isScalingInsertion ? 'animate-subtle-scale' : ''}`}
               >
-                <span className={`w-2 h-2 rounded-full shrink-0 ${activeQuizTool === 'insertion' ? 'bg-white' : 'bg-red-600'}`} />
+                <span className={`w-2 h-2 rounded-full shrink-0 ${activeQuizTool === 'insertion' ? 'bg-white' : 'bg-orange-600'}`} />
                 <span>Insertie</span>
               </button>
             </div>
@@ -1773,7 +1773,7 @@ export const QuizView: React.FC = () => {
               }}
               className="w-full px-3 py-2 bg-clinical-50 border border-clinical-200 rounded-xl text-xs sm:text-sm font-semibold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
             >
-              <option value="mixed">Gemengde toets (alle testen door elkaar)</option>
+              <option value="mixed">Gemengde toets</option>
               <option value="bone">Bot benoemen</option>
               <option value="full">Origo en insertie plaatsen</option>
               <option value="landmark">Vind aanhechtingspunt</option>
@@ -2101,11 +2101,11 @@ export const QuizView: React.FC = () => {
                     onClick={() => setActiveQuizTool('insertion')}
                     className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 border transition-all ${
                       activeQuizTool === 'insertion'
-                        ? 'bg-red-600 text-white border-red-600 shadow-xs ring-2 ring-red-400'
-                        : 'bg-rose-50/70 text-rose-800 border-rose-200 hover:bg-rose-100'
+                        ? 'bg-orange-600 text-white border-orange-600 shadow-xs ring-2 ring-orange-400'
+                        : 'bg-orange-50/70 text-orange-800 border-orange-200 hover:bg-orange-100'
                     } ${isScalingInsertion ? 'animate-subtle-scale' : ''}`}
                   >
-                    <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${activeQuizTool === 'insertion' ? 'bg-white' : 'bg-red-600'}`} />
+                    <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${activeQuizTool === 'insertion' ? 'bg-white' : 'bg-orange-600'}`} />
                     <span>Insertie</span>
                   </button>
                 </div>
@@ -2297,6 +2297,7 @@ export const QuizView: React.FC = () => {
                 userOpenAnswer={userOpenAnswer}
                 openValidationResult={openAnswerFeedback}
                 jointExplanation={currentQuestion.jointQuizItem?.explanation}
+                toleranceValue={toleranceValue}
               />
             )}
 

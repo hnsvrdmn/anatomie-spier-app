@@ -64,16 +64,16 @@ export const MuscleDetail: React.FC = () => {
           </p>
         </div>
 
-        {/* Insertie (Rood) */}
-        <div className="p-3.5 rounded-xl bg-rose-50/70 border border-rose-100 space-y-1">
+        {/* Insertie (Oranje) */}
+        <div className="p-3.5 rounded-xl bg-orange-50/70 border border-orange-100 space-y-1">
           <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-red-600 shrink-0 shadow-xs" />
-            <h3 className="text-xs font-bold text-rose-950 uppercase tracking-wider flex items-center gap-1">
-              <ArrowDownRight className="w-3.5 h-3.5 text-red-600" />
+            <span className="w-3 h-3 rounded-full bg-orange-500 shrink-0 shadow-xs" />
+            <h3 className="text-xs font-bold text-orange-950 uppercase tracking-wider flex items-center gap-1">
+              <ArrowDownRight className="w-3.5 h-3.5 text-orange-600" />
               Insertie
             </h3>
           </div>
-          <p className="text-xs sm:text-sm text-rose-950 font-medium leading-relaxed pl-5">
+          <p className="text-xs sm:text-sm text-orange-950 font-medium leading-relaxed pl-5">
             {displayedMuscle.insertionText}
           </p>
         </div>

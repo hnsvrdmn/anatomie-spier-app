@@ -93,7 +93,7 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
           const isOrigin = line.type === 'origin';
           const strokeColor = isOppositeUnselected
             ? '#94a3b8'
-            : (isOrigin ? '#2563eb' : '#dc2626');
+            : (isOrigin ? '#2563eb' : '#ea580c');
 
           const pathD = `M ${toSvgX(pts[0].x)} ${toSvgY(pts[0].y)} ` +
             pts.slice(1).map(p => `L ${toSvgX(p.x)} ${toSvgY(p.y)}`).join(' ');
@@ -105,7 +105,7 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                 <path
                   d={pathD}
                   fill="none"
-                  stroke={isOrigin ? '#3b82f6' : '#ef4444'}
+                  stroke={isOrigin ? '#3b82f6' : '#f97316'}
                   strokeWidth={22 / zoom}
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -335,18 +335,18 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                 strokeDasharray={isOppositeView ? "4 2" : "none"}
               />
 
-              {/* Binnenste O letter of doelwit */}
+              {/* Binnenste O letter */}
               <text
                 x={cx}
-                y={cy + (showReferenceGhost ? 0.5 : 1) / zoom}
+                y={cy + (1 / zoom)}
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fill="#ffffff"
-                fontSize={Math.round((showReferenceGhost ? 10.5 : 11) / zoom)}
+                fontSize={Math.round(11 / zoom)}
                 fontWeight="black"
                 className="select-none pointer-events-none"
               >
-                {showReferenceGhost ? '🎯' : 'O'}
+                O
               </text>
             </g>
           );
@@ -367,7 +367,7 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
           const cy = toSvgY(insertion.y);
           const isHighlighted = highlightedPoint?.x === insertion.x && highlightedPoint?.y === insertion.y;
           const insName = insertion.name || muscle.insertionText;
-          const markerColor = isOppositeUnselected ? '#94a3b8' : (color || '#dc2626');
+          const markerColor = isOppositeUnselected ? '#94a3b8' : (color || '#ea580c');
 
           return (
             <g
@@ -395,8 +395,8 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                     cx={cx}
                     cy={cy}
                     r={26 / zoom}
-                    fill="rgba(244, 63, 94, 0.25)"
-                    stroke="#f43f5e"
+                    fill="rgba(249, 115, 22, 0.25)"
+                    stroke="#fb923c"
                     strokeWidth={2 / zoom}
                     className="animate-pulse"
                   />
@@ -405,7 +405,7 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                     cy={cy}
                     r={20 / zoom}
                     fill="none"
-                    stroke="#e11d48"
+                    stroke="#ea580c"
                     strokeWidth={1.5 / zoom}
                   />
                 </>
@@ -415,25 +415,25 @@ export const MuscleMarkers: React.FC<MuscleMarkersProps> = ({
                 cx={cx}
                 cy={cy}
                 r={(isHighlighted || showReferenceGhost ? 16 : 14) / zoom}
-                fill={showReferenceGhost ? '#e11d48' : markerColor}
+                fill={showReferenceGhost ? '#ea580c' : markerColor}
                 fillOpacity={isOppositeView ? 0.75 : 1.0}
                 stroke="#ffffff"
                 strokeWidth={(isOppositeView ? 2.5 : (showReferenceGhost ? 3.5 : 3.5)) / zoom}
                 strokeDasharray={isOppositeView ? "4 2" : "none"}
               />
 
-              {/* Binnenste I letter of doelwit */}
+              {/* Binnenste I letter */}
               <text
                 x={cx}
-                y={cy + (showReferenceGhost ? 0.5 : 1) / zoom}
+                y={cy + (1 / zoom)}
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fill="#ffffff"
-                fontSize={Math.round((showReferenceGhost ? 10.5 : 11) / zoom)}
+                fontSize={Math.round(11 / zoom)}
                 fontWeight="black"
                 className="select-none pointer-events-none"
               >
-                {showReferenceGhost ? '🎯' : 'I'}
+                I
               </text>
             </g>
           );

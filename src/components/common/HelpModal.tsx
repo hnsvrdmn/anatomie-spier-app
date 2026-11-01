@@ -191,7 +191,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                     <strong>1 vinger vegen (swipe):</strong> beweegt het beeld (pannen) soepel mee. Er wordt dan <em>nooit</em> per ongeluk een punt geplaatst.
                   </li>
                   <li>
-                    <strong>1 vinger kort tikken (tap):</strong> plaatst direct een Origo (blauw) of Insertie (rood) op de aangetikte plek.
+                    <strong>1 vinger kort tikken (tap):</strong> plaatst direct een Origo (blauw) of Insertie (oranje) op de aangetikte plek.
                   </li>
                   <li>
                     <strong>2 vingers knijpen/spreiden:</strong> in- en uitzoomen (pinch-to-zoom) tot 3.5× vergroting.
@@ -200,7 +200,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                     <strong>Dubbeltik:</strong> herstelt de weergave direct naar 100% (reset zoom en positie).
                   </li>
                   <li>
-                    <strong>O en I knoppen (linksboven):</strong> tik op <em>O</em> voor blauwe origo&apos;s of <em>I</em> voor rode inserties. Bij spieren met meerdere punten wissel je handmatig tussen O en I en bevestig je na afloop met <em>Controleer</em>.
+                    <strong>O en I knoppen (linksboven):</strong> tik op <em>O</em> voor blauwe origo&apos;s of <em>I</em> voor oranje inserties. Bij spieren met meerdere punten wissel je handmatig tussen O en I en bevestig je na afloop met <em>Controleer</em>.
                   </li>
                   <li>
                     <strong>Onderste paneel:</strong> tik of sleep het paneel omhoog om gewricht, testtype of nauwkeurigheid (tolerantiegrens) in te stellen.
@@ -215,10 +215,10 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                 </div>
                 <ul className="text-xs text-slate-700 space-y-1.5 list-disc pl-5">
                   <li>
-                    <strong>Linkermuisknop:</strong> plaatst het actieve type punt (blauw voor origo of rood voor insertie).
+                    <strong>Linkermuisknop:</strong> plaatst het actieve type punt (blauw voor origo of oranje voor insertie).
                   </li>
                   <li>
-                    <strong>Rechtermuisknop:</strong> plaatst direct het <em>tegenovergestelde</em> type punt (bijv. direct een rode insertie plaatsen terwijl origo actief staat). Ideaal om snel te wisselen bij meervoudige spieren!
+                    <strong>Rechtermuisknop:</strong> plaatst direct het <em>tegenovergestelde</em> type punt (bijv. direct een oranje insertie plaatsen terwijl origo actief staat). Ideaal om snel te wisselen bij meervoudige spieren!
                   </li>
                   <li>
                     <strong>Muiswiel:</strong> soepel in- en uitzoomen op de positie van de muiscursor.
@@ -253,7 +253,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                       <span>Bij standaard spieren (1 origo en 1 insertie):</span>
                     </div>
                     <p className="text-slate-600 leading-relaxed pl-3.5">
-                      Je start standaard met <strong>Origo</strong> (blauw). Zodra je het origopunt op het skelet klikt of tikt, verspringt de selectie <strong>automatisch naar Insertie</strong> (rood). Plaats je daarna de insertie, dan controleert de app jouw antwoord direct automatisch.
+                      Je start standaard met <strong>Origo</strong> (blauw). Zodra je het origopunt op het skelet klikt of tikt, verspringt de selectie <strong>automatisch naar Insertie</strong> (oranje). Plaats je daarna de insertie, dan controleert de app jouw antwoord direct automatisch.
                     </p>
                   </div>
 
@@ -267,10 +267,10 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                     </p>
                     <ul className="text-slate-600 space-y-1.5 list-disc pl-8 pt-1">
                       <li>
-                        <strong>Waarom niet automatisch?</strong> Zo kun je eerst rustig alle benodigde blauwe origopunten achter elkaar plaatsen zonder dat de app tussentijds ongewenst naar rood overschakelt.
+                        <strong>Waarom niet automatisch?</strong> Zo kun je eerst rustig alle benodigde blauwe origopunten achter elkaar plaatsen zonder dat de app tussentijds ongewenst naar oranje overschakelt.
                       </li>
                       <li>
-                        <strong>Hoe ga je verder naar Insertie?</strong> Schakel zelf handmatig over door op de knop <strong>&quot;Insertie&quot;</strong> (of de rode knop <strong>&quot;I&quot;</strong> op mobiel) te tikken. <em>(Handige PC-tip: met de rechtermuisknop plaats je direct een insertie!).</em>
+                        <strong>Hoe ga je verder naar Insertie?</strong> Schakel zelf handmatig over door op de knop <strong>&quot;Insertie&quot;</strong> (of de oranje knop <strong>&quot;I&quot;</strong> op mobiel) te tikken. <em>(Handige PC-tip: met de rechtermuisknop plaats je direct een insertie!).</em>
                       </li>
                       <li>
                         <strong>Controleren:</strong> Omdat de app niet kan raden hoeveel punten je exact wilt plaatsen, rond je de vraag af door zelf op de groene knop <strong>&quot;Controleer&quot;</strong> te klikken.
@@ -338,7 +338,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                 </div>
                 <ul className="text-xs text-slate-600 space-y-1 list-disc pl-5">
                   <li><strong>Klik op een bolletje</strong> om het te activeren. Sleep het punt met de muis naar de gewenste positie op het bot.</li>
-                  <li><strong>Klik op het skelet</strong> om een nieuw punt toe te voegen (origo in blauw, insertie in rood).</li>
+                  <li><strong>Klik op het skelet</strong> om een nieuw punt toe te voegen (origo in blauw, insertie in oranje).</li>
                   <li><strong>Rechtermuisknop op een punt</strong> verwijdert het punt direct. Je kunt ook het rode prullenbak-icoontje in het zijpaneel gebruiken.</li>
                   <li>Alle coördinaten worden genormaliseerd opgeslagen (0.0 tot 1.0) zodat ze op elk schermformaat en resolutie 100% schaalvast blijven.</li>
                 </ul>

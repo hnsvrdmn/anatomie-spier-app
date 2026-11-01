@@ -26,6 +26,7 @@ interface QuizFeedbackProps {
   userOpenAnswer?: string;
   openValidationResult?: AnswerValidationResult | null;
   jointExplanation?: string;
+  toleranceValue?: number;
 }
 
 export const QuizFeedback: React.FC<QuizFeedbackProps> = ({
@@ -45,6 +46,7 @@ export const QuizFeedback: React.FC<QuizFeedbackProps> = ({
   userOpenAnswer,
   openValidationResult,
   jointExplanation,
+  toleranceValue,
 }) => {
   const isJoints = quizType === 'joints';
   const isOpenQuestion = quizType === 'open_question' || quizType === 'bone';
@@ -149,8 +151,8 @@ export const QuizFeedback: React.FC<QuizFeedbackProps> = ({
                 : `Het juiste antwoord was: ${correctAnswerText || muscle?.name || ''}.`
             ) : (
               <>
-                {correctCount}/{targetCount} punten exact geplaatst (&lt; 0.035 afstand).
-                {closeCount > 0 && ` (${closeCount} bijna goed binnen 0.070).`}
+                {correctCount}/{targetCount} punten exact geplaatst (&lt; {((toleranceValue || 0.025) * SKELETON_REAL_HEIGHT_CM).toFixed(1)} cm).
+                {closeCount > 0 && ` (${closeCount} bijna goed binnen ${((toleranceValue || 0.025) * 2 * SKELETON_REAL_HEIGHT_CM).toFixed(1)} cm).`}
               </>
             )}
           </p>
@@ -215,14 +217,14 @@ export const QuizFeedback: React.FC<QuizFeedbackProps> = ({
             </div>
           )}
 
-          {/* Insertie kaart (rood) */}
+          {/* Insertie kaart (oranje) */}
           {showInsertionCard && (
-            <div className="p-3 rounded-xl bg-rose-50/70 border border-rose-100 space-y-1">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-rose-950 uppercase tracking-wider">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0" />
+            <div className="p-3 rounded-xl bg-orange-50/70 border border-orange-100 space-y-1">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-orange-950 uppercase tracking-wider">
+                <span className="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0" />
                 <span>Insertie</span>
               </div>
-              <p className="text-xs text-rose-950 font-medium leading-relaxed pl-4">
+              <p className="text-xs text-orange-950 font-medium leading-relaxed pl-4">
                 {muscle.insertionText}
               </p>
             </div>

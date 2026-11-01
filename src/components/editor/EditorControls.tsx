@@ -128,8 +128,8 @@ export const EditorControls: React.FC<EditorControlsProps> = ({
     {
       id: 'insertion',
       label: 'Insertie',
-      icon: <span className="w-2.5 h-2.5 rounded-full bg-red-600 inline-block shrink-0" />,
-      color: 'hover:bg-rose-50 text-rose-700 border-rose-200',
+      icon: <span className="w-2.5 h-2.5 rounded-full bg-orange-500 inline-block shrink-0" />,
+      color: 'hover:bg-orange-50 text-orange-700 border-orange-200',
     },
     {
       id: 'origin_line',
@@ -140,8 +140,8 @@ export const EditorControls: React.FC<EditorControlsProps> = ({
     {
       id: 'insertion_line',
       label: 'Insertie-zone',
-      icon: <span className="w-3 h-0.5 border-b-2 border-dashed border-rose-600 inline-block shrink-0" />,
-      color: 'hover:bg-rose-50 text-rose-700 border-rose-200',
+      icon: <span className="w-3 h-0.5 border-b-2 border-dashed border-orange-500 inline-block shrink-0" />,
+      color: 'hover:bg-orange-50 text-orange-700 border-orange-200',
     },
     {
       id: 'path',
@@ -394,7 +394,7 @@ export const EditorControls: React.FC<EditorControlsProps> = ({
                 type="button"
                 onClick={() => setLandmarkTargetType('insertion')}
                 className={`px-2 py-0.5 rounded text-[11px] font-bold ${
-                  landmarkTargetType === 'insertion' ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-700'
+                  landmarkTargetType === 'insertion' ? 'bg-orange-600 text-white' : 'bg-slate-100 text-slate-700'
                 }`}
               >
                 Insertie
@@ -469,7 +469,7 @@ export const EditorControls: React.FC<EditorControlsProps> = ({
 
         {/* Inserties lijst */}
         <div className="space-y-1 pt-1 border-t border-slate-200/60">
-          <div className="text-[11px] font-bold text-rose-700 flex items-center justify-between">
+          <div className="text-[11px] font-bold text-orange-700 flex items-center justify-between">
             <span>Inserties ({currentVisuals.insertions.length})</span>
           </div>
           {currentVisuals.insertions.length === 0 ? (
@@ -485,12 +485,12 @@ export const EditorControls: React.FC<EditorControlsProps> = ({
                   onClick={() => onSelectPoint?.({ point: ins, type: 'insertion', index: idx })}
                   className={`p-2 rounded-xl text-xs flex items-center justify-between cursor-pointer border transition ${
                     isSelected
-                      ? 'bg-rose-50 border-rose-400 ring-2 ring-rose-200 shadow-xs'
+                      ? 'bg-orange-50 border-orange-400 ring-2 ring-orange-200 shadow-xs'
                       : 'bg-white border-slate-200 hover:bg-slate-50'
                   }`}
                 >
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0" />
                     <div className="min-w-0">
                       <div className="font-bold text-slate-900 truncate">
                         I{idx + 1}: {ptName}
@@ -610,7 +610,7 @@ export const EditorControls: React.FC<EditorControlsProps> = ({
                   });
                   setActiveTool('insertion_line');
                 }}
-                className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 hover:bg-rose-200 text-[10px] font-bold transition"
+                className="px-1.5 py-0.5 rounded bg-orange-100 text-orange-800 hover:bg-orange-200 text-[10px] font-bold transition"
                 title="Maak een nieuwe Insertie-zone aan (bijv. Linea alba)"
               >
                 + I-zone
