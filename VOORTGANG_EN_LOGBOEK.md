@@ -2277,3 +2277,35 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 - **Verificatie & Deployment:**
   - `npm run build` foutloos geslaagd (`✓ built in 3.80s`).
   - Alle wijzigingen gecommit en gepusht naar `main` op GitHub.
+
+
+---
+
+## 70. Correctie Latissimus Dorsi Origo-telling & Wervelzone Differentiatie (03-11-2026 18:54)
+- **Status:** Succesvol opgelost en geverifieerd.
+- **Aanleiding & Probleemanalyse:**
+  - De gebruiker merkte op dat bij de *m. latissimus dorsi* de auto-switcher al na **2 origo's** doorschakelde naar insertie, terwijl er **3 origo's** geplaatst moeten worden:
+    1. Processus spinosus 7e-12e thoracale wervels
+    2. Processus spinosus alle lumbale wervels
+    3. Dorsale zijde crista iliaca
+  - *Oorzaak:* In `coordinates.ts` splitste de functie `resolveZoneKey` alle wervels samen onder één generieke zone (`zone_vertebrae`). Hierdoor werden zowel de thoracale wervels als de lumbale wervels samengevoegd tot één en hetzelfde doel. De app dacht dat er maar 2 origo-zones waren (wervels + crista iliaca) in plaats van 3.
+- **Uitgevoerde Oplossingen ([coordinates.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/utils/coordinates.ts)):**
+  1. **Anatomische differentiatie van wervelzones:**
+     - `zone_vertebrae_cervicales` (halswervels)
+     - `zone_vertebrae_thoracicae` (borstwervels Th1-Th12)
+     - `zone_vertebrae_lumbales` (lendenwervels L1-L5)
+     - Aparte zones voor de drie delen van *m. trapezius* (`zone_trapezius_descendens`, `zone_trapezius_transversa`, `zone_trapezius_ascendens`).
+  2. **Resultaat voor Latissimus Dorsi:**
+     - De 4 origo-punten in de data worden nu gegroepeerd naar exact **3 unieke doelen**:
+       1. `zone_vertebrae_thoracicae` (2 punten op Th7-Th12; student hoeft er maar 1 te plaatsen)
+       2. `zone_vertebrae_lumbales` (lumbale wervels)
+       3. `zone_crista_iliaca` (crista iliaca)
+     - `expectedCounts.origins` staat nu op **exact 3**.
+     - De auto-switcher wacht nu netjes tot alle 3 de origo's geplaatst zijn alvorens naar insertie te wisselen.
+  3. **Multi-zone lijnbeoordeling:**
+     - `DistinctTarget` bewaart nu `lines: AttachmentLine[]` zodat alle deellijnen binnen een zone (zoals boven- en ondergedeelte van een lange aanhechting) volledig gedekt blijven.
+- **Verificatie:**
+  - Automated tests gedraaid (`test_latissimus_eval.ts`):
+    - 2 origo's geplaatst -> `isPassed: false` (nog niet compleet).
+    - 3 origo's geplaatst (thoracaal + lumbaal + crista iliaca) -> `isPassed: true` (100% correct goedgekeurd).
+  - `npm run build` foutloos geslaagd (`✓ built in 4.06s`).

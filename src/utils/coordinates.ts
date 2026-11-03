@@ -211,6 +211,7 @@ export interface DistinctTarget {
   name: string;
   points: Point2D[];
   line?: AttachmentLine;
+  lines?: AttachmentLine[];
   zoneId: string;
   isZone: boolean;
 }
@@ -226,15 +227,26 @@ export function resolveZoneKey(name: string = '', lineName?: string, explicitZon
 
   const text = `${name} ${lineName || ''}`.toLowerCase();
 
-  // Wervels & wervelkolom (thoracaal, lumbaal, cervicaal, wervels, proc. spinosus, proc. transversus)
+  // Trapezius onderdelen hebben elk hun eigen anatomische zone
+  if (text.includes('pars descendens')) return 'zone_trapezius_descendens';
+  if (text.includes('pars transversa')) return 'zone_trapezius_transversa';
+  if (text.includes('pars ascendens')) return 'zone_trapezius_ascendens';
+
+  // Wervels & wervelkolom onderverdeeld in cervicale, thoracale en lumbale zones
+  if (text.includes('cervica')) {
+    return 'zone_vertebrae_cervicales';
+  }
+  if (text.includes('thoraca') || text.includes('t1-') || text.includes('t3-') || text.includes('t12') || text.includes('th1') || text.includes('th7')) {
+    return 'zone_vertebrae_thoracicae';
+  }
+  if (text.includes('lumba') || text.includes('l1-') || text.includes('l5')) {
+    return 'zone_vertebrae_lumbales';
+  }
   if (
     text.includes('wervel') ||
     text.includes('vertebra') ||
     text.includes('spinosus') ||
-    text.includes('transversus van') ||
-    text.includes('thoracalis') ||
-    text.includes('lumbales') ||
-    text.includes('cervicales')
+    text.includes('transversus van')
   ) {
     return 'zone_vertebrae';
   }
@@ -352,8 +364,12 @@ export function getDistinctTargets(
     if (targetMap.has(groupingKey)) {
       const existing = targetMap.get(groupingKey)!;
       existing.points.push(pt);
-      if (!existing.line && matchedLine) {
-        existing.line = matchedLine;
+      if (matchedLine) {
+        if (!existing.lines) existing.lines = existing.line ? [existing.line] : [];
+        if (!existing.lines.some((l) => l.id === matchedLine.id)) {
+          existing.lines.push(matchedLine);
+        }
+        if (!existing.line) existing.line = matchedLine;
         existing.isZone = true;
       }
     } else {
@@ -362,6 +378,7 @@ export function getDistinctTargets(
         name: rawName,
         points: [pt],
         line: matchedLine,
+        lines: matchedLine ? [matchedLine] : [],
         zoneId,
         isZone,
       });
@@ -469,27 +486,33 @@ export function evaluatePointSet(
       }
     }
 
-    if (target.line && target.line.points && target.line.points.length >= 2) {
-      // Een aanhechtingszone heeft een anatomische breedte (bijv. dikte van een rib, wervellichaam of botkam).
-      // Zorg dat de zone-tolerantie realistisch en touch-vriendelijk is (nooit strenger dan een punt!).
-      const baseTol = Math.max(target.line.tolerance || 0.030, toleranceCorrect);
-      const lineTolCorrect = baseTol * 1.25;
-      const lineTolClose = lineTolCorrect * 1.6;
-      const polyRes = distanceToPolyline(upt, target.line.points);
-      const lineAcc = getAccuracy(polyRes.distance, lineTolCorrect, lineTolClose);
-      const norm = polyRes.distance / lineTolCorrect;
+    const linesToEval = (target.lines && target.lines.length > 0)
+      ? target.lines
+      : (target.line ? [target.line] : []);
 
-      // Geef voorrang aan de zone als deze een betere accuracy geeft of relatief dichterbij ligt
-      const accRank = (a: MatchAccuracy) => (a === 'correct' ? 0 : a === 'close' ? 1 : 2);
-      if (
-        accRank(lineAcc) < accRank(bestAcc) ||
-        (accRank(lineAcc) === accRank(bestAcc) && norm < bestNormScore)
-      ) {
-        bestNormScore = norm;
-        bestDist = polyRes.distance;
-        bestTargetPt = polyRes.projection;
-        bestAcc = lineAcc;
-        matchedLineName = target.line.name;
+    for (const line of linesToEval) {
+      if (line.points && line.points.length >= 2) {
+        // Een aanhechtingszone heeft een anatomische breedte (bijv. dikte van een rib, wervellichaam of botkam).
+        // Zorg dat de zone-tolerantie realistisch en touch-vriendelijk is (nooit strenger dan een punt!).
+        const baseTol = Math.max(line.tolerance || 0.030, toleranceCorrect);
+        const lineTolCorrect = baseTol * 1.25;
+        const lineTolClose = lineTolCorrect * 1.6;
+        const polyRes = distanceToPolyline(upt, line.points);
+        const lineAcc = getAccuracy(polyRes.distance, lineTolCorrect, lineTolClose);
+        const norm = polyRes.distance / lineTolCorrect;
+
+        // Geef voorrang aan de zone als deze een betere accuracy geeft of relatief dichterbij ligt
+        const accRank = (a: MatchAccuracy) => (a === 'correct' ? 0 : a === 'close' ? 1 : 2);
+        if (
+          accRank(lineAcc) < accRank(bestAcc) ||
+          (accRank(lineAcc) === accRank(bestAcc) && norm < bestNormScore)
+        ) {
+          bestNormScore = norm;
+          bestDist = polyRes.distance;
+          bestTargetPt = polyRes.projection;
+          bestAcc = lineAcc;
+          matchedLineName = line.name;
+        }
       }
     }
 
