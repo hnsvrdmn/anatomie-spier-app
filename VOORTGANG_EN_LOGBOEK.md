@@ -2218,3 +2218,23 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
      - `BoneContext` storage-versie opgehoogd naar `pmt_anatomie_bone_structures_v4` en automatische opruiming van legacy-caches ingebouwd.
 - **Verificatie:**
   - `npm run build` foutloos geslaagd (`✓ built in 4.25s`).
+
+
+---
+
+## 67. Pijltjestoetsen Navigatie (Links/Rechts) & Google Zoeken als Losse Popup (03-11-2026 18:29)
+- **Status:** Succesvol doorgevoerd en geverifieerd.
+- **Aanleiding & Gebruikerswensen:**
+  1. *Toetsenbord navigatie:* Met de links- en rechtstoetsen (`ArrowLeft` en `ArrowRight`) op het toetsenbord kunnen wisselen tussen botstructuren.
+  2. *Google popup:* De Google-knop moet geen nieuw tabblad openen, maar een compacte losse popup zodat de app intact in beeld blijft.
+- **Uitgevoerde Acties ([BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx)):**
+  1. **Pijltjestoetsen links/rechts (`ArrowLeft` / `ArrowRight`):**
+     - Luisteraar gekoppeld in `useEffect` op `window` die luistert naar `ArrowLeft` (vorige structuur) en `ArrowRight` (volgende structuur).
+     - Negeert toetsaanslagen automatisch wanneer de gebruiker in een invoerveld typt of de hernoem-modal open staat.
+     - Bij indrukken wordt de vorige/volgende structuur direct geselecteerd en gehighlight op het skelet.
+  2. **Google Zoeken als Losse Popup:**
+     - `<a target="_blank">` vervangen door een knop gekoppeld aan `handleOpenGoogleSearch`.
+     - Gebruikt `window.open` met afmetingen `850x750` gecentreerd op het scherm (`google_search_popup`).
+     - Hierdoor verschijnt de zoekopdracht direct in een overzichtelijk compact venster naast of over de app zonder tabs te vervuilen.
+- **Verificatie:**
+  - `npm run build` foutloos geslaagd (`✓ built in 4.30s`).

@@ -626,6 +626,20 @@ export const BoneEditorView: React.FC = () => {
     showToast(`'${name}' gekopieerd naar klembord`, 'success');
   }, [showToast]);
 
+  // Open Google Zoeken in een compacte losse popup in plaats van een nieuw tabblad
+  const handleOpenGoogleSearch = useCallback((name: string) => {
+    const url = `https://www.google.com/search?q=${encodeURIComponent(name + ' anatomie')}`;
+    const width = 850;
+    const height = 750;
+    const left = Math.round(window.screen.width / 2 - width / 2);
+    const top = Math.round(window.screen.height / 2 - height / 2);
+    window.open(
+      url,
+      'google_search_popup',
+      `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes,status=no,location=yes,toolbar=no,menubar=no`
+    );
+  }, []);
+
   // Hernoemen van een structuur
   const [editingPoint, setEditingPoint] = useState<EditablePoint | null>(null);
   const [renameInputValue, setRenameInputValue] = useState('');
@@ -657,22 +671,35 @@ export const BoneEditorView: React.FC = () => {
     showToast('Laatste botbewerking ongedaan gemaakt (Ctrl+Z)', 'info');
   }, [boneHistory, importBonesJson, importStructuresJson, showToast]);
 
-  // Luister naar Ctrl+Z / Cmd+Z om botbewerkingen ongedaan te maken
+  // Luister naar toetsenbord shortcuts: Ctrl+Z (undo) & Pijltjestoetsen links/rechts (vorige/volgende structuur)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
       if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
         return;
       }
+      if (editingPoint) return;
+
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
         e.preventDefault();
         e.stopPropagation();
         handleUndo();
+        return;
+      }
+
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        e.stopPropagation();
+        handlePrevStructure();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        e.stopPropagation();
+        handleNextStructure();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleUndo]);
+  }, [handleUndo, handlePrevStructure, handleNextStructure, editingPoint]);
 
   // Escape toets om delete-modus of toevoegen-paneel te sluiten
   useEffect(() => {
@@ -1308,15 +1335,14 @@ export const BoneEditorView: React.FC = () => {
                   >
                     <Copy className="w-3 h-3" />
                   </button>
-                  <a
-                    href={`https://www.google.com/search?q=${encodeURIComponent(currentActiveStructure.name + ' anatomie')}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
+                    onClick={() => handleOpenGoogleSearch(currentActiveStructure.name)}
                     className="p-1 rounded hover:bg-sky-200 text-sky-800 transition"
-                    title="Zoek op Google"
+                    title="Zoek op Google (losse popup)"
                   >
                     <ExternalLink className="w-3 h-3 text-emerald-600" />
-                  </a>
+                  </button>
                   <button
                     type="button"
                     onClick={() => handleStartRename({
