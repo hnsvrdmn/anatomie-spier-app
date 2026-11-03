@@ -3,27 +3,9 @@ import { useBones } from '../../context/BoneContext';
 import { useMuscles } from '../../context/MuscleContext';
 import { BoneStructurePoint } from '../../data/boneStructures';
 import { SKELETON_WIDTH, SKELETON_HEIGHT } from '../../utils/coordinates';
-import {
-  RotateCcw,
-  Download,
-  Upload,
-  Save,
-  Filter,
-  Eye,
-  EyeOff,
-  ZoomIn,
-  ZoomOut,
-  Hand,
-  MousePointer,
-  Plus,
-  Trash2,
-  X,
-  Copy,
-  ExternalLink,
-  Edit2,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
+import { ViewToggle, ViewLayoutMode } from '../common/ViewToggle';
+import { AnatomicalView } from '../../types/anatomy';
+import { RotateCcw, Download, Upload, Save, Eye, EyeOff, ZoomIn, ZoomOut, Hand, MousePointer, Plus, Trash2, X, Copy, ExternalLink, Edit2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export const SVG_WIDTH = 1000;
 export const SVG_HEIGHT = 2374.54;
@@ -503,9 +485,7 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
                       {hoveredPoint.subName}
                     </div>
                   )}
-                  <div className="text-[11px] font-mono text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md mt-1 border border-slate-700">
-                    x: {hoveredPoint.x.toFixed(4)}, y: {hoveredPoint.y.toFixed(4)} • {hoveredPoint.side || 'midline'}
-                  </div>
+
                   {isDeleteMode && (
                     <div className="mt-1.5 px-2.5 py-1 rounded-lg bg-rose-600/30 text-rose-300 border border-rose-500/40 text-[11px] font-bold flex items-center gap-1.5">
                       <Trash2 className="w-3.5 h-3.5 text-rose-400" />
@@ -552,6 +532,8 @@ export const BoneEditorView: React.FC = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [currentView, setCurrentView] = useState<AnatomicalView>('ventral');
+  const [viewLayout, setViewLayout] = useState<ViewLayoutMode>('both');
 
   // Keuze tussen het bewerken van 'bones' (hoofd-botposities) of 'structures' (relevante botstructuren)
   const [editTarget, setEditTarget] = useState<'bones' | 'structures'>('structures');
@@ -772,7 +754,25 @@ export const BoneEditorView: React.FC = () => {
   // Optie om aanpassingen tussen ventraal en dorsaal te koppelen (standaard uit: onafhankelijk)
   const [linkVentralDorsal, setLinkVentralDorsal] = useState(false);
 
-  const handleSaveToDisk = async () => {
+  const handleExportJson = () => {
+    if (editTarget === 'bones') {
+      exportBonesJson();
+    } else {
+      exportStructuresJson();
+    }
+  };
+
+  const handleResetAll = () => {
+    if (window.confirm(editTarget === 'bones' ? 'Weet je zeker dat je alle botten wilt resetten naar de standaard?' : 'Weet je zeker dat je alle botstructuren wilt resetten naar de standaard?')) {
+      if (editTarget === 'bones') {
+        resetBones();
+      } else {
+        resetStructures();
+      }
+    }
+  };
+
+    const handleSaveToDisk = async () => {
     setIsSaving(true);
     const okBones = await saveBonesToDisk();
     const okStructures = await saveStructuresToDisk();
@@ -1267,51 +1267,215 @@ export const BoneEditorView: React.FC = () => {
   );
 
   return (
-    <div className="flex-1 w-full max-w-7xl mx-auto px-2 sm:px-4 py-2 flex flex-col h-[calc(100vh-8.5rem)] min-h-[680px]">
-      {/* Bovenste werkbalk met tabs, filters, spiegelfuncties en acties */}
-      <div className="w-full flex flex-wrap items-center justify-between gap-2 pb-2 mb-2 border-b border-clinical-100 text-xs">
-        {/* Linkerzijde: Schakelaar tussen Botten en Botstructuren + Filter */}
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200 shadow-2xs">
-            <button
-              type="button"
-              onClick={() => setEditTarget('structures')}
-              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition ${
-                editTarget === 'structures'
-                  ? 'bg-white text-sky-950 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              📍 Botstructuren ({structures.length})
-            </button>
-            <button
-              type="button"
-              onClick={() => setEditTarget('bones')}
-              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition ${
-                editTarget === 'bones'
-                  ? 'bg-white text-sky-950 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              🦴 Hoofd-botten ({bones.length})
-            </button>
+    <div className="flex-1 w-full max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-3 sm:py-6 flex flex-col lg:flex-row gap-4 lg:gap-6 items-stretch select-none">
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".json"
+        onChange={handleFileUpload}
+        className="hidden"
+      />
+
+      {/* Linker/Midden kolom: Skelet met Vaste Hoogte (exact gelijk aan Spieren tab) */}
+      <div className="w-full lg:flex-1 flex flex-col items-center justify-between bg-white rounded-3xl p-3 sm:p-4 border border-clinical-200/90 shadow-sm relative h-[92vh] min-h-[760px] max-h-[1020px]">
+        {/* Bovenbalk: Aanzichtschakelaar gecentreerd (vaste hoogte h-12) */}
+        <div className="w-full h-12 shrink-0 flex items-center justify-between pb-2 border-b border-clinical-100 px-1">
+          <div className="flex-1 min-w-0 flex items-center gap-2">
+            {isAddingStructure && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold animate-pulse shadow-2xs">
+                <Plus className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="truncate">Klik op skelet om '{newStructName || 'nieuwe structuur'}' te plaatsen</span>
+              </span>
+            )}
+            {isDeleteMode && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold shadow-2xs">
+                <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                <span>Klik op een punt om te verwijderen</span>
+              </span>
+            )}
           </div>
 
-          {/* Filter per bot met Vorige & Volgende knoppen (< en >) */}
-          <div className="flex items-center gap-0.5 bg-slate-50 border border-slate-200/90 rounded-xl px-1 py-0.5 shadow-2xs">
+          <div className="shrink-0">
+            <ViewToggle
+              currentView={currentView}
+              onViewChange={setCurrentView}
+              showBothOption={true}
+              activeLayout={viewLayout}
+              onLayoutChange={setViewLayout}
+            />
+          </div>
+
+          <div className="flex-1 min-w-0 flex items-center justify-end gap-1.5">
+            <button
+              type="button"
+              onClick={() => setHidePopup((h) => !h)}
+              className={`p-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition ${
+                hidePopup
+                  ? 'bg-amber-50 text-amber-800 border-amber-300 shadow-2xs'
+                  : 'bg-clinical-50 hover:bg-clinical-100 text-clinical-700 border-clinical-200/80'
+              }`}
+              title={hidePopup ? 'Toon pop-up informatie' : 'Verberg pop-up (markers blijven altijd zichtbaar)'}
+            >
+              {hidePopup ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Skelet & Overlay Canvas */}
+        <div className="flex-1 min-h-0 w-full h-full flex items-center justify-center py-2 overflow-hidden">
+          {viewLayout === 'both' ? (
+            <div className="w-full h-full grid grid-cols-1 md:grid-cols-2 gap-3 overflow-hidden">
+              {/* Ventraal links */}
+              <div className="relative w-full h-full min-w-0 min-h-0 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-slate-100 pr-0 md:pr-2 overflow-hidden">
+                <span className="absolute top-2 left-3 text-[11px] font-black uppercase tracking-wider text-slate-500 bg-slate-100/90 px-2.5 py-1 rounded-md z-20 shadow-2xs">
+                  Ventraal ({ventralPoints.length} punten)
+                </span>
+                <DraggableSkeleton
+                  view="ventral"
+                  points={ventralPoints}
+                  hidePopup={hidePopup}
+                  onToggleHidePopup={() => setHidePopup((h) => !h)}
+                  onDragStart={handleDragStart}
+                  onUpdatePoint={handleUpdatePoint}
+                  onDragEnd={handleDragEnd}
+                  isPlacingPoint={isAddingStructure}
+                  onPlacePoint={handleCreateStructureAt}
+                  isDeleteMode={isDeleteMode}
+                  onDeletePoint={handleDeletePoint}
+                  onCopyName={handleCopyName}
+                  onSelectPoint={handleSelectPoint}
+                  highlightedName={currentActiveStructure?.name}
+                />
+              </div>
+
+              {/* Dorsaal rechts */}
+              <div className="relative w-full h-full min-w-0 min-h-0 flex flex-col items-center justify-center pl-0 md:pl-2 overflow-hidden">
+                <span className="absolute top-2 left-3 text-[11px] font-black uppercase tracking-wider text-slate-500 bg-slate-100/90 px-2.5 py-1 rounded-md z-20 shadow-2xs">
+                  Dorsaal ({dorsalPoints.length} punten)
+                </span>
+                <DraggableSkeleton
+                  view="dorsal"
+                  points={dorsalPoints}
+                  hidePopup={hidePopup}
+                  onToggleHidePopup={() => setHidePopup((h) => !h)}
+                  onDragStart={handleDragStart}
+                  onUpdatePoint={handleUpdatePoint}
+                  onDragEnd={handleDragEnd}
+                  isPlacingPoint={isAddingStructure}
+                  onPlacePoint={handleCreateStructureAt}
+                  isDeleteMode={isDeleteMode}
+                  onDeletePoint={handleDeletePoint}
+                  onCopyName={handleCopyName}
+                  onSelectPoint={handleSelectPoint}
+                  highlightedName={currentActiveStructure?.name}
+                />
+              </div>
+            </div>
+          ) : viewLayout === 'ventral' ? (
+            <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+              <span className="absolute top-2 left-3 text-[11px] font-black uppercase tracking-wider text-slate-500 bg-slate-100/90 px-2.5 py-1 rounded-md z-20 shadow-2xs">
+                Ventraal ({ventralPoints.length} punten)
+              </span>
+              <DraggableSkeleton
+                view="ventral"
+                points={ventralPoints}
+                hidePopup={hidePopup}
+                onToggleHidePopup={() => setHidePopup((h) => !h)}
+                onDragStart={handleDragStart}
+                onUpdatePoint={handleUpdatePoint}
+                onDragEnd={handleDragEnd}
+                isPlacingPoint={isAddingStructure}
+                onPlacePoint={handleCreateStructureAt}
+                isDeleteMode={isDeleteMode}
+                onDeletePoint={handleDeletePoint}
+                onCopyName={handleCopyName}
+                onSelectPoint={handleSelectPoint}
+                highlightedName={currentActiveStructure?.name}
+              />
+            </div>
+          ) : (
+            <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+              <span className="absolute top-2 left-3 text-[11px] font-black uppercase tracking-wider text-slate-500 bg-slate-100/90 px-2.5 py-1 rounded-md z-20 shadow-2xs">
+                Dorsaal ({dorsalPoints.length} punten)
+              </span>
+              <DraggableSkeleton
+                view="dorsal"
+                points={dorsalPoints}
+                hidePopup={hidePopup}
+                onToggleHidePopup={() => setHidePopup((h) => !h)}
+                onDragStart={handleDragStart}
+                onUpdatePoint={handleUpdatePoint}
+                onDragEnd={handleDragEnd}
+                isPlacingPoint={isAddingStructure}
+                onPlacePoint={handleCreateStructureAt}
+                isDeleteMode={isDeleteMode}
+                onDeletePoint={handleDeletePoint}
+                onCopyName={handleCopyName}
+                onSelectPoint={handleSelectPoint}
+                highlightedName={currentActiveStructure?.name}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Onderbalk met instructies (vaste h-8) */}
+        <div className="w-full h-8 shrink-0 flex items-center justify-between pt-2 border-t border-clinical-100 text-xs text-clinical-500">
+          <span className="truncate">
+            💡 Klik = selecteren • Dubbelklik = kopiëren • Pijltjestoetsen = ← / → • Rechtsklik = verwijderen
+          </span>
+          <span className="font-mono text-[11px] text-clinical-400 shrink-0 ml-2">
+            {ventralPoints.length} V | {dorsalPoints.length} D
+          </span>
+        </div>
+      </div>
+
+      {/* Rechter Zijpaneel: Editor Bedieningselementen (exact zoals Spieren tab) */}
+      <div className="w-full lg:w-96 flex flex-col space-y-4 shrink-0 overflow-y-auto max-h-[92vh] pr-1 custom-scrollbar">
+        {/* 1. Doel & Bot Selecteren Card */}
+        <div className="bg-white p-4 rounded-2xl border border-clinical-200/80 shadow-xs space-y-3">
+          <div className="flex items-center justify-between">
+            <label className="text-[11px] font-black text-clinical-700 uppercase tracking-wider">
+              {editTarget === 'structures' ? 'Botstructuren' : 'Botten'} Selecteren
+            </label>
+            <div className="inline-flex rounded-xl bg-slate-100 p-0.5 border border-slate-200">
+              <button
+                type="button"
+                onClick={() => setEditTarget('structures')}
+                className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition ${
+                  editTarget === 'structures'
+                    ? 'bg-white text-clinical-950 shadow-2xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Structuren
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditTarget('bones')}
+                className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition ${
+                  editTarget === 'bones'
+                    ? 'bg-white text-clinical-950 shadow-2xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Botten
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5">
             <button
               type="button"
               onClick={handlePrevBone}
-              className="p-1 rounded-lg hover:bg-slate-200 text-slate-600 transition"
               title="Vorig bot (<)"
+              className="p-2 bg-clinical-50 hover:bg-clinical-100 text-clinical-700 border border-clinical-200 rounded-xl transition shrink-0 active:scale-95"
             >
-              <ChevronLeft className="w-3.5 h-3.5" />
+              <ChevronLeft className="w-4 h-4" />
             </button>
-            <Filter className="w-3.5 h-3.5 text-slate-500 ml-0.5" />
             <select
               value={selectedFilterBone}
               onChange={(e) => setSelectedFilterBone(e.target.value)}
-              className="text-xs font-semibold text-slate-800 bg-transparent focus:outline-none cursor-pointer px-1 py-0.5 max-w-[140px] sm:max-w-[180px] truncate"
+              className="flex-1 min-w-0 px-2.5 py-2 bg-clinical-50 border border-clinical-200 rounded-xl text-xs font-bold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition truncate"
             >
               {editTarget === 'structures' ? (
                 <>
@@ -1338,58 +1502,88 @@ export const BoneEditorView: React.FC = () => {
             <button
               type="button"
               onClick={handleNextBone}
-              className="p-1 rounded-lg hover:bg-slate-200 text-slate-600 transition"
               title="Volgend bot (>)"
+              className="p-2 bg-clinical-50 hover:bg-clinical-100 text-clinical-700 border border-clinical-200 rounded-xl transition shrink-0 active:scale-95"
             >
-              <ChevronRight className="w-3.5 h-3.5" />
+              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
+        </div>
 
-          {/* Structuur-voor-structuur doorloper met Vorige & Volgende, Kopieer, Google & Hernoem knoppen */}
-          {editTarget === 'structures' && uniqueStructures.length > 0 && (
-            <div className="flex items-center gap-1 bg-sky-50 border border-sky-200 rounded-xl px-2 py-0.5 shadow-2xs">
-              <button
-                type="button"
-                onClick={handlePrevStructure}
-                className="p-1 rounded-lg hover:bg-sky-200 text-sky-800 transition"
-                title="Vorige structuur"
-              >
-                <ChevronLeft className="w-3.5 h-3.5" />
-              </button>
-              <div className="flex items-center gap-1.5 px-1 max-w-[160px] sm:max-w-[220px]">
-                <span className="font-bold text-sky-950 text-xs truncate" title={currentActiveStructure?.name}>
-                  {currentActiveStructure ? currentActiveStructure.name : 'Selecteer'}
+        {/* 2. Actieve Structuur Card met Navigatie en Actieknoppen */}
+        {editTarget === 'structures' && (
+          <div className="bg-white p-4 rounded-2xl border border-clinical-200/80 shadow-xs space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="text-[11px] font-black text-clinical-700 uppercase tracking-wider flex items-center gap-1.5">
+                <span>Actieve Structuur</span>
+              </label>
+              {uniqueStructures.length > 0 && (
+                <span className="text-[10px] font-mono font-bold bg-sky-50 text-sky-700 border border-sky-200/80 px-2 py-0.5 rounded-full">
+                  {selectedStructIdx + 1} / {uniqueStructures.length}
                 </span>
-                <span className="text-[10px] text-sky-600 font-mono shrink-0">
-                  {selectedStructIdx + 1}/{uniqueStructures.length}
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={handleNextStructure}
-                className="p-1 rounded-lg hover:bg-sky-200 text-sky-800 transition"
-                title="Volgende structuur"
-              >
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-              {currentActiveStructure && (
-                <div className="flex items-center gap-1 ml-1 border-l border-sky-200 pl-1">
+              )}
+            </div>
+
+            {currentActiveStructure ? (
+              <div className="space-y-2.5">
+                <div className="p-3 bg-sky-50/80 rounded-xl border border-sky-200/80">
+                  <div className="text-sm font-black text-slate-900 leading-snug break-words">
+                    {currentActiveStructure.name}
+                  </div>
+                  {currentActiveStructure.fullName && currentActiveStructure.fullName !== currentActiveStructure.name && (
+                    <div className="text-[11px] font-semibold text-sky-800 pt-0.5">
+                      {currentActiveStructure.fullName}
+                    </div>
+                  )}
+                  <div className="text-[10px] text-slate-500 font-medium pt-1">
+                    Bot: {bones.find((b) => b.id === currentActiveStructure.boneId)?.latinName || currentActiveStructure.boneId}
+                  </div>
+                </div>
+
+                {/* Navigatie Vorige / Volgende (< en >) */}
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={handlePrevStructure}
+                    className="w-full py-2 px-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 flex items-center justify-center gap-1.5 transition active:scale-95 shadow-2xs"
+                    title="Vorige structuur (of druk op ←)"
+                  >
+                    <ChevronLeft className="w-4 h-4 text-slate-500" />
+                    <span>Vorige (←)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleNextStructure}
+                    className="w-full py-2 px-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 flex items-center justify-center gap-1.5 transition active:scale-95 shadow-2xs"
+                    title="Volgende structuur (of druk op →)"
+                  >
+                    <span>Volgende (→)</span>
+                    <ChevronRight className="w-4 h-4 text-slate-500" />
+                  </button>
+                </div>
+
+                {/* 4 Actieknoppen: Kopieer, Google Popup, Hernoem, Verwijder */}
+                <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100">
                   <button
                     type="button"
                     onClick={() => handleCopyName(currentActiveStructure.name)}
-                    className="p-1 rounded hover:bg-sky-200 text-sky-800 transition"
-                    title="Kopieer naam naar klembord"
+                    className="py-2 px-2.5 bg-clinical-50 hover:bg-clinical-100 text-clinical-900 border border-clinical-200 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition active:scale-95"
+                    title="Kopieer naam naar klembord (of dubbelklik op marker)"
                   >
-                    <Copy className="w-3 h-3" />
+                    <Copy className="w-3.5 h-3.5 text-blue-600" />
+                    <span>Kopieer</span>
                   </button>
+
                   <button
                     type="button"
                     onClick={() => handleOpenGoogleSearch(currentActiveStructure.name)}
-                    className="p-1 rounded hover:bg-sky-200 text-sky-800 transition"
-                    title="Zoek op Google (losse popup)"
+                    className="py-2 px-2.5 bg-clinical-50 hover:bg-clinical-100 text-clinical-900 border border-clinical-200 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition active:scale-95"
+                    title="Zoek op Google in een compact popup venster"
                   >
-                    <ExternalLink className="w-3 h-3 text-emerald-600" />
+                    <ExternalLink className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Google</span>
                   </button>
+
                   <button
                     type="button"
                     onClick={() => handleStartRename({
@@ -1401,11 +1595,13 @@ export const BoneEditorView: React.FC = () => {
                       type: 'structure',
                       boneId: currentActiveStructure.boneId,
                     })}
-                    className="p-1 rounded hover:bg-sky-200 text-sky-800 transition"
-                    title="Naam aanpassen"
+                    className="py-2 px-2.5 bg-clinical-50 hover:bg-clinical-100 text-clinical-900 border border-clinical-200 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition active:scale-95"
+                    title="Naam van structuur aanpassen"
                   >
-                    <Edit2 className="w-3 h-3 text-amber-600" />
+                    <Edit2 className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Hernoem</span>
                   </button>
+
                   <button
                     type="button"
                     onClick={() => handleDeletePoint({
@@ -1417,403 +1613,320 @@ export const BoneEditorView: React.FC = () => {
                       type: 'structure',
                       boneId: currentActiveStructure.boneId,
                     })}
-                    className="p-1 rounded hover:bg-rose-100 text-rose-600 transition"
+                    className="py-2 px-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition active:scale-95"
                     title="Verwijder structuur (L + R)"
                   >
-                    <Trash2 className="w-3 h-3" />
+                    <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                    <span>Verwijder</span>
                   </button>
                 </div>
-              )}
+              </div>
+            ) : (
+              <div className="py-4 text-center text-xs text-slate-400">
+                Geen structuren gevonden voor dit bot.
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 3. Nieuwe Structuur Toevoegen Card */}
+        <div className="bg-white p-4 rounded-2xl border border-clinical-200/80 shadow-xs space-y-3">
+          <div className="flex items-center justify-between">
+            <label className="text-[11px] font-black text-clinical-700 uppercase tracking-wider flex items-center gap-1.5">
+              <Plus className="w-3.5 h-3.5 text-blue-600" />
+              <span>Nieuwe Structuur</span>
+            </label>
+            {!isAddingStructure ? (
+              <button
+                type="button"
+                onClick={() => setIsAddingStructure(true)}
+                className="py-1 px-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1 transition shadow-2xs active:scale-95"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Toevoegen</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsAddingStructure(false)}
+                className="p-1 rounded-lg hover:bg-slate-100 text-slate-500"
+                title="Sluiten"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+
+          {isAddingStructure && (
+            <div className="space-y-2.5 pt-1 border-t border-slate-100 animate-in fade-in duration-150">
+              <div>
+                <label className="text-[11px] font-bold text-slate-600 block mb-1">
+                  Naam structuur:
+                </label>
+                <input
+                  type="text"
+                  autoFocus
+                  placeholder="bijv. Tuberositas tibiae..."
+                  value={newStructName}
+                  onChange={(e) => setNewStructName(e.target.value)}
+                  className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-600 block mb-1">
+                  Koppel aan bot:
+                </label>
+                <select
+                  value={newStructBoneId}
+                  onChange={(e) => setNewStructBoneId(e.target.value)}
+                  className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:bg-white"
+                >
+                  {bones.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.latinName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-600 block mb-1">
+                  Aanzicht:
+                </label>
+                <div className="grid grid-cols-3 gap-1">
+                  {(['both', 'ventral', 'dorsal'] as const).map((mode) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      onClick={() => setNewStructViewMode(mode)}
+                      className={`py-1 text-[11px] font-bold rounded-lg border transition ${
+                        newStructViewMode === mode
+                          ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
+                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                      }`}
+                    >
+                      {mode === 'both' ? 'Beide' : mode === 'ventral' ? 'Ventraal' : 'Dorsaal'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="p-2.5 bg-emerald-50 rounded-xl border border-emerald-200/80 text-[11px] text-emerald-900 leading-snug">
+                👉 <strong>Klik nu op het skelet</strong> om de positie te bepalen. De structuur wordt automatisch symmetrisch op links en rechts geplaatst.
+              </div>
             </div>
           )}
+        </div>
 
-          {/* Knop: Structuur toevoegen */}
-          {editTarget === 'structures' && (
+        {/* 4. Hulpmiddelen & Opties Card */}
+        <div className="bg-white p-4 rounded-2xl border border-clinical-200/80 shadow-xs space-y-2.5">
+          <label className="text-[11px] font-black text-clinical-700 uppercase tracking-wider block">
+            Hulpmiddelen & Opties
+          </label>
+
+          <div className="space-y-1.5">
             <button
               type="button"
-              onClick={() => {
-                if (!isAddingStructure && selectedFilterBone !== 'all') {
-                  setNewStructBoneId(selectedFilterBone);
-                }
-                setIsAddingStructure((prev) => !prev);
-                if (isDeleteMode) setIsDeleteMode(false);
-              }}
-              className={`px-2.5 py-1 rounded-xl border font-bold text-xs flex items-center gap-1.5 shadow-2xs transition active:scale-95 ${
-                isAddingStructure
-                  ? 'bg-sky-600 text-white border-sky-600 ring-2 ring-sky-300'
-                  : 'bg-white hover:bg-sky-50 text-sky-700 border-sky-300 hover:border-sky-400'
+              onClick={() => setIsDeleteMode((m) => !m)}
+              className={`w-full py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-between transition ${
+                isDeleteMode
+                  ? 'bg-rose-600 text-white border-rose-600 shadow-sm'
+                  : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
               }`}
-              title="Voeg een nieuwe botstructuur toe (L + R, ventraal en/of dorsaal)"
             >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Structuur toevoegen</span>
+              <span className="flex items-center gap-2">
+                <Trash2 className="w-4 h-4 text-rose-500" />
+                <span>Prullenbak-modus</span>
+              </span>
+              <span className="text-[10px] font-mono uppercase">
+                {isDeleteMode ? 'Aan' : 'Uit'}
+              </span>
             </button>
-          )}
 
-          {/* Knop: Prullenbak / Verwijderstand (geen label conform instructie gebruiker) */}
-          <button
-            type="button"
-            onClick={() => {
-              setIsDeleteMode((prev) => !prev);
-              if (isAddingStructure) setIsAddingStructure(false);
-            }}
-            className={`p-1.5 rounded-xl border font-bold text-xs flex items-center justify-center shadow-2xs transition active:scale-95 ${
-              isDeleteMode
-                ? 'bg-rose-600 text-white border-rose-600 ring-2 ring-rose-300 shadow-md'
-                : 'bg-white hover:bg-rose-50 text-slate-500 hover:text-rose-600 border-slate-200 hover:border-rose-300'
-            }`}
-            title={isDeleteMode ? 'Verwijderen uitschakelen (Esc)' : 'Klik op een punt om te verwijderen'}
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-
-        </div>
-
-        {/* Midden tools: Spiegelen L↔R en optionele koppeling Ventraal ↔ Dorsaal */}
-        <div className="flex flex-wrap items-center gap-1.5">
-          <div className="flex items-center gap-1 bg-slate-50 border border-slate-200/90 rounded-xl px-2.5 py-1">
-            <label
-              className="flex items-center gap-1.5 cursor-pointer select-none text-[11px] font-bold text-slate-700"
-              title="Wanneer actief: bij het verslepen van een punt (links of rechts) beweegt het tegenoverliggende punt binnen DITZELFDE aanzicht synchroon mee"
-            >
-              <input
-                type="checkbox"
-                checked={liveSymmetry}
-                onChange={(e) => setLiveSymmetry(e.target.checked)}
-                className="w-3.5 h-3.5 text-sky-600 rounded accent-sky-600"
-              />
-              <span>Spiegelen L↔R</span>
-            </label>
-          </div>
-
-          <div className="flex items-center gap-1 bg-slate-50 border border-slate-200/90 rounded-xl px-2.5 py-1">
-            <label
-              className="flex items-center gap-1.5 cursor-pointer select-none text-[11px] font-bold text-slate-700"
-              title="Wanneer UIT (standaard): ventraal en dorsaal zijn 100% onafhankelijk. Wanneer AAN: aanpassingen op ventraal worden ook automatisch gespiegeld naar dorsaal overgenomen."
-            >
-              <input
-                type="checkbox"
-                checked={linkVentralDorsal}
-                onChange={(e) => setLinkVentralDorsal(e.target.checked)}
-                className="w-3.5 h-3.5 text-sky-600 rounded accent-sky-600"
-              />
-              <span>Koppel Ventraal ↔ Dorsaal</span>
-            </label>
-          </div>
-
-          {/* Knoppen Kopieer L ➔ R, R ➔ L en aanzichten */}
-          <div className="flex items-center gap-1 bg-slate-50 border border-slate-200/90 rounded-xl px-2 py-0.5">
             <button
               type="button"
-              onClick={() => {
-                if (editTarget === 'structures') {
-                  mirrorStructureSides(selectedFilterBone, 'all', 'left');
-                  showToast(
-                    selectedFilterBone === 'all'
-                      ? 'Alle linkerpunten gekopieerd en gespiegeld naar rechts'
-                      : `Linkerpunten naar rechts gespiegeld (${bones.find((b) => b.id === selectedFilterBone)?.latinName})`,
-                    'success'
-                  );
-                } else {
-                  mirrorBoneSides(selectedFilterBone, 'all', 'left');
-                  showToast('Linker botpunten naar rechts gespiegeld', 'success');
-                }
-              }}
-              className="px-2 py-1 rounded-lg bg-white hover:bg-sky-50 hover:text-sky-700 text-slate-700 font-bold border border-slate-200 shadow-2xs transition flex items-center gap-1 text-[11px] active:scale-95"
-              title="Kopieer alle punten van Links naar Rechts (horizontaal gespiegeld binnen hun eigen aanzicht)"
+              onClick={() => setLiveSymmetry((s) => !s)}
+              className={`w-full py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-between transition ${
+                liveSymmetry
+                  ? 'bg-clinical-50 text-clinical-900 border-clinical-200'
+                  : 'bg-slate-50 text-slate-500 border-slate-200'
+              }`}
             >
-              <span>Kopieer L ➔ R</span>
+              <span>Live symmetrie (L ⇄ R)</span>
+              <span className="text-[10px] font-mono uppercase">
+                {liveSymmetry ? 'Aan' : 'Uit'}
+              </span>
             </button>
+
             <button
               type="button"
-              onClick={() => {
-                if (editTarget === 'structures') {
-                  mirrorStructureSides(selectedFilterBone, 'all', 'right');
-                  showToast(
-                    selectedFilterBone === 'all'
-                      ? 'Alle rechterpunten gekopieerd en gespiegeld naar links'
-                      : `Rechterpunten naar links gespiegeld (${bones.find((b) => b.id === selectedFilterBone)?.latinName})`,
-                    'success'
-                  );
-                } else {
-                  mirrorBoneSides(selectedFilterBone, 'all', 'right');
-                  showToast('Rechter botpunten naar links gespiegeld', 'success');
-                }
-              }}
-              className="px-2 py-1 rounded-lg bg-white hover:bg-sky-50 hover:text-sky-700 text-slate-700 font-bold border border-slate-200 shadow-2xs transition flex items-center gap-1 text-[11px] active:scale-95"
-              title="Kopieer alle punten van Rechts naar Links (horizontaal gespiegeld binnen hun eigen aanzicht)"
+              onClick={() => setLinkVentralDorsal((l) => !l)}
+              className={`w-full py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-between transition ${
+                linkVentralDorsal
+                  ? 'bg-clinical-50 text-clinical-900 border-clinical-200'
+                  : 'bg-slate-50 text-slate-500 border-slate-200'
+              }`}
             >
-              <span>Kopieer R ➔ L</span>
+              <span>Koppel V ⇄ D posities</span>
+              <span className="text-[10px] font-mono uppercase">
+                {linkVentralDorsal ? 'Aan' : 'Uit'}
+              </span>
             </button>
 
-            <div className="w-[1px] h-3.5 bg-slate-300 mx-0.5" />
-            <button
-              type="button"
-              onClick={() => {
-                if (editTarget === 'structures') {
-                  copyStructureView('ventral', selectedFilterBone);
-                  showToast('Ventrale structuren gekopieerd naar dorsaal', 'success');
-                } else {
-                  copyBoneView('ventral', selectedFilterBone);
-                  showToast('Ventrale botten gekopieerd naar dorsaal', 'success');
-                }
-              }}
-              className="px-1.5 py-1 rounded-lg hover:bg-sky-50 hover:text-sky-700 text-slate-600 font-semibold transition text-[10.5px] active:scale-95"
-              title="Kopieer ventrale aanzichtposities naar het dorsale aanzicht (sagittaal gespiegeld)"
-            >
-              <span>V ➔ D</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (editTarget === 'structures') {
-                  copyStructureView('dorsal', selectedFilterBone);
-                  showToast('Dorsale structuren gekopieerd naar ventraal', 'success');
-                } else {
-                  copyBoneView('dorsal', selectedFilterBone);
-                  showToast('Dorsale botten gekopieerd naar ventraal', 'success');
-                }
-              }}
-              className="px-1.5 py-1 rounded-lg hover:bg-sky-50 hover:text-sky-700 text-slate-600 font-semibold transition text-[10.5px] active:scale-95"
-              title="Kopieer dorsale aanzichtposities naar het ventrale aanzicht (sagittaal gespiegeld)"
-            >
-              <span>D ➔ V</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Rechterzijde: Knoppen voor Opslaan, Herstellen en JSON */}
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            disabled={boneHistory.length === 0}
-            onClick={handleUndo}
-            className="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold transition flex items-center gap-1.5 shadow-2xs active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
-            title="Laatste bewerking ongedaan maken (Ctrl+Z)"
-          >
-            <RotateCcw className="w-3.5 h-3.5 text-slate-600" />
-            <span>Herstel (Ctrl+Z){boneHistory.length > 0 ? ` (${boneHistory.length})` : ''}</span>
-          </button>
-
-          <button
-            type="button"
-            disabled={isSaving}
-            onClick={handleSaveToDisk}
-            className="px-3 py-1.5 rounded-xl border border-emerald-300 bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition flex items-center gap-1.5 shadow-sm active:scale-95"
-            title="Sla huidige posities permanent op in de broncode op schijf"
-          >
-            <Save className="w-3.5 h-3.5" />
-            <span>{isSaving ? 'Opslaan...' : 'Opslaan naar bronbestand'}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              if (
-                confirm(
-                  editTarget === 'bones'
-                    ? 'Weet je zeker dat je alle botpunten wilt herstellen naar de standaardwaarden?'
-                    : 'Weet je zeker dat je alle botstructuren wilt herstellen naar de standaardwaarden?'
-                )
-              ) {
-                if (editTarget === 'bones') {
-                  resetBones();
-                } else {
-                  resetStructures();
-                }
-                showToast('Standaardwaarden hersteld', 'info');
-              }
-            }}
-            className="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold transition flex items-center gap-1.5 shadow-2xs"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Herstellen</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={editTarget === 'bones' ? exportBonesJson : exportStructuresJson}
-            className="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold transition flex items-center gap-1.5 shadow-2xs"
-            title="Download huidige data als JSON bestand"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Exporteer</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="px-2.5 py-1.5 rounded-xl border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold transition flex items-center gap-1.5 shadow-2xs"
-            title="Upload een eerder opgeslagen JSON bestand"
-          >
-            <Upload className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Importeer</span>
-          </button>
-
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".json,application/json"
-            onChange={handleFileUpload}
-            className="hidden"
-          />
-        </div>
-      </div>
-
-      {/* Paneel voor het toevoegen van een nieuwe botstructuur */}
-      {isAddingStructure && (
-        <div className="w-full bg-sky-50/95 border-2 border-sky-300 rounded-2xl p-2.5 sm:p-3 mb-2 flex flex-wrap items-center justify-between gap-3 text-xs shadow-md animate-in fade-in duration-150 shrink-0">
-          <div className="flex flex-wrap items-center gap-2.5">
-            {/* 1. Naam van de structuur */}
-            <div className="flex items-center gap-1.5">
-              <label className="font-bold text-sky-950">Naam:</label>
-              <input
-                type="text"
-                autoFocus
-                value={newStructName}
-                onChange={(e) => setNewStructName(e.target.value)}
-                placeholder="bijv. Tuberositas tibiae"
-                className="px-2.5 py-1.5 rounded-xl bg-white border border-sky-300 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500 w-44 sm:w-56 shadow-2xs"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && newStructName.trim()) {
-                    handleCreateStructureAt('ventral', 0.42, 0.5);
+            {/* Spiegel L ⇄ R knoppen */}
+            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-clinical-100">
+              <button
+                type="button"
+                onClick={() => {
+                  if (editTarget === 'structures') {
+                    mirrorStructureSides(selectedFilterBone, 'all', 'left');
+                    showToast(
+                      selectedFilterBone === 'all'
+                        ? 'Alle linkerpunten gekopieerd en gespiegeld naar rechts'
+                        : `Linkerpunten naar rechts gespiegeld (${bones.find((b) => b.id === selectedFilterBone)?.latinName})`,
+                      'success'
+                    );
+                  } else {
+                    mirrorBoneSides(selectedFilterBone, 'all', 'left');
+                    showToast('Linker botpunten naar rechts gespiegeld', 'success');
                   }
                 }}
-              />
-            </div>
-
-            {/* 2. Bij welk bot hoort het */}
-            <div className="flex items-center gap-1.5">
-              <label className="font-bold text-sky-950">Bot:</label>
-              <select
-                value={newStructBoneId}
-                onChange={(e) => setNewStructBoneId(e.target.value)}
-                className="px-2.5 py-1.5 rounded-xl bg-white border border-sky-300 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer shadow-2xs"
+                className="py-1.5 px-2 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-sky-700 text-slate-700 font-bold border border-slate-200 transition text-[11px] text-center"
+                title="Kopieer alle punten van Links naar Rechts"
               >
-                {bones.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {b.latinName} ({b.dutchName})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* 3. Aanzicht(en): Ventraal, Dorsaal, Zowel */}
-            <div className="flex items-center gap-1 bg-white p-0.5 rounded-xl border border-sky-300 shadow-2xs">
-              <button
-                type="button"
-                onClick={() => setNewStructViewMode('both')}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition ${
-                  newStructViewMode === 'both' ? 'bg-sky-600 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
-                }`}
-                title="Plaats zowel op Ventraal (L+R) als op Dorsaal (L+R)"
-              >
-                Zowel V & D (4 pnt)
+                L ➔ R spiegel
               </button>
               <button
                 type="button"
-                onClick={() => setNewStructViewMode('ventral')}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition ${
-                  newStructViewMode === 'ventral' ? 'bg-sky-600 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
-                }`}
-                title="Alleen op Ventraal (L+R)"
+                onClick={() => {
+                  if (editTarget === 'structures') {
+                    mirrorStructureSides(selectedFilterBone, 'all', 'right');
+                    showToast(
+                      selectedFilterBone === 'all'
+                        ? 'Alle rechterpunten gekopieerd en gespiegeld naar links'
+                        : `Rechterpunten naar links gespiegeld (${bones.find((b) => b.id === selectedFilterBone)?.latinName})`,
+                      'success'
+                    );
+                  } else {
+                    mirrorBoneSides(selectedFilterBone, 'all', 'right');
+                    showToast('Rechter botpunten naar links gespiegeld', 'success');
+                  }
+                }}
+                className="py-1.5 px-2 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-sky-700 text-slate-700 font-bold border border-slate-200 transition text-[11px] text-center"
+                title="Kopieer alle punten van Rechts naar Links"
               >
-                Ventraal (L+R)
+                R ➔ L spiegel
+              </button>
+            </div>
+
+            {/* Kopieer Aanzicht V ⇄ D knoppen */}
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  if (editTarget === 'structures') {
+                    copyStructureView('ventral', selectedFilterBone);
+                    showToast('Ventrale structuren gekopieerd naar dorsaal', 'success');
+                  } else {
+                    copyBoneView('ventral', selectedFilterBone);
+                    showToast('Ventrale botten gekopieerd naar dorsaal', 'success');
+                  }
+                }}
+                className="py-1.5 px-2 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-sky-700 text-slate-700 font-bold border border-slate-200 transition text-[11px] text-center"
+                title="Kopieer ventrale aanzichtposities naar het dorsale aanzicht"
+              >
+                V ➔ D kopiëren
               </button>
               <button
                 type="button"
-                onClick={() => setNewStructViewMode('dorsal')}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition ${
-                  newStructViewMode === 'dorsal' ? 'bg-sky-600 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
-                }`}
-                title="Alleen op Dorsaal (L+R)"
+                onClick={() => {
+                  if (editTarget === 'structures') {
+                    copyStructureView('dorsal', selectedFilterBone);
+                    showToast('Dorsale structuren gekopieerd naar ventraal', 'success');
+                  } else {
+                    copyBoneView('dorsal', selectedFilterBone);
+                    showToast('Dorsale botten gekopieerd naar ventraal', 'success');
+                  }
+                }}
+                className="py-1.5 px-2 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-sky-700 text-slate-700 font-bold border border-slate-200 transition text-[11px] text-center"
+                title="Kopieer dorsale aanzichtposities naar het ventrale aanzicht"
               >
-                Dorsaal (L+R)
+                D ➔ V kopiëren
               </button>
             </div>
           </div>
+        </div>
 
-          {/* Instructie & Knoppen */}
-          <div className="flex items-center gap-2">
-            <div className="hidden xl:flex items-center gap-1.5 text-sky-900 font-semibold text-[11px]">
-              <span>👉 Klik op skelet om te plaatsen (L & R automatisch gespiegeld) of:</span>
+        {/* 5. Geschiedenis, Opslag & Beheer Card */}
+        <div className="bg-white p-4 rounded-2xl border border-clinical-200/80 shadow-xs space-y-3">
+          <label className="text-[11px] font-black text-clinical-700 uppercase tracking-wider block">
+            Opslag & Beheer
+          </label>
+
+          <div className="space-y-2">
+            {/* Ctrl+Z Herstelknop */}
+            <button
+              type="button"
+              onClick={handleUndo}
+              disabled={boneHistory.length === 0}
+              className="w-full py-2 px-3 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition disabled:opacity-40 disabled:cursor-not-allowed shadow-2xs"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-blue-600" />
+              <span>Herstel (Ctrl+Z)</span>
+              {boneHistory.length > 0 && (
+                <span className="text-[10px] bg-slate-200 text-slate-800 px-1.5 py-0.2 rounded-full font-mono">
+                  {boneHistory.length}
+                </span>
+              )}
+            </button>
+
+            {/* Grote Opslaan naar Schijf knop */}
+            <button
+              type="button"
+              onClick={handleSaveToDisk}
+              disabled={isSaving}
+              className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black shadow-sm flex items-center justify-center gap-2 transition disabled:opacity-50 active:scale-95"
+            >
+              <Save className="w-4 h-4" />
+              <span>{isSaving ? 'Bezig met opslaan...' : '💾 Opslaan naar schijf'}</span>
+            </button>
+
+            {/* JSON Export en Import */}
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={handleExportJson}
+                className="py-1.5 px-2 bg-clinical-50 hover:bg-clinical-100 text-clinical-800 border border-clinical-200 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition"
+                title="Download JSON export"
+              >
+                <Download className="w-3.5 h-3.5 text-slate-500" />
+                <span>Export JSON</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="py-1.5 px-2 bg-clinical-50 hover:bg-clinical-100 text-clinical-800 border border-clinical-200 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 transition"
+                title="Importeer JSON"
+              >
+                <Upload className="w-3.5 h-3.5 text-slate-500" />
+                <span>Import JSON</span>
+              </button>
             </div>
 
+            {/* Reset naar Standaard */}
             <button
               type="button"
-              disabled={!newStructName.trim()}
-              onClick={() => handleCreateStructureAt('ventral', 0.42, 0.5)}
-              className="px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-700 disabled:opacity-50 text-white font-bold text-xs transition shadow-2xs active:scale-95 flex items-center gap-1"
-              title="Plaats direct in centrum"
+              onClick={handleResetAll}
+              className="w-full py-1.5 px-2 text-[11px] font-semibold text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-xl transition text-center"
             >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Centrum plaatsen</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setIsAddingStructure(false);
-                setNewStructName('');
-              }}
-              className="p-1.5 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-sky-200/60 transition"
-              title="Annuleren"
-            >
-              <X className="w-4 h-4" />
+              Reset alles naar standaard
             </button>
           </div>
-        </div>
-      )}
-
-      {/* Beide views naast elkaar: Ventraal links, Dorsaal rechts (onafhankelijk zoomen & pannen) */}
-      <div className="flex-1 min-h-0 w-full bg-white rounded-3xl p-3 border border-clinical-200/90 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-4 overflow-hidden">
-        {/* Ventraal links */}
-        <div className="relative w-full h-full min-w-0 min-h-0 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-slate-100 pr-0 md:pr-2 overflow-hidden">
-          <span className="absolute top-2 left-3 text-[11px] font-black uppercase tracking-wider text-slate-500 bg-slate-100/90 px-2.5 py-1 rounded-md z-20 shadow-2xs">
-            Ventraal ({ventralPoints.length} punten)
-          </span>
-          <DraggableSkeleton
-            view="ventral"
-            points={ventralPoints}
-            hidePopup={hidePopup}
-            onToggleHidePopup={() => setHidePopup((h) => !h)}
-            onDragStart={handleDragStart}
-            onUpdatePoint={handleUpdatePoint}
-            onDragEnd={handleDragEnd}
-            isPlacingPoint={isAddingStructure}
-            onPlacePoint={handleCreateStructureAt}
-            isDeleteMode={isDeleteMode}
-            onDeletePoint={handleDeletePoint}
-            onCopyName={handleCopyName}
-            onSelectPoint={handleSelectPoint}
-            highlightedName={currentActiveStructure?.name}
-          />
-        </div>
-
-        {/* Dorsaal rechts */}
-        <div className="relative w-full h-full min-w-0 min-h-0 flex flex-col items-center justify-center pl-0 md:pl-2 overflow-hidden">
-          <span className="absolute top-2 left-3 text-[11px] font-black uppercase tracking-wider text-slate-500 bg-slate-100/90 px-2.5 py-1 rounded-md z-20 shadow-2xs">
-            Dorsaal ({dorsalPoints.length} punten)
-          </span>
-          <DraggableSkeleton
-            view="dorsal"
-            points={dorsalPoints}
-            hidePopup={hidePopup}
-            onToggleHidePopup={() => setHidePopup((h) => !h)}
-            onDragStart={handleDragStart}
-            onUpdatePoint={handleUpdatePoint}
-            onDragEnd={handleDragEnd}
-            isPlacingPoint={isAddingStructure}
-            onPlacePoint={handleCreateStructureAt}
-            isDeleteMode={isDeleteMode}
-            onDeletePoint={handleDeletePoint}
-            onCopyName={handleCopyName}
-            onSelectPoint={handleSelectPoint}
-            highlightedName={currentActiveStructure?.name}
-          />
         </div>
       </div>
-    {/* Modal / Dialog voor structuurnaam aanpassen */}
+
+      {/* Modal / Dialog voor structuurnaam aanpassen */}
       {editingPoint && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-5 shadow-2xl border border-slate-200 max-w-md w-full space-y-4 animate-in fade-in zoom-in-95 duration-100">

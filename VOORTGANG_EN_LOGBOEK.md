@@ -2380,3 +2380,30 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 - **Verificatie & Deployment:**
   - `npm run build` foutloos geslaagd (`✓ built in 4.13s`).
   - Gecommit en gepusht naar `main` op GitHub.
+
+
+---
+
+## 74. Botten Bewerk Tab Look & Feel Geharmoniseerd met Spieren Tab & X/Y Coördinaten Verwijderd (03-11-2026 19:15)
+- **Status:** Succesvol geïmplementeerd, gebouwd en gepusht naar GitHub.
+- **Aanleiding & Gebruikerswensen:**
+  1. De botten bewerk tab (`BoneEditorView.tsx`) meer de look en opbouw geven van de spieren bewerk tab (`EditorView.tsx` / `EditorControls.tsx`), zonder enig verlies aan functionaliteit.
+  2. De x- en y-coördinaten in de mouseover tooltip op het skelet verwijderen voor een strakker en rustiger beeld.
+- **Doorgevoerde Aanpassingen ([BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx)):**
+  1. *Mouseover Tooltip (`DraggableSkeleton`):*
+     - De weergave `x: ..., y: ... • side` verwijderd; de hover toont nu puur en clean de anatomische structuurnaam en het bijbehorende bot.
+  2. *Layout en Structuur Geharmoniseerd:*
+     - **Linkerkolom (Skeletcard):** Grote, elegante kaart (`bg-white rounded-3xl border border-clinical-200/90 shadow-sm h-[92vh] min-h-[760px] max-h-[1020px]`).
+     - **Bovenbalk met ViewToggle:** Gecentreerde aanzichtschakelaar met `Ventraal | Dorsaal | Beide` (`ViewToggle`), aanzicht-specifieke rendering of weergave naast elkaar, en badges voor actieve acties (toevoegen of prullenbak).
+     - **Onderbalk met Sneltoetsen & Instructies:** Strakke instructiebalk onder het skelet met tips voor dubbelklik (kopiëren), links/rechts toetsen, Ctrl+Z en Google popup.
+     - **Rechterkolom (Clinical Sidebar):** Vaste breedte `lg:w-96` met overzichtelijke kaarten:
+       - *Type & Selectie Card:* Schakelaar Botstructuren / Botten + filter dropdown op bot.
+       - *Actieve Structuur Card:* Geselecteerde structuur met navigatieknoppen `<` en `>`, Google popup-knop (`window.open` popup), direct bewerken van naam, kopiëren en verwijderen.
+       - *Nieuwe Structuur Toevoegen Card:* Formulier met sneltoevoeging op skelet.
+       - *Tools & Weergave Card:* Prullenbak-modus, Live symmetrie (L ⇄ R), Koppel V ⇄ D posities, L ➔ R spiegelen, R ➔ L spiegelen, en aanzicht kopiëren (V ➔ D en D ➔ V).
+       - *Opslag & Beheer Card:* Ctrl+Z geschiedenis herstel, JSON Export/Import, grote `Opslaan naar schijf` knop en veilige Reset optie.
+  3. *Volledig Behoud van Alle Functionaliteiten:*
+     - Geen enkele functionaliteit ging verloren: live symmetrie, sagittaal kopiëren, sneltoetsen (`ArrowLeft`, `ArrowRight`, `Ctrl+Z`), dubbelklik-kopie, popups, filters en disk/JSON sync werken identiek en sneller.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos geslaagd (`✓ built in 4.71s`).
+  - Gecommit en gepusht naar `main` op GitHub.
