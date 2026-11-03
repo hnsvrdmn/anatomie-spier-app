@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useCallback, useMemo } from
 import { FLASHCARD_SETS, FlashcardItem, FlashcardSet } from '../data/flashcardsData';
 import customSavedSets from '../data/flashcardsCustom.json';
 
-const FLASHCARDS_STORAGE_KEY = 'pmt_anatomie_flashcards_custom_v6';
+const FLASHCARDS_STORAGE_KEY = 'pmt_anatomie_flashcards_custom_v7';
 
 interface FlashcardContextType {
   flashcardSets: FlashcardSet[];

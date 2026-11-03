@@ -2384,6 +2384,25 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 
 ---
 
+## 80. Samengestelde Kaart Opgesplitst in Drie Losse Kaarten (03-11-2026 19:46)
+- **Status:** Succesvol geïmplementeerd, gebouwd en gepusht naar GitHub.
+- **Aanleiding & Gebruikerswens:**
+  - De kaart *"Wat is de Nederlandse naam van art. cubiti, art. humeri en cingulum pectorale?"* bevatte drie afzonderlijke vragen in één kaart.
+  - Verzoek: Splits dit op in drie afzonderlijke, snelle flashcards conform het 1-vraag-per-kaart principe.
+- **Doorgevoerde Aanpassingen ([flashcardsPart1.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/flashcardsPart1.ts), [flashcardsCustom.json](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/flashcardsCustom.json), [FlashcardContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/FlashcardContext.tsx)):**
+  - Oude gecombineerde kaart `syn-10` in de set *4. Synoviaal Gewrichten & Bewegingsanalyse* vervangen door 3 gerichte kaarten:
+    1. **`syn-10a`:** *"Wat is de Nederlandse naam van art. cubiti?"* ➔ `Ellebooggewricht.`
+    2. **`syn-10b`:** *"Wat is de Nederlandse naam van art. humeri?"* ➔ `Schoudergewricht.`
+    3. **`syn-10c`:** *"Wat is de Nederlandse naam van het cingulum pectorale?"* ➔ `Schoudergordel.`
+  - Zowel in de bronbestanden als in `flashcardsCustom.json` gesynchroniseerd.
+  - Opslagsleutel verhoogd naar `pmt_anatomie_flashcards_custom_v7` zodat de drie losse kaarten direct in de actieve sessies verschijnen.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos geslaagd (`✓ built in 4.29s`).
+  - Gecommit en gepusht naar `main` op GitHub.
+
+
+---
+
 ## 74. Botten Bewerk Tab Look & Feel Geharmoniseerd met Spieren Tab & X/Y Coördinaten Verwijderd (03-11-2026 19:15)
 - **Status:** Succesvol geïmplementeerd, gebouwd en gepusht naar GitHub.
 - **Aanleiding & Gebruikerswensen:**
@@ -2518,4 +2537,23 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
      - Sluiten kan via de `X`-knop, door buiten de afbeelding te klikken, of met de `Escape`-toets op het toetsenbord.
 - **Verificatie & Deployment:**
   - `npm run build` foutloos geslaagd (`✓ built in 4.13s`).
+  - Gecommit en gepusht naar `main` op GitHub.
+
+
+---
+
+## 80. Samengestelde Kaart Opgesplitst in Drie Losse Kaarten (03-11-2026 19:46)
+- **Status:** Succesvol geïmplementeerd, gebouwd en gepusht naar GitHub.
+- **Aanleiding & Gebruikerswens:**
+  - De kaart *"Wat is de Nederlandse naam van art. cubiti, art. humeri en cingulum pectorale?"* bevatte drie afzonderlijke vragen in één kaart.
+  - Verzoek: Splits dit op in drie afzonderlijke, snelle flashcards conform het 1-vraag-per-kaart principe.
+- **Doorgevoerde Aanpassingen ([flashcardsPart1.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/flashcardsPart1.ts), [flashcardsCustom.json](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/flashcardsCustom.json), [FlashcardContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/FlashcardContext.tsx)):**
+  - Oude gecombineerde kaart `syn-10` in de set *4. Synoviaal Gewrichten & Bewegingsanalyse* vervangen door 3 gerichte kaarten:
+    1. **`syn-10a`:** *"Wat is de Nederlandse naam van art. cubiti?"* ➔ `Ellebooggewricht.`
+    2. **`syn-10b`:** *"Wat is de Nederlandse naam van art. humeri?"* ➔ `Schoudergewricht.`
+    3. **`syn-10c`:** *"Wat is de Nederlandse naam van het cingulum pectorale?"* ➔ `Schoudergordel.`
+  - Zowel in de bronbestanden als in `flashcardsCustom.json` gesynchroniseerd.
+  - Opslagsleutel verhoogd naar `pmt_anatomie_flashcards_custom_v7` zodat de drie losse kaarten direct in de actieve sessies verschijnen.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos geslaagd (`✓ built in 4.29s`).
   - Gecommit en gepusht naar `main` op GitHub.

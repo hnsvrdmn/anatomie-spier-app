@@ -1657,12 +1657,26 @@ export const FLASHCARDS_PART_1: FlashcardSet[] = [
         question: 'Welke twee gewrichten vormen samen het onderste spronggewricht?',
         answer: '• Art. subtalaris\n• Art. talocalcaneonavicularis',
       },
-      {
-        id: 'syn-10',
+            {
+        id: 'syn-10a',
         setId: 'synoviaal-bewegingsanalyse',
         categoryLabel: 'De gewrichten',
-        question: 'Wat is de Nederlandse naam van art. cubiti, art. humeri en cingulum pectorale?',
-        answer: '• Art. cubiti = ellebooggewricht\n• Art. humeri = schoudergewricht\n• Cingulum pectorale = schoudergordel',
+        question: 'Wat is de Nederlandse naam van art. cubiti?',
+        answer: 'Ellebooggewricht.',
+      },
+      {
+        id: 'syn-10b',
+        setId: 'synoviaal-bewegingsanalyse',
+        categoryLabel: 'De gewrichten',
+        question: 'Wat is de Nederlandse naam van art. humeri?',
+        answer: 'Schoudergewricht.',
+      },
+      {
+        id: 'syn-10c',
+        setId: 'synoviaal-bewegingsanalyse',
+        categoryLabel: 'De gewrichten',
+        question: 'Wat is de Nederlandse naam van het cingulum pectorale?',
+        answer: 'Schoudergordel.',
       },
       {
         id: 'syn-11',
