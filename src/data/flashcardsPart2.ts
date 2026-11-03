@@ -317,6 +317,14 @@ export const FLASHCARDS_PART_2: FlashcardSet[] = [
         question: 'Uit welke twee spieren bestaat de m. iliopsoas?',
         answer: 'M. iliacus en m. psoas major.',
       },
+      {
+        id: 'cox-42',
+        setId: 'art-coxae',
+        categoryLabel: 'Aanzichten',
+        question: 'Welk aanzicht (mediaal of lateraal) zie je hier van het linker en rechter os coxae en waaraan herken je dat?',
+        answer: '• Links = mediaal aanzicht (binnenzijde — herkenbaar aan de facies auricularis / gewrichtsvlak met het heiligbeen)\n• Rechts = lateraal aanzicht (buitenzijde — herkenbaar aan het acetabulum / de heupkom)\n• Voorzijde (anterior): SIAS (a) en SIAI (b)\n• Achterzijde (posterior): SIPS (c) en SIPI (d)',
+        imageUrl: '/images/flashcards/richtingen_os_coxae.png',
+      },
     ],
   },
 

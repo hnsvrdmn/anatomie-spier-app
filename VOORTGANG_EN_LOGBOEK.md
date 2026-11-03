@@ -2407,3 +2407,29 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 - **Verificatie & Deployment:**
   - `npm run build` foutloos geslaagd (`✓ built in 4.71s`).
   - Gecommit en gepusht naar `main` op GitHub.
+
+
+---
+
+## 75. Flashcards Herindeling: Scapula & Os Coxae Verplaatst & Aanzichtvraag Gecreëerd (03-11-2026 19:25)
+- **Status:** Succesvol geïmplementeerd, gebouwd en gepusht naar GitHub.
+- **Aanleiding & Gebruikerswensen:**
+  1. In de flashcardset "1. Richtingen & Aanzichten" zaten nog specifieke botvragen over de scapula (`rich-11a`, `rich-11b`) en os coxae (`rich-18` t/m `rich-21`).
+  2. Deze verplaatsen naar de respectievelijke hoofdstukken waar ze thuishoren (Scapula naar *Art. humeri / Schouder*, Os coxae naar *Art. coxae / Heup*). Als vragen daardoor dubbel zijn, mogen ze eruit.
+  3. De afbeelding van het os coxae (`richtingen_os_coxae.png`) behouden, maar omvormen tot een gerichte vraag naar het **aanzicht** (mediaal vs. lateraal aanzicht & oriëntatie anterior/posterior).
+- **Doorgevoerde Aanpassingen:**
+  1. *[flashcardsPart1.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/flashcardsPart1.ts) (Set 1: Richtingen & Aanzichten):*
+     - `rich-11a` & `rich-11b` (anguli en margines van de scapula) verwijderd uit Richtingen: deze worden al 1-op-1 getoetst in de Schouder-set (`hum-12` t/m `hum-15`).
+     - `rich-18` t/m `rich-21` (letters a, b, c, d voor SIAS, SIAI, SIPS, SIPI) verwijderd uit Richtingen: deze worden al 1-op-1 getoetst in de Heup-set (`cox-9` t/m `cox-12`).
+     - Nieuwe overkoepelende aanzicht-kaart toegevoegd (`rich-coxae-aanzicht`) met afbeelding `richtingen_os_coxae.png`:
+       - *Vraag:* *"Welk aanzicht (mediaal of lateraal) zie je hier van het linker en rechter os coxae en waaraan herken je dat?"*
+       - *Antwoord:* Links = mediaal aanzicht (binnenzijde — herkenbaar aan de facies auricularis); Rechts = lateraal aanzicht (buitenzijde — herkenbaar aan het acetabulum / de heupkom); Voorzijde (anterior) = SIAS (a) en SIAI (b); Achterzijde (posterior) = SIPS (c) en SIPI (d).
+  2. *[flashcardsPart2.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/flashcardsPart2.ts) (Set 5: Art. coxae):*
+     - `cox-42` toegevoegd met afbeelding `richtingen_os_coxae.png` als aanzicht-oefenkaart voor het heupbeen (analoog aan `gen-42` in de Knie-set).
+  3. *[flashcardsPart3.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/flashcardsPart3.ts) (Set 9: Art. humeri):*
+     - `hum-45` toegevoegd met afbeelding `humeri_botten_1_14.png` voor het herkennen van het ventrale vs. dorsale aanzicht van de scapula en humerus (aan de spina scapulae).
+  4. *[FlashcardContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/FlashcardContext.tsx):*
+     - Opslagsleutel verhoogd naar `pmt_anatomie_flashcards_custom_v5` zodat de nieuwe schonere flashcards direct actief zijn in alle browsers.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos geslaagd (`✓ built in 4.08s`).
+  - Gecommit en gepusht naar `main` op GitHub.

@@ -667,6 +667,14 @@ export const FLASHCARDS_PART_3: FlashcardSet[] = [
         answer: 'Processus coracoideus.',
         imageUrl: '/images/flashcards/humeri_botten_1_14.png',
       },
+      {
+        id: 'hum-45',
+        setId: 'art-humeri',
+        categoryLabel: 'Aanzichten',
+        question: 'Welk aanzicht (ventraal of dorsaal) hebben het linker en rechter botstuk van de schouder (scapula & humerus)?',
+        answer: '• Links = ventraal aanzicht (voorzijde — te zien aan de fossa subscapularis en processus coracoideus)\n• Rechts = dorsaal aanzicht (achterzijde — duidelijk herkenbaar aan de spina scapulae / schouderbladkam)',
+        imageUrl: '/images/flashcards/humeri_botten_1_14.png',
+      },
     ],
   },
 
