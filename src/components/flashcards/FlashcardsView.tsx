@@ -68,10 +68,10 @@ export const FlashcardsView: React.FC = () => {
   const randomMixedSet: FlashcardSet = useMemo(
     () => ({
       id: 'random-all',
-      title: '🔀 Alle flashcards gemengd (Random Mix)',
-      shortTitle: '🔀 Random Mix',
-      pdfSource: 'Alle hoofdstukken & bronnen gemengd',
-      description: `Willekeurige mix van alle ${allCardsCombined.length} flashcards uit alle sets.`,
+      title: 'Random flashcards',
+      shortTitle: 'Random flashcards',
+      pdfSource: 'Alle bronnen',
+      description: '',
       cards: allCardsCombined,
     }),
     [allCardsCombined]
@@ -494,62 +494,35 @@ export const FlashcardsView: React.FC = () => {
             </button>
           </div>
 
-          {/* Prominente disclaimer bovenaan de sets */}
-          <div className="w-full bg-amber-50 border border-amber-200/90 rounded-2xl p-3 flex items-start gap-2.5 text-amber-900 text-xs font-medium shadow-2xs">
-            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-            <div className="leading-relaxed">
-              <strong className="font-bold">Let op:</strong> De flashcards en botstructuren zijn nog in ontwikkeling en bevatten nog fouten en onnauwkeurigheden.
+          {/* Beknopte disclaimer */}
+          <div className="w-full bg-amber-50 border border-amber-200/90 rounded-xl px-3 py-2 flex items-center gap-2 text-amber-900 text-xs font-medium shadow-2xs">
+            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+            <div>
+              <strong className="font-bold">Let op:</strong> De flashcards zijn nog in ontwikkeling en kunnen fouten bevatten.
             </div>
           </div>
 
-          {/* Prominente Random Flashcards Optie (mengt dynamisch alle sets) */}
+          {/* Random Flashcards Optie (mengt dynamisch alle sets) */}
           <button
             type="button"
             onClick={() => handleSelectSet('random-all')}
-            className="group w-full text-left bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700 text-white rounded-2xl p-3.5 sm:p-4 shadow-sm hover:shadow-md transition active:scale-[0.99] flex flex-col gap-2.5 border border-indigo-400/30"
+            className="group w-full text-left bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white rounded-2xl px-3.5 py-3 shadow-2xs hover:shadow-md transition flex items-center justify-between gap-3 border border-blue-500"
           >
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0 shadow-inner">
-                  <Shuffle className="w-5 h-5 text-white animate-pulse" />
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm sm:text-base font-extrabold truncate text-white">
-                      Alle flashcards gemengd
-                    </span>
-                    <span className="px-2 py-0.5 rounded-full bg-white/25 text-white text-[10px] font-black uppercase tracking-wider shrink-0 shadow-2xs">
-                      Random
-                    </span>
-                  </div>
-                  <p className="text-[11px] sm:text-xs text-white/90 truncate mt-0.5">
-                    Willekeurige mix van alle {allCardsCombined.length} flashcards door elkaar
-                  </p>
-                </div>
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
+                <Shuffle className="w-4 h-4 text-white" />
               </div>
-
-              <div className="flex items-center gap-2 shrink-0">
-                <span className="px-2.5 py-1 rounded-full bg-white/20 text-white text-xs font-black shadow-2xs">
-                  {allCardsCombined.length} kaarten
-                </span>
-                <ChevronRight className="w-5 h-5 text-white/80 group-hover:text-white group-hover:translate-x-0.5 transition-transform" />
-              </div>
+              <span className="text-sm sm:text-base font-extrabold truncate text-white">
+                Random flashcards
+              </span>
             </div>
 
-            {/* Voortgangsbalkje als er al kaarten geoefend zijn in random mix */}
-            {(() => {
-              const randomRes = progressBySet['random-all']?.results || {};
-              const correct = allCardsCombined.filter((c) => randomRes[c.id] === 'correct').length;
-              const incorrect = allCardsCombined.filter((c) => randomRes[c.id] === 'incorrect').length;
-              const totalAnswered = correct + incorrect;
-              if (totalAnswered === 0) return null;
-              return (
-                <div className="w-full bg-black/20 rounded-full h-1.5 overflow-hidden flex mt-1">
-                  <div className="h-full bg-emerald-400" style={{ width: `${Math.round((correct / allCardsCombined.length) * 100)}%` }} />
-                  <div className="h-full bg-rose-400" style={{ width: `${Math.round((incorrect / allCardsCombined.length) * 100)}%` }} />
-                </div>
-              );
-            })()}
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-white text-xs font-bold">
+                {allCardsCombined.length} kaarten
+              </span>
+              <ChevronRight className="w-5 h-5 text-white/80 group-hover:text-white group-hover:translate-x-0.5 transition-transform" />
+            </div>
           </button>
 
           <div className="grid grid-cols-1 gap-2 pb-4">
@@ -664,15 +637,15 @@ export const FlashcardsView: React.FC = () => {
                       onClick={() => handleSelectSet('random-all')}
                       className={`w-full text-left px-3 py-2 rounded-xl flex items-center justify-between gap-2 text-xs font-bold transition ${
                         activeSet.id === 'random-all'
-                          ? 'bg-purple-50 text-purple-900 ring-1 ring-purple-300'
-                          : 'text-purple-700 hover:bg-purple-50'
+                          ? 'bg-blue-50 text-blue-900 ring-1 ring-blue-300'
+                          : 'text-blue-700 hover:bg-blue-50'
                       }`}
                     >
                       <div className="flex items-center gap-2 truncate">
-                        <Shuffle className="w-3.5 h-3.5 text-purple-600 shrink-0" />
-                        <span className="truncate">🔀 Alle flashcards gemengd (Random Mix)</span>
+                        <Shuffle className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                        <span className="truncate">Random flashcards</span>
                       </div>
-                      <span className="px-1.5 py-0.5 rounded-md bg-purple-100 text-purple-700 text-[11px] font-extrabold shrink-0">
+                      <span className="px-1.5 py-0.5 rounded-md bg-blue-100 text-blue-700 text-[11px] font-extrabold shrink-0">
                         {allCardsCombined.length}
                       </span>
                     </button>

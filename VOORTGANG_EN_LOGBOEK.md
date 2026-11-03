@@ -2384,25 +2384,6 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 
 ---
 
-## 80. Samengestelde Kaart Opgesplitst in Drie Losse Kaarten (03-11-2026 19:46)
-- **Status:** Succesvol geïmplementeerd, gebouwd en gepusht naar GitHub.
-- **Aanleiding & Gebruikerswens:**
-  - De kaart *"Wat is de Nederlandse naam van art. cubiti, art. humeri en cingulum pectorale?"* bevatte drie afzonderlijke vragen in één kaart.
-  - Verzoek: Splits dit op in drie afzonderlijke, snelle flashcards conform het 1-vraag-per-kaart principe.
-- **Doorgevoerde Aanpassingen ([flashcardsPart1.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/flashcardsPart1.ts), [flashcardsCustom.json](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/flashcardsCustom.json), [FlashcardContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/FlashcardContext.tsx)):**
-  - Oude gecombineerde kaart `syn-10` in de set *4. Synoviaal Gewrichten & Bewegingsanalyse* vervangen door 3 gerichte kaarten:
-    1. **`syn-10a`:** *"Wat is de Nederlandse naam van art. cubiti?"* ➔ `Ellebooggewricht.`
-    2. **`syn-10b`:** *"Wat is de Nederlandse naam van art. humeri?"* ➔ `Schoudergewricht.`
-    3. **`syn-10c`:** *"Wat is de Nederlandse naam van het cingulum pectorale?"* ➔ `Schoudergordel.`
-  - Zowel in de bronbestanden als in `flashcardsCustom.json` gesynchroniseerd.
-  - Opslagsleutel verhoogd naar `pmt_anatomie_flashcards_custom_v7` zodat de drie losse kaarten direct in de actieve sessies verschijnen.
-- **Verificatie & Deployment:**
-  - `npm run build` foutloos geslaagd (`✓ built in 4.29s`).
-  - Gecommit en gepusht naar `main` op GitHub.
-
-
----
-
 ## 74. Botten Bewerk Tab Look & Feel Geharmoniseerd met Spieren Tab & X/Y Coördinaten Verwijderd (03-11-2026 19:15)
 - **Status:** Succesvol geïmplementeerd, gebouwd en gepusht naar GitHub.
 - **Aanleiding & Gebruikerswensen:**
@@ -2556,4 +2537,28 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
   - Opslagsleutel verhoogd naar `pmt_anatomie_flashcards_custom_v7` zodat de drie losse kaarten direct in de actieve sessies verschijnen.
 - **Verificatie & Deployment:**
   - `npm run build` foutloos geslaagd (`✓ built in 4.29s`).
+  - Gecommit en gepusht naar `main` op GitHub.
+
+
+---
+
+## 81. Flashcards Icoon Terug in Navigatie, Verkorte Waarschuwing & Blauwe Random Flashcards Styling (03-11-2026 20:05)
+- **Status:** Succesvol geïmplementeerd, gebouwd en gepusht naar GitHub.
+- **Aanleiding & Gebruikerswensen:**
+  1. Het Flashcards icoontje terugzetten in de hoofdnavigatie voor zowel mobiel als desktop/PC.
+  2. De waarschuwing behouden, maar een stuk compacter en korter formuleren.
+  3. De "Random flashcards" optie vereenvoudigen: overtollige toelichtende teksten verwijderen, titel puur naar *"Random flashcards"*, gradient weghalen en voorzien van de uniforme app-blauwe stijl (`bg-blue-600`).
+- **Doorgevoerde Aanpassingen:**
+  1. *Navigatie ([Header.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/common/Header.tsx)):*
+     - `Layers` geïmporteerd en Flashcards knop toegevoegd aan `mobileNavItems` (tussen Bewegingen en Oefen).
+     - Flashcards knop toegevoegd aan `desktopNavItems` (met label en icoon).
+     - `handleHelpButtonClick` hersteld naar een directe klik voor de `HelpModal`.
+  2. *Beknopte Waarschuwing ([FlashcardsView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/flashcards/FlashcardsView.tsx)):*
+     - Banner teruggebracht tot een compacte, rustige strook: *"Let op: De flashcards zijn nog in ontwikkeling en kunnen fouten bevatten."*
+  3. *Strakke Blauwe Random Flashcards Knop ([FlashcardsView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/flashcards/FlashcardsView.tsx)):*
+     - Kleurverloop/gradient verwijderd; stijl omgezet naar de standaard app-blauwe knopstijl (`bg-blue-600 hover:bg-blue-700`).
+     - Titel exact *"Random flashcards"*; lange beschrijvingen en extra tags weggelaten.
+     - Ook in de set-titel en de dropdown-keuzelijst overal consistent omgezet naar *"Random flashcards"*.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos geslaagd (`✓ built in 4.35s`, 0 fouten).
   - Gecommit en gepusht naar `main` op GitHub.
