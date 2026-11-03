@@ -30,8 +30,7 @@ export const READER_BONES: Bone[] = [
       "Acetabulum (heupkom)",
       "Os pubis (schaambeen)",
       "Os ilium (darmbeen) met: SIAS, SIAI, SIPS, SIPI & crista iliaca",
-      "Os ischium (zitbeen) met: tuber ischiadicum",
-      "test"
+      "Os ischium (zitbeen) met: tuber ischiadicum"
     ],
     "primaryView": "both",
     "markers": [

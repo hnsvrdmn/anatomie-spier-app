@@ -54,6 +54,7 @@ interface DraggableSkeletonProps {
   onPlacePoint?: (view: 'ventral' | 'dorsal', x: number, y: number) => void;
   isDeleteMode?: boolean;
   onDeletePoint?: (point: EditablePoint) => void;
+  onCopyName?: (name: string) => void;
   highlightedName?: string;
 }
 
@@ -69,6 +70,7 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
   onPlacePoint,
   isDeleteMode = false,
   onDeletePoint,
+  onCopyName,
   highlightedName,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -404,6 +406,11 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
                   e.preventDefault();
                   e.stopPropagation();
                   onDeletePoint?.(pt);
+                }}
+                onDoubleClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onCopyName?.(pt.rawName || pt.name);
                 }}
                 onMouseEnter={() => setHoveredPoint(pt)}
                 onMouseLeave={() => {
@@ -1704,6 +1711,7 @@ export const BoneEditorView: React.FC = () => {
             onPlacePoint={handleCreateStructureAt}
             isDeleteMode={isDeleteMode}
             onDeletePoint={handleDeletePoint}
+            onCopyName={handleCopyName}
             highlightedName={currentActiveStructure?.name}
           />
         </div>
@@ -1725,6 +1733,7 @@ export const BoneEditorView: React.FC = () => {
             onPlacePoint={handleCreateStructureAt}
             isDeleteMode={isDeleteMode}
             onDeletePoint={handleDeletePoint}
+            onCopyName={handleCopyName}
             highlightedName={currentActiveStructure?.name}
           />
         </div>

@@ -4,13 +4,15 @@ import { BoneStructurePoint, BONE_STRUCTURES } from '../data/boneStructures';
 import { AnatomicalView } from '../types/anatomy';
 
 const BONES_LOCAL_STORAGE_KEY = 'pmt_anatomie_bones_reader_v1';
-const STRUCTURES_LOCAL_STORAGE_KEY = 'pmt_anatomie_bone_structures_v3';
+const STRUCTURES_LOCAL_STORAGE_KEY = 'pmt_anatomie_bone_structures_v4';
 
 // Ruim oude versies op
 try {
   localStorage.removeItem('pmt_anatomie_bones_custom_v1');
   localStorage.removeItem('pmt_anatomie_bones_custom_v2');
   localStorage.removeItem('pmt_anatomie_bone_structures_v1');
+  localStorage.removeItem('pmt_anatomie_bone_structures_v2');
+  localStorage.removeItem('pmt_anatomie_bone_structures_v3');
 } catch {}
 
 interface BoneContextType {
@@ -83,7 +85,9 @@ export const BoneProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const savedV3 = localStorage.getItem(STRUCTURES_LOCAL_STORAGE_KEY);
       if (savedV3) {
-        const parsed = JSON.parse(savedV3);
+        const rawParsed = JSON.parse(savedV3);
+        const forbidden = new Set(['test', 'incisura ischiadica major', 'symphysis pubica', 'linea aspera', 'fossa intercondylaris', 'facies patellaris', 'eminentia intercondylaris']);
+        const parsed = Array.isArray(rawParsed) ? rawParsed.filter((s: BoneStructurePoint) => !forbidden.has((s.name || '').toLowerCase().trim())) : [];
         if (Array.isArray(parsed) && parsed.length > 0) {
           const hasLegacyBoth = parsed.some((s: BoneStructurePoint) => (s.view as string) === 'both');
           if (!hasLegacyBoth) {

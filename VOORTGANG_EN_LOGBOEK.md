@@ -2186,3 +2186,35 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
      - Een rechtermuisklik (`onContextMenu`) op een willekeurige botmarker verwijdert het punt direct.
 - **Verificatie:**
   - `npm run build` foutloos geslaagd (`✓ built in 4.37s`).
+
+
+---
+
+## 66. Dubbelklik Kopiëren, Linea Alba Zone Zichtbaar & Niet-Reader Botstructuren Verwijderd (03-11-2026 18:27)
+- **Status:** Succesvol doorgevoerd en geverifieerd.
+- **Aanleiding & Gebruikerswensen:**
+  1. *Dubbelklik kopiëren:* Dubbelklikken op een botstructuur/marker moet de naam direct kopiëren (zoals `Ctrl+C`).
+  2. *Linea alba zone:* Mag als uitzondering wel zichtbaar blijven buiten de bewerktab als duidelijke anatomische referentielijn.
+  3. *Andere linea zones:* Voorstellen doen voor overige belangrijke lijnen uit het anatomie/fysiotherapiecurriculum.
+  4. *Niet-reader botstructuren verwijderen:* Alle botstructuren die niet in het reader-curriculum voorkomen opsporen en definitief verwijderen.
+- **Uitgevoerde Acties:**
+  1. **Dubbelklik Kopiëren ([BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx)):**
+     - `onDoubleClick` event handler gekoppeld aan de markers op het skelet (`onCopyName?.(pt.rawName || pt.name)`).
+     - Bij een dubbelklik op een willekeurige botmarker wordt de naam direct naar het klembord geschreven en verschijnt een bevestigende toast-melding (`'...' gekopieerd naar klembord`).
+  2. **Linea Alba Zone Hersteld Buiten de Bewerktab ([MuscleMarkers.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/MuscleMarkers.tsx)):**
+     - Filter toegevoegd aan `MuscleMarkers.tsx` die specifiek de `linea alba` aanhechtingslijnen (o.a. bij *m. obliquus internus/externus abdominis*) toont.
+     - Hierdoor blijft deze centrale bindweefselnaad van het abdomen zichtbaar als visuele referentie, terwijl alle overige zones netjes verborgen blijven.
+  3. **Niet-Reader Botstructuren Definitief Verwijderd ([boneStructures.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/boneStructures.ts), [bonesData.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/bonesData.ts), [BoneContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/BoneContext.tsx)):**
+     - Volledige vergelijking gedraaid tussen alle 196 datapunten en de officiële `READER_BONES` structurenlijst.
+     - De volgende 17 niet-reader punten zijn definitief verwijderd:
+       - `test` (4 punten, os coxae)
+       - `Incisura ischiadica major` (2 punten, os coxae)
+       - `Symphysis pubica` (1 punt, os coxae)
+       - `Linea aspera` (2 punten, os femur)
+       - `Fossa intercondylaris` (2 punten, os femur)
+       - `Facies patellaris` (2 punten, os femur)
+       - `Eminentia intercondylaris` (4 punten, os tibia)
+     - `READER_BONES` in `bonesData.ts` opgeschoond van testvervuiling.
+     - `BoneContext` storage-versie opgehoogd naar `pmt_anatomie_bone_structures_v4` en automatische opruiming van legacy-caches ingebouwd.
+- **Verificatie:**
+  - `npm run build` foutloos geslaagd (`✓ built in 4.25s`).
