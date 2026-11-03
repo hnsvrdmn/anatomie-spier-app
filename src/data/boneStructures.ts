@@ -230,8 +230,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Caput femoris (dijbeenkop)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.6236,
-    "y": 0.4639
+    "x": 0.6319,
+    "y": 0.4763
   },
   {
     "id": "femur_caput_l_v",
@@ -252,8 +252,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Caput femoris (dijbeenkop)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.3764,
-    "y": 0.4639
+    "x": 0.3681,
+    "y": 0.4763
   },
   {
     "id": "femur_collum_r_v",
@@ -274,8 +274,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Collum femoris (dijbeenhals)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.5945,
-    "y": 0.4922
+    "x": 0.6504,
+    "y": 0.4841
   },
   {
     "id": "femur_collum_l_v",
@@ -296,8 +296,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Collum femoris (dijbeenhals)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.4055,
-    "y": 0.4922
+    "x": 0.3496,
+    "y": 0.4841
   },
   {
     "id": "femur_troch_maj_r_v",
@@ -307,8 +307,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Trochanter major (grote draaier)",
     "view": "ventral",
     "side": "right",
-    "x": 0.3081,
-    "y": 0.4775
+    "x": 0.3137,
+    "y": 0.4817
   },
   {
     "id": "femur_troch_maj_r_d",
@@ -318,8 +318,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Trochanter major (grote draaier)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.6928,
-    "y": 0.4779
+    "x": 0.678,
+    "y": 0.4903
   },
   {
     "id": "femur_troch_maj_l_v",
@@ -329,8 +329,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Trochanter major (grote draaier)",
     "view": "ventral",
     "side": "left",
-    "x": 0.6919,
-    "y": 0.4775
+    "x": 0.6863,
+    "y": 0.4817
   },
   {
     "id": "femur_troch_maj_l_d",
@@ -340,8 +340,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Trochanter major (grote draaier)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.3072,
-    "y": 0.4779
+    "x": 0.322,
+    "y": 0.4903
   },
   {
     "id": "femur_troch_min_r_v",
@@ -439,8 +439,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Condylus medialis (binneste gewrichtsknobbel)",
     "view": "ventral",
     "side": "right",
-    "x": 0.435,
-    "y": 0.69
+    "x": 0.4373,
+    "y": 0.7032
   },
   {
     "id": "femur_cond_med_r_d",
@@ -450,8 +450,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Condylus medialis (binneste gewrichtsknobbel)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.5563,
-    "y": 0.7024
+    "x": 0.5581,
+    "y": 0.7156
   },
   {
     "id": "femur_cond_med_l_v",
@@ -461,8 +461,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Condylus medialis (binneste gewrichtsknobbel)",
     "view": "ventral",
     "side": "left",
-    "x": 0.565,
-    "y": 0.69
+    "x": 0.5627,
+    "y": 0.7032
   },
   {
     "id": "femur_cond_med_l_d",
@@ -472,8 +472,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Condylus medialis (binneste gewrichtsknobbel)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.4437,
-    "y": 0.7024
+    "x": 0.4419,
+    "y": 0.7156
   },
   {
     "id": "femur_cond_lat_r_v",
@@ -494,8 +494,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Condylus lateralis (buitenste gewrichtsknobbel)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.6448,
-    "y": 0.7024
+    "x": 0.6467,
+    "y": 0.7156
   },
   {
     "id": "femur_cond_lat_l_v",
@@ -516,8 +516,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Condylus lateralis (buitenste gewrichtsknobbel)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.3552,
-    "y": 0.7024
+    "x": 0.3533,
+    "y": 0.7156
   },
   {
     "id": "tibia_cond_med_r_v",
@@ -538,8 +538,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Condylus medialis (mediale scheenbeenplateau)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.5581,
-    "y": 0.7172
+    "x": 0.5701,
+    "y": 0.7359
   },
   {
     "id": "tibia_cond_med_l_v",
@@ -560,8 +560,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Condylus medialis (mediale scheenbeenplateau)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.4419,
-    "y": 0.7172
+    "x": 0.4299,
+    "y": 0.7359
   },
   {
     "id": "tibia_cond_lat_r_v",
@@ -571,8 +571,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Condylus lateralis (laterale scheenbeenplateau)",
     "view": "ventral",
     "side": "right",
-    "x": 0.3542,
-    "y": 0.7164
+    "x": 0.3568,
+    "y": 0.7172
   },
   {
     "id": "tibia_cond_lat_r_d",
@@ -593,8 +593,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Condylus lateralis (laterale scheenbeenplateau)",
     "view": "ventral",
     "side": "left",
-    "x": 0.6458,
-    "y": 0.7164
+    "x": 0.6432,
+    "y": 0.7172
   },
   {
     "id": "tibia_cond_lat_l_d",
@@ -681,8 +681,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Malleolus medialis (binnenenkel)",
     "view": "ventral",
     "side": "right",
-    "x": 0.435,
-    "y": 0.915
+    "x": 0.4513,
+    "y": 0.9168
   },
   {
     "id": "tibia_malleolus_med_r_d",
@@ -692,8 +692,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Malleolus medialis (binnenenkel)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.565,
-    "y": 0.915
+    "x": 0.5303,
+    "y": 0.9186
   },
   {
     "id": "tibia_malleolus_med_l_v",
@@ -703,8 +703,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Malleolus medialis (binnenenkel)",
     "view": "ventral",
     "side": "left",
-    "x": 0.565,
-    "y": 0.915
+    "x": 0.5487,
+    "y": 0.9168
   },
   {
     "id": "tibia_malleolus_med_l_d",
@@ -714,8 +714,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Malleolus medialis (binnenenkel)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.435,
-    "y": 0.915
+    "x": 0.4697,
+    "y": 0.9186
   },
   {
     "id": "fibula_caput_r_v",
@@ -813,8 +813,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Malleolus lateralis (buitenenkel)",
     "view": "ventral",
     "side": "right",
-    "x": 0.393,
-    "y": 0.9316
+    "x": 0.4041,
+    "y": 0.9174
   },
   {
     "id": "fibula_malleolus_lat_r_d",
@@ -824,8 +824,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Malleolus lateralis (buitenenkel)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.5858,
-    "y": 0.934
+    "x": 0.5804,
+    "y": 0.9199
   },
   {
     "id": "fibula_malleolus_lat_l_v",
@@ -835,8 +835,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Malleolus lateralis (buitenenkel)",
     "view": "ventral",
     "side": "left",
-    "x": 0.607,
-    "y": 0.9316
+    "x": 0.5959,
+    "y": 0.9174
   },
   {
     "id": "fibula_malleolus_lat_l_d",
@@ -846,8 +846,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Malleolus lateralis (buitenenkel)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.4142,
-    "y": 0.934
+    "x": 0.4196,
+    "y": 0.9199
   },
   {
     "id": "calcaneus_tuber_r",
@@ -923,8 +923,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Tuberculum majus (grote knobbel)",
     "view": "ventral",
     "side": "right",
-    "x": 0.2428,
-    "y": 0.2241
+    "x": 0.2306,
+    "y": 0.2246
   },
   {
     "id": "humerus_tub_maj_r_d",
@@ -945,8 +945,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Tuberculum majus (grote knobbel)",
     "view": "ventral",
     "side": "left",
-    "x": 0.7572,
-    "y": 0.2241
+    "x": 0.7694,
+    "y": 0.2246
   },
   {
     "id": "humerus_tub_maj_l_d",
@@ -1078,7 +1078,7 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "view": "ventral",
     "side": "right",
     "x": 0.2288,
-    "y": 0.3718
+    "y": 0.3706
   },
   {
     "id": "humerus_epicond_lat_r_d",
@@ -1088,8 +1088,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Epicondylus lateralis (buitenste elleboogknobbel)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.7712,
-    "y": 0.3718
+    "x": 0.7758,
+    "y": 0.3722
   },
   {
     "id": "humerus_epicond_lat_l_v",
@@ -1100,7 +1100,7 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "view": "ventral",
     "side": "left",
     "x": 0.7712,
-    "y": 0.3718
+    "y": 0.3706
   },
   {
     "id": "humerus_epicond_lat_l_d",
@@ -1110,8 +1110,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Epicondylus lateralis (buitenste elleboogknobbel)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.2288,
-    "y": 0.3718
+    "x": 0.2242,
+    "y": 0.3722
   },
   {
     "id": "humerus_trochlea_r_v",
@@ -1121,8 +1121,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Trochlea humeri (katrol voor ellepijp)",
     "view": "ventral",
     "side": "right",
-    "x": 0.255,
-    "y": 0.3629
+    "x": 0.2528,
+    "y": 0.3714
   },
   {
     "id": "humerus_trochlea_r_d",
@@ -1132,8 +1132,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Trochlea humeri (katrol voor ellepijp)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.745,
-    "y": 0.3629
+    "x": 0.7408,
+    "y": 0.3691
   },
   {
     "id": "humerus_trochlea_l_v",
@@ -1143,8 +1143,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Trochlea humeri (katrol voor ellepijp)",
     "view": "ventral",
     "side": "left",
-    "x": 0.745,
-    "y": 0.3629
+    "x": 0.7472,
+    "y": 0.3714
   },
   {
     "id": "humerus_trochlea_l_d",
@@ -1154,8 +1154,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Trochlea humeri (katrol voor ellepijp)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.255,
-    "y": 0.3629
+    "x": 0.2592,
+    "y": 0.3691
   },
   {
     "id": "humerus_capitulum_r",
@@ -1198,7 +1198,7 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Acromion (schouderdak)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.7352,
+    "x": 0.7389,
     "y": 0.2051
   },
   {
@@ -1220,7 +1220,7 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Acromion (schouderdak)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.2648,
+    "x": 0.2611,
     "y": 0.2051
   },
   {
@@ -1253,8 +1253,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Spina scapulae (schouderbladkam)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.309,
-    "y": 0.2075
+    "x": 0.3256,
+    "y": 0.2098
   },
   {
     "id": "scapula_spina_l",
@@ -1264,8 +1264,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Spina scapulae (schouderbladkam)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.691,
-    "y": 0.2075
+    "x": 0.6744,
+    "y": 0.2098
   },
   {
     "id": "scapula_margo_med_r",
@@ -1275,8 +1275,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Margo medialis (mediale rand)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.416,
-    "y": 0.245
+    "x": 0.3994,
+    "y": 0.251
   },
   {
     "id": "scapula_margo_med_l",
@@ -1286,8 +1286,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Margo medialis (mediale rand)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.584,
-    "y": 0.245
+    "x": 0.6006,
+    "y": 0.251
   },
   {
     "id": "scapula_margo_lat_r",
@@ -1297,8 +1297,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Margo lateralis (laterale rand)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.322,
-    "y": 0.2556
+    "x": 0.3293,
+    "y": 0.2541
   },
   {
     "id": "scapula_margo_lat_l",
@@ -1308,8 +1308,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Margo lateralis (laterale rand)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.678,
-    "y": 0.2556
+    "x": 0.6707,
+    "y": 0.2541
   },
   {
     "id": "scapula_ang_inf_r",
@@ -1319,8 +1319,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Angulus inferior (onderste punt)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.37,
-    "y": 0.283
+    "x": 0.3865,
+    "y": 0.2828
   },
   {
     "id": "scapula_ang_inf_l",
@@ -1330,8 +1330,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Angulus inferior (onderste punt)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.63,
-    "y": 0.283
+    "x": 0.6135,
+    "y": 0.2828
   },
   {
     "id": "scapula_ang_sup_r",
@@ -1341,8 +1341,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Angulus superior (bovenste punt)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.4,
-    "y": 0.205
+    "x": 0.3792,
+    "y": 0.202
   },
   {
     "id": "scapula_ang_sup_l",
@@ -1352,8 +1352,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Angulus superior (bovenste punt)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.6,
-    "y": 0.205
+    "x": 0.6208,
+    "y": 0.202
   },
   {
     "id": "scapula_cavitas_r_v",
@@ -1803,8 +1803,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Costae fluctuantes (zwevende ribben 11-12, 2x)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.6402,
-    "y": 0.3555
+    "x": 0.6153,
+    "y": 0.352
   },
   {
     "id": "costa_fluctuantes_l_v",
@@ -1825,8 +1825,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Costae fluctuantes (zwevende ribben 11-12, 2x)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.3598,
-    "y": 0.3555
+    "x": 0.3847,
+    "y": 0.352
   },
   {
     "id": "vert_cervicales_v",
@@ -1913,8 +1913,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Processus transversus (dwarsuitsteeksel)",
     "view": "ventral",
     "side": "right",
-    "x": 0.465,
-    "y": 0.277
+    "x": 0.4483,
+    "y": 0.3403
   },
   {
     "id": "vert_transversus_r_d",
@@ -1935,8 +1935,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Processus transversus (dwarsuitsteeksel)",
     "view": "ventral",
     "side": "left",
-    "x": 0.535,
-    "y": 0.277
+    "x": 0.5517,
+    "y": 0.3403
   },
   {
     "id": "vert_transversus_l_d",

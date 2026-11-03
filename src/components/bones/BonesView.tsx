@@ -7,7 +7,7 @@ import { AnatomicalView } from '../../types/anatomy';
 import { BoneSkeletonViewer } from './BoneSkeletonViewer';
 import { ViewToggle, ViewLayoutMode } from '../common/ViewToggle';
 import { useIsMobile } from '../../hooks/useIsMobile';
-import { RotateCw, X, ArrowRight, ChevronUp, ChevronLeft, ChevronRight, AlertTriangle } from 'lucide-react';
+import { RotateCw, X, ArrowRight, ChevronUp, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface BoneAttachmentsCardProps {
   boneId: string;
@@ -262,11 +262,7 @@ export const BonesView: React.FC = () => {
   if (isMobile) {
     return (
       <div className="relative w-full h-[calc(100dvh-3.5rem)] bg-white flex flex-col overflow-hidden select-none">
-        {/* Prominente disclaimer bovenaan (mobiel) */}
-        <div className="w-full bg-amber-50/95 border-b border-amber-200/90 px-3 py-1.5 flex items-center justify-center gap-1.5 text-amber-900 text-[11px] font-medium z-30 shrink-0 text-center shadow-2xs">
-          <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-          <span><strong>Let op:</strong> Botstructuren zijn in ontwikkeling en bevatten nog fouten.</span>
-        </div>
+
 
         {/* 1. Volledig scherm skelet met pinch-to-zoom en pan (wordt NOOIT verkleind!) */}
         <div className="flex-1 w-full h-full bg-white relative flex items-center justify-center overflow-hidden pb-24">
@@ -399,13 +395,7 @@ export const BonesView: React.FC = () => {
                           {selectedBone.structures.length} {selectedBone.structures.length === 1 ? 'structuur' : 'structuren'}
                         </span>
                       </div>
-                      {/* Disclaimer botstructuren */}
-                      <div className="flex items-start gap-2 p-2.5 rounded-xl bg-amber-50/90 border border-amber-200/80 text-amber-900 text-[11px] leading-relaxed">
-                        <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
-                        <span>
-                          <strong>Disclaimer:</strong> De markeringen van de botstructuren zijn nog in ontwikkeling en nog niet volledig geverifieerd. Deze kunnen nog fouten of onnauwkeurigheden bevatten.
-                        </span>
-                      </div>
+
                       <div className="grid grid-cols-1 gap-1.5">
                         {selectedBone.structures.map((struct, idx) => {
                           const isHighlighted = Boolean(
@@ -477,15 +467,7 @@ export const BonesView: React.FC = () => {
   // =========================================================================
   return (
     <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex flex-col gap-3">
-      {/* Prominente disclaimer bovenaan (desktop) */}
-      <div className="w-full bg-amber-50/95 border border-amber-200/90 rounded-2xl px-4 py-2.5 flex items-center justify-between gap-3 text-amber-900 text-xs font-medium shadow-2xs shrink-0">
-        <div className="flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
-          <span>
-            <strong>Let op:</strong> De markeringen van de botstructuren zijn nog in ontwikkeling en bevatten nog fouten en onnauwkeurigheden. Controleer altijd met officiële anatomische bronnen.
-          </span>
-        </div>
-      </div>
+
 
       <div className="flex-1 w-full flex flex-col lg:flex-row gap-6 items-start">
         {/* Linker kolom: Skelet met Vaste Weergave */}
@@ -589,13 +571,7 @@ export const BonesView: React.FC = () => {
                     {selectedBone.structures.length} {selectedBone.structures.length === 1 ? 'structuur' : 'structuren'}
                   </span>
                 </div>
-                {/* Disclaimer botstructuren */}
-                <div className="flex items-start gap-2 p-2.5 rounded-xl bg-amber-50/90 border border-amber-200/80 text-amber-900 text-[11px] leading-relaxed">
-                  <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
-                  <span>
-                    <strong>Disclaimer:</strong> De markeringen van de botstructuren zijn nog in ontwikkeling en nog niet volledig geverifieerd. Deze kunnen nog fouten of onnauwkeurigheden bevatten.
-                  </span>
-                </div>
+
                 <div className="grid grid-cols-1 gap-1.5">
                   {selectedBone.structures.map((struct, idx) => {
                     const isHighlighted = Boolean(
@@ -659,10 +635,7 @@ export const BonesView: React.FC = () => {
             <p className="text-xs text-slate-500 max-w-[260px] leading-relaxed">
               Beweeg over de punten op het skelet om de botten te zien, of klik op een punt voor de beschrijving en aanhechtende origo&apos;s en inserties.
             </p>
-            <div className="mt-4 flex items-center gap-1.5 text-[11px] text-amber-800 bg-amber-50/90 border border-amber-200/80 px-3 py-1.5 rounded-xl font-medium">
-              <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-              <span>Let op: Botstructuren zijn nog in ontwikkeling en bevatten nog fouten</span>
-            </div>
+
           </div>
         )}
       </div>

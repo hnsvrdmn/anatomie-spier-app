@@ -2257,3 +2257,23 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
      - Alle actieknoppen (Google Zoeken popup, Kopiëren, Hernoemen, Verwijderen) en de links/rechts pijltjesbediening sluiten naadloos aan op de zojuist aangeklikte structuur.
 - **Verificatie:**
   - `npm run build` foutloos geslaagd (`✓ built in 4.24s`).
+
+
+---
+
+## 69. Waarschuwingsberichten / Disclaimers Verwijderd uit Botten Tab (03-11-2026 18:45)
+- **Status:** Succesvol doorgevoerd en geverifieerd.
+- **Aanleiding & Gebruikerswens:**
+  - De gebruiker verzocht alle waarschuwingsberichten ("Let op: Botstructuren zijn nog in ontwikkeling...") te verwijderen uit de botten tab, aangezien de botstructuren nu nagelopen zijn en kloppen, en alles te pushen naar GitHub.
+- **Uitgevoerde Acties ([BonesView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/bones/BonesView.tsx)):**
+  - Alle 5 disclaimers en oranje waarschuwingsbalken zijn definitief verwijderd:
+    1. De bovenste mobiele banner (`Let op: Botstructuren zijn in ontwikkeling...`).
+    2. De waarschuwingsbox binnen de mobiele lade bij de relevante botstructuren.
+    3. De bovenste desktop waarschuwingsbalk.
+    4. De waarschuwingsbox binnen het desktop detailpaneel bij de botstructuren.
+    5. De waarschuwingstekst in de 'Geen bot geselecteerd' startweergave.
+  - Ongebruikte `AlertTriangle` icon import opgeruimd.
+  - De botten tab toont nu een zuivere, professionele en rustige weergave van het skelet en de reader-botstructuren.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos geslaagd (`✓ built in 3.80s`).
+  - Alle wijzigingen gecommit en gepusht naar `main` op GitHub.

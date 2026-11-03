@@ -30,7 +30,8 @@ export const READER_BONES: Bone[] = [
       "Acetabulum (heupkom)",
       "Os pubis (schaambeen)",
       "Os ilium (darmbeen) met: SIAS, SIAI, SIPS, SIPI & crista iliaca",
-      "Os ischium (zitbeen) met: tuber ischiadicum"
+      "Os ischium (zitbeen) met: tuber ischiadicum",
+      "test"
     ],
     "primaryView": "both",
     "markers": [
@@ -632,27 +633,41 @@ export const READER_BONES: Bone[] = [
       {
         "side": "left",
         "view": "dorsal",
-        "x": 0.42,
-        "y": 0.245,
+        "x": 0.4363,
+        "y": 0.2354,
         "subpart": "Costae verae (ware ribben 1-7)"
       },
       {
         "side": "right",
         "view": "dorsal",
-        "x": 0.58,
-        "y": 0.245,
+        "x": 0.5637,
+        "y": 0.2354,
         "subpart": "Costae verae (ware ribben 1-7)"
       },
       {
         "side": "left",
         "view": "ventral",
+        "x": 0.4133,
+        "y": 0.3186,
+        "subpart": "Costae spuriae (valse ribben 8-10)"
+      },
+      {
+        "side": "right",
+        "view": "ventral",
+        "x": 0.5867,
+        "y": 0.3186,
+        "subpart": "Costae spuriae (valse ribben 8-10)"
+      },
+      {
+        "side": "left",
+        "view": "dorsal",
         "x": 0.405,
         "y": 0.315,
         "subpart": "Costae spuriae (valse ribben 8-10)"
       },
       {
         "side": "right",
-        "view": "ventral",
+        "view": "dorsal",
         "x": 0.595,
         "y": 0.315,
         "subpart": "Costae spuriae (valse ribben 8-10)"
@@ -660,43 +675,29 @@ export const READER_BONES: Bone[] = [
       {
         "side": "left",
         "view": "dorsal",
-        "x": 0.405,
-        "y": 0.315,
-        "subpart": "Costae spuriae (valse ribben 8-10)"
-      },
-      {
-        "side": "right",
-        "view": "dorsal",
-        "x": 0.595,
-        "y": 0.315,
-        "subpart": "Costae spuriae (valse ribben 8-10)"
-      },
-      {
-        "side": "left",
-        "view": "dorsal",
-        "x": 0.4286,
-        "y": 0.3439,
+        "x": 0.44,
+        "y": 0.345,
         "subpart": "Costae fluctuantes (zwevende ribben 11-12)"
       },
       {
         "side": "right",
         "view": "dorsal",
-        "x": 0.5646,
-        "y": 0.3421,
+        "x": 0.5532,
+        "y": 0.3432,
         "subpart": "Costae fluctuantes (zwevende ribben 11-12)"
       },
       {
         "side": "left",
         "view": "ventral",
-        "x": 0.371,
-        "y": 0.347,
+        "x": 0.3561,
+        "y": 0.3768,
         "subpart": "Costae fluctuantes (zwevende ribben 11-12)"
       },
       {
         "side": "right",
         "view": "ventral",
-        "x": 0.625,
-        "y": 0.35,
+        "x": 0.6399,
+        "y": 0.3798,
         "subpart": "Costae fluctuantes (zwevende ribben 11-12)"
       }
     ]
