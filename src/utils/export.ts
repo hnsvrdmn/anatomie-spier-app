@@ -1,6 +1,6 @@
 import { Muscle } from '../types/anatomy';
 
-const LOCAL_STORAGE_KEY = 'pmt_anatomie_muscles_dataset_v16';
+const LOCAL_STORAGE_KEY = 'pmt_anatomie_muscles_dataset_v17';
 
 /**
  * Filtert spieren die niet in het PMT-curriculum / de reader horen

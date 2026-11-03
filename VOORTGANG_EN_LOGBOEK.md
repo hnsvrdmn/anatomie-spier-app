@@ -2338,3 +2338,23 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
   - `audit_all_muscle_zones.ts` gedraaid: alle zone-tellingen sluiten nu 100% naadloos aan op de officiële readerteksten.
   - `npm run build` foutloos geslaagd (`✓ built in 4.16s`).
   - Gecommit en gepusht naar GitHub.
+
+
+---
+
+## 72. Synchronisatie Gebruikersaanpassingen & Dataset v17 (03-11-2026 19:05)
+- **Status:** Succesvol gecommit en gepusht naar GitHub.
+- **Aanleiding:**
+  - De gebruiker heeft in de bewerk-omgeving nieuwe aanpassingen doorgevoerd aan de spieren dataset en verzocht om deze direct te pushen naar GitHub.
+- **Geanalyseerde Wijzigingen ([muscles.json](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/muscles.json)):**
+  1. *m. latissimus dorsi:* Aanhechtingslijnen verder verlengd en verfijnd.
+  2. *m. gluteus maximus:* Punten en lijnen voor crista iliaca, SIPS, os sacrum en os coccygis fijn afgesteld.
+  3. *m. iliopsoas:* Wervellijnen voor T12 en lumbaal geoptimaliseerd.
+  4. *m. biceps femoris:* Nieuwe aanhechtingslijn toegevoegd voor het caput breve op het corpus femoris.
+  5. *m. tibialis anterior:* Aanhechtingslijnen toegevoegd voor zowel de origo (tibia) als insertie (mediale voetrand).
+  6. *m. soleus:* Aanhechtingslijnen toegevoegd voor fibula en tibia.
+- **Dataset Cache:**
+  - `LOCAL_STORAGE_KEY` in `export.ts` opgehoogd naar `pmt_anatomie_muscles_dataset_v17` zodat mobiele browsers en desktop direct de nieuwste posities en lijnen laden.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos geslaagd (`✓ built in 4.25s`).
+  - Gecommit en gepusht naar `main` op GitHub.
