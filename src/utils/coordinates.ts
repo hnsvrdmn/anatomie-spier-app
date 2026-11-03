@@ -242,6 +242,10 @@ export function resolveZoneKey(name: string = '', lineName?: string, explicitZon
   if (text.includes('os ilium') || text.includes('fossa iliaca') || text.includes('ventrale vlak os ilium')) {
     return 'zone_os_ilium';
   }
+  // Sacrum & coccygis (heiligbeen en stuitje horen tot dezelfde functionele aanhechtingszone)
+  if (text.includes('sacrum') || text.includes('coccyg') || text.includes('stuit')) {
+    return 'zone_sacrum_coccygis';
+  }
   // Crista iliaca
   if (text.includes('crista iliaca')) {
     return 'zone_crista_iliaca';
@@ -267,8 +271,17 @@ export function resolveZoneKey(name: string = '', lineName?: string, explicitZon
   // Os ischii / tuber ischiadicum
   if (text.includes('tuber ischiadicum')) return 'zone_tuber_ischiadicum';
   if (text.includes('os ischii')) return 'zone_os_ischii';
-  // Corpus femoris
+  // Corpus femoris & trochanters
   if (text.includes('corpus femoris')) return 'zone_corpus_femoris';
+  if (text.includes('trochanter major')) return 'zone_trochanter_major';
+  if (text.includes('trochanter minor')) return 'zone_trochanter_minor';
+  // Corpus fibula & corpus tibia
+  if (text.includes('corpus fibula') || text.includes('zijde fibula') || text.includes('vlak corpus fibula')) {
+    return 'zone_corpus_fibula';
+  }
+  if (text.includes('corpus tibia') || text.includes('zijde tibia') || text.includes('vlak corpus tibia')) {
+    return 'zone_corpus_tibia';
+  }
   // Clavicula / Sternum / Acromion / Spina scapula
   if (text.includes('clavicula')) return 'zone_clavicula';
   if (text.includes('sternum')) return 'zone_sternum';
@@ -406,8 +419,11 @@ export function evaluatePointSet(
     }
 
     if (target.line && target.line.points && target.line.points.length >= 2) {
-      const lineTolCorrect = Math.max(target.line.tolerance || 0.022, toleranceCorrect * 0.85);
-      const lineTolClose = Math.max(lineTolCorrect * 1.5, toleranceCorrect * 1.5);
+      // Een aanhechtingszone heeft een anatomische breedte (bijv. dikte van een rib, wervellichaam of botkam).
+      // Zorg dat de zone-tolerantie realistisch en touch-vriendelijk is (nooit strenger dan een punt!).
+      const baseTol = Math.max(target.line.tolerance || 0.030, toleranceCorrect);
+      const lineTolCorrect = baseTol * 1.25;
+      const lineTolClose = lineTolCorrect * 1.6;
       const polyRes = distanceToPolyline(upt, target.line.points);
       const lineAcc = getAccuracy(polyRes.distance, lineTolCorrect, lineTolClose);
       const norm = polyRes.distance / lineTolCorrect;
@@ -508,22 +524,43 @@ export function evaluatePointSet(
         satisfiedZones.add(matchedZoneTarget.zoneId || matchedZoneTarget.key);
       }
     } else {
-      // Het punt valt buiten alle geldige doelen en zones: telt als incorrect/fout
-      let closestRes: MatchResult | null = null;
+      // Test of het punt binnen een vergevingsgezinde zonebuffer valt (bijv. net naast de rand van rib of wervel)
+      let fallbackZoneRes: MatchResult | null = null;
       for (let tIdx = 0; tIdx < distinctTargets.length; tIdx++) {
-        const res = evalAgainstTarget(userPoints[uIdx], distinctTargets[tIdx]);
-        if (!closestRes || res.distance < closestRes.distance) {
-          closestRes = res;
+        const tgt = distinctTargets[tIdx];
+        if (tgt.line || tgt.isZone) {
+          const res = evalAgainstTarget(userPoints[uIdx], tgt);
+          if (res.distance <= ptTolClose * 1.25) {
+            fallbackZoneRes = {
+              ...res,
+              accuracy: 'close',
+            };
+            break;
+          }
         }
       }
-      resultsByUserIdx.set(uIdx, {
-        userPoint: userPoints[uIdx],
-        targetPoint: closestRes ? closestRes.targetPoint : userPoints[uIdx],
-        distance: closestRes ? closestRes.distance : 1.0,
-        accuracy: 'incorrect',
-        targetType,
-        matchedLineName: closestRes?.matchedLineName,
-      });
+
+      if (fallbackZoneRes) {
+        matchedUserIndices.add(uIdx);
+        resultsByUserIdx.set(uIdx, fallbackZoneRes);
+      } else {
+        // Het punt valt buiten alle geldige doelen en zones: telt als incorrect/fout
+        let closestRes: MatchResult | null = null;
+        for (let tIdx = 0; tIdx < distinctTargets.length; tIdx++) {
+          const res = evalAgainstTarget(userPoints[uIdx], distinctTargets[tIdx]);
+          if (!closestRes || res.distance < closestRes.distance) {
+            closestRes = res;
+          }
+        }
+        resultsByUserIdx.set(uIdx, {
+          userPoint: userPoints[uIdx],
+          targetPoint: closestRes ? closestRes.targetPoint : userPoints[uIdx],
+          distance: closestRes ? closestRes.distance : 1.0,
+          accuracy: 'incorrect',
+          targetType,
+          matchedLineName: closestRes?.matchedLineName,
+        });
+      }
     }
   }
 
@@ -541,9 +578,13 @@ export function evaluatePointSet(
   // Slaagconditie:
   // 1. Alle unieke anatomische zones moeten minimaal 1x correct geraakt zijn
   //    (bijv. bij iliopsoas: minimaal 1 op wervels én minimaal 1 op os ilium).
-  // 2. Er mogen géén foutieve punten buiten de anatomische zones geplaatst zijn.
+  // 2. Er mogen géén flagrant foute punten buiten de anatomische zones geplaatst zijn.
+  //    Bij uitgebreide aanhechtingen (>= 4 punten, zoals serratus anterior langs ribben of trapezius langs wervels)
+  //    wordt 1 klein randpuntje vergeven mits alle verplichte zones gedekt zijn en correctCount >= requiredCount.
   const allZonesSatisfied = Array.from(requiredZones).every((z) => satisfiedZones.has(z));
-  const hasNoIncorrectPoints = matches.every((m) => m.accuracy !== 'incorrect');
+  const incorrectCount = matches.filter((m) => m.accuracy === 'incorrect').length;
+  const allowMinorFlaw = correctCount >= requiredCount && incorrectCount <= 1 && userPoints.length >= 4;
+  const hasNoIncorrectPoints = incorrectCount === 0 || allowMinorFlaw;
   const isPassed = allZonesSatisfied && hasNoIncorrectPoints && userPoints.length > 0;
 
   return {

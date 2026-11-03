@@ -17,7 +17,7 @@ import {
 import { JOINT_CATEGORIES, getJointCategory } from '../../data/jointCategories';
 import { getMovementQuestionOptions, MUSCLE_MOVEMENTS } from '../../data/muscleMovements';
 import { READER_BONES } from '../../data/bonesData';
-import { getRandomJointQuestion, getJointMCOptions, JointQuizItem, getJointLocation } from '../../data/jointQuestions';
+import { getRandomJointQuestion, getJointMCOptions, JointQuizItem, getJointLocation, JOINT_QUIZ_ITEMS } from '../../data/jointQuestions';
 import { evaluatePointSet, distanceToSegment, projectToSegment, getAccuracy, getDistinctTargetCount } from '../../utils/coordinates';
 import { validateAnatomicalAnswer, AnswerValidationResult } from '../../utils/answerMatching';
 import { isForbiddenMuscle } from '../../utils/export';
@@ -209,6 +209,12 @@ export const QuizView: React.FC = () => {
   const questionCounterRef = useRef<number>(0);
   const [retryQueue, setRetryQueue] = useState<{ question: QuizQuestion; dueAtCount: number }[]>([]);
 
+  // Wachtrijen voor sampling without replacement in de 'free' (toets) modus
+  // Zorgt dat een vraag NOOIT herhaalt totdat alle andere vragen in de pool minimaal 1x zijn geweest!
+  const unaskedMuscleIdsRef = useRef<string[]>([]);
+  const unaskedBoneMarkerKeysRef = useRef<string[]>([]);
+  const unaskedJointIdsRef = useRef<string[]>([]);
+
   // Desktop weergavemodus: 'both' is verplicht de standaard op desktop!
   const [viewLayout, setViewLayout] = useState<ViewLayoutMode>('both');
 
@@ -392,14 +398,36 @@ export const QuizView: React.FC = () => {
     }
   }, [autoRotateView, setCurrentView]);
 
-  // Registreer een fout beantwoorde vraag in de herhalingswachtrij (spaced repetition na ~5 vragen)
+  // Registreer een fout beantwoorde vraag
+  // In 'free' (toets) modus: vraag pas achteraan de wachtrij zetten nadat ALLE andere vragen geweest zijn!
+  // In 'joint' (oefen) modus: spaced repetition binnen het gewricht.
   const registerIncorrectQuestion = useCallback((q: QuizQuestion) => {
-    // 4 tot 6 vragen later ("een stuk of 5 (hoeft niet precies)")
+    if (practiceMode === 'free') {
+      if (q.muscle?.id) {
+        if (!unaskedMuscleIdsRef.current.includes(q.muscle.id)) {
+          unaskedMuscleIdsRef.current.push(q.muscle.id);
+        }
+      } else if (q.bone && q.boneMarker) {
+        const markerIdx = q.bone.markers.findIndex((m: any) => m === q.boneMarker);
+        if (markerIdx >= 0) {
+          const key = `${q.bone.id}:${markerIdx}`;
+          if (!unaskedBoneMarkerKeysRef.current.includes(key)) {
+            unaskedBoneMarkerKeysRef.current.push(key);
+          }
+        }
+      } else if (q.jointQuizItem?.id) {
+        if (!unaskedJointIdsRef.current.includes(q.jointQuizItem.id)) {
+          unaskedJointIdsRef.current.push(q.jointQuizItem.id);
+        }
+      }
+      return;
+    }
+
+    // In 'joint' oefenmodus: 4 tot 6 vragen later binnen dit gewricht
     const offset = 4 + Math.floor(Math.random() * 3);
     const dueAtCount = questionCounterRef.current + offset;
 
     setRetryQueue((prev) => {
-      // Voorkom dubbele registratie van exact dezelfde opgave
       const isAlreadyQueued = prev.some((item) => {
         if (q.muscle?.id && item.question.muscle?.id === q.muscle.id && item.question.type === q.type) {
           return true;
@@ -416,7 +444,7 @@ export const QuizView: React.FC = () => {
       if (isAlreadyQueued) return prev;
       return [...prev, { question: { ...q }, dueAtCount }];
     });
-  }, []);
+  }, [practiceMode]);
 
   // Genereer vraag voor het geselecteerde gewricht op positie index (puur Origo & Insertie)
   const loadJointQuestion = useCallback((mIndex: number) => {
@@ -464,15 +492,67 @@ export const QuizView: React.FC = () => {
     return m.functionText || m.otherFunctions || '';
   }, []);
 
+  // Haal de volgende spier op via sampling without replacement (geen herhaling totdat alle spieren zijn geweest)
+  const getNextFreeMuscle = useCallback((): Muscle | null => {
+    if (cleanMuscles.length === 0) return null;
+    if (unaskedMuscleIdsRef.current.length === 0) {
+      const ids = cleanMuscles.map((m) => m.id);
+      for (let i = ids.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [ids[i], ids[j]] = [ids[j], ids[i]];
+      }
+      unaskedMuscleIdsRef.current = ids;
+    }
+    const nextId = unaskedMuscleIdsRef.current.shift()!;
+    return cleanMuscles.find((m) => m.id === nextId) || cleanMuscles[0];
+  }, [cleanMuscles]);
+
+  // Haal de volgende botmarker op via sampling without replacement
+  const getNextFreeBoneMarker = useCallback((): { bone: typeof READER_BONES[0]; marker: typeof READER_BONES[0]['markers'][0] } | null => {
+    const bonesWithMarkers = READER_BONES.filter((b) => b.markers && b.markers.length > 0);
+    if (bonesWithMarkers.length === 0) return null;
+    if (unaskedBoneMarkerKeysRef.current.length === 0) {
+      const keys: string[] = [];
+      bonesWithMarkers.forEach((b) => {
+        b.markers.forEach((_, idx) => keys.push(`${b.id}:${idx}`));
+      });
+      for (let i = keys.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [keys[i], keys[j]] = [keys[j], keys[i]];
+      }
+      unaskedBoneMarkerKeysRef.current = keys;
+    }
+    const nextKey = unaskedBoneMarkerKeysRef.current.shift()!;
+    const [boneId, markerIdxStr] = nextKey.split(':');
+    const bone = bonesWithMarkers.find((b) => b.id === boneId) || bonesWithMarkers[0];
+    const marker = bone.markers[parseInt(markerIdxStr, 10)] || bone.markers[0];
+    return { bone, marker };
+  }, []);
+
+  // Haal het volgende gewrichtsitem op via sampling without replacement
+  const getNextFreeJointItem = useCallback((): JointQuizItem | null => {
+    if (JOINT_QUIZ_ITEMS.length === 0) return null;
+    if (unaskedJointIdsRef.current.length === 0) {
+      const ids = JOINT_QUIZ_ITEMS.map((item) => item.id);
+      for (let i = ids.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [ids[i], ids[j]] = [ids[j], ids[i]];
+      }
+      unaskedJointIdsRef.current = ids;
+    }
+    const nextId = unaskedJointIdsRef.current.shift()!;
+    return JOINT_QUIZ_ITEMS.find((item) => item.id === nextId) || JOINT_QUIZ_ITEMS[0];
+  }, []);
+
   // Genereer een nieuwe willekeurige vraag voor de 'free' modus
   const generateNewFreeQuestion = useCallback((typeOverride?: QuizType | 'all') => {
     const targetType = typeOverride !== undefined ? typeOverride : freeQuizType;
 
     // Speciaal type: Bot identificatie (open vraag met stip op skelet zonder tekst)
     if (targetType === 'bone') {
-      const bonesWithMarkers = READER_BONES.filter((b) => b.markers && b.markers.length > 0);
-      const randBone = bonesWithMarkers[Math.floor(Math.random() * bonesWithMarkers.length)];
-      const randMarker = randBone.markers[Math.floor(Math.random() * randBone.markers.length)];
+      const boneMarkerObj = getNextFreeBoneMarker();
+      if (!boneMarkerObj) return;
+      const { bone: randBone, marker: randMarker } = boneMarkerObj;
       const markerView: 'ventral' | 'dorsal' = randMarker.view === 'both'
         ? (Math.random() < 0.5 ? 'ventral' : 'dorsal')
         : randMarker.view;
@@ -550,7 +630,7 @@ export const QuizView: React.FC = () => {
 
     // Speciaal type: Gewrichten (lossen test over gewrichtstypen, assen, deelgewrichten en bewegingen)
     if (targetType === 'joints') {
-      const jointItem = getRandomJointQuestion();
+      const jointItem = getNextFreeJointItem() || getRandomJointQuestion();
       const mcTextOptions = getJointMCOptions(jointItem);
 
       setCurrentQuestion({
@@ -583,7 +663,9 @@ export const QuizView: React.FC = () => {
 
     if (cleanMuscles.length === 0) return;
 
-    let randMuscle = cleanMuscles[Math.floor(Math.random() * cleanMuscles.length)];
+    const chosenMuscle = getNextFreeMuscle();
+    if (!chosenMuscle) return;
+    let randMuscle = chosenMuscle;
     let type: QuizType = 'full';
 
     if (targetType === 'all' || targetType === 'mixed') {
@@ -811,38 +893,30 @@ export const QuizView: React.FC = () => {
     }
   }, [practiceMode, selectedJointId, jointPracticeType, jointMuscleIndex, loadJointQuestion, freeQuizType]);
 
-  // Volgende vraag handler met spaced repetition voor foute antwoorden
+  // Volgende vraag handler
   const handleNextQuestion = () => {
     questionCounterRef.current += 1;
     const currentCount = questionCounterRef.current;
 
-    // 1. Controleer of er een herhalingsvraag klaarstaat
-    const dueIndex = retryQueue.findIndex((item) => {
-      if (item.dueAtCount > currentCount) return false;
-      if (practiceMode === 'joint') {
-        return item.question.jointId === selectedJointId;
-      }
-      if (freeQuizType === 'all' || freeQuizType === 'mixed') {
-        return true;
-      }
-      return item.question.type === freeQuizType;
-    });
-
-    if (dueIndex >= 0) {
-      const dueItem = retryQueue[dueIndex];
-      setRetryQueue((prev) => prev.filter((_, idx) => idx !== dueIndex));
-      loadQuestion(dueItem.question);
-      return;
-    }
-
-    // 2. Normale doorloop indien geen herhalingsvraag
+    // In 'joint' (oefen) modus: herhalingsvragen binnen het actieve gewricht
     if (practiceMode === 'joint') {
+      const dueIndex = retryQueue.findIndex((item) => {
+        if (item.dueAtCount > currentCount) return false;
+        return item.question.jointId === selectedJointId;
+      });
+
+      if (dueIndex >= 0) {
+        const dueItem = retryQueue[dueIndex];
+        setRetryQueue((prev) => prev.filter((_, idx) => idx !== dueIndex));
+        loadQuestion(dueItem.question);
+        return;
+      }
+
       const nextIdx = jointMuscleIndex + 1;
       if (nextIdx < jointMuscles.length) {
         setJointMuscleIndex(nextIdx);
         loadJointQuestion(nextIdx);
       } else {
-        // Indien alle spieren van het gewricht doorlopen zijn, kijk of er nog herhalingsvragen openstaan voor dit gewricht
         const remainingJointRetryIndex = retryQueue.findIndex(
           (item) => item.question.jointId === selectedJointId
         );
@@ -855,6 +929,7 @@ export const QuizView: React.FC = () => {
         }
       }
     } else {
+      // In 'free' (toets) modus: trek altijd de volgende unieke vraag uit de wachtrij
       generateNewFreeQuestion();
     }
   };

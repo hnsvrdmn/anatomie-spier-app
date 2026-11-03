@@ -1164,7 +1164,7 @@
     "id": "serratus_anterior",
     "name": "m. serratus anterior",
     "latinName": "m. serratus anterior",
-    "view": "ventral",
+    "view": "dorsal",
     "symmetryType": "bilateral",
     "jointCategories": [
       "cingulum"
@@ -1384,8 +1384,8 @@
         ],
         "insertions": [
           {
-            "x": 0.4016,
-            "y": 0.2343,
+            "x": 0.4044,
+            "y": 0.2221,
             "name": "margo medialis scapula (craniaal)"
           },
           {
@@ -1493,8 +1493,8 @@
         ],
         "insertions": [
           {
-            "x": 0.5984,
-            "y": 0.2343,
+            "x": 0.5956,
+            "y": 0.2221,
             "name": "margo medialis scapula (craniaal)"
           },
           {
@@ -1503,89 +1503,7 @@
             "name": "margo medialis scapula (caudaal)"
           }
         ],
-        "musclePath": [],
-        "attachmentLines": [
-          {
-            "id": "line-rhomb-o1-right",
-            "name": "processus spinosus 7e cervicale vertebra",
-            "type": "origin",
-            "points": [
-              {
-                "x": 0.5278,
-                "y": 0.155
-              },
-              {
-                "x": 0.5278,
-                "y": 0.167
-              },
-              {
-                "x": 0.5348,
-                "y": 0.2
-              }
-            ],
-            "tolerance": 0.022
-          },
-          {
-            "id": "line-rhomb-o2-right",
-            "name": "processus spinosus 1-5 thoracale vertebra",
-            "type": "origin",
-            "points": [
-              {
-                "x": 0.5278,
-                "y": 0.18
-              },
-              {
-                "x": 0.5348,
-                "y": 0.2279
-              },
-              {
-                "x": 0.5348,
-                "y": 0.242
-              }
-            ],
-            "tolerance": 0.024
-          },
-          {
-            "id": "line-rhomb-i1-right",
-            "name": "margo medialis scapula (craniaal)",
-            "type": "insertion",
-            "points": [
-              {
-                "x": 0.5984,
-                "y": 0.215
-              },
-              {
-                "x": 0.5984,
-                "y": 0.2343
-              },
-              {
-                "x": 0.5961,
-                "y": 0.2717
-              }
-            ],
-            "tolerance": 0.022
-          },
-          {
-            "id": "line-rhomb-i2-right",
-            "name": "margo medialis scapula (caudaal)",
-            "type": "insertion",
-            "points": [
-              {
-                "x": 0.5984,
-                "y": 0.2343
-              },
-              {
-                "x": 0.5961,
-                "y": 0.2717
-              },
-              {
-                "x": 0.5961,
-                "y": 0.282
-              }
-            ],
-            "tolerance": 0.022
-          }
-        ]
+        "musclePath": []
       }
     },
     "otherFunctions": "Fixeert en stabiliseert de margo medialis van de scapula tegen de ribbenboog."
@@ -1693,29 +1611,7 @@
             "name": "tuberositas ulna"
           }
         ],
-        "musclePath": [],
-        "attachmentLines": [
-          {
-            "id": "line-brachialis-orig-right",
-            "name": "distale helft ventrale zijde humerus",
-            "type": "origin",
-            "points": [
-              {
-                "x": 0.258,
-                "y": 0.282
-              },
-              {
-                "x": 0.2662,
-                "y": 0.3156
-              },
-              {
-                "x": 0.264,
-                "y": 0.355
-              }
-            ],
-            "tolerance": 0.024
-          }
-        ]
+        "musclePath": []
       },
       "left": {
         "origins": [
@@ -1740,16 +1636,16 @@
             "type": "origin",
             "points": [
               {
-                "x": 0.742,
-                "y": 0.282
+                "x": 0.7338,
+                "y": 0.3045
               },
               {
                 "x": 0.7338,
                 "y": 0.3156
               },
               {
-                "x": 0.736,
-                "y": 0.355
+                "x": 0.7338,
+                "y": 0.3272
               }
             ],
             "tolerance": 0.024
@@ -1781,8 +1677,8 @@
             "name": "caput longum: net onder gewrichtskom schoudergewricht"
           },
           {
-            "x": 0.2482,
-            "y": 0.2982,
+            "x": 0.2557,
+            "y": 0.292,
             "name": "caput laterale: lateraal op dorsale vlak van os humerus"
           },
           {
@@ -1812,16 +1708,16 @@
             "type": "origin",
             "points": [
               {
-                "x": 0.2482,
-                "y": 0.252
+                "x": 0.2578,
+                "y": 0.2879
               },
               {
-                "x": 0.2482,
-                "y": 0.2982
+                "x": 0.2546,
+                "y": 0.2911
               },
               {
-                "x": 0.255,
-                "y": 0.34
+                "x": 0.2567,
+                "y": 0.3058
               }
             ],
             "tolerance": 0.022
@@ -1832,16 +1728,16 @@
             "type": "origin",
             "points": [
               {
-                "x": 0.2387,
-                "y": 0.26
+                "x": 0.2355,
+                "y": 0.2696
               },
               {
                 "x": 0.2387,
                 "y": 0.2808
               },
               {
-                "x": 0.262,
-                "y": 0.345
+                "x": 0.2355,
+                "y": 0.2964
               }
             ],
             "tolerance": 0.022
@@ -1856,8 +1752,8 @@
             "name": "caput longum: net onder gewrichtskom schoudergewricht"
           },
           {
-            "x": 0.7518,
-            "y": 0.2982,
+            "x": 0.7443,
+            "y": 0.292,
             "name": "caput laterale: lateraal op dorsale vlak van os humerus"
           },
           {
@@ -1878,48 +1774,6 @@
             "x": 0.765,
             "y": 0.32,
             "name": "tricepspees"
-          }
-        ],
-        "attachmentLines": [
-          {
-            "id": "line-triceps-lat-right",
-            "name": "caput laterale: lateraal op dorsale vlak van os humerus",
-            "type": "origin",
-            "points": [
-              {
-                "x": 0.7518,
-                "y": 0.252
-              },
-              {
-                "x": 0.7518,
-                "y": 0.2982
-              },
-              {
-                "x": 0.745,
-                "y": 0.34
-              }
-            ],
-            "tolerance": 0.022
-          },
-          {
-            "id": "line-triceps-med-right",
-            "name": "caput mediale: mediaal op dorsale vlak van os humerus",
-            "type": "origin",
-            "points": [
-              {
-                "x": 0.7613,
-                "y": 0.26
-              },
-              {
-                "x": 0.7613,
-                "y": 0.2808
-              },
-              {
-                "x": 0.738,
-                "y": 0.345
-              }
-            ],
-            "tolerance": 0.022
           }
         ]
       }

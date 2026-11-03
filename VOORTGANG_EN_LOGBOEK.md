@@ -2046,3 +2046,57 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
     - Omdraaien, beoordelen met *Goed*, terugbladeren met `<` en weer vooruit met `>` met 100% succes gevalideerd.
 
 
+## 61. Server Gestart, Geen Vraagherhaling in Toetsmodus & Verruimde Toleranties Origo/Insertie Zones [2026-11-03 17:25]
+- **Status Server:**
+  - Vite dev server actief op:
+    - **Lokaal:** `http://localhost:3000/`
+    - **Netwerk:** `http://192.168.1.111:3000/` (en `http://169.254.83.107:3000/`)
+- **Vraag van de gebruiker:**
+  1. *Start de server en post even de url in de logs voordat je iets anders doet. Houdt de logs veelvuldig bij.*
+  2. *In het test gedeelte: de vragen herhalen te vaak. Als een bepaalde vraag is geweest moet deze niet terug komen tot alle andere vragen.*
+  3. *Bij origo en insertie plaatsen: soms lijk ik de insertie best verkeerd te plaatsen en wordt het goed gerekend, maar soms plaats ik de insertie nagenoeg goed en wordt hij fout gerekend (zie afbeeldingen: m. serratus anterior, m. trapezius, m. iliopsoas, m. gluteus maximus). Ligt dit aan de zones? Is hier iets aan te doen? Loop alles even na zodat dit minder vaak voorkomt, zeker bij gebieden met een wat grotere zone.*
+- **Oorzaken & Doorgevoerde Verbeteringen:**
+  1. **Geen Vraagherhaling meer in de Vrije Toetsmodus ([QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx)):**
+     - *Oorzaak van herhaling:* Voorheen trok `generateNewFreeQuestion` willekeurige spieren met `Math.random() * cleanMuscles.length` (sampling with replacement), waardoor door toeval en de verjaardagsparadox dezelfde spier al na 2 of 3 beurten opnieuw gekozen werd. Bovendien forceerde `retryQueue` een foute vraag al na ~4 vragen weer terug in het beeld.
+     - *Oplossing (Deck-based sampling without replacement):*
+       - `unaskedMuscleIdsRef`, `unaskedBoneMarkerKeysRef` en `unaskedJointIdsRef` geïmplementeerd.
+       - Elke vraagpool wordt bij de start van een ronde geschud via Fisher-Yates.
+       - Vragen worden één voor één van de stapel getrokken. Een spier, bot of gewrichtsvraag kan **nooit** terugkeren totdat alle andere items uit de pool minimaal 1x zijn behandeld.
+       - Foutief beantwoorde vragen worden in de testmodus pas achteraan de wachtrij geplaatst, zodat eerst alle resterende vragen aan bod komen.
+  2. **Analyse van Foutieve Evaluatie bij Grote Zones ([muscles.json](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/muscles.json) & [coordinates.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/utils/coordinates.ts)):**
+     - *Oorzaak 1 (Te korte lijnen / abrupte eindpunten):*
+       - In `serratus_anterior` stopte de riblijn (`line-serratus-orig-caud-left`) abrupt bij `y: 0.35` (rib 6). Ribben 8 en 9 lopen anatomisch echter door tot `y: 0.385`. Het punt dat de student op rib 8/9 zette (afbeelding 1) viel hierdoor buiten het afkappunt van de lijn.
+       - In `trapezius` stopte de ascendens-lijn bij `y: 0.3331` (T8/T9), terwijl de vraag vraagt om T3–T12. T12 ligt op `y: 0.375`. Het punt dat de student exact op de wervelkolom bij T12 zette (afbeelding 2) werd afgekeurd door de te korte lijn.
+       - In `iliopsoas` stopte de lumbale lijn bij `y: 0.415` (L3), terwijl L1–L5 doorloopt tot `y: 0.45` (afbeelding 3).
+       - In `gluteus_maximus` stopte de sacrumlijn bij `y: 0.445`, waardoor de overgang naar os coccygis (`y: 0.465`) ontbrak.
+       - In meerdere spieren (`latissimus_dorsi`, `deltoideus`, `gluteus_maximus`, `obliquus`) waren de aanhechtingslijnen alleen op links gedefinieerd en ontbraken ze volledig op de rechterzijde!
+     - *Oorzaak 2 (Tolerantie op zones was 15% strenger dan op losse punten):*
+       - In `evaluatePointSet` stond: `const lineTolCorrect = Math.max(target.line.tolerance, toleranceCorrect * 0.85);`. De tolerantie op zones werd kunstmatig met 15% verkleind, terwijl botten en zones (ribben, wervellichamen, botkammen) in werkelijkheid juist een anatomische breedte van enkele centimeters hebben.
+       - Aangepast naar: `const baseTol = Math.max(target.line.tolerance || 0.030, toleranceCorrect); const lineTolCorrect = baseTol * 1.25;`. Hierdoor mag men natuurlijk op het botgebied klikken zonder een flinterdunne 1D-hartlijn te hoeven raden.
+     - *Oorzaak 3 (Ontbrekende zone-groepering in `resolveZoneKey`):*
+       - `os sacrum` en `os coccygis` vielen terug op losse tekststrings, waardoor het programma eiste dat er apart op het minuscule stuitje werd geklikt naast het sacrum. Samengevoegd tot `zone_sacrum_coccygis`.
+       - Tevens `zone_corpus_fibula`, `zone_corpus_tibia`, `zone_trochanter_major` en `zone_trochanter_minor` toegevoegd.
+     - *Oorzaak 4 (Alles-of-niets regel bij reeksen):*
+       - Bij spieren met uitgebreide aanhechtingen (zoals 8 punten langs ribben of wervels) zorgde 1 enkel puntje dat een fractie buiten de lijn viel voor een directe afkeuring van de hele vraag (`matches.every(m => m.accuracy !== 'incorrect')`), ondanks dat 7 punten kaarsrecht op de ribben stonden.
+       - Nu geldt: als alle verplichte zones gedekt zijn en `correctCount >= requiredCount`, wordt 1 klein randpuntje in een lange serie vergeven (`allowMinorFlaw`).
+  3. **Lijnen Verlengd & Gespiegeld ([muscles.json](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/muscles.json)):**
+     - `serratus_anterior`: Caudale riblijn verlengd tot `y: 0.385` over ribben 5 t/m 9; tolerantie verhoogd naar `0.040`.
+     - `trapezius`: Ascendens-lijn verlengd tot `y: 0.375` (T12); tolerantie verhoogd naar `0.034 - 0.036`.
+     - `iliopsoas`: Lumbale lijn verlengd tot `y: 0.45` (L5); tolerantie verhoogd naar `0.036 - 0.038`.
+     - `gluteus_maximus`: Sacrum- en coccyxlijn verlengd tot `y: 0.465`; crista- en femurlijnen gecorrigeerd; tolerantie verhoogd naar `0.036 - 0.038`.
+     - `latissimus_dorsi`: Thoracale lijn verlengd tot `y: 0.375`, lumbale lijn tot `y: 0.45`.
+     - Alle aanhechtingslijnen zijn automatisch gespiegeld tussen links en rechts zodat beide zijden identieke kwaliteit bieden.
+  4. **Dataset Versie Opgehoogd naar v16 ([export.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/utils/export.ts)):**
+     - `LOCAL_STORAGE_KEY` verhoogd naar `pmt_anatomie_muscles_dataset_v16` zodat smartphones en browsers niet blijven hangen in de oude gecachte lijnen van v15.
+- **Verificatie:**
+  - `npm run build` geslaagd zonder fouten (`✓ built in 4.06s`).
+  - Unit tests gedraaid op de exacte coördinaten uit de screenshots:
+    - `serratus_anterior` rib 8/9 punt: afstand gedaald naar `0.0024` (limiet `0.0500`) -> **Correct ✓**
+    - `trapezius` T12 punt: afstand gedaald naar `0.0002` (limiet `0.0450`) -> **Correct ✓**
+    - `iliopsoas` L5 punt: afstand gedaald naar `0.0012` (limiet `0.0475`) -> **Correct ✓**
+    - `gluteus_maximus` sacrum/coccyx punt: afstand gedaald naar `0.0003` (limiet `0.0475`) -> **Correct ✓**
+  - Geautomatiseerde browser test gedraaid op de actieve dev server (`http://localhost:3000/`): 10 opeenvolgende vragen in de testmodus gegenereerd en getoetst; alle 10 waren 100% uniek zonder herhalingen.
+
+
+
+
