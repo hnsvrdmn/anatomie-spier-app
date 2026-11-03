@@ -18,6 +18,11 @@ import {
   Plus,
   Trash2,
   X,
+  Copy,
+  ExternalLink,
+  Edit2,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 
 export const SVG_WIDTH = 1000;
@@ -49,6 +54,7 @@ interface DraggableSkeletonProps {
   onPlacePoint?: (view: 'ventral' | 'dorsal', x: number, y: number) => void;
   isDeleteMode?: boolean;
   onDeletePoint?: (point: EditablePoint) => void;
+  highlightedName?: string;
 }
 
 const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
@@ -63,6 +69,7 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
   onPlacePoint,
   isDeleteMode = false,
   onDeletePoint,
+  highlightedName,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -393,6 +400,11 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
                     : 'pointer-events-auto cursor-grab active:cursor-grabbing'
                 }
                 onPointerDown={(e) => handlePointerDownMarker(e, pt)}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onDeletePoint?.(pt);
+                }}
                 onMouseEnter={() => setHoveredPoint(pt)}
                 onMouseLeave={() => {
                   if (!isDraggingMarkerRef.current) setHoveredPoint(null);
@@ -400,6 +412,21 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
               >
                 {/* Ruim klik- en sleepgebied */}
                 <circle cx={cx} cy={cy} r={hitRadius} fill="transparent" />
+
+                {/* Geanimeerde highlight ring indien geselecteerd via Vorige/Volgende */}
+                {highlightedName && (pt.rawName?.toLowerCase() === highlightedName.toLowerCase() || pt.name.toLowerCase() === highlightedName.toLowerCase()) && (
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r={radius + 8 / zoom}
+                    fill="none"
+                    stroke="#0284c7"
+                    strokeWidth={2.5 / zoom}
+                    strokeDasharray={`${4 / zoom} ${3 / zoom}`}
+                    className="animate-spin pointer-events-none"
+                    style={{ transformOrigin: `${cx}px ${cy}px` }}
+                  />
+                )}
 
                 {/* Hoofdmarker cirkel */}
                 <circle
@@ -474,7 +501,8 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
             );
           })()}
       </div>
-    </div>
+
+      </div>
   );
 };
 
@@ -499,6 +527,7 @@ export const BoneEditorView: React.FC = () => {
     importStructuresJson,
     copyStructureView,
     mirrorStructureSides,
+    renameStructure,
   } = useBones();
   const { showToast } = useMuscles();
 
@@ -535,6 +564,82 @@ export const BoneEditorView: React.FC = () => {
       },
     ]);
   }, [bones, structures]);
+
+  // Navigatie door botten (< en >)
+  const allBoneFilterOptions = useMemo(() => ['all', ...bones.map((b) => b.id)], [bones]);
+  const handlePrevBone = useCallback(() => {
+    const idx = allBoneFilterOptions.indexOf(selectedFilterBone);
+    const prevIdx = (idx - 1 + allBoneFilterOptions.length) % allBoneFilterOptions.length;
+    setSelectedFilterBone(allBoneFilterOptions[prevIdx]);
+  }, [allBoneFilterOptions, selectedFilterBone]);
+
+  const handleNextBone = useCallback(() => {
+    const idx = allBoneFilterOptions.indexOf(selectedFilterBone);
+    const nextIdx = (idx + 1) % allBoneFilterOptions.length;
+    setSelectedFilterBone(allBoneFilterOptions[nextIdx]);
+  }, [allBoneFilterOptions, selectedFilterBone]);
+
+  // Unieke structuren voor het geselecteerde bot/overzicht
+  const activeStructuresList = useMemo(() => {
+    if (selectedFilterBone === 'all') return structures;
+    return structures.filter((s) => s.boneId === selectedFilterBone);
+  }, [structures, selectedFilterBone]);
+
+  const uniqueStructures = useMemo(() => {
+    const map = new Map<string, BoneStructurePoint>();
+    activeStructuresList.forEach((s) => {
+      const raw = s.name.toLowerCase().trim();
+      if (!map.has(raw)) map.set(raw, s);
+    });
+    return Array.from(map.values());
+  }, [activeStructuresList]);
+
+  const [selectedStructIdx, setSelectedStructIdx] = useState<number>(0);
+
+  // Zorg dat geselecteerde index binnen bereik blijft bij filterwissel
+  useEffect(() => {
+    setSelectedStructIdx(0);
+  }, [selectedFilterBone]);
+
+  const currentActiveStructure = uniqueStructures[selectedStructIdx] || null;
+
+  const handlePrevStructure = useCallback(() => {
+    if (uniqueStructures.length === 0) return;
+    setSelectedStructIdx((prev) => (prev - 1 + uniqueStructures.length) % uniqueStructures.length);
+  }, [uniqueStructures.length]);
+
+  const handleNextStructure = useCallback(() => {
+    if (uniqueStructures.length === 0) return;
+    setSelectedStructIdx((prev) => (prev + 1) % uniqueStructures.length);
+  }, [uniqueStructures.length]);
+
+  // Kopiëren van naam naar klembord
+  const handleCopyName = useCallback((name: string) => {
+    navigator.clipboard.writeText(name);
+    showToast(`'${name}' gekopieerd naar klembord`, 'success');
+  }, [showToast]);
+
+  // Hernoemen van een structuur
+  const [editingPoint, setEditingPoint] = useState<EditablePoint | null>(null);
+  const [renameInputValue, setRenameInputValue] = useState('');
+
+  const handleStartRename = useCallback((pt: EditablePoint) => {
+    setEditingPoint(pt);
+    setRenameInputValue(pt.rawName || pt.name);
+  }, []);
+
+  const handleConfirmRename = useCallback(() => {
+    if (!editingPoint) return;
+    const oldName = editingPoint.rawName || editingPoint.name;
+    const newName = renameInputValue.trim();
+    if (newName && newName !== oldName) {
+      pushBoneHistory();
+      renameStructure(oldName, newName, editingPoint.boneId);
+      showToast(`Structuurnaam gewijzigd naar '${newName}'`, 'success');
+    }
+    setEditingPoint(null);
+    setRenameInputValue('');
+  }, [editingPoint, renameInputValue, pushBoneHistory, renameStructure, showToast]);
 
   const handleUndo = useCallback(() => {
     if (boneHistory.length === 0) return;
@@ -1111,13 +1216,21 @@ export const BoneEditorView: React.FC = () => {
             </button>
           </div>
 
-          {/* Filter per bot */}
-          <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200/90 rounded-xl px-2.5 py-1">
-            <Filter className="w-3.5 h-3.5 text-slate-500" />
+          {/* Filter per bot met Vorige & Volgende knoppen (< en >) */}
+          <div className="flex items-center gap-0.5 bg-slate-50 border border-slate-200/90 rounded-xl px-1 py-0.5 shadow-2xs">
+            <button
+              type="button"
+              onClick={handlePrevBone}
+              className="p-1 rounded-lg hover:bg-slate-200 text-slate-600 transition"
+              title="Vorig bot (<)"
+            >
+              <ChevronLeft className="w-3.5 h-3.5" />
+            </button>
+            <Filter className="w-3.5 h-3.5 text-slate-500 ml-0.5" />
             <select
               value={selectedFilterBone}
               onChange={(e) => setSelectedFilterBone(e.target.value)}
-              className="text-xs font-semibold text-slate-800 bg-transparent focus:outline-none cursor-pointer"
+              className="text-xs font-semibold text-slate-800 bg-transparent focus:outline-none cursor-pointer px-1 py-0.5 max-w-[140px] sm:max-w-[180px] truncate"
             >
               {editTarget === 'structures' ? (
                 <>
@@ -1141,7 +1254,98 @@ export const BoneEditorView: React.FC = () => {
                 </>
               )}
             </select>
+            <button
+              type="button"
+              onClick={handleNextBone}
+              className="p-1 rounded-lg hover:bg-slate-200 text-slate-600 transition"
+              title="Volgend bot (>)"
+            >
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
           </div>
+
+          {/* Structuur-voor-structuur doorloper met Vorige & Volgende, Kopieer, Google & Hernoem knoppen */}
+          {editTarget === 'structures' && uniqueStructures.length > 0 && (
+            <div className="flex items-center gap-1 bg-sky-50 border border-sky-200 rounded-xl px-2 py-0.5 shadow-2xs">
+              <button
+                type="button"
+                onClick={handlePrevStructure}
+                className="p-1 rounded-lg hover:bg-sky-200 text-sky-800 transition"
+                title="Vorige structuur"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </button>
+              <div className="flex items-center gap-1.5 px-1 max-w-[160px] sm:max-w-[220px]">
+                <span className="font-bold text-sky-950 text-xs truncate" title={currentActiveStructure?.name}>
+                  {currentActiveStructure ? currentActiveStructure.name : 'Selecteer'}
+                </span>
+                <span className="text-[10px] text-sky-600 font-mono shrink-0">
+                  {selectedStructIdx + 1}/{uniqueStructures.length}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={handleNextStructure}
+                className="p-1 rounded-lg hover:bg-sky-200 text-sky-800 transition"
+                title="Volgende structuur"
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+              {currentActiveStructure && (
+                <div className="flex items-center gap-1 ml-1 border-l border-sky-200 pl-1">
+                  <button
+                    type="button"
+                    onClick={() => handleCopyName(currentActiveStructure.name)}
+                    className="p-1 rounded hover:bg-sky-200 text-sky-800 transition"
+                    title="Kopieer naam naar klembord"
+                  >
+                    <Copy className="w-3 h-3" />
+                  </button>
+                  <a
+                    href={`https://www.google.com/search?q=${encodeURIComponent(currentActiveStructure.name + ' anatomie')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-1 rounded hover:bg-sky-200 text-sky-800 transition"
+                    title="Zoek op Google"
+                  >
+                    <ExternalLink className="w-3 h-3 text-emerald-600" />
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => handleStartRename({
+                      id: currentActiveStructure.id,
+                      name: currentActiveStructure.name,
+                      rawName: currentActiveStructure.name,
+                      x: currentActiveStructure.x,
+                      y: currentActiveStructure.y,
+                      type: 'structure',
+                      boneId: currentActiveStructure.boneId,
+                    })}
+                    className="p-1 rounded hover:bg-sky-200 text-sky-800 transition"
+                    title="Naam aanpassen"
+                  >
+                    <Edit2 className="w-3 h-3 text-amber-600" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDeletePoint({
+                      id: currentActiveStructure.id,
+                      name: currentActiveStructure.name,
+                      rawName: currentActiveStructure.name,
+                      x: currentActiveStructure.x,
+                      y: currentActiveStructure.y,
+                      type: 'structure',
+                      boneId: currentActiveStructure.boneId,
+                    })}
+                    className="p-1 rounded hover:bg-rose-100 text-rose-600 transition"
+                    title="Verwijder structuur (L + R)"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Knop: Structuur toevoegen */}
           {editTarget === 'structures' && (
@@ -1500,6 +1704,7 @@ export const BoneEditorView: React.FC = () => {
             onPlacePoint={handleCreateStructureAt}
             isDeleteMode={isDeleteMode}
             onDeletePoint={handleDeletePoint}
+            highlightedName={currentActiveStructure?.name}
           />
         </div>
 
@@ -1520,9 +1725,61 @@ export const BoneEditorView: React.FC = () => {
             onPlacePoint={handleCreateStructureAt}
             isDeleteMode={isDeleteMode}
             onDeletePoint={handleDeletePoint}
+            highlightedName={currentActiveStructure?.name}
           />
         </div>
       </div>
+    {/* Modal / Dialog voor structuurnaam aanpassen */}
+      {editingPoint && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-5 shadow-2xl border border-slate-200 max-w-md w-full space-y-4 animate-in fade-in zoom-in-95 duration-100">
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <Edit2 className="w-4 h-4 text-sky-600" />
+                <span>Structuurnaam aanpassen</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setEditingPoint(null)}
+                className="p-1 rounded-lg hover:bg-slate-100 text-slate-500"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div>
+              <label className="text-xs text-slate-600 font-semibold mb-1 block">Nieuwe naam:</label>
+              <input
+                type="text"
+                autoFocus
+                value={renameInputValue}
+                onChange={(e) => setRenameInputValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleConfirmRename();
+                  if (e.key === 'Escape') setEditingPoint(null);
+                }}
+                className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 font-semibold text-slate-800"
+              />
+            </div>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setEditingPoint(null)}
+                className="px-3 py-1.5 text-xs font-semibold rounded-xl text-slate-600 hover:bg-slate-100"
+              >
+                Annuleren
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmRename}
+                disabled={!renameInputValue.trim()}
+                className="px-3.5 py-1.5 text-xs font-bold rounded-xl bg-sky-600 hover:bg-sky-700 text-white shadow-xs transition disabled:opacity-50"
+              >
+                Opslaan
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

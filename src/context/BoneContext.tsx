@@ -39,6 +39,7 @@ interface BoneContextType {
   addStructurePoints: (newPoints: BoneStructurePoint[], structureName?: string, boneId?: string) => void;
   deleteStructurePoint: (id: string) => void;
   deleteStructurePoints: (structureName: string, boneId: string) => void;
+  renameStructure: (oldName: string, newName: string, boneId: string) => void;
   resetStructures: () => void;
   saveStructuresToDisk: () => Promise<boolean>;
   exportStructuresJson: () => void;
@@ -438,6 +439,56 @@ export const BoneProvider: React.FC<{ children: React.ReactNode }> = ({ children
     []
   );
 
+  const renameStructure = useCallback(
+    (oldName: string, newName: string, boneId: string) => {
+      const oldRaw = oldName.toLowerCase().trim();
+      const cleanNew = newName.trim();
+      if (!cleanNew || oldRaw === cleanNew.toLowerCase()) return;
+
+      setStructures((prev) => {
+        const updated = prev.map((s) => {
+          if (
+            s.boneId === boneId &&
+            (s.name.toLowerCase().trim() === oldRaw ||
+              (s.fullName && s.fullName.toLowerCase().trim() === oldRaw))
+          ) {
+            return {
+              ...s,
+              name: cleanNew,
+              fullName: cleanNew,
+            };
+          }
+          return s;
+        });
+        try {
+          localStorage.setItem(STRUCTURES_LOCAL_STORAGE_KEY, JSON.stringify(updated));
+        } catch (e) {
+          console.error('Fout bij opslaan botstructuren:', e);
+        }
+        return updated;
+      });
+
+      setBones((prev) => {
+        const updated = prev.map((b) => {
+          if (b.id !== boneId || !b.structures) return b;
+          return {
+            ...b,
+            structures: b.structures.map((s) =>
+              s.toLowerCase().trim() === oldRaw ? cleanNew : s
+            ),
+          };
+        });
+        try {
+          localStorage.setItem(BONES_LOCAL_STORAGE_KEY, JSON.stringify(updated));
+        } catch (e) {
+          console.error('Fout bij opslaan botten:', e);
+        }
+        return updated;
+      });
+    },
+    []
+  );
+
   const resetStructures = useCallback(() => {
     saveStructures(BONE_STRUCTURES);
   }, [saveStructures]);
@@ -644,6 +695,7 @@ export const BoneProvider: React.FC<{ children: React.ReactNode }> = ({ children
         addStructurePoints,
         deleteStructurePoint,
         deleteStructurePoints,
+        renameStructure,
         resetStructures,
         saveStructuresToDisk,
         exportStructuresJson,

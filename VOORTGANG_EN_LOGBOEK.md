@@ -2163,3 +2163,26 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
   - In de **toetsmodus** blijft de tolerantiezone onder de motorkap actief meegerekend in `evaluatePointSet` voor een soepele en eerlijke beoordeling, maar het skelet blijft visueel rustig en schoon.
 - **Verificatie:**
   - `npm run build` succesvol geslaagd zonder fouten (`built in 3.88s`).
+
+
+---
+
+## 65. Botten- & Structuren-Check Controls & Knoppen Verplaatst uit Mouseover (03-11-2026 18:24)
+- **Status:** Succesvol voltooid en geverifieerd.
+- **Aanleiding & Gebruikersvraag:**
+  - De gebruiker merkte op dat de actieknoppen ('google', 'kopieer' en 'hernoem') in de mouseover-popup van het skelet verdwenen zodra de muis bewoog, waardoor ze niet aangeklikt konden worden.
+  - Verzoek: verwijder de knoppen uit de mouseover en zorg voor stabiele bediening met next/previous, kopiëren, hernoemen en direct verwijderen via rechtermuisknop.
+- **Uitgevoerde Acties ([BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx) & [BoneContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/BoneContext.tsx)):**
+  1. **Knoppen Verwijderd uit Mouseover:**
+     - De interactieve knoppen in de mouseover-tooltip van `DraggableSkeleton` zijn verwijderd. De tooltip toont nu alleen nog zuiver de naam en coördinaten.
+  2. **Permanente Structuurbalk met Next / Previous & Acties:**
+     - In de bovenbalk van de bottenbewerker bevindt zich nu een vaste werkbalk:
+       - `<` en `>` (Chevron-knoppen) om soepel door alle unieke botstructuren te bladeren met highlight-cirkel op het skelet.
+       - **Kopieer-knop (klembord)**: kopieert de structuurnaam met 1 klik naar het klembord met een bevestigende toast-melding.
+       - **Google Zoeken-knop**: opent direct een nieuw tabblad met Google Zoeken naar de anatomische structuur (`https://www.google.com/search?q=<naam>+anatomie`).
+       - **Hernoem-knop**: opent een modal dialoog om de naam van de structuur overal aan te passen (`renameStructure`).
+       - **Verwijder-knop**: verwijdert alle punten van de geselecteerde structuur.
+  3. **Rechtermuisknop Verwijderen op Skelet:**
+     - Een rechtermuisklik (`onContextMenu`) op een willekeurige botmarker verwijdert het punt direct.
+- **Verificatie:**
+  - `npm run build` foutloos geslaagd (`✓ built in 4.37s`).
