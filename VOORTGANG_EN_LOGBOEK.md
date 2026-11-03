@@ -2309,3 +2309,32 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
     - 2 origo's geplaatst -> `isPassed: false` (nog niet compleet).
     - 3 origo's geplaatst (thoracaal + lumbaal + crista iliaca) -> `isPassed: true` (100% correct goedgekeurd).
   - `npm run build` foutloos geslaagd (`✓ built in 4.06s`).
+
+
+---
+
+## 71. Volledige Audit van Alle Spieren op Vroegtijdig Doorswitchen (03-11-2026 18:56)
+- **Status:** Volledige audit uitgevoerd en alle ontdekte knelpunten opgelost.
+- **Aanleiding:**
+  - Vraag van gebruiker om te controleren of het probleem van de *m. latissimus dorsi* (te vroeg doorschakelen door samengevoegde zones) ook bij andere spieren speelde.
+- **Resultaten van de Audit over alle 35+ spieren:**
+  1. **`m. gluteus maximus` (Gevonden & Opgelost):**
+     - *Origo Text:* `crista iliaca, SIPS, os sacrum, os coccygis` (4 structuren).
+     - *Probleem:* `os sacrum` en `os coccygis` waren voorheen samengevoegd onder `zone_sacrum_coccygis`. Hierdoor stond het verwachte aantal origo's op **3** in plaats van **4**, waardoor de auto-switcher al na 3 punten naar insertie sprong!
+     - *Oplossing:* `zone_os_sacrum` en `zone_os_coccygis` zijn nu anatomisch gescheiden. Het aantal vereiste origo's staat nu exact op **4**.
+  2. **`m. serratus anterior` (Gevonden & Opgelost):**
+     - *Insertie Text:* `margo medialis scapula, angulus superior scapula, angulus inferior scapula` (3 structuren).
+     - *Probleem:* `angulus superior`, `angulus inferior` en `margo medialis` waren alle drie samengevoegd onder `zone_margo_medialis_scapula`. Hierdoor dacht het systeem dat er maar **1** insertie nodig was!
+     - *Oplossing:* `zone_angulus_superior_scapula`, `zone_angulus_inferior_scapula` en `zone_margo_medialis_scapula` zijn nu gescheiden. Het aantal vereiste inserties staat nu exact op **3**.
+  3. **Overige meervoudige spieren gecontroleerd:**
+     - *m. trapezius:* Origo = 3, Insertie = 3 (100% correct).
+     - *m. deltoideus:* Origo = 3, Insertie = 1 (100% correct).
+     - *m. pectoralis major:* Origo = 3, Insertie = 1 (100% correct).
+     - *m. triceps brachii:* Origo = 3, Insertie = 1 (100% correct).
+     - *m. biceps brachii:* Origo = 2, Insertie = 1 (100% correct).
+     - *m. iliopsoas:* Origo = 3 (T12, lumbales, os ilium), Insertie = 1 (100% correct).
+     - *mm. Rhomboideii:* Origo = 2 (C7 en Th1-Th5), Insertie = 1 (100% correct).
+- **Verificatie & Deployment:**
+  - `audit_all_muscle_zones.ts` gedraaid: alle zone-tellingen sluiten nu 100% naadloos aan op de officiële readerteksten.
+  - `npm run build` foutloos geslaagd (`✓ built in 4.16s`).
+  - Gecommit en gepusht naar GitHub.

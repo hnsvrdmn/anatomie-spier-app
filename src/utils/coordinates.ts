@@ -254,9 +254,12 @@ export function resolveZoneKey(name: string = '', lineName?: string, explicitZon
   if (text.includes('os ilium') || text.includes('fossa iliaca') || text.includes('ventrale vlak os ilium')) {
     return 'zone_os_ilium';
   }
-  // Sacrum & coccygis (heiligbeen en stuitje horen tot dezelfde functionele aanhechtingszone)
-  if (text.includes('sacrum') || text.includes('coccyg') || text.includes('stuit')) {
-    return 'zone_sacrum_coccygis';
+  // Sacrum & coccygis afzonderlijk (twee verschillende botstructuren)
+  if (text.includes('coccyg') || text.includes('stuit')) {
+    return 'zone_os_coccygis';
+  }
+  if (text.includes('sacrum') || text.includes('heiligbeen')) {
+    return 'zone_os_sacrum';
   }
   // Crista iliaca
   if (text.includes('crista iliaca')) {
@@ -274,10 +277,10 @@ export function resolveZoneKey(name: string = '', lineName?: string, explicitZon
   if (text.includes('linea alba')) {
     return 'zone_linea_alba';
   }
-  // Scapula rand (margo medialis / angulus superior / angulus inferior)
-  if (text.includes('margo medialis') || text.includes('angulus superior') || text.includes('angulus inferior')) {
-    return 'zone_margo_medialis_scapula';
-  }
+  // Scapula hoeken & rand afzonderlijk
+  if (text.includes('angulus superior')) return 'zone_angulus_superior_scapula';
+  if (text.includes('angulus inferior')) return 'zone_angulus_inferior_scapula';
+  if (text.includes('margo medialis')) return 'zone_margo_medialis_scapula';
   // Os pubis
   if (text.includes('os pubis')) return 'zone_os_pubis';
   // Os ischii / tuber ischiadicum
