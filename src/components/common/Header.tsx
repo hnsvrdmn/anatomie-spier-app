@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useMuscles } from '../../context/MuscleContext';
-import { BookOpen, GraduationCap, Edit3, ListChecks, Activity, Bone, HelpCircle, Layers } from 'lucide-react';
+import { BookOpen, GraduationCap, Edit3, ListChecks, Activity, Bone, HelpCircle } from 'lucide-react';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { HelpModal } from './HelpModal';
 
@@ -34,7 +34,38 @@ export const Header: React.FC = () => {
     }, 350);
   };
 
-  // Mobiele navigatie: Spieren, Botten, Bewegingen, Flashcards, Oefen, Test (alleen duidelijke iconen)
+  // 3x tikken op het '?' icoontje opent de Flashcards
+  const helpTapCountRef = useRef(0);
+  const helpTapTimerRef = useRef<number | null>(null);
+
+  const handleHelpButtonClick = () => {
+    helpTapCountRef.current += 1;
+
+    if (helpTapCountRef.current >= 3) {
+      if (helpTapTimerRef.current) {
+        window.clearTimeout(helpTapTimerRef.current);
+        helpTapTimerRef.current = null;
+      }
+      helpTapCountRef.current = 0;
+      setIsHelpOpen(false);
+      setAppMode('flashcards');
+      return;
+    }
+
+    if (helpTapTimerRef.current) {
+      window.clearTimeout(helpTapTimerRef.current);
+    }
+
+    helpTapTimerRef.current = window.setTimeout(() => {
+      if (helpTapCountRef.current < 3) {
+        setIsHelpOpen(true);
+      }
+      helpTapCountRef.current = 0;
+      helpTapTimerRef.current = null;
+    }, 280);
+  };
+
+  // Mobiele navigatie: Spieren, Botten, Bewegingen, Oefen, Test (alleen duidelijke iconen)
   const mobileNavItems = [
     {
       id: 'study',
@@ -56,13 +87,6 @@ export const Header: React.FC = () => {
       icon: <Activity className="w-5 h-5" />,
       isActive: appMode === 'movements',
       onClick: () => setAppMode('movements'),
-    },
-    {
-      id: 'flashcards',
-      label: 'Flashcards',
-      icon: <Layers className="w-5 h-5" />,
-      isActive: appMode === 'flashcards',
-      onClick: () => setAppMode('flashcards'),
     },
     {
       id: 'quiz-joint',
@@ -88,7 +112,7 @@ export const Header: React.FC = () => {
     },
   ];
 
-  // Desktop navigatie: Spieren, Botten, Bewegingen, Flashcards, Oefenen, Testen, Bewerken
+  // Desktop navigatie: Spieren, Botten, Bewegingen, Oefenen, Testen, Bewerken
   const desktopNavItems = [
     {
       id: 'study',
@@ -110,13 +134,6 @@ export const Header: React.FC = () => {
       icon: <Activity className="w-4 h-4" />,
       isActive: appMode === 'movements',
       onClick: () => setAppMode('movements'),
-    },
-    {
-      id: 'flashcards',
-      label: 'Flashcards',
-      icon: <Layers className="w-4 h-4" />,
-      isActive: appMode === 'flashcards',
-      onClick: () => setAppMode('flashcards'),
     },
     {
       id: 'quiz-joint',
@@ -188,11 +205,11 @@ export const Header: React.FC = () => {
               )}
             </nav>
 
-            {/* Hulpknop met ? icoontje rechts in de header */}
+            {/* Hulpknop met ? icoontje rechts in de header (3x tikken = geheime toegang flashcards) */}
             <div className="absolute right-1 sm:right-2 flex items-center">
               <button
                 type="button"
-                onClick={() => setIsHelpOpen(true)}
+                onClick={handleHelpButtonClick}
                 className="p-1.5 sm:p-2 rounded-xl text-clinical-300 hover:text-white hover:bg-clinical-800 transition active:scale-95"
                 title="Hulp & Uitleg (?)"
                 aria-label="Hulp & Uitleg"

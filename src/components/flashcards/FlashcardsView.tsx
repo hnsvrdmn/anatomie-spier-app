@@ -19,6 +19,7 @@ import {
   LayoutGrid,
   Edit3,
   AlertTriangle,
+  SkipForward,
 } from 'lucide-react';
 
 type CardResult = 'correct' | 'incorrect';
@@ -213,6 +214,34 @@ export const FlashcardsView: React.FC = () => {
     }));
   }, [currentIndex, exitDirection, updateActiveSetProgress]);
 
+  const handleNextCard = useCallback(() => {
+    if (currentIndex >= activeDeck.length - 1 || exitDirection) return;
+    setIsFlipped(false);
+    setDragOffset({ x: 0, y: 0 });
+    updateActiveSetProgress((prev) => ({
+      ...prev,
+      currentIndex: Math.min(activeDeck.length - 1, (prev.currentIndex ?? 0) + 1),
+    }));
+  }, [currentIndex, activeDeck.length, exitDirection, updateActiveSetProgress]);
+
+  const handleSkipCard = useCallback(() => {
+    if (!currentCard || exitDirection) return;
+    setIsFlipped(false);
+    setDragOffset({ x: 0, y: 0 });
+    updateActiveSetProgress((prev) => {
+      const queue = [...(prev.activeQueueIds || activeSet.cards.map((c) => c.id))];
+      const idx = prev.currentIndex ?? 0;
+      if (idx >= queue.length) return prev;
+      const skippedId = queue[idx];
+      // Verplaats de overgeslagen kaart naar het einde van de wachtrij
+      const nextQueue = [...queue.slice(0, idx), ...queue.slice(idx + 1), skippedId];
+      return {
+        ...prev,
+        activeQueueIds: nextQueue,
+      };
+    });
+  }, [currentCard, exitDirection, updateActiveSetProgress, activeSet.cards]);
+
   const handleRetryIncorrect = useCallback(() => {
     const targetIds =
       stats.allSetIncorrectIds.length > 0
@@ -306,14 +335,20 @@ export const FlashcardsView: React.FC = () => {
       } else if (e.key === 'ArrowLeft') {
         e.preventDefault();
         handleGradeCard('incorrect');
-      } else if (e.key === 'Backspace') {
+      } else if (e.key === 'Backspace' || e.key === '<' || e.key === ',') {
         e.preventDefault();
         handlePrevCard();
+      } else if (e.key === '>' || e.key === '.') {
+        e.preventDefault();
+        handleNextCard();
+      } else if (e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        handleSkipCard();
       }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [activeSetId, zoomedImage, isDropdownOpen, isFinished, handleGradeCard, handlePrevCard]);
+  }, [activeSetId, zoomedImage, isDropdownOpen, isFinished, handleGradeCard, handlePrevCard, handleNextCard, handleSkipCard]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (exitDirection || isFinished) return;
@@ -867,39 +902,68 @@ export const FlashcardsView: React.FC = () => {
           </div>
         )}
 
-        {/* ONDERBALK: Alleen Vorige, Rood (Fout) en Groen (Goed) (shrink-0, altijd in beeld) */}
+        {/* ONDERBALK: Vorige (<), Fout (X), Skip, Goed (Check), Volgende (>) */}
         {!isFinished && currentCard && (
-          <div className="shrink-0 grid grid-cols-11 gap-2 items-center pt-0.5 pb-1">
+          <div className="shrink-0 flex items-center justify-between gap-1.5 sm:gap-2 pt-0.5 pb-1">
+            {/* Vorige < */}
             <button
               type="button"
               onClick={handlePrevCard}
               disabled={currentIndex === 0}
-              className={`col-span-2 h-11 rounded-2xl border flex items-center justify-center transition ${
+              className={`h-11 w-11 sm:w-12 rounded-2xl border flex items-center justify-center transition shrink-0 ${
                 currentIndex === 0
                   ? 'bg-slate-100 text-slate-300 border-slate-200 cursor-not-allowed'
                   : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 active:scale-95 shadow-2xs'
               }`}
-              title="Vorige"
+              title="Vorige vraag (<)"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
 
+            {/* Fout X */}
             <button
               type="button"
               onClick={() => handleGradeCard('incorrect')}
-              className="col-span-4 h-11 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 border-2 border-rose-200 font-extrabold flex items-center justify-center shadow-2xs active:scale-95 transition"
+              className="flex-1 h-11 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 border-2 border-rose-200 font-extrabold flex items-center justify-center shadow-2xs active:scale-95 transition"
               title="Fout"
             >
               <X className="w-5 h-5 stroke-[2.75]" />
             </button>
 
+            {/* Skip / Overslaan */}
+            <button
+              type="button"
+              onClick={handleSkipCard}
+              className="px-3 sm:px-4 h-11 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200/80 font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs active:scale-95 transition shrink-0"
+              title="Vraag overslaan (kaart achteraan zetten)"
+            >
+              <SkipForward className="w-4 h-4 text-slate-500" />
+              <span className="text-[11px] sm:text-xs">Skip</span>
+            </button>
+
+            {/* Goed Check */}
             <button
               type="button"
               onClick={() => handleGradeCard('correct')}
-              className="col-span-5 h-11 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white border-2 border-emerald-600 font-extrabold flex items-center justify-center shadow-xs active:scale-95 transition"
+              className="flex-1 h-11 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white border-2 border-emerald-600 font-extrabold flex items-center justify-center shadow-xs active:scale-95 transition"
               title="Goed"
             >
               <Check className="w-5 h-5 stroke-[2.75]" />
+            </button>
+
+            {/* Volgende > */}
+            <button
+              type="button"
+              onClick={handleNextCard}
+              disabled={currentIndex >= activeDeck.length - 1}
+              className={`h-11 w-11 sm:w-12 rounded-2xl border flex items-center justify-center transition shrink-0 ${
+                currentIndex >= activeDeck.length - 1
+                  ? 'bg-slate-100 text-slate-300 border-slate-200 cursor-not-allowed'
+                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 active:scale-95 shadow-2xs'
+              }`}
+              title="Volgende vraag (>)"
+            >
+              <ChevronRight className="w-5 h-5" />
             </button>
           </div>
         )}

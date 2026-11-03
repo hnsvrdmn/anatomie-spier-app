@@ -2,12 +2,12 @@ import { FlashcardSet } from './flashcardsPart1';
 
 export const FLASHCARDS_PART_3: FlashcardSet[] = [
   // ============================================================================
-  // SET 7: ART. CUBITI (ANTWOORDEN cubiti.pdf)
+  // SET 8: ART. CUBITI (ANTWOORDEN cubiti.pdf)
   // ============================================================================
   {
     id: 'art-cubiti',
-    title: '7. Art. cubiti (Ellebooggewricht)',
-    shortTitle: '7. Art. cubiti',
+    title: '8. Art. cubiti (Ellebooggewricht)',
+    shortTitle: '8. Art. cubiti',
     pdfSource: 'ANTWOORDEN cubiti.pdf',
     description: 'Deelgewrichten, botstructuren (1-13) en spieren van de elleboog.',
     cards: [
@@ -327,12 +327,12 @@ export const FLASHCARDS_PART_3: FlashcardSet[] = [
   },
 
   // ============================================================================
-  // SET 8: ART. HUMERI (ANTWOORDEN  humeri.pdf)
+  // SET 9: ART. HUMERI (ANTWOORDEN  humeri.pdf)
   // ============================================================================
   {
     id: 'art-humeri',
-    title: '8. Art. humeri (Schoudergewricht)',
-    shortTitle: '8. Art. humeri',
+    title: '9. Art. humeri (Schoudergewricht)',
+    shortTitle: '9. Art. humeri',
     pdfSource: 'ANTWOORDEN  humeri.pdf',
     description: 'Rotator cuff, botstructuren scapula/humerus (1-14) en schouderspieren.',
     cards: [
@@ -671,12 +671,12 @@ export const FLASHCARDS_PART_3: FlashcardSet[] = [
   },
 
   // ============================================================================
-  // SET 9: CINGULUM PECTORALE (ANTWOORDEN cingulum pectorale.pdf)
+  // SET 10: CINGULUM PECTORALE (ANTWOORDEN cingulum pectorale.pdf)
   // ============================================================================
   {
     id: 'cingulum-pectorale',
-    title: '9. Cingulum Pectorale (Schoudergordel)',
-    shortTitle: '9. Cingulum',
+    title: '10. Cingulum Pectorale (Schoudergordel)',
+    shortTitle: '10. Cingulum',
     pdfSource: 'ANTWOORDEN cingulum pectorale.pdf',
     description: 'Gewrichten (SC, AC, schoudergordel-thorax), structuren en schoudergordelspieren.',
     cards: [

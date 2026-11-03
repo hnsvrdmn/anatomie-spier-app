@@ -2,12 +2,12 @@ import { FlashcardSet } from './flashcardsPart1';
 
 export const FLASHCARDS_PART_2: FlashcardSet[] = [
   // ============================================================================
-  // SET 4: ART. COXAE (Art. Coxae ANTWOORDEN.pdf)
+  // SET 5: ART. COXAE (Art. Coxae ANTWOORDEN.pdf)
   // ============================================================================
   {
     id: 'art-coxae',
-    title: '4. Art. coxae (Heupgewricht)',
-    shortTitle: '4. Art. coxae',
+    title: '5. Art. coxae (Heupgewricht)',
+    shortTitle: '5. Art. coxae',
     pdfSource: 'Art. Coxae ANTWOORDEN.pdf',
     description: 'Gewrichtskenmerken, botstructuren (1-15) en spieren van het heupgewricht.',
     cards: [
@@ -321,12 +321,12 @@ export const FLASHCARDS_PART_2: FlashcardSet[] = [
   },
 
   // ============================================================================
-  // SET 5: ART. GENUS (Art.genus ANTWOORDEN.pdf)
+  // SET 6: ART. GENUS (Art.genus ANTWOORDEN.pdf)
   // ============================================================================
   {
     id: 'art-genus',
-    title: '5. Art. genus (Kniegewricht)',
-    shortTitle: '5. Art. genus',
+    title: '6. Art. genus (Kniegewricht)',
+    shortTitle: '6. Art. genus',
     pdfSource: 'Art.genus ANTWOORDEN.pdf',
     description: 'Gewrichtskenmerken, botstructuren (1-9), ligamenten & menisci (1-7) en spieren van de knie.',
     cards: [
@@ -654,12 +654,12 @@ export const FLASHCARDS_PART_2: FlashcardSet[] = [
   },
 
   // ============================================================================
-  // SET 6: ART. PEDIS (Art. pedis ANTWOORDEN.pdf)
+  // SET 7: ART. PEDIS (Art. pedis ANTWOORDEN.pdf)
   // ============================================================================
   {
     id: 'art-pedis',
-    title: '6. Art. pedis (Enkel & Voet)',
-    shortTitle: '6. Art. pedis',
+    title: '7. Art. pedis (Enkel & Voet)',
+    shortTitle: '7. Art. pedis',
     pdfSource: 'Art. pedis ANTWOORDEN.pdf',
     description: 'Bovenste en onderste spronggewricht, botten (1-5), gewrichten (1-5), ligamenten (1-4) en spieren (1-5).',
     cards: [

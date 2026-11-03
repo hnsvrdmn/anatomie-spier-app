@@ -6,8 +6,8 @@ export type { FlashcardItem, FlashcardSet };
 
 const ROMP_SET: FlashcardSet = {
   id: 'romp',
-  title: '10. Romp (Wervelkolom, Thorax & Buikspieren)',
-  shortTitle: '10. Romp',
+  title: '11. Romp (Wervelkolom, Thorax & Buikspieren)',
+  shortTitle: '11. Romp',
   pdfSource: 'ANTWOORDEN romp.pdf',
   description: 'Wervelkolom en ribbenkast (1-10), opbouw van een wervel (1-8) en spieren van de romp.',
   cards: [
@@ -378,8 +378,8 @@ const ROMP_SET: FlashcardSet = {
 
 const OEFENTOETS_SET: FlashcardSet = {
   id: 'oefentoets_mix',
-  title: '11. Oefentoets & Examentraining Mix',
-  shortTitle: '11. Oefentoets',
+  title: '12. Oefentoets & Examentraining Mix',
+  shortTitle: '12. Oefentoets',
   pdfSource: 'OEFENTOETS ANATOMIE ANTWOORDEN.pdf',
   description: 'Toepassingsvragen uit de proeftoets en herkenningsvragen van de overzichtsplaten p. 71-74.',
   cards: [

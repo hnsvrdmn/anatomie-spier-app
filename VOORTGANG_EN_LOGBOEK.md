@@ -1988,3 +1988,61 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
   - Getoetst via geautomatiseerde end-to-end browser test met headless Edge: structuur toevoegen, prullenbak-stand activeren, marker direct aanklikken, bevestigen dat alle 4 gekoppelde punten zijn verwijderd uit `localStorage`, en uitschakelen via `Escape`.
   - `npm run build` succesvol gedraaid (`0 errors`, 3.95s).
 
+
+## 60. Flashcards: Terminologie als Eigen Categorie, 1 Vraag per Kaart, Vorige/Volgende (< >), Skip-Knop & Categorie-Correcties [2026-11-03 09:50]
+- **Vraag van de gebruiker:**
+  1. *Bij de flashcards: Terminologie moet een eigen categorie worden.*
+  2. *Er zijn vragen zoals "Wat betekenen pronatie, supinatie, inversie en eversie" in de woordenlijst. Dit moet verdeeld worden over losse kaarten. Op elke kaart moet maar om één ding gevraagd worden.*
+  3. *Er moet een mogelijkheid komen om de vorige vraag terug te zien (en de volgende als je bent teruggebladerd). Houdt het simpel, gewoon `<` en `>` icoontjes.*
+  4. *Voeg een knop toe om kaarten te skippen.*
+  5. *Verwijder het flashcard icoontje weer voor nu. Houdt de mogelijkheid om 3 keer op het `?` icoontje te drukken om bij de flashcards te komen.*
+  6. *Sommige vragen, zoals "Welk deel van de humerus maakt contact met de ellepijp (ulna)?" zitten in de verkeerde categorie. Dubbelcheck dit weer en zet ze in de juiste categorie.*
+- **Doorgevoerde oplossingen:**
+  1. **Terminologie als Eigen Categorie ([flashcardsPart1.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/flashcardsPart1.ts) & [flashcardsData.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/flashcardsData.ts)):**
+     - Nieuwe zelfstandige set aangemaakt: **"2. Terminologie & Woordenlijst"** (id: `terminologie`).
+     - Bevat alle anatomische en Latijnse begrippen uit de officiële PDF-woordenlijst (77 gerichte kaarten).
+     - Bestaande sets 1 t/m 12 chronologisch doorgenummerd:
+       - Set 1: *1. Richtingen & Aanzichten*
+       - Set 2: *2. Terminologie & Woordenlijst*
+       - Set 3: *3. Assen, Vlakken & Bewegingen*
+       - Set 4: *4. Synoviaal Gewrichten & Bewegingsanalyse*
+       - Sets 5–10: *Art. coxae, Art. genus, Art. pedis, Art. cubiti, Art. humeri, Cingulum Pectorale*
+       - Sets 11–12: *Romp & Oefentoets/Examentraining Mix*
+     - `FLASHCARDS_STORAGE_KEY` opgehoogd naar `pmt_anatomie_flashcards_custom_v4` zodat de nieuwe sets en categorieën direct actief zijn zonder caching-conflicten.
+  2. **Strikt 1 Vraag per Kaart:**
+     - Alle samengestelde vragen over termen (o.a. pronatie, supinatie, inversie, eversie, botvertalingen, gewrichtsnamen) opgeknipt in afzonderlijke micro-kaarten:
+       - `"Wat betekent pronatie in de woordenlijst?"`
+       - `"Wat betekent supinatie in de woordenlijst?"`
+       - `"Wat betekent inversie in de woordenlijst?"`
+       - `"Wat betekent eversie in de woordenlijst?"`
+       - Losse kaarten voor o.a. `scapula`, `clavicula`, `humerus`, `radius`, `ulna`, `os coxae`, `os ilium`, `os ischium`, `os pubis`, `femur`, `patella`, `tibia`, `fibula`, `margo`, `angulus`, `caput`, `collum`, `spina`, `tuber`, `condylus`, `fossa`, `incisura`, `flexie`, `extensie`, `elevatie`, `detractie`, `protractie`, `retractie`, etc.
+     - Vragen in Set 4 (`syn-7` en `syn-10`) eveneens opgeknipt in afzonderlijke vragen voor `art. coxae`, `art. genus`, `art. cubiti`, `art. humeri` en `cingulum pectorale`.
+  3. **Navigatie Vorige/Volgende met `<` en `>` Icoontjes ([FlashcardsView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/flashcards/FlashcardsView.tsx)):**
+     - Knoppenbalk onderaan voorzien van:
+       - Links: `<` knop (`ChevronLeft`) om direct terug te bladeren naar de voorgaande vraag.
+       - Rechts: `>` knop (`ChevronRight`) om weer vooruit te bladeren na terugbladeren.
+       - Automatische disabled-state wanneer men aan het begin resp. einde van de reeks is.
+       - Tevens bruikbaar via toetsenbord (`<`, `,` of `Backspace` voor vorige; `>`, `.` voor volgende).
+  4. **Skip-Knop ([FlashcardsView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/flashcards/FlashcardsView.tsx)):**
+     - Knop `[⏭ Skip]` toegevoegd in de onderbalk.
+     - Bij klikken op Skip wordt de huidige kaart direct doorgeschoven naar het einde van de wachtrij van de ronde (`activeQueueIds`), zonder deze als fout of goed te tellen.
+     - Keyboard shortcut: toets `s`.
+  5. **Flashcard-Icoontje Verwijderd & 3x Tikken op `?` ([Header.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/common/Header.tsx)):**
+     - Het flashcard-icoon (`Layers`) is verwijderd uit de mobiele en desktop navigatiebalken.
+     - Geheime 3x snelle klik op het `?` help-icoontje (`HelpCircle`) schakelt direct door naar `#flashcards` (`appMode = 'flashcards'`).
+     - Debounce-timer (280ms) ingesteld voor enkelvoudig klikken op `?`, zodat het interactieve hulpvenster pas opent als er géén 3x geklikt wordt (voorkomt dat het modale venster de 2e of 3e klik onderschept).
+  6. **Herindeling van Verkeerd Geplaatste Vragen:**
+     - Vraag *"Welk deel van de humerus maakt contact met de ellepijp (ulna)?"* (Trochlea humeri) verhuisd van Set 1 (Richtingen) naar Set 8 (**Art. cubiti**, `cub-4b`).
+     - Vraag *"Hoe heten het proximale en distale gewricht tussen radius en ulna?"* (Art. radio-ulnaris proximalis & distalis) verhuisd naar Set 8 (**Art. cubiti**, `cub-6b`).
+     - Vraag *"Welk deel van het opperarmbeen (humerus) maakt contact met de scapula?"* (Caput humeri) verhuisd naar Set 9 (**Art. humeri**, `hum-4b`).
+     - Vraag *"Welk deel van het schouderblad (scapula) maakt contact met het sleutelbeen (clavicula)?"* (Acromion) verhuisd naar Set 10 (**Cingulum Pectorale**, `cin-4b`).
+- **Verificatie:**
+  - TypeScript compilatie en Vite build gerund: `npm run build` geslaagd zonder waarschuwingen of fouten (`✓ built in 4.02s`).
+  - End-to-end getoetst via geautomatiseerde headless Chrome CDP tests:
+    - Afwezigheid van flashcard-icoon in hoofdnavigatie bevestigd.
+    - 3x snel tikken op `?` opent direct `#flashcards`.
+    - Landing page toont Set 2 *Terminologie & Woordenlijst* met 77 enkelvoudige vragen.
+    - Skip-knop getest: verschuift kaart naar het einde van de wachtrij en toont volgende kaart.
+    - Omdraaien, beoordelen met *Goed*, terugbladeren met `<` en weer vooruit met `>` met 100% succes gevalideerd.
+
+
