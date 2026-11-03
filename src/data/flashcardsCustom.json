@@ -1,1 +1,4680 @@
-[]
+[
+  {
+    "id": "richtingen",
+    "title": "1. Richtingen & Aanzichten",
+    "shortTitle": "1. Richtingen",
+    "pdfSource": "ANTWOORDEN richtingen.pdf",
+    "description": "Anatomische richtingsaanduidingen, aanzichten en oriëntatiepunten.",
+    "cards": [
+      {
+        "id": "rich-1",
+        "setId": "richtingen",
+        "categoryLabel": "Richtingen",
+        "question": "Wat betekent mediaal?",
+        "answer": "Richting het midden (de mediaanlijn) van het lichaam."
+      },
+      {
+        "id": "rich-2",
+        "setId": "richtingen",
+        "categoryLabel": "Richtingen",
+        "question": "Wat betekent lateraal?",
+        "answer": "Van het midden van het lichaam vandaan (naar de zijkant)."
+      },
+      {
+        "id": "rich-3",
+        "setId": "richtingen",
+        "categoryLabel": "Richtingen",
+        "question": "Ligt de kleine teen mediaal of lateraal ten opzichte van de grote teen?",
+        "answer": "Lateraal."
+      },
+      {
+        "id": "rich-4",
+        "setId": "richtingen",
+        "categoryLabel": "Richtingen",
+        "question": "Ligt de duim in de anatomische houding mediaal of lateraal ten opzichte van de pink?",
+        "answer": "Lateraal."
+      },
+      {
+        "id": "rich-5",
+        "setId": "richtingen",
+        "categoryLabel": "Richtingen",
+        "question": "Ligt de pink in de anatomische houding mediaal of lateraal ten opzichte van de wijsvinger?",
+        "answer": "Mediaal."
+      },
+      {
+        "id": "rich-10a",
+        "setId": "richtingen",
+        "categoryLabel": "Richtingen",
+        "question": "Wat betekent superior (binnen een botstuk of lichaam)?",
+        "answer": "Bovengelegen (naar boven gericht)."
+      },
+      {
+        "id": "rich-10b",
+        "setId": "richtingen",
+        "categoryLabel": "Richtingen",
+        "question": "Wat betekent inferior (binnen een botstuk of lichaam)?",
+        "answer": "Ondergelegen (naar beneden gericht)."
+      },
+      {
+        "id": "rich-12a",
+        "setId": "richtingen",
+        "categoryLabel": "Richtingen",
+        "question": "Wat betekent ventraal?",
+        "answer": "Aan de voorzijde (buikzijde) van het lichaam."
+      },
+      {
+        "id": "rich-12b",
+        "setId": "richtingen",
+        "categoryLabel": "Richtingen",
+        "question": "Wat betekent dorsaal?",
+        "answer": "Aan de achterzijde (rugzijde) van het lichaam."
+      },
+      {
+        "id": "rich-13",
+        "setId": "richtingen",
+        "categoryLabel": "Aanzichten",
+        "question": "Welk aanzicht (ventraal of dorsaal) zie je hier van art. genus (knie) en waaraan zie je dat?",
+        "answer": "Ventraal aanzicht — te zien aan de patella (knieschijf).",
+        "imageUrl": "/images/flashcards/richtingen_aanzichten.png"
+      },
+      {
+        "id": "rich-14",
+        "setId": "richtingen",
+        "categoryLabel": "Aanzichten",
+        "question": "Welk aanzicht (ventraal of dorsaal) zie je hier van de scapula en waaraan zie je dat?",
+        "answer": "Dorsaal aanzicht — te zien aan de spina scapulae.",
+        "imageUrl": "/images/flashcards/richtingen_aanzichten.png"
+      },
+      {
+        "id": "rich-15",
+        "setId": "richtingen",
+        "categoryLabel": "Aanzichten",
+        "question": "Welk aanzicht hebben de twee afgebeelde humeri (links en rechts) en waaraan zie je dat?",
+        "answer": "• Links = ventraal\n• Rechts = dorsaal (te zien aan de fossa olecrani)",
+        "imageUrl": "/images/flashcards/richtingen_aanzichten.png"
+      },
+      {
+        "id": "rich-16a",
+        "setId": "richtingen",
+        "categoryLabel": "Richtingen",
+        "question": "Wat betekent anterior (binnen een botstuk)?",
+        "answer": "Aan de voorzijde gelegen."
+      },
+      {
+        "id": "rich-16b",
+        "setId": "richtingen",
+        "categoryLabel": "Richtingen",
+        "question": "Wat betekent posterior (binnen een botstuk)?",
+        "answer": "Aan de achterzijde gelegen."
+      },
+      {
+        "id": "rich-coxae-aanzicht",
+        "setId": "richtingen",
+        "categoryLabel": "Aanzichten",
+        "question": "Welk aanzicht (mediaal of lateraal) zie je hier van het linker en rechter os coxae en waaraan herken je dat?",
+        "answer": "• Links = mediaal aanzicht (binnenzijde — herkenbaar aan de facies auricularis / gewrichtsvlak met het heiligbeen)\n• Rechts = lateraal aanzicht (buitenzijde — herkenbaar aan het acetabulum / de heupkom)\n• Voorzijde (anterior): SIAS (a) en SIAI (b)\n• Achterzijde (posterior): SIPS (c) en SIPI (d)",
+        "imageUrl": "/images/flashcards/richtingen_os_coxae.png"
+      },
+      {
+        "id": "rich-22a",
+        "setId": "richtingen",
+        "categoryLabel": "Richtingen",
+        "question": "Wat betekent proximaal (bij extremiteiten)?",
+        "answer": "Richting de aanhechting van de extremiteit (dichter bij de romp)."
+      },
+      {
+        "id": "rich-22b",
+        "setId": "richtingen",
+        "categoryLabel": "Richtingen",
+        "question": "Wat betekent distaal (bij extremiteiten)?",
+        "answer": "Verder van de aanhechting van de extremiteit verwijderd (verder van de romp)."
+      },
+      {
+        "id": "rich-23",
+        "setId": "richtingen",
+        "categoryLabel": "Richtingen",
+        "question": "Ligt de pols proximaal of distaal van de elleboog?",
+        "answer": "Distaal."
+      },
+      {
+        "id": "rich-24",
+        "setId": "richtingen",
+        "categoryLabel": "Richtingen",
+        "question": "Ligt de elleboog proximaal of distaal van de schouder?",
+        "answer": "Distaal."
+      },
+      {
+        "id": "rich-25",
+        "setId": "richtingen",
+        "categoryLabel": "Richtingen",
+        "question": "Ligt de knie proximaal of distaal van de heup?",
+        "answer": "Distaal."
+      },
+      {
+        "id": "rich-26",
+        "setId": "richtingen",
+        "categoryLabel": "Richtingen",
+        "question": "Ligt de knie proximaal of distaal van de enkel?",
+        "answer": "Proximaal."
+      }
+    ]
+  },
+  {
+    "id": "terminologie",
+    "title": "2a. Terminologie (Latijn ➔ Nederlands)",
+    "shortTitle": "2a. Latijn ➔ NL",
+    "pdfSource": "ANTWOORDEN richtingen.pdf (Woordenlijst)",
+    "description": "Latijnse anatomische terminologie, botvormen, bewegingsbegrippen en vertalingen (1 vraag per kaart).",
+    "cards": [
+      {
+        "id": "term-scapula",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van scapula?",
+        "answer": "Schouderblad."
+      },
+      {
+        "id": "term-clavicula",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van clavicula?",
+        "answer": "Sleutelbeen."
+      },
+      {
+        "id": "term-humerus",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van humerus?",
+        "answer": "Opperarmbeen."
+      },
+      {
+        "id": "term-radius",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van radius?",
+        "answer": "Spaakbeen."
+      },
+      {
+        "id": "term-ulna",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van ulna?",
+        "answer": "Ellepijp."
+      },
+      {
+        "id": "term-coxae",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van os coxae?",
+        "answer": "Heupbeen (bekkenhelft)."
+      },
+      {
+        "id": "term-ilium",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van os ilium?",
+        "answer": "Darmbeen."
+      },
+      {
+        "id": "term-ischium",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van os ischium?",
+        "answer": "Zitbeen."
+      },
+      {
+        "id": "term-pubis",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van os pubis?",
+        "answer": "Schaambeen."
+      },
+      {
+        "id": "term-femur",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van femur?",
+        "answer": "Dijbeen."
+      },
+      {
+        "id": "term-patella",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van patella?",
+        "answer": "Knieschijf."
+      },
+      {
+        "id": "term-tibia",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van tibia?",
+        "answer": "Scheenbeen."
+      },
+      {
+        "id": "term-fibula",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van fibula?",
+        "answer": "Kuitbeen."
+      },
+      {
+        "id": "term-costae",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van costae?",
+        "answer": "Ribben."
+      },
+      {
+        "id": "term-sternum",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van sternum?",
+        "answer": "Borstbeen."
+      },
+      {
+        "id": "term-vertebrae",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van vertebrae?",
+        "answer": "Wervels."
+      },
+      {
+        "id": "term-margo",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van margo?",
+        "answer": "Rand."
+      },
+      {
+        "id": "term-margo-med",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent margo medialis?",
+        "answer": "Mediale rand (binnenrand)."
+      },
+      {
+        "id": "term-margo-lat",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent margo lateralis?",
+        "answer": "Laterale rand (buitenrand)."
+      },
+      {
+        "id": "term-angulus",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van angulus?",
+        "answer": "Hoek."
+      },
+      {
+        "id": "term-angulus-sup",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent angulus superior?",
+        "answer": "Bovenhoek."
+      },
+      {
+        "id": "term-angulus-inf",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent angulus inferior?",
+        "answer": "Onderhoek."
+      },
+      {
+        "id": "term-caput",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent caput in de anatomische terminologie?",
+        "answer": "Kop of hoofd."
+      },
+      {
+        "id": "term-collum",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent collum in de anatomische terminologie?",
+        "answer": "Hals."
+      },
+      {
+        "id": "term-corpus",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent corpus in de anatomische terminologie?",
+        "answer": "Lichaam of schacht van een bot."
+      },
+      {
+        "id": "term-spina",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent spina in de anatomische terminologie?",
+        "answer": "Doorn of doornvormig uitsteeksel."
+      },
+      {
+        "id": "term-crista",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent crista in de anatomische terminologie?",
+        "answer": "Kam of richel."
+      },
+      {
+        "id": "term-processus",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent processus in de anatomische terminologie?",
+        "answer": "Uitsteeksel."
+      },
+      {
+        "id": "term-tuber",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent tuber in de anatomische terminologie?",
+        "answer": "Knobbel."
+      },
+      {
+        "id": "term-tuberculum",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent tuberculum in de anatomische terminologie?",
+        "answer": "Knobbeltje (kleine knobbel)."
+      },
+      {
+        "id": "term-tuberositas",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent tuberositas in de anatomische terminologie?",
+        "answer": "Ruwe verhevenheid (ruwheid op een bot)."
+      },
+      {
+        "id": "term-condylus",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent condylus in de anatomische terminologie?",
+        "answer": "Gewrichtsknobbel."
+      },
+      {
+        "id": "term-epicondylus",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent epicondylus in de anatomische terminologie?",
+        "answer": "Knobbel op of boven een gewrichtsknobbel."
+      },
+      {
+        "id": "term-malleolus",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent malleolus in de anatomische terminologie?",
+        "answer": "Enkelknobbel (binnen- of buitenenkel)."
+      },
+      {
+        "id": "term-fossa",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent fossa in de anatomische terminologie?",
+        "answer": "Groeve of kuil."
+      },
+      {
+        "id": "term-incisura",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent incisura in de anatomische terminologie?",
+        "answer": "Insnijding of inkeping."
+      },
+      {
+        "id": "term-sulcus",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent sulcus in de anatomische terminologie?",
+        "answer": "Gleuf of groef."
+      },
+      {
+        "id": "term-major",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent major in de anatomische terminologie?",
+        "answer": "Groot."
+      },
+      {
+        "id": "term-minor",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent minor in de anatomische terminologie?",
+        "answer": "Klein."
+      },
+      {
+        "id": "term-longus",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent longus in de anatomische terminologie?",
+        "answer": "Lang."
+      },
+      {
+        "id": "term-brevis",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent brevis in de anatomische terminologie?",
+        "answer": "Kort."
+      },
+      {
+        "id": "term-externus",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent externus in de anatomische terminologie?",
+        "answer": "Buitenste (aan de buitenzijde)."
+      },
+      {
+        "id": "term-internus",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent internus in de anatomische terminologie?",
+        "answer": "Binnenste (aan de binnenzijde)."
+      },
+      {
+        "id": "term-rectus",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent rectus in de anatomische terminologie?",
+        "answer": "Recht."
+      },
+      {
+        "id": "term-obliquus",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent obliquus in de anatomische terminologie?",
+        "answer": "Schuin."
+      },
+      {
+        "id": "term-biceps",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent biceps in de anatomische terminologie?",
+        "answer": "Tweehoofdig (spier met 2 koppen)."
+      },
+      {
+        "id": "term-triceps",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent triceps in de anatomische terminologie?",
+        "answer": "Driehoofdig (spier met 3 koppen)."
+      },
+      {
+        "id": "term-quadriceps",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent quadriceps in de anatomische terminologie?",
+        "answer": "Vierhoofdig (spier met 4 koppen)."
+      },
+      {
+        "id": "term-frontaal",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent frontaal in de anatomische terminologie?",
+        "answer": "Evenwijdig aan het voorhoofd."
+      },
+      {
+        "id": "term-sagittaal",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent sagittaal in de anatomische terminologie?",
+        "answer": "Van voor naar achter gericht (pijlnaad)."
+      },
+      {
+        "id": "term-transversaal",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent transversaal in de anatomische terminologie?",
+        "answer": "Dwars of horizontaal doorsnijdend."
+      },
+      {
+        "id": "term-longitudinaal",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent longitudinaal in de anatomische terminologie?",
+        "answer": "In de lengterichting verlopend."
+      },
+      {
+        "id": "term-abductie",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent abductie?",
+        "answer": "Afvoeren (van het midden van het lichaam weg bewegen)."
+      },
+      {
+        "id": "term-adductie",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent adductie?",
+        "answer": "Aanvoeren (naar het midden van het lichaam toe bewegen)."
+      },
+      {
+        "id": "term-flexie",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent flexie?",
+        "answer": "Buigen van een gewricht."
+      },
+      {
+        "id": "term-extensie",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent extensie?",
+        "answer": "Strekken van een gewricht."
+      },
+      {
+        "id": "term-anteflexie",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent anteflexie?",
+        "answer": "Naar voren bewegen / heffen van de arm of het been."
+      },
+      {
+        "id": "term-retroflexie",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent retroflexie?",
+        "answer": "Naar achteren bewegen van de arm of het been."
+      },
+      {
+        "id": "term-endorotatie",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent endorotatie?",
+        "answer": "Binnenwaartse rotatie (naar binnen draaien om de lengte-as)."
+      },
+      {
+        "id": "term-exorotatie",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent exorotatie?",
+        "answer": "Buitenwaartse rotatie (naar buiten draaien om de lengte-as)."
+      },
+      {
+        "id": "term-elevatie",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent elevatie?",
+        "answer": "Naar boven bewegen (heffen van de schoudergordel)."
+      },
+      {
+        "id": "term-detractie",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent detractie (depressie)?",
+        "answer": "Naar beneden bewegen (omlaag brengen van de schoudergordel)."
+      },
+      {
+        "id": "term-protractie",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent protractie?",
+        "answer": "Naar voren bewegen van de schoudergordel (bolle rug)."
+      },
+      {
+        "id": "term-retractie",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent retractie?",
+        "answer": "Naar achteren bewegen van de schoudergordel (schouderbladen naar elkaar toe trekken)."
+      },
+      {
+        "id": "term-pronatie",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent pronatie in de woordenlijst?",
+        "answer": "Binnenwaarts draaien van de onderarm/hand (handpalm naar achteren/beneden)."
+      },
+      {
+        "id": "term-supinatie",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent supinatie in de woordenlijst?",
+        "answer": "Buitenwaarts draaien van de onderarm/hand (handpalm naar voren/boven, zoals bij een soepkom)."
+      },
+      {
+        "id": "term-inversie",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent inversie in de woordenlijst?",
+        "answer": "Binnenwaarts kantelen van de voet (mediale voetrand omhoog geheven)."
+      },
+      {
+        "id": "term-eversie",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent eversie in de woordenlijst?",
+        "answer": "Buitenwaarts kantelen van de voet (laterale voetrand omhoog geheven)."
+      },
+      {
+        "id": "term-levator",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent levator in de anatomische terminologie?",
+        "answer": "Heffer (spier die een structuur omhoog beweegt)."
+      },
+      {
+        "id": "term-erector",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent erector in de anatomische terminologie?",
+        "answer": "Oprichter of strekker."
+      },
+      {
+        "id": "term-tensor",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat betekent tensor in de anatomische terminologie?",
+        "answer": "Spanner (spier die een peesblad of kapsel aanspant)."
+      },
+      {
+        "id": "term-art-coxae",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van art. coxae?",
+        "answer": "Heupgewricht."
+      },
+      {
+        "id": "term-art-genus",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van art. genus?",
+        "answer": "Kniegewricht."
+      },
+      {
+        "id": "term-art-talocruralis",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van art. talocruralis?",
+        "answer": "Bovenste spronggewricht (bovenste enkelgewricht)."
+      },
+      {
+        "id": "term-art-cubiti",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van art. cubiti?",
+        "answer": "Ellebooggewricht."
+      },
+      {
+        "id": "term-art-humeri",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van art. humeri?",
+        "answer": "Schoudergewricht."
+      },
+      {
+        "id": "term-cingulum",
+        "setId": "terminologie",
+        "categoryLabel": "Terminologie",
+        "question": "Wat is de Nederlandse vertaling van cingulum pectorale?",
+        "answer": "Schoudergordel."
+      }
+    ]
+  },
+  {
+    "id": "terminologie-nl-lat",
+    "title": "2b. Terminologie (Nederlands ➔ Latijn)",
+    "shortTitle": "2b. NL ➔ Latijn",
+    "pdfSource": "ANTWOORDEN richtingen.pdf (Woordenlijst)",
+    "description": "Nederlandse termen vertalen naar de officiële Latijnse anatomische benamingen (Nederlands ➔ Latijn).",
+    "cards": [
+      {
+        "id": "termnl-scapula",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse naam voor het schouderblad?",
+        "answer": "Scapula (os scapula)."
+      },
+      {
+        "id": "termnl-clavicula",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse naam voor het sleutelbeen?",
+        "answer": "Clavicula (os clavicula)."
+      },
+      {
+        "id": "termnl-humerus",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse naam voor het opperarmbeen?",
+        "answer": "Humerus (os humerus)."
+      },
+      {
+        "id": "termnl-radius",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse naam voor het spaakbeen?",
+        "answer": "Radius (os radius)."
+      },
+      {
+        "id": "termnl-ulna",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse naam voor de ellepijp?",
+        "answer": "Ulna (os ulna)."
+      },
+      {
+        "id": "termnl-coxae",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse naam voor het heupbeen (bekkenhelft)?",
+        "answer": "Os coxae."
+      },
+      {
+        "id": "termnl-ilium",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse naam voor het darmbeen?",
+        "answer": "Os ilium."
+      },
+      {
+        "id": "termnl-ischium",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse naam voor het zitbeen?",
+        "answer": "Os ischium (os ischii)."
+      },
+      {
+        "id": "termnl-pubis",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse naam voor het schaambeen?",
+        "answer": "Os pubis."
+      },
+      {
+        "id": "termnl-femur",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse naam voor het dijbeen?",
+        "answer": "Femur (os femur)."
+      },
+      {
+        "id": "termnl-patella",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse naam voor de knieschijf?",
+        "answer": "Patella (os patella)."
+      },
+      {
+        "id": "termnl-tibia",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse naam voor het scheenbeen?",
+        "answer": "Tibia (os tibia)."
+      },
+      {
+        "id": "termnl-fibula",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse naam voor het kuitbeen?",
+        "answer": "Fibula (os fibula)."
+      },
+      {
+        "id": "termnl-costae",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse naam voor de ribben?",
+        "answer": "Costae (enkelvoud: costa)."
+      },
+      {
+        "id": "termnl-sternum",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse naam voor het borstbeen?",
+        "answer": "Sternum (os sternum)."
+      },
+      {
+        "id": "termnl-vertebrae",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse naam voor de wervels?",
+        "answer": "Vertebrae (enkelvoud: vertebra)."
+      },
+      {
+        "id": "termnl-margo",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse term voor een rand op een bot?",
+        "answer": "Margo."
+      },
+      {
+        "id": "termnl-margo-med",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse term voor de mediale rand (binnenrand)?",
+        "answer": "Margo medialis."
+      },
+      {
+        "id": "termnl-margo-lat",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse term voor de laterale rand (buitenrand)?",
+        "answer": "Margo lateralis."
+      },
+      {
+        "id": "termnl-angulus",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse term voor een hoek van een botstuk?",
+        "answer": "Angulus."
+      },
+      {
+        "id": "termnl-angulus-sup",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse term voor de bovenhoek van een bot?",
+        "answer": "Angulus superior."
+      },
+      {
+        "id": "termnl-angulus-inf",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de Latijnse term voor de onderhoek van een bot?",
+        "answer": "Angulus inferior."
+      },
+      {
+        "id": "termnl-caput",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent kop of hoofd van een bot?",
+        "answer": "Caput."
+      },
+      {
+        "id": "termnl-collum",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent hals van een bot?",
+        "answer": "Collum."
+      },
+      {
+        "id": "termnl-corpus",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent lichaam of schacht van een bot?",
+        "answer": "Corpus."
+      },
+      {
+        "id": "termnl-spina",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent doorn of doornvormig uitsteeksel?",
+        "answer": "Spina."
+      },
+      {
+        "id": "termnl-crista",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent kam of richel op een bot?",
+        "answer": "Crista."
+      },
+      {
+        "id": "termnl-processus",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent uitsteeksel op een botstuk?",
+        "answer": "Processus."
+      },
+      {
+        "id": "termnl-tuber",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent een grote botknobbel?",
+        "answer": "Tuber."
+      },
+      {
+        "id": "termnl-tuberculum",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent een knobbeltje (kleine verhevenheid)?",
+        "answer": "Tuberculum."
+      },
+      {
+        "id": "termnl-tuberositas",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent een ruwe verhevenheid (ruwheid op een bot)?",
+        "answer": "Tuberositas."
+      },
+      {
+        "id": "termnl-condylus",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent gewrichtsknobbel?",
+        "answer": "Condylus."
+      },
+      {
+        "id": "termnl-epicondylus",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent een knobbel boven of op een gewrichtsknobbel?",
+        "answer": "Epicondylus."
+      },
+      {
+        "id": "termnl-malleolus",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent enkelknobbel (binnen- of buitenenkel)?",
+        "answer": "Malleolus (malleolus medialis / lateralis)."
+      },
+      {
+        "id": "termnl-fossa",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent groeve of kuil in een bot?",
+        "answer": "Fossa."
+      },
+      {
+        "id": "termnl-incisura",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent insnijding of inkeping in een botrand?",
+        "answer": "Incisura."
+      },
+      {
+        "id": "termnl-sulcus",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent gleuf of groef?",
+        "answer": "Sulcus."
+      },
+      {
+        "id": "termnl-major",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent groot (bijv. in spiernamen)?",
+        "answer": "Major."
+      },
+      {
+        "id": "termnl-minor",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent klein (bijv. in spiernamen)?",
+        "answer": "Minor."
+      },
+      {
+        "id": "termnl-longus",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent lang?",
+        "answer": "Longus."
+      },
+      {
+        "id": "termnl-brevis",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent kort?",
+        "answer": "Brevis."
+      },
+      {
+        "id": "termnl-externus",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent buitenste (aan de buitenzijde gelegen)?",
+        "answer": "Externus."
+      },
+      {
+        "id": "termnl-internus",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent binnenste (aan de binnenzijde gelegen)?",
+        "answer": "Internus."
+      },
+      {
+        "id": "termnl-rectus",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent recht (rechtlopend)?",
+        "answer": "Rectus."
+      },
+      {
+        "id": "termnl-obliquus",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent schuin (schuinlopend)?",
+        "answer": "Obliquus."
+      },
+      {
+        "id": "termnl-biceps",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent tweehoofdig (spier met 2 koppen)?",
+        "answer": "Biceps."
+      },
+      {
+        "id": "termnl-triceps",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent driehoofdig (spier met 3 koppen)?",
+        "answer": "Triceps."
+      },
+      {
+        "id": "termnl-quadriceps",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse term betekent vierhoofdig (spier met 4 koppen)?",
+        "answer": "Quadriceps."
+      },
+      {
+        "id": "termnl-frontaal",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welk anatomisch vlak loopt evenwijdig aan het voorhoofd?",
+        "answer": "Frontale vlak (planum frontale)."
+      },
+      {
+        "id": "termnl-sagittaal",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welk anatomisch vlak loopt van voor naar achter (evenwijdig aan de pijlnaad)?",
+        "answer": "Sagittale vlak (planum sagittale)."
+      },
+      {
+        "id": "termnl-transversaal",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welk anatomisch vlak verdeelt het lichaam horizontaal in een boven- en onderhelft?",
+        "answer": "Transversale vlak (planum transversale)."
+      },
+      {
+        "id": "termnl-longitudinaal",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke anatomische as loopt verticaal in de lengterichting van boven naar beneden?",
+        "answer": "Longitudinale as (lengte-as)."
+      },
+      {
+        "id": "termnl-abductie",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Hoe heet de beweging van het midden van het lichaam weg (afvoeren)?",
+        "answer": "Abductie."
+      },
+      {
+        "id": "termnl-adductie",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Hoe heet de beweging naar het midden van het lichaam toe (aanvoeren)?",
+        "answer": "Adductie."
+      },
+      {
+        "id": "termnl-flexie",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Hoe heet de algemene buigbeweging van een gewricht?",
+        "answer": "Flexie (buiging)."
+      },
+      {
+        "id": "termnl-extensie",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Hoe heet de algemene strekbeweging van een gewricht?",
+        "answer": "Extensie (strekking)."
+      },
+      {
+        "id": "termnl-anteflexie",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Hoe heet het naar voren bewegen / heffen van de arm of het been?",
+        "answer": "Anteflexie."
+      },
+      {
+        "id": "termnl-retroflexie",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Hoe heet het naar achteren bewegen van de arm of het been?",
+        "answer": "Retroflexie."
+      },
+      {
+        "id": "termnl-endorotatie",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Hoe heet de binnenwaartse draaiing om de lengte-as?",
+        "answer": "Endorotatie."
+      },
+      {
+        "id": "termnl-exorotatie",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Hoe heet de buitenwaartse draaiing om de lengte-as?",
+        "answer": "Exorotatie."
+      },
+      {
+        "id": "termnl-elevatie",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Hoe heet het naar boven bewegen / heffen van de schoudergordel?",
+        "answer": "Elevatie."
+      },
+      {
+        "id": "termnl-detractie",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Hoe heet het naar beneden bewegen / omlaag brengen van de schoudergordel?",
+        "answer": "Detractie (of depressie)."
+      },
+      {
+        "id": "termnl-protractie",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Hoe heet het naar voren bewegen van de schoudergordel (bolle bovenrug)?",
+        "answer": "Protractie."
+      },
+      {
+        "id": "termnl-retractie",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Hoe heet het naar achteren trekken van de schoudergordel (schouderbladen naar elkaar)?",
+        "answer": "Retractie."
+      },
+      {
+        "id": "termnl-pronatie",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Hoe heet het naar binnen draaien van de onderarm/hand (handpalm naar achteren/omlaag)?",
+        "answer": "Pronatie."
+      },
+      {
+        "id": "termnl-supinatie",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Hoe heet het naar buiten draaien van de onderarm/hand (handpalm naar voren/omhoog, soepkom)?",
+        "answer": "Supinatie."
+      },
+      {
+        "id": "termnl-inversie",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Hoe heet het naar binnen kantelen van de voet (mediale voetrand omhoog)?",
+        "answer": "Inversie."
+      },
+      {
+        "id": "termnl-eversie",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Hoe heet het naar buiten kantelen van de voet (laterale voetrand omhoog)?",
+        "answer": "Eversie."
+      },
+      {
+        "id": "termnl-levator",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse spierfunctieterm betekent heffer (spier die omhoog beweegt)?",
+        "answer": "Levator (bijv. m. levator scapulae)."
+      },
+      {
+        "id": "termnl-erector",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse spierfunctieterm betekent oprichter of strekker?",
+        "answer": "Erector (bijv. m. erector spinae)."
+      },
+      {
+        "id": "termnl-tensor",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Welke Latijnse spierfunctieterm betekent spanner (spier die een peesblad aanspant)?",
+        "answer": "Tensor (bijv. m. tensor fasciae latae)."
+      },
+      {
+        "id": "termnl-art-coxae",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de officiële Latijnse naam voor het heupgewricht?",
+        "answer": "Art. coxae (articulatio coxae)."
+      },
+      {
+        "id": "termnl-art-genus",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de officiële Latijnse naam voor het kniegewricht?",
+        "answer": "Art. genus (articulatio genus)."
+      },
+      {
+        "id": "termnl-art-talocruralis",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de officiële Latijnse naam voor het bovenste spronggewricht (BSG)?",
+        "answer": "Art. talocruralis."
+      },
+      {
+        "id": "termnl-art-cubiti",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de officiële Latijnse naam voor het ellebooggewricht?",
+        "answer": "Art. cubiti (articulatio cubiti)."
+      },
+      {
+        "id": "termnl-art-humeri",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de officiële Latijnse naam voor het schoudergewricht?",
+        "answer": "Art. humeri (articulatio humeri)."
+      },
+      {
+        "id": "termnl-cingulum",
+        "setId": "terminologie-nl-lat",
+        "categoryLabel": "Terminologie NL ➔ Latijn",
+        "question": "Wat is de officiële Latijnse naam voor de schoudergordel?",
+        "answer": "Cingulum pectorale."
+      }
+    ]
+  },
+  {
+    "id": "assen-vlakken-bewegingen",
+    "title": "3. Assen, Vlakken & Bewegingen",
+    "shortTitle": "3. Assen & Vlakken",
+    "pdfSource": "ANTWOORDEN assen en vlakken.pdf & ANTWOORDEN assen vlakken en bewegingen.pdf",
+    "description": "De drie vlakken, de drie assen en de bewegingen per gewricht.",
+    "cards": [
+      {
+        "id": "avb-1",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Vlakken",
+        "question": "Welke drie vlakken zijn hier van links naar rechts afgebeeld?",
+        "answer": "• Links = Frontaal vlak\n• Midden = Sagittaal vlak\n• Rechts = Transversaal vlak",
+        "imageUrl": "/images/flashcards/assen_vlakken_3vlakken.png"
+      },
+      {
+        "id": "avb-2",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Assen",
+        "question": "Welke as hoort bij letter F in deze figuur?",
+        "answer": "Longitudinale as.",
+        "imageUrl": "/images/flashcards/assen_vlakken_3assen.png"
+      },
+      {
+        "id": "avb-3",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Assen",
+        "question": "Welke as hoort bij letter S in deze figuur?",
+        "answer": "Sagittale as.",
+        "imageUrl": "/images/flashcards/assen_vlakken_3assen.png"
+      },
+      {
+        "id": "avb-4",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Assen",
+        "question": "Welke as hoort bij letter H in deze figuur?",
+        "answer": "Transversale as.",
+        "imageUrl": "/images/flashcards/assen_vlakken_3assen.png"
+      },
+      {
+        "id": "avb-5",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "As & Vlak",
+        "question": "Welk vlak staat loodrecht op de transversale as en welke bewegingen vinden hierin plaats?",
+        "answer": "• Vlak: Sagittaal vlak\n• Bewegingen: Flexie en extensie (buigen en strekken)"
+      },
+      {
+        "id": "avb-6",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "As & Vlak",
+        "question": "Welk vlak staat loodrecht op de sagittale as en welke bewegingen vinden hierin plaats?",
+        "answer": "• Vlak: Frontaal vlak\n• Bewegingen: Abductie en adductie (afvoeren en aanvoeren)"
+      },
+      {
+        "id": "avb-7",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "As & Vlak",
+        "question": "Welk vlak staat loodrecht op de longitudinale as en welke bewegingen vinden hierin plaats?",
+        "answer": "• Vlak: Transversaal vlak\n• Bewegingen: Rotaties (draaiende bewegingen)"
+      },
+      {
+        "id": "avb-8",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Art. coxae",
+        "question": "Hoe heet het naar voor en achter bewegen in art. coxae (heupgewricht)?",
+        "answer": "Anteflexie en retroflexie (vlak: S, as: T).",
+        "imageUrl": "/images/flashcards/bewegingen_coxae.png"
+      },
+      {
+        "id": "avb-9",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Art. coxae",
+        "question": "Hoe heet het af- en aanvoeren in art. coxae (heupgewricht)?",
+        "answer": "Abductie en adductie (vlak: F, as: S).",
+        "imageUrl": "/images/flashcards/bewegingen_coxae.png"
+      },
+      {
+        "id": "avb-10",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Art. coxae",
+        "question": "Hoe heet het buiten- en binnenwaarts roteren in art. coxae (heupgewricht)?",
+        "answer": "Exorotatie en endorotatie (vlak: T, as: L).",
+        "imageUrl": "/images/flashcards/bewegingen_coxae.png"
+      },
+      {
+        "id": "avb-11",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Art. genus",
+        "question": "Hoe heet het buigen en strekken in art. genus (knie)?",
+        "answer": "Flexie en extensie (vlak: S, as: T)."
+      },
+      {
+        "id": "avb-12",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Art. genus",
+        "question": "Hoe heet het buitenwaarts en binnenwaarts roteren in art. genus (knie)?",
+        "answer": "Exorotatie en endorotatie (vlak: T, as: L)."
+      },
+      {
+        "id": "avb-13",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Art. pedis",
+        "question": "Hoe heet het richting de voetzool en voetrug bewegen in het bovenste spronggewricht?",
+        "answer": "Plantairflexie en dorsaalflexie (vlak: S, as: T).",
+        "imageUrl": "/images/flashcards/bewegingen_pedis.png"
+      },
+      {
+        "id": "avb-14",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Art. pedis",
+        "question": "Hoe heet het buitenwaarts en binnenwaarts roteren in het onderste spronggewricht?",
+        "answer": "Eversie en inversie (vlak: n.v.t., as: n.v.t.).",
+        "imageUrl": "/images/flashcards/bewegingen_pedis.png"
+      },
+      {
+        "id": "avb-15",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Art. humeri",
+        "question": "Hoe heet het naar voor en achter bewegen van de geheven arm in art. humeri?",
+        "answer": "Horizontale adductie en Horizontale abductie (vlak: n.v.t., as: n.v.t.)."
+      },
+      {
+        "id": "avb-16",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Art. humeri",
+        "question": "Hoe heet het naar achter en voor bewegen van de arm in art. humeri (vanuit anatomische houding)?",
+        "answer": "Retroflexie en anteflexie (vlak: S, as: T)."
+      },
+      {
+        "id": "avb-17",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Art. humeri",
+        "question": "Hoe heet het af- en aanvoeren in art. humeri (schoudergewricht)?",
+        "answer": "Abductie en adductie (vlak: F, as: S)."
+      },
+      {
+        "id": "avb-18",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Art. humeri",
+        "question": "Hoe heet het binnenwaarts en buitenwaarts roteren in art. humeri (schoudergewricht)?",
+        "answer": "Endorotatie en exorotatie (vlak: T, as: L)."
+      },
+      {
+        "id": "avb-19",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Art. cubiti",
+        "question": "Hoe heet het buigen en strekken in art. cubiti (elleboog)?",
+        "answer": "Flexie en extensie (vlak: S, as: T)."
+      },
+      {
+        "id": "avb-20",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Art. cubiti",
+        "question": "Hoe heet het binnenwaarts en buitenwaarts roteren van de onderarm in art. cubiti?",
+        "answer": "Pronatie en supinatie (vlak: T, as: L)."
+      },
+      {
+        "id": "avb-21",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Cingulum pectorale",
+        "question": "Hoe heet het naar boven en beneden bewegen van de schoudergordel?",
+        "answer": "Elevatie en depressie / detractie (vlak: n.v.t., as: n.v.t.).",
+        "imageUrl": "/images/flashcards/bewegingen_cingulum.png"
+      },
+      {
+        "id": "avb-22",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Cingulum pectorale",
+        "question": "Hoe heet het naar voor en naar achter bewegen van de schoudergordel?",
+        "answer": "Protractie en retractie (vlak: n.v.t., as: n.v.t.).",
+        "imageUrl": "/images/flashcards/bewegingen_cingulum.png"
+      },
+      {
+        "id": "avb-23",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Cingulum pectorale",
+        "question": "Hoe heet het buitenwaarts en binnenwaarts roteren van de schoudergordel?",
+        "answer": "Laterorotatie en mediorotatie (vlak: n.v.t., as: n.v.t.).",
+        "imageUrl": "/images/flashcards/bewegingen_cingulum.png"
+      },
+      {
+        "id": "avb-24",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Romp",
+        "question": "Hoe heet het buigen en strekken van de romp?",
+        "answer": "Flexie en extensie (vlak: S, as: T).",
+        "imageUrl": "/images/flashcards/bewegingen_romp.png"
+      },
+      {
+        "id": "avb-25",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Romp",
+        "question": "Hoe heet het zijwaarts buigen van de romp?",
+        "answer": "Lateroflexie (vlak: F, as: S).",
+        "imageUrl": "/images/flashcards/bewegingen_romp.png"
+      },
+      {
+        "id": "avb-26",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Romp",
+        "question": "Hoe heet het draaien van de romp en in welk vlak en om welke as gebeurt dit?",
+        "answer": "Rotatie (vlak: T, as: L).",
+        "imageUrl": "/images/flashcards/bewegingen_romp.png"
+      },
+      {
+        "id": "avb-27",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Vlak & As",
+        "question": "In welk vlak en om welke as vinden anteflexie en retroflexie plaats?",
+        "answer": "Vlak: Sagittaal (S) — As: Transversaal (T)."
+      },
+      {
+        "id": "avb-28",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Vlak & As",
+        "question": "In welk vlak en om welke as vinden abductie en adductie plaats?",
+        "answer": "Vlak: Frontaal (F) — As: Sagittaal (S)."
+      },
+      {
+        "id": "avb-29",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Vlak & As",
+        "question": "In welk vlak en om welke as vinden endorotatie en exorotatie plaats?",
+        "answer": "Vlak: Transversaal (T) — As: Longitudinaal (L)."
+      },
+      {
+        "id": "avb-30",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Vlak & As",
+        "question": "In welk vlak en om welke as vinden plantairflexie en dorsaalflexie plaats?",
+        "answer": "Vlak: Sagittaal (S) — As: Transversaal (T)."
+      },
+      {
+        "id": "avb-31",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Vlak & As",
+        "question": "In welk vlak en om welke as vinden pronatie en supinatie van de onderarm plaats?",
+        "answer": "Vlak: Transversaal (T) — As: Longitudinaal (L)."
+      },
+      {
+        "id": "avb-32",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Vlak & As",
+        "question": "In welk vlak en om welke as vindt lateroflexie van de romp plaats?",
+        "answer": "Vlak: Frontaal (F) — As: Sagittaal (S)."
+      },
+      {
+        "id": "avb-33",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Romp",
+        "question": "Welke twee Latijnse termen duiden bij lateroflexie en rotatie van de romp de richting (rechts en links) aan?",
+        "answer": "• Dextra = rechts\n• Sinistra = links"
+      },
+      {
+        "id": "avb-34",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Art. coxae",
+        "question": "Welke bewegingen in art. coxae vinden plaats in het sagittale vlak om de transversale as?",
+        "answer": "Anteflexie en retroflexie.",
+        "imageUrl": "/images/flashcards/bewegingen_coxae.png"
+      },
+      {
+        "id": "avb-35",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Art. coxae",
+        "question": "Welke bewegingen in art. coxae vinden plaats in het frontale vlak om de sagittale as?",
+        "answer": "Abductie en adductie.",
+        "imageUrl": "/images/flashcards/bewegingen_coxae.png"
+      },
+      {
+        "id": "avb-36",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Art. coxae",
+        "question": "Welke bewegingen in art. coxae vinden plaats in het transversale vlak om de longitudinale as?",
+        "answer": "Exorotatie en endorotatie.",
+        "imageUrl": "/images/flashcards/bewegingen_coxae.png"
+      },
+      {
+        "id": "avb-37",
+        "setId": "assen-vlakken-bewegingen",
+        "categoryLabel": "Art. pedis",
+        "question": "In welk spronggewricht vinden plantair-/dorsaalflexie plaats en in welk spronggewricht eversie/inversie?",
+        "answer": "• Plantairflexie & dorsaalflexie: bovenste spronggewricht\n• Eversie & inversie: onderste spronggewricht",
+        "imageUrl": "/images/flashcards/bewegingen_pedis.png"
+      }
+    ]
+  },
+  {
+    "id": "synoviaal-bewegingsanalyse",
+    "title": "4. Synoviaal Gewrichten & Bewegingsanalyse",
+    "shortTitle": "4. Synoviaal & Analyse",
+    "pdfSource": "ANTWOORDEN synoviaal gewrichten.pdf & ANTWOORDEN eerste bewegingsanalyse.pdf",
+    "description": "Gewrichtstypen, opbouw van een synoviaal gewricht (1-12) en eerste bewegingsanalyse.",
+    "cards": [
+      {
+        "id": "syn-1",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Gewrichtstypen",
+        "question": "Wat is de Latijnse naam voor een scharniergewricht en hoeveel assen heeft het?",
+        "answer": "Art. ginglymus — 1 as (flexie en extensie).",
+        "imageUrl": "/images/flashcards/synoviaal_typen_boven.png"
+      },
+      {
+        "id": "syn-2",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Gewrichtstypen",
+        "question": "Wat is de Latijnse naam voor een rolgewricht en hoeveel assen heeft het?",
+        "answer": "Art. trochoidea — 1 as (rotaties).",
+        "imageUrl": "/images/flashcards/synoviaal_typen_boven.png"
+      },
+      {
+        "id": "syn-3",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Gewrichtstypen",
+        "question": "Wat is de Latijnse naam voor een zadelgewricht en hoeveel assen heeft het?",
+        "answer": "Art. sellaris — 2 assen (flexie/extensie, abductie/adductie).",
+        "imageUrl": "/images/flashcards/synoviaal_typen_boven.png"
+      },
+      {
+        "id": "syn-4",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Gewrichtstypen",
+        "question": "Wat is de Nederlandse naam voor art. spheroidea en hoeveel assen heeft het?",
+        "answer": "Bolgewricht (kogelgewricht) — 3 assen (flexie/extensie, abductie/adductie, rotaties).",
+        "imageUrl": "/images/flashcards/synoviaal_typen_onder.png"
+      },
+      {
+        "id": "syn-5",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Gewrichtstypen",
+        "question": "Wat is de Nederlandse naam voor art. plana en hoeveel assen heeft het?",
+        "answer": "Vlakgewricht — 1 as (rotaties).",
+        "imageUrl": "/images/flashcards/synoviaal_typen_onder.png"
+      },
+      {
+        "id": "syn-6",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Gewrichtstypen",
+        "question": "Wat is de Nederlandse naam voor art. ellipsoidea en hoeveel assen heeft het?",
+        "answer": "Ellipsvormig gewricht — 1 as (vaak flexie en extensie).",
+        "imageUrl": "/images/flashcards/synoviaal_typen_onder.png"
+      },
+      {
+        "id": "syn-7",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "De gewrichten",
+        "question": "Wat is de Nederlandse naam van art. coxae en art. genus?",
+        "answer": "• Art. coxae = heupgewricht\n• Art. genus = kniegewricht"
+      },
+      {
+        "id": "syn-8",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "De gewrichten",
+        "question": "Wat is de Nederlandse naam van art. talocruralis?",
+        "answer": "Bovenste spronggewricht."
+      },
+      {
+        "id": "syn-9",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "De gewrichten",
+        "question": "Welke twee gewrichten vormen samen het onderste spronggewricht?",
+        "answer": "• Art. subtalaris\n• Art. talocalcaneonavicularis"
+      },
+      {
+        "id": "syn-10",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "De gewrichten",
+        "question": "Wat is de Nederlandse naam van art. cubiti, art. humeri en cingulum pectorale?",
+        "answer": "• Art. cubiti = ellebooggewricht\n• Art. humeri = schoudergewricht\n• Cingulum pectorale = schoudergordel"
+      },
+      {
+        "id": "syn-11",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Opbouw gewricht",
+        "question": "Wat zijn nummer 1 en nummer 2 in deze afbeelding?",
+        "answer": "• 1 = Kom van het gewricht\n• 2 = Kop van het gewricht",
+        "imageUrl": "/images/flashcards/synoviaal_opbouw_1_12.png"
+      },
+      {
+        "id": "syn-12",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Opbouw gewricht",
+        "question": "Wat is nummer 3 en wat is de functie ervan?",
+        "answer": "Omliggend botstuk — beperkt de bewegingsruimte.",
+        "imageUrl": "/images/flashcards/synoviaal_opbouw_1_12.png"
+      },
+      {
+        "id": "syn-13",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Opbouw gewricht",
+        "question": "Wat zijn nummer 4 en 9 en wat is de functie ervan?",
+        "answer": "Ligament — verbindt botstukken en geeft stevigheid aan een gewricht.",
+        "imageUrl": "/images/flashcards/synoviaal_opbouw_1_12.png"
+      },
+      {
+        "id": "syn-14",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Opbouw gewricht",
+        "question": "Wat is nummer 5 en wat is de functie ervan?",
+        "answer": "Pees — verbindt de spierbuik met een botstuk.",
+        "imageUrl": "/images/flashcards/synoviaal_opbouw_1_12.png"
+      },
+      {
+        "id": "syn-15",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Opbouw gewricht",
+        "question": "Wat is nummer 6 en wat is de functie ervan?",
+        "answer": "Gewrichtsruimte met synovia — laat bewegingen in het gewricht soepel verlopen.",
+        "imageUrl": "/images/flashcards/synoviaal_opbouw_1_12.png"
+      },
+      {
+        "id": "syn-16",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Opbouw gewricht",
+        "question": "Wat is nummer 7 en wat is de functie ervan?",
+        "answer": "Peesschede — voorkomt beschadiging aan de pees door wrijving.",
+        "imageUrl": "/images/flashcards/synoviaal_opbouw_1_12.png"
+      },
+      {
+        "id": "syn-17",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Opbouw gewricht",
+        "question": "Wat is nummer 8 en wat is de functie ervan?",
+        "answer": "Gewrichtskapsel — fibreus bindweefsel dat stevigheid geeft aan het gewricht.",
+        "imageUrl": "/images/flashcards/synoviaal_opbouw_1_12.png"
+      },
+      {
+        "id": "syn-18",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Opbouw gewricht",
+        "question": "Wat is nummer 10 en wat is de functie ervan?",
+        "answer": "Gewrichtskraakbeen (hyalien) — voorkomt wrijving tussen botstukken.",
+        "imageUrl": "/images/flashcards/synoviaal_opbouw_1_12.png"
+      },
+      {
+        "id": "syn-19",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Opbouw gewricht",
+        "question": "Wat is nummer 11 en wat is de functie ervan?",
+        "answer": "Synoviaal membraan — produceert synovia (gewrichtssmeer).",
+        "imageUrl": "/images/flashcards/synoviaal_opbouw_1_12.png"
+      },
+      {
+        "id": "syn-20",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Opbouw gewricht",
+        "question": "Wat is nummer 12 en wat is de functie ervan?",
+        "answer": "Bursa (slijmbeurs) — voorkomt drukbelasting in het gewricht.",
+        "imageUrl": "/images/flashcards/synoviaal_opbouw_1_12.png"
+      },
+      {
+        "id": "syn-21",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Bewegingsanalyse",
+        "question": "Welke stand heeft de rechter elleboog in fase 1, 2 en 3?",
+        "answer": "• Fase 1: extensie\n• Fase 2: flexie\n• Fase 3: extensie",
+        "imageUrl": "/images/flashcards/bewegingsanalyse_1_2_3.png"
+      },
+      {
+        "id": "syn-22",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Bewegingsanalyse",
+        "question": "Welke beweging maakt de rechter elleboog van fase 1→2 en van 2→3?",
+        "answer": "• Fase 1→2: flexie\n• Fase 2→3: extensie",
+        "imageUrl": "/images/flashcards/bewegingsanalyse_1_2_3.png"
+      },
+      {
+        "id": "syn-23",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Bewegingsanalyse",
+        "question": "Welke stand heeft de rechter heup in fase 1, 2 en 3?",
+        "answer": "• Fase 1: anteflexie\n• Fase 2: anteflexie\n• Fase 3: anteflexie (minder ver)",
+        "imageUrl": "/images/flashcards/bewegingsanalyse_1_2_3.png"
+      },
+      {
+        "id": "syn-24",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Bewegingsanalyse",
+        "question": "Welke beweging maakt de rechter heup van fase 1→2 en van 2→3?",
+        "answer": "• Fase 1→2: geen beweging\n• Fase 2→3: retroflexie",
+        "imageUrl": "/images/flashcards/bewegingsanalyse_1_2_3.png"
+      },
+      {
+        "id": "syn-25",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Bewegingsanalyse",
+        "question": "Welke stand heeft de rechter enkel in fase 1, 2 en 3?",
+        "answer": "• Fase 1: dorsaalflexie\n• Fase 2: plantairflexie\n• Fase 3: dorsaalflexie",
+        "imageUrl": "/images/flashcards/bewegingsanalyse_1_2_3.png"
+      },
+      {
+        "id": "syn-26",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Bewegingsanalyse",
+        "question": "Welke beweging maakt de rechter enkel van fase 1→2 en van 2→3?",
+        "answer": "• Fase 1→2: plantairflexie\n• Fase 2→3: dorsaalflexie",
+        "imageUrl": "/images/flashcards/bewegingsanalyse_1_2_3.png"
+      },
+      {
+        "id": "syn-27",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Streksprong",
+        "question": "Streksprong: welke beweging maakt de linker heup van fase 1→2, 2→3, 3→4 en 4→5?",
+        "answer": "• 1→2: retroflexie\n• 2→3: retroflexie\n• 3→4: geen\n• 4→5: anteflexie",
+        "imageUrl": "/images/flashcards/bewegingsanalyse_streksprong.png"
+      },
+      {
+        "id": "syn-28",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Streksprong",
+        "question": "Streksprong: welke beweging maakt de rechter schouder van fase 1→2, 2→3, 3→4 en 4→5?",
+        "answer": "• 1→2: anteflexie\n• 2→3: anteflexie\n• 3→4: geen\n• 4→5: retroflexie",
+        "imageUrl": "/images/flashcards/bewegingsanalyse_streksprong.png"
+      },
+      {
+        "id": "syn-29",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Streksprong",
+        "question": "Streksprong: welke beweging maakt de linker knie van fase 1→2, 2→3, 3→4 en 4→5?",
+        "answer": "• 1→2: extensie\n• 2→3: extensie\n• 3→4: geen\n• 4→5: flexie",
+        "imageUrl": "/images/flashcards/bewegingsanalyse_streksprong.png"
+      },
+      {
+        "id": "syn-30",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Streksprong",
+        "question": "Streksprong: welke beweging maakt de rechter elleboog van fase 1→2, 2→3, 3→4 en 4→5?",
+        "answer": "• 1→2: extensie\n• 2→3: geen\n• 3→4: geen\n• 4→5: geen",
+        "imageUrl": "/images/flashcards/bewegingsanalyse_streksprong.png"
+      },
+      {
+        "id": "syn-31",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Streksprong",
+        "question": "In welk vlak en om welke as vinden de bewegingen van de streksprong plaats?",
+        "answer": "Vlak: Sagittaal (S) — As: Transversaal (T).",
+        "imageUrl": "/images/flashcards/bewegingsanalyse_streksprong.png"
+      },
+      {
+        "id": "syn-32",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Gewrichtstypen",
+        "question": "Welke vier synoviale gewrichtstypen uit het moduulboek hebben 1 bewegingsas?",
+        "answer": "• Art. ginglymus (scharniergewricht)\n• Art. trochoidea (rolgewricht)\n• Art. plana (vlakgewricht)\n• Art. ellipsoidea (ellipsvormig gewricht)"
+      },
+      {
+        "id": "syn-33",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Gewrichtstypen",
+        "question": "Welk synoviaal gewrichtstype heeft 2 assen en welk type heeft 3 assen?",
+        "answer": "• 2 assen: Art. sellaris (zadelgewricht)\n• 3 assen: Art. spheroidea (bolgewricht)"
+      },
+      {
+        "id": "syn-34",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Opbouw gewricht",
+        "question": "Wat is de functie van de kom (nr. 1) en de kop (nr. 2) van het gewricht?",
+        "answer": "De twee botstructuren die samen het gewricht vormen.",
+        "imageUrl": "/images/flashcards/synoviaal_opbouw_1_12.png"
+      },
+      {
+        "id": "syn-35",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Opbouw gewricht",
+        "question": "Wat is synovia (nr. 6) en door welke structuur (nr. 11) wordt het aangemaakt?",
+        "answer": "• Synovia = vloeistof in het gewricht die bewegingen soepel laat verlopen\n• Aangemaakt door: synoviaal membraan (nr. 11)",
+        "imageUrl": "/images/flashcards/synoviaal_opbouw_1_12.png"
+      },
+      {
+        "id": "syn-36",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Opbouw gewricht",
+        "question": "Wat is het verschil tussen een pees (nr. 5) en een ligament (nr. 4 & 9)?",
+        "answer": "• Pees (nr. 5): verbindt de spierbuik met een botstuk\n• Ligament (nr. 4 & 9): verbindt twee botstukken met elkaar",
+        "imageUrl": "/images/flashcards/synoviaal_opbouw_1_12.png"
+      },
+      {
+        "id": "syn-37",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Opbouw gewricht",
+        "question": "Wat is het verschil in functie tussen een peesschede (nr. 7) en een bursa (nr. 12)?",
+        "answer": "• Peesschede (nr. 7): voorkomt beschadiging aan pees door wrijving\n• Bursa (nr. 12): voorkomt drukbelasting in het gewricht",
+        "imageUrl": "/images/flashcards/synoviaal_opbouw_1_12.png"
+      },
+      {
+        "id": "syn-38",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Opbouw gewricht",
+        "question": "Welke laag van fibreus bindweefsel (nr. 8) omsluit het gewricht en geeft stevigheid?",
+        "answer": "Het gewrichtskapsel (nr. 8).",
+        "imageUrl": "/images/flashcards/synoviaal_opbouw_1_12.png"
+      },
+      {
+        "id": "syn-39",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Streksprong",
+        "question": "Streksprong: welke stand heeft de linker heup in fase 1, 2, 3, 4 en 5?",
+        "answer": "• Fase 1: anteflexie\n• Fase 2: anteflexie (minder ver)\n• Fase 3: extensie (neutraal)\n• Fase 4: extensie (neutraal)\n• Fase 5: anteflexie",
+        "imageUrl": "/images/flashcards/bewegingsanalyse_streksprong.png"
+      },
+      {
+        "id": "syn-40",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Streksprong",
+        "question": "Streksprong: welke stand heeft de rechter schouder in fase 1, 2, 3, 4 en 5?",
+        "answer": "• Fase 1: retroflexie\n• Fase 2: anteflexie\n• Fase 3: anteflexie (hoog)\n• Fase 4: anteflexie (hoog)\n• Fase 5: anteflexie (lager)",
+        "imageUrl": "/images/flashcards/bewegingsanalyse_streksprong.png"
+      },
+      {
+        "id": "syn-41",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Streksprong",
+        "question": "Streksprong: welke stand heeft de linker knie in fase 1, 2, 3, 4 en 5?",
+        "answer": "• Fase 1: flexie\n• Fase 2: flexie (minder ver)\n• Fase 3: extensie\n• Fase 4: extensie\n• Fase 5: flexie",
+        "imageUrl": "/images/flashcards/bewegingsanalyse_streksprong.png"
+      },
+      {
+        "id": "syn-42",
+        "setId": "synoviaal-bewegingsanalyse",
+        "categoryLabel": "Streksprong",
+        "question": "Streksprong: welke stand heeft de rechter elleboog in fase 1, 2, 3, 4 en 5?",
+        "answer": "• Fase 1: flexie\n• Fase 2 t/m 5: extensie",
+        "imageUrl": "/images/flashcards/bewegingsanalyse_streksprong.png"
+      }
+    ]
+  },
+  {
+    "id": "art-coxae",
+    "title": "5. Art. coxae (Heupgewricht)",
+    "shortTitle": "5. Art. coxae",
+    "pdfSource": "Art. Coxae ANTWOORDEN.pdf",
+    "description": "Gewrichtskenmerken, botstructuren (1-15) en spieren van het heupgewricht.",
+    "cards": [
+      {
+        "id": "cox-1",
+        "setId": "art-coxae",
+        "categoryLabel": "Algemeen",
+        "question": "Welk type gewricht is art. coxae en hoeveel assen heeft het?",
+        "answer": "Art. spheroidea (bolgewricht) — 3 assen."
+      },
+      {
+        "id": "cox-2",
+        "setId": "art-coxae",
+        "categoryLabel": "Algemeen",
+        "question": "Welke twee botten vormen samen art. coxae?",
+        "answer": "• Os coxae (heupbeen)\n• Os femur (dijbeen)"
+      },
+      {
+        "id": "cox-3",
+        "setId": "art-coxae",
+        "categoryLabel": "Algemeen",
+        "question": "Wat vormt de gewrichtskom en wat vormt de gewrichtskop van art. coxae?",
+        "answer": "• Kom: Acetabulum\n• Kop: Caput femoris"
+      },
+      {
+        "id": "cox-4",
+        "setId": "art-coxae",
+        "categoryLabel": "Algemeen",
+        "question": "Welke bewegingen zijn mogelijk in art. coxae (met bijbehorende as)?",
+        "answer": "• Anteflexie en retroflexie (transversale as)\n• Abductie en adductie (sagittale as)\n• Endorotatie en exorotatie (longitudinale as)"
+      },
+      {
+        "id": "cox-5",
+        "setId": "art-coxae",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 1?",
+        "answer": "Crista iliaca (darmbeenrand).",
+        "imageUrl": "/images/flashcards/coxae_botten_1_15.png"
+      },
+      {
+        "id": "cox-6",
+        "setId": "art-coxae",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 2?",
+        "answer": "Os ilium (darmbeen).",
+        "imageUrl": "/images/flashcards/coxae_botten_1_15.png"
+      },
+      {
+        "id": "cox-7",
+        "setId": "art-coxae",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 3?",
+        "answer": "Os ischii (zitbeen).",
+        "imageUrl": "/images/flashcards/coxae_botten_1_15.png"
+      },
+      {
+        "id": "cox-8",
+        "setId": "art-coxae",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 4?",
+        "answer": "Acetabulum (kom van het heupgewricht).",
+        "imageUrl": "/images/flashcards/coxae_botten_1_15.png"
+      },
+      {
+        "id": "cox-9",
+        "setId": "art-coxae",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 5?",
+        "answer": "Spina iliaca posterior superior (SIPS).",
+        "imageUrl": "/images/flashcards/coxae_botten_1_15.png"
+      },
+      {
+        "id": "cox-10",
+        "setId": "art-coxae",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 6?",
+        "answer": "Spina iliaca posterior inferior (SIPI).",
+        "imageUrl": "/images/flashcards/coxae_botten_1_15.png"
+      },
+      {
+        "id": "cox-11",
+        "setId": "art-coxae",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 7?",
+        "answer": "Spina iliaca anterior inferior (SIAI).",
+        "imageUrl": "/images/flashcards/coxae_botten_1_15.png"
+      },
+      {
+        "id": "cox-12",
+        "setId": "art-coxae",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 8?",
+        "answer": "Spina iliaca anterior superior (SIAS).",
+        "imageUrl": "/images/flashcards/coxae_botten_1_15.png"
+      },
+      {
+        "id": "cox-13",
+        "setId": "art-coxae",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 9?",
+        "answer": "Os pubis (schaambeen).",
+        "imageUrl": "/images/flashcards/coxae_botten_1_15.png"
+      },
+      {
+        "id": "cox-14",
+        "setId": "art-coxae",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 10?",
+        "answer": "Tuber ischiadicum (zitbeenknobbel).",
+        "imageUrl": "/images/flashcards/coxae_botten_1_15.png"
+      },
+      {
+        "id": "cox-15",
+        "setId": "art-coxae",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 11?",
+        "answer": "Caput femoris (kop van het dijbeen).",
+        "imageUrl": "/images/flashcards/coxae_botten_1_15.png"
+      },
+      {
+        "id": "cox-16",
+        "setId": "art-coxae",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 12?",
+        "answer": "Collum femoris (hals van het dijbeen).",
+        "imageUrl": "/images/flashcards/coxae_botten_1_15.png"
+      },
+      {
+        "id": "cox-17",
+        "setId": "art-coxae",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 13?",
+        "answer": "Corpus femoris (lichaam van het dijbeen).",
+        "imageUrl": "/images/flashcards/coxae_botten_1_15.png"
+      },
+      {
+        "id": "cox-18",
+        "setId": "art-coxae",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 14?",
+        "answer": "Trochanter minor (kleine rolheuvel).",
+        "imageUrl": "/images/flashcards/coxae_botten_1_15.png"
+      },
+      {
+        "id": "cox-19",
+        "setId": "art-coxae",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 15?",
+        "answer": "Trochanter major (grote rolheuvel).",
+        "imageUrl": "/images/flashcards/coxae_botten_1_15.png"
+      },
+      {
+        "id": "cox-20",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de m. rectus femoris?",
+        "answer": "• Origo: SIAI\n• Insertie: via patellapees aan tuberositas tibiae"
+      },
+      {
+        "id": "cox-21",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. rectus femoris?",
+        "answer": "• Art. coxae: anteflexie\n• Art. genus: extensie"
+      },
+      {
+        "id": "cox-22",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de m. biceps femoris?",
+        "answer": "• Origo: tuber ischiadicum (caput longum) en dorsale zijde corpus femoris (caput breve)\n• Insertie: caput fibulae"
+      },
+      {
+        "id": "cox-23",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. biceps femoris?",
+        "answer": "• Art. coxae: retroflexie\n• Art. genus: flexie en exorotatie"
+      },
+      {
+        "id": "cox-24",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de m. semimembranosus?",
+        "answer": "• Origo: tuber ischiadicum\n• Insertie: condylus medialis tibiae"
+      },
+      {
+        "id": "cox-25",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. semimembranosus?",
+        "answer": "• Art. coxae: retroflexie (en endorotatie)\n• Art. genus: flexie en endorotatie"
+      },
+      {
+        "id": "cox-26",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de m. semitendinosus?",
+        "answer": "• Origo: tuber ischiadicum\n• Insertie: condylus medialis tibiae"
+      },
+      {
+        "id": "cox-27",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. semitendinosus?",
+        "answer": "• Art. coxae: retroflexie (en endorotatie)\n• Art. genus: flexie en endorotatie"
+      },
+      {
+        "id": "cox-28",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de m. iliopsoas?",
+        "answer": "• Origo: laatste thoracale en lumbale vertebrae, binnenzijde os ilium\n• Insertie: trochanter minor femoris"
+      },
+      {
+        "id": "cox-29",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. iliopsoas in art. coxae?",
+        "answer": "Anteflexie en exorotatie art. coxae."
+      },
+      {
+        "id": "cox-30",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo, insertie en functie van de mm. adductor (adductor magnus, longus en brevis)?",
+        "answer": "• Origo: os pubis en os ischii\n• Insertie: mediale zijde corpus femoris en condylus medialis\n• Functie: adductie art. coxae"
+      },
+      {
+        "id": "cox-31",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de m. gluteus maximus?",
+        "answer": "• Origo: crista iliaca, SIPS, os sacrum, os coccygis\n• Insertie: proximale laterale deel corpus femoris en tractus iliotibialis"
+      },
+      {
+        "id": "cox-32",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. gluteus maximus?",
+        "answer": "Retroflexie en exorotatie art. coxae."
+      },
+      {
+        "id": "cox-33",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spieren zijn nummer 6, 8 en 9 in deze figuur?",
+        "answer": "• 6 = m. iliopsoas\n• 8 = mm. adductor\n• 9 = m. gluteus maximus",
+        "imageUrl": "/images/flashcards/coxae_spieren_fig.png"
+      },
+      {
+        "id": "cox-34",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 1 in deze figuur?",
+        "answer": "M. rectus femoris.",
+        "imageUrl": "/images/flashcards/coxae_spieren_fig.png"
+      },
+      {
+        "id": "cox-35",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 2 in deze figuur?",
+        "answer": "M. biceps femoris.",
+        "imageUrl": "/images/flashcards/coxae_spieren_fig.png"
+      },
+      {
+        "id": "cox-36",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke twee spieren worden met nummer 3 & 4 aangegeven in deze figuur?",
+        "answer": "M. semimembranosus en m. semitendinosus.",
+        "imageUrl": "/images/flashcards/coxae_spieren_fig.png"
+      },
+      {
+        "id": "cox-37",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren per beweging",
+        "question": "Welke twee spieren uit het moduulboek zorgen voor anteflexie in art. coxae?",
+        "answer": "• M. iliopsoas\n• M. rectus femoris"
+      },
+      {
+        "id": "cox-38",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren per beweging",
+        "question": "Welke vier spieren uit het moduulboek zorgen voor retroflexie in art. coxae?",
+        "answer": "• M. gluteus maximus\n• M. biceps femoris\n• M. semimembranosus\n• M. semitendinosus"
+      },
+      {
+        "id": "cox-39",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren per beweging",
+        "question": "Welke drie spieren vormen de mm. adductor voor adductie in art. coxae?",
+        "answer": "• M. adductor magnus\n• M. adductor longus\n• M. adductor brevis"
+      },
+      {
+        "id": "cox-40",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren per beweging",
+        "question": "Welke twee spieren zorgen voor exorotatie in art. coxae en welke twee voor endorotatie?",
+        "answer": "• Exorotatie: m. gluteus maximus en m. iliopsoas\n• Endorotatie: m. semimembranosus en m. semitendinosus"
+      },
+      {
+        "id": "cox-41",
+        "setId": "art-coxae",
+        "categoryLabel": "Spieren",
+        "question": "Uit welke twee spieren bestaat de m. iliopsoas?",
+        "answer": "M. iliacus en m. psoas major."
+      },
+      {
+        "id": "cox-42",
+        "setId": "art-coxae",
+        "categoryLabel": "Aanzichten",
+        "question": "Welk aanzicht (mediaal of lateraal) zie je hier van het linker en rechter os coxae en waaraan herken je dat?",
+        "answer": "• Links = mediaal aanzicht (binnenzijde — herkenbaar aan de facies auricularis / gewrichtsvlak met het heiligbeen)\n• Rechts = lateraal aanzicht (buitenzijde — herkenbaar aan het acetabulum / de heupkom)\n• Voorzijde (anterior): SIAS (a) en SIAI (b)\n• Achterzijde (posterior): SIPS (c) en SIPI (d)",
+        "imageUrl": "/images/flashcards/richtingen_os_coxae.png"
+      }
+    ]
+  },
+  {
+    "id": "art-genus",
+    "title": "6. Art. genus (Kniegewricht)",
+    "shortTitle": "6. Art. genus",
+    "pdfSource": "Art.genus ANTWOORDEN.pdf",
+    "description": "Gewrichtskenmerken, botstructuren (1-9), ligamenten & menisci (1-7) en spieren van de knie.",
+    "cards": [
+      {
+        "id": "gen-1",
+        "setId": "art-genus",
+        "categoryLabel": "Algemeen",
+        "question": "Welk type gewricht is art. genus en hoeveel assen heeft het?",
+        "answer": "Art. trocho-ginglymus (draai-scharniergewricht) — 2 assen."
+      },
+      {
+        "id": "gen-2",
+        "setId": "art-genus",
+        "categoryLabel": "Algemeen",
+        "question": "Welke drie botten vormen samen art. genus?",
+        "answer": "• Os femur\n• Os tibia\n• Os patella"
+      },
+      {
+        "id": "gen-3",
+        "setId": "art-genus",
+        "categoryLabel": "Algemeen",
+        "question": "Wat vormt de gewrichtskom en wat vormt de gewrichtskop van art. genus?",
+        "answer": "• Kom: Condylus medialis en lateralis tibiae\n• Kop: Condylus medialis en lateralis femoris"
+      },
+      {
+        "id": "gen-4",
+        "setId": "art-genus",
+        "categoryLabel": "Algemeen",
+        "question": "Welke bewegingen zijn mogelijk in art. genus (en wanneer zijn rotaties mogelijk)?",
+        "answer": "• Flexie en extensie (transversale as)\n• Endorotatie en exorotatie (longitudinale as; alleen in flexiestand)"
+      },
+      {
+        "id": "gen-5",
+        "setId": "art-genus",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 1?",
+        "answer": "Os femur.",
+        "imageUrl": "/images/flashcards/genus_botten_1_9.png"
+      },
+      {
+        "id": "gen-6",
+        "setId": "art-genus",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 2?",
+        "answer": "Condylus medialis femoris.",
+        "imageUrl": "/images/flashcards/genus_botten_1_9.png"
+      },
+      {
+        "id": "gen-7",
+        "setId": "art-genus",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 3?",
+        "answer": "Condylus lateralis femoris.",
+        "imageUrl": "/images/flashcards/genus_botten_1_9.png"
+      },
+      {
+        "id": "gen-8",
+        "setId": "art-genus",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 4?",
+        "answer": "Condylus medialis tibiae.",
+        "imageUrl": "/images/flashcards/genus_botten_1_9.png"
+      },
+      {
+        "id": "gen-9",
+        "setId": "art-genus",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 5?",
+        "answer": "Condylus lateralis tibiae.",
+        "imageUrl": "/images/flashcards/genus_botten_1_9.png"
+      },
+      {
+        "id": "gen-10",
+        "setId": "art-genus",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 6?",
+        "answer": "Os tibia.",
+        "imageUrl": "/images/flashcards/genus_botten_1_9.png"
+      },
+      {
+        "id": "gen-11",
+        "setId": "art-genus",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 7?",
+        "answer": "Tuberositas tibiae.",
+        "imageUrl": "/images/flashcards/genus_botten_1_9.png"
+      },
+      {
+        "id": "gen-12",
+        "setId": "art-genus",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 8?",
+        "answer": "Os fibula.",
+        "imageUrl": "/images/flashcards/genus_botten_1_9.png"
+      },
+      {
+        "id": "gen-13",
+        "setId": "art-genus",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 9?",
+        "answer": "Caput fibulae.",
+        "imageUrl": "/images/flashcards/genus_botten_1_9.png"
+      },
+      {
+        "id": "gen-14",
+        "setId": "art-genus",
+        "categoryLabel": "Ligamenten & menisci",
+        "question": "Welke structuur is nummer 1 en wat is de functie ervan?",
+        "answer": "Lig. cruciatum anterior — voorkomt naar voren schuiven van os tibia en remt (samen met posterior) rotatie.",
+        "imageUrl": "/images/flashcards/genus_ligamenten_1_7.png"
+      },
+      {
+        "id": "gen-15",
+        "setId": "art-genus",
+        "categoryLabel": "Ligamenten & menisci",
+        "question": "Welke structuur is nummer 2 en wat is de functie ervan?",
+        "answer": "Tuberositas tibiae — aanhechting van de patellapees.",
+        "imageUrl": "/images/flashcards/genus_ligamenten_1_7.png"
+      },
+      {
+        "id": "gen-16",
+        "setId": "art-genus",
+        "categoryLabel": "Ligamenten & menisci",
+        "question": "Welke structuur is nummer 3 en wat is de functie ervan?",
+        "answer": "Meniscus medialis — begeleidt flexie en extensie, zorgt voor demping.",
+        "imageUrl": "/images/flashcards/genus_ligamenten_1_7.png"
+      },
+      {
+        "id": "gen-17",
+        "setId": "art-genus",
+        "categoryLabel": "Ligamenten & menisci",
+        "question": "Welke structuur is nummer 4 en wat is de functie ervan?",
+        "answer": "Meniscus lateralis — begeleidt flexie en extensie, zorgt voor demping.",
+        "imageUrl": "/images/flashcards/genus_ligamenten_1_7.png"
+      },
+      {
+        "id": "gen-18",
+        "setId": "art-genus",
+        "categoryLabel": "Ligamenten & menisci",
+        "question": "Welke structuur is nummer 5 en wat is de functie ervan?",
+        "answer": "Lig. cruciatum posterior — voorkomt naar achter schuiven van os tibia en remt (samen met anterior) rotatie.",
+        "imageUrl": "/images/flashcards/genus_ligamenten_1_7.png"
+      },
+      {
+        "id": "gen-19",
+        "setId": "art-genus",
+        "categoryLabel": "Ligamenten & menisci",
+        "question": "Welke structuur is nummer 6 en wat is de functie ervan?",
+        "answer": "Lig. collaterale medialis — behoudt contact tussen femur en tibia, voorkomt X-benen (valgusstand).",
+        "imageUrl": "/images/flashcards/genus_ligamenten_1_7.png"
+      },
+      {
+        "id": "gen-20",
+        "setId": "art-genus",
+        "categoryLabel": "Ligamenten & menisci",
+        "question": "Welke structuur is nummer 7 en wat is de functie ervan?",
+        "answer": "Lig. collaterale lateralis — behoudt contact tussen femur en tibia, voorkomt O-benen (varusstand).",
+        "imageUrl": "/images/flashcards/genus_ligamenten_1_7.png"
+      },
+      {
+        "id": "gen-21",
+        "setId": "art-genus",
+        "categoryLabel": "Spieren",
+        "question": "Welke vier spieren vormen samen de m. quadriceps femoris?",
+        "answer": "• M. rectus femoris\n• M. vastus lateralis\n• M. vastus intermedius\n• M. vastus medialis"
+      },
+      {
+        "id": "gen-22",
+        "setId": "art-genus",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de gemeenschappelijke insertie van alle vier de koppen van de m. quadriceps femoris?",
+        "answer": "Via de patellapees aan de tuberositas tibiae."
+      },
+      {
+        "id": "gen-23",
+        "setId": "art-genus",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en functie van de m. vastus lateralis?",
+        "answer": "• Origo: laterale zijde corpus femoris\n• Functie: extensie art. genus"
+      },
+      {
+        "id": "gen-24",
+        "setId": "art-genus",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en functie van de m. vastus intermedius?",
+        "answer": "• Origo: ventrale zijde corpus femoris\n• Functie: extensie art. genus"
+      },
+      {
+        "id": "gen-25",
+        "setId": "art-genus",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en functie van de m. vastus medialis?",
+        "answer": "• Origo: mediale zijde corpus femoris\n• Functie: extensie art. genus"
+      },
+      {
+        "id": "gen-26",
+        "setId": "art-genus",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en functie van de m. rectus femoris?",
+        "answer": "• Origo: SIAI\n• Functie: anteflexie art. coxae en extensie art. genus"
+      },
+      {
+        "id": "gen-27",
+        "setId": "art-genus",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo, insertie en functie van de m. biceps femoris?",
+        "answer": "• Origo: tuber ischiadicum (caput longum) en middelste derde dorsale deel femur (caput breve)\n• Insertie: caput fibulae\n• Functie: retroflexie art. coxae, flexie en exorotatie art. genus"
+      },
+      {
+        "id": "gen-28",
+        "setId": "art-genus",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo, insertie en functie van de m. semimembranosus?",
+        "answer": "• Origo: tuber ischiadicum\n• Insertie: condylus medialis tibiae\n• Functie: retroflexie art. coxae, flexie en endorotatie art. genus"
+      },
+      {
+        "id": "gen-29",
+        "setId": "art-genus",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo, insertie en functie van de m. semitendinosus?",
+        "answer": "• Origo: tuber ischiadicum\n• Insertie: condylus medialis tibiae\n• Functie: retroflexie art. coxae, flexie en endorotatie art. genus"
+      },
+      {
+        "id": "gen-30",
+        "setId": "art-genus",
+        "categoryLabel": "Spieren",
+        "question": "Welke spier zorgt voor exorotatie in art. genus en welke twee voor endorotatie?",
+        "answer": "• Exorotatie: m. biceps femoris\n• Endorotatie: m. semimembranosus en m. semitendinosus"
+      },
+      {
+        "id": "gen-31",
+        "setId": "art-genus",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 1 in deze figuur?",
+        "answer": "M. rectus femoris.",
+        "imageUrl": "/images/flashcards/genus_spieren_fig.png"
+      },
+      {
+        "id": "gen-32",
+        "setId": "art-genus",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 2 in deze figuur?",
+        "answer": "M. vastus lateralis.",
+        "imageUrl": "/images/flashcards/genus_spieren_fig.png"
+      },
+      {
+        "id": "gen-33",
+        "setId": "art-genus",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 3 in deze figuur?",
+        "answer": "M. vastus intermedius.",
+        "imageUrl": "/images/flashcards/genus_spieren_fig.png"
+      },
+      {
+        "id": "gen-34",
+        "setId": "art-genus",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 4 in deze figuur?",
+        "answer": "M. vastus medialis.",
+        "imageUrl": "/images/flashcards/genus_spieren_fig.png"
+      },
+      {
+        "id": "gen-35",
+        "setId": "art-genus",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 5 in deze figuur?",
+        "answer": "M. biceps femoris.",
+        "imageUrl": "/images/flashcards/genus_spieren_fig.png"
+      },
+      {
+        "id": "gen-36",
+        "setId": "art-genus",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke twee spieren worden met nummer 6/7 aangegeven in deze figuur?",
+        "answer": "M. semimembranosus en m. semitendinosus.",
+        "imageUrl": "/images/flashcards/genus_spieren_fig.png"
+      },
+      {
+        "id": "gen-37",
+        "setId": "art-genus",
+        "categoryLabel": "Spieren",
+        "question": "Welke van de vier koppen van de m. quadriceps femoris beweegt zowel art. coxae als art. genus?",
+        "answer": "M. rectus femoris (anteflexie art. coxae en extensie art. genus)."
+      },
+      {
+        "id": "gen-38",
+        "setId": "art-genus",
+        "categoryLabel": "Ligamenten",
+        "question": "Welke twee ligamenten kruisen elkaar midden in art. genus en voorkomen schuiven en rotatie van de tibia?",
+        "answer": "• Lig. cruciatum anterior\n• Lig. cruciatum posterior",
+        "imageUrl": "/images/flashcards/genus_ligamenten_1_7.png"
+      },
+      {
+        "id": "gen-39",
+        "setId": "art-genus",
+        "categoryLabel": "Ligamenten",
+        "question": "Welk collateraal ligament voorkomt valgusstand (X-benen) en welk voorkomt varusstand (O-benen)?",
+        "answer": "• Valgusstand (X-benen): lig. collaterale medialis (nr. 6)\n• Varusstand (O-benen): lig. collaterale lateralis (nr. 7)",
+        "imageUrl": "/images/flashcards/genus_ligamenten_1_7.png"
+      },
+      {
+        "id": "gen-40",
+        "setId": "art-genus",
+        "categoryLabel": "Spieren",
+        "question": "Welke kuitspier uit de structurenlijst geeft naast plantairflexie in de enkel ook flexie in art. genus?",
+        "answer": "M. gastrocnemius."
+      },
+      {
+        "id": "gen-41",
+        "setId": "art-genus",
+        "categoryLabel": "Botstructuren",
+        "question": "Op welke botstructuur hecht de m. biceps femoris aan en op welke de m. semimembranosus/semitendinosus?",
+        "answer": "• M. biceps femoris: caput fibulae (nr. 9)\n• M. semimembranosus & m. semitendinosus: condylus medialis tibiae (nr. 4)",
+        "imageUrl": "/images/flashcards/genus_botten_1_9.png"
+      },
+      {
+        "id": "gen-42",
+        "setId": "art-genus",
+        "categoryLabel": "Aanzichten",
+        "question": "Welk aanzicht (ventraal of dorsaal) heeft het linker plaatje en welk aanzicht het rechter plaatje?",
+        "answer": "• Links = ventraal aanzicht\n• Rechts = dorsaal aanzicht",
+        "imageUrl": "/images/flashcards/genus_botten_1_9.png"
+      }
+    ]
+  },
+  {
+    "id": "art-pedis",
+    "title": "7. Art. pedis (Enkel & Voet)",
+    "shortTitle": "7. Art. pedis",
+    "pdfSource": "Art. pedis ANTWOORDEN.pdf",
+    "description": "Bovenste en onderste spronggewricht, botten (1-5), gewrichten (1-5), ligamenten (1-4) en spieren (1-5).",
+    "cards": [
+      {
+        "id": "ped-1",
+        "setId": "art-pedis",
+        "categoryLabel": "Algemeen",
+        "question": "Welke vijf botten vormen samen art. pedis?",
+        "answer": "• Os tibia\n• Os fibula\n• Os talus\n• Os calcaneus\n• Os naviculare"
+      },
+      {
+        "id": "ped-2",
+        "setId": "art-pedis",
+        "categoryLabel": "Algemeen",
+        "question": "Welke drie botten vormen art. talocruralis (bovenste spronggewricht)?",
+        "answer": "Os talus, os tibia en os fibula."
+      },
+      {
+        "id": "ped-3",
+        "setId": "art-pedis",
+        "categoryLabel": "Algemeen",
+        "question": "Welke twee botten vormen art. subtalaris?",
+        "answer": "Os talus en os calcaneus."
+      },
+      {
+        "id": "ped-4",
+        "setId": "art-pedis",
+        "categoryLabel": "Algemeen",
+        "question": "Welke drie botten vormen art. talo-calcaneo-navicularis?",
+        "answer": "Os talus, os calcaneus en os naviculare."
+      },
+      {
+        "id": "ped-5",
+        "setId": "art-pedis",
+        "categoryLabel": "Algemeen",
+        "question": "Welke twee deelgewrichten vormen samen het onderste spronggewricht (OSG)?",
+        "answer": "• Art. subtalaris (achterste deel: talus + calcaneus)\n• Art. talo-calcaneo-navicularis (voorste deel: talus + calcaneus + naviculare)"
+      },
+      {
+        "id": "ped-6",
+        "setId": "art-pedis",
+        "categoryLabel": "Algemeen",
+        "question": "Welke bewegingen vinden plaats in het bovenste en onderste spronggewricht?",
+        "answer": "• Bovenste (art. talocruralis): plantairflexie en dorsaalflexie (transversale as)\n• Onderste (OSG): eversie/pronatie en inversie/supinatie"
+      },
+      {
+        "id": "ped-7",
+        "setId": "art-pedis",
+        "categoryLabel": "Samenstellende botten",
+        "question": "Welk bot is nummer 1?",
+        "answer": "Os tibia (scheenbeen).",
+        "imageUrl": "/images/flashcards/pedis_botten_1_5.png"
+      },
+      {
+        "id": "ped-8",
+        "setId": "art-pedis",
+        "categoryLabel": "Samenstellende botten",
+        "question": "Welk bot is nummer 2?",
+        "answer": "Os fibula (kuitbeen).",
+        "imageUrl": "/images/flashcards/pedis_botten_1_5.png"
+      },
+      {
+        "id": "ped-9",
+        "setId": "art-pedis",
+        "categoryLabel": "Samenstellende botten",
+        "question": "Welk bot is nummer 3?",
+        "answer": "Os talus (sprongbeen).",
+        "imageUrl": "/images/flashcards/pedis_botten_1_5.png"
+      },
+      {
+        "id": "ped-10",
+        "setId": "art-pedis",
+        "categoryLabel": "Samenstellende botten",
+        "question": "Welk bot is nummer 4?",
+        "answer": "Os calcaneus (hielbeen).",
+        "imageUrl": "/images/flashcards/pedis_botten_1_5.png"
+      },
+      {
+        "id": "ped-11",
+        "setId": "art-pedis",
+        "categoryLabel": "Samenstellende botten",
+        "question": "Welk bot is nummer 5?",
+        "answer": "Os naviculare (scheepvormig been).",
+        "imageUrl": "/images/flashcards/pedis_botten_1_5.png"
+      },
+      {
+        "id": "ped-12",
+        "setId": "art-pedis",
+        "categoryLabel": "Gewrichten & botstructuren",
+        "question": "Welke botstructuur is nummer 1 in dit aanzicht?",
+        "answer": "Malleolus lateralis (buitenste enkelknobbel).",
+        "imageUrl": "/images/flashcards/pedis_gewrichten_1_5.png"
+      },
+      {
+        "id": "ped-13",
+        "setId": "art-pedis",
+        "categoryLabel": "Gewrichten & botstructuren",
+        "question": "Welke botstructuur is nummer 2 in dit aanzicht?",
+        "answer": "Malleolus medialis (binnenste enkelknobbel).",
+        "imageUrl": "/images/flashcards/pedis_gewrichten_1_5.png"
+      },
+      {
+        "id": "ped-14",
+        "setId": "art-pedis",
+        "categoryLabel": "Gewrichten & botstructuren",
+        "question": "Welke botstructuur is nummer 3 in dit aanzicht?",
+        "answer": "Tuber calcanei (hielbeenknobbel).",
+        "imageUrl": "/images/flashcards/pedis_gewrichten_1_5.png"
+      },
+      {
+        "id": "ped-15",
+        "setId": "art-pedis",
+        "categoryLabel": "Gewrichten & botstructuren",
+        "question": "Welk gewricht is nummer 4 in dit aanzicht?",
+        "answer": "Art. talocruralis (bovenste spronggewricht).",
+        "imageUrl": "/images/flashcards/pedis_gewrichten_1_5.png"
+      },
+      {
+        "id": "ped-16",
+        "setId": "art-pedis",
+        "categoryLabel": "Gewrichten & botstructuren",
+        "question": "Welk gewricht is nummer 5 in dit aanzicht?",
+        "answer": "Art. talo-calcaneo-navicularis (deel van onderste spronggewricht).",
+        "imageUrl": "/images/flashcards/pedis_gewrichten_1_5.png"
+      },
+      {
+        "id": "ped-17",
+        "setId": "art-pedis",
+        "categoryLabel": "Ligamenten",
+        "question": "Welk ligament is nummer 1 en wat is de functie ervan?",
+        "answer": "Lig. deltoideum — remt extreme pronatiestand (eversie).",
+        "imageUrl": "/images/flashcards/pedis_ligamenten_1_4.png"
+      },
+      {
+        "id": "ped-18",
+        "setId": "art-pedis",
+        "categoryLabel": "Ligamenten",
+        "question": "Welk ligament is nummer 2 en wat is de functie ervan?",
+        "answer": "Lig. calcaneofibulare — remt extreme supinatiestand (inversie).",
+        "imageUrl": "/images/flashcards/pedis_ligamenten_1_4.png"
+      },
+      {
+        "id": "ped-19",
+        "setId": "art-pedis",
+        "categoryLabel": "Ligamenten",
+        "question": "Welk ligament is nummer 3 en wat is de functie ervan?",
+        "answer": "Lig. talofibulare posterior — ondersteunt lig. calcaneofibulare (remt inversie).",
+        "imageUrl": "/images/flashcards/pedis_ligamenten_1_4.png"
+      },
+      {
+        "id": "ped-20",
+        "setId": "art-pedis",
+        "categoryLabel": "Ligamenten",
+        "question": "Welk ligament is nummer 4 en wat is de functie ervan?",
+        "answer": "Lig. talofibulare anterior — ondersteunt lig. calcaneofibulare (remt inversie).",
+        "imageUrl": "/images/flashcards/pedis_ligamenten_1_4.png"
+      },
+      {
+        "id": "ped-21",
+        "setId": "art-pedis",
+        "categoryLabel": "Spieren",
+        "question": "Welke spier is nummer 1 in deze figuur?",
+        "answer": "M. tibialis anterior.",
+        "imageUrl": "/images/flashcards/pedis_spieren_fig.png"
+      },
+      {
+        "id": "ped-22",
+        "setId": "art-pedis",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo, insertie en functie van de m. tibialis anterior (nr. 1)?",
+        "answer": "• Origo: laterale ventrale vlak corpus tibia, condylus lateralis tibiae\n• Insertie: mediale voetrand\n• Functie: dorsaalflexie en inversie (supinatie)",
+        "imageUrl": "/images/flashcards/pedis_spieren_fig.png"
+      },
+      {
+        "id": "ped-23",
+        "setId": "art-pedis",
+        "categoryLabel": "Spieren",
+        "question": "Welke spier is nummer 2 in deze figuur?",
+        "answer": "M. peroneus brevis (m. fibularis brevis).",
+        "imageUrl": "/images/flashcards/pedis_spieren_fig.png"
+      },
+      {
+        "id": "ped-24",
+        "setId": "art-pedis",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo, insertie en functie van de m. fibularis brevis (nr. 2)?",
+        "answer": "• Origo: laterale vlak corpus fibula\n• Insertie: laterale voetrand\n• Functie: eversie (pronatie) art. talo-calcaneo-navicularis",
+        "imageUrl": "/images/flashcards/pedis_spieren_fig.png"
+      },
+      {
+        "id": "ped-25",
+        "setId": "art-pedis",
+        "categoryLabel": "Spieren",
+        "question": "Welke spier is nummer 3 in deze figuur?",
+        "answer": "M. fibularis longus (m. peroneus longus).",
+        "imageUrl": "/images/flashcards/pedis_spieren_fig.png"
+      },
+      {
+        "id": "ped-26",
+        "setId": "art-pedis",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo, insertie en functie van de m. fibularis longus (nr. 3)?",
+        "answer": "• Origo: proximale laterale deel corpus fibula\n• Insertie: mediale voetrand (onder de voet door)\n• Functie: eversie (pronatie) art. talo-calcaneo-navicularis",
+        "imageUrl": "/images/flashcards/pedis_spieren_fig.png"
+      },
+      {
+        "id": "ped-27",
+        "setId": "art-pedis",
+        "categoryLabel": "Spieren",
+        "question": "Welke spier is nummer 4 in deze figuur?",
+        "answer": "M. gastrocnemius.",
+        "imageUrl": "/images/flashcards/pedis_spieren_fig.png"
+      },
+      {
+        "id": "ped-28",
+        "setId": "art-pedis",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo, insertie en functie van de m. gastrocnemius (nr. 4)?",
+        "answer": "• Origo: condylus medialis en lateralis femoris\n• Insertie: via achillespees aan tuber calcanei\n• Functie: plantairflexie art. talocruralis, flexie art. genus",
+        "imageUrl": "/images/flashcards/pedis_spieren_fig.png"
+      },
+      {
+        "id": "ped-29",
+        "setId": "art-pedis",
+        "categoryLabel": "Spieren",
+        "question": "Welke spier is nummer 5 in deze figuur?",
+        "answer": "M. soleus.",
+        "imageUrl": "/images/flashcards/pedis_spieren_fig.png"
+      },
+      {
+        "id": "ped-30",
+        "setId": "art-pedis",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo, insertie en functie van de m. soleus (nr. 5)?",
+        "answer": "• Origo: proximale dorsale deel fibula en tibia\n• Insertie: via achillespees aan tuber calcanei\n• Functie: plantairflexie art. talocruralis",
+        "imageUrl": "/images/flashcards/pedis_spieren_fig.png"
+      },
+      {
+        "id": "ped-31",
+        "setId": "art-pedis",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de origo van de m. tibialis anterior?",
+        "answer": "Laterale ventrale vlak corpus tibia en condylus lateralis tibiae."
+      },
+      {
+        "id": "ped-32",
+        "setId": "art-pedis",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de insertie van de m. tibialis anterior?",
+        "answer": "Mediale voetrand."
+      },
+      {
+        "id": "ped-33",
+        "setId": "art-pedis",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de twee functies van de m. tibialis anterior?",
+        "answer": "• Dorsaalflexie in art. talocruralis\n• Inversie (supinatie) in art. talo-calcaneo-navicularis"
+      },
+      {
+        "id": "ped-34",
+        "setId": "art-pedis",
+        "categoryLabel": "Spieren",
+        "question": "Wat is het verschil in insertie tussen de m. fibularis brevis en de m. fibularis longus?",
+        "answer": "• M. fibularis brevis: laterale voetrand\n• M. fibularis longus: mediale voetrand (onder de voet door)"
+      },
+      {
+        "id": "ped-35",
+        "setId": "art-pedis",
+        "categoryLabel": "Spieren",
+        "question": "Welke twee spieren hechten via de achillespees aan op het tuber calcanei?",
+        "answer": "• M. gastrocnemius\n• M. soleus"
+      },
+      {
+        "id": "ped-36",
+        "setId": "art-pedis",
+        "categoryLabel": "Spieren",
+        "question": "Wat is het verschil in origo tussen de m. gastrocnemius en de m. soleus?",
+        "answer": "• M. gastrocnemius: condylus medialis en lateralis femoris\n• M. soleus: proximale dorsale deel fibula en tibia"
+      },
+      {
+        "id": "ped-37",
+        "setId": "art-pedis",
+        "categoryLabel": "Spieren",
+        "question": "Wat is het verschil in functie tussen de m. gastrocnemius en de m. soleus?",
+        "answer": "• M. gastrocnemius: plantairflexie art. talocruralis én flexie art. genus\n• M. soleus: alleen plantairflexie art. talocruralis"
+      },
+      {
+        "id": "ped-38",
+        "setId": "art-pedis",
+        "categoryLabel": "Spieren per beweging",
+        "question": "Welke spier zorgt voor dorsaalflexie en welke twee spieren zorgen voor plantairflexie in art. talocruralis?",
+        "answer": "• Dorsaalflexie: m. tibialis anterior\n• Plantairflexie: m. gastrocnemius en m. soleus"
+      },
+      {
+        "id": "ped-39",
+        "setId": "art-pedis",
+        "categoryLabel": "Spieren per beweging",
+        "question": "Welke spier zorgt voor inversie en welke twee spieren zorgen voor eversie in art. talo-calcaneo-navicularis?",
+        "answer": "• Inversie: m. tibialis anterior\n• Eversie: m. fibularis brevis en m. fibularis longus"
+      },
+      {
+        "id": "ped-40",
+        "setId": "art-pedis",
+        "categoryLabel": "Ligamenten",
+        "question": "Aan welke zijde (mediaal of lateraal) ligt het lig. deltoideum en aan welke zijde het lig. calcaneofibulare?",
+        "answer": "• Mediaal: lig. deltoideum (nr. 1)\n• Lateraal: lig. calcaneofibulare (nr. 2), lig. talofibulare posterior (nr. 3) en anterior (nr. 4)",
+        "imageUrl": "/images/flashcards/pedis_ligamenten_1_4.png"
+      },
+      {
+        "id": "ped-41",
+        "setId": "art-pedis",
+        "categoryLabel": "Botstructuren",
+        "question": "Van welk bot is de malleolus medialis een onderdeel en van welk bot de malleolus lateralis?",
+        "answer": "• Malleolus medialis (nr. 2): os tibia\n• Malleolus lateralis (nr. 1): os fibula",
+        "imageUrl": "/images/flashcards/pedis_gewrichten_1_5.png"
+      }
+    ]
+  },
+  {
+    "id": "art-cubiti",
+    "title": "8. Art. cubiti (Ellebooggewricht)",
+    "shortTitle": "8. Art. cubiti",
+    "pdfSource": "ANTWOORDEN cubiti.pdf",
+    "description": "Deelgewrichten, botstructuren (1-13) en spieren van de elleboog.",
+    "cards": [
+      {
+        "id": "cub-1",
+        "setId": "art-cubiti",
+        "categoryLabel": "Gewricht & type",
+        "question": "Wat is de Nederlandse naam van art. cubiti?",
+        "answer": "Ellebooggewricht."
+      },
+      {
+        "id": "cub-2",
+        "setId": "art-cubiti",
+        "categoryLabel": "Algemeen",
+        "question": "Welk type gewricht is art. cubiti en hoeveel assen heeft het?",
+        "answer": "Art. trocho-ginglymus (draai-scharniergewricht) — 2 assen."
+      },
+      {
+        "id": "cub-3",
+        "setId": "art-cubiti",
+        "categoryLabel": "Algemeen",
+        "question": "Welke drie botten vormen samen art. cubiti?",
+        "answer": "• Os humerus (opperarmbeen)\n• Os ulna (ellepijp)\n• Os radius (spaakbeen)"
+      },
+      {
+        "id": "cub-4",
+        "setId": "art-cubiti",
+        "categoryLabel": "Algemeen",
+        "question": "Hoe heet het mediale deelgewricht van art. cubiti en welke beweging vindt hierin plaats?",
+        "answer": "Art. humero-ulnaris — flexie en extensie (transversale as)."
+      },
+      {
+        "id": "cub-5",
+        "setId": "art-cubiti",
+        "categoryLabel": "Algemeen",
+        "question": "Hoe heet het laterale deelgewricht van art. cubiti en welke bewegingen vinden hierin plaats?",
+        "answer": "Art. humero-radialis — flexie en extensie (transversale as) én pronatie en supinatie (longitudinale as)."
+      },
+      {
+        "id": "cub-6",
+        "setId": "art-cubiti",
+        "categoryLabel": "Algemeen",
+        "question": "Hoe heet het gewricht tussen radius en ulna in de elleboog?",
+        "answer": "Art. radio-ulnaris proximalis."
+      },
+      {
+        "id": "cub-7",
+        "setId": "art-cubiti",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 1?",
+        "answer": "Os humerus (opperarmbeen).",
+        "imageUrl": "/images/flashcards/cubiti_botten_1_13.png"
+      },
+      {
+        "id": "cub-8",
+        "setId": "art-cubiti",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 2?",
+        "answer": "Corpus humeri.",
+        "imageUrl": "/images/flashcards/cubiti_botten_1_13.png"
+      },
+      {
+        "id": "cub-9",
+        "setId": "art-cubiti",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 3?",
+        "answer": "Epicondylus medialis.",
+        "imageUrl": "/images/flashcards/cubiti_botten_1_13.png"
+      },
+      {
+        "id": "cub-10",
+        "setId": "art-cubiti",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 4?",
+        "answer": "Epicondylus lateralis.",
+        "imageUrl": "/images/flashcards/cubiti_botten_1_13.png"
+      },
+      {
+        "id": "cub-11",
+        "setId": "art-cubiti",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 5?",
+        "answer": "Trochlea humeri.",
+        "imageUrl": "/images/flashcards/cubiti_botten_1_13.png"
+      },
+      {
+        "id": "cub-12",
+        "setId": "art-cubiti",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 6?",
+        "answer": "Capitulum humeri.",
+        "imageUrl": "/images/flashcards/cubiti_botten_1_13.png"
+      },
+      {
+        "id": "cub-13",
+        "setId": "art-cubiti",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 7?",
+        "answer": "Os ulna (ellepijp).",
+        "imageUrl": "/images/flashcards/cubiti_botten_1_13.png"
+      },
+      {
+        "id": "cub-14",
+        "setId": "art-cubiti",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 8?",
+        "answer": "Olecranon (elleboogpunt).",
+        "imageUrl": "/images/flashcards/cubiti_botten_1_13.png"
+      },
+      {
+        "id": "cub-15",
+        "setId": "art-cubiti",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 9?",
+        "answer": "Corpus ulnae.",
+        "imageUrl": "/images/flashcards/cubiti_botten_1_13.png"
+      },
+      {
+        "id": "cub-16",
+        "setId": "art-cubiti",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 10?",
+        "answer": "Os radius (spaakbeen).",
+        "imageUrl": "/images/flashcards/cubiti_botten_1_13.png"
+      },
+      {
+        "id": "cub-17",
+        "setId": "art-cubiti",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 11?",
+        "answer": "Caput radii (kop van het spaakbeen).",
+        "imageUrl": "/images/flashcards/cubiti_botten_1_13.png"
+      },
+      {
+        "id": "cub-18",
+        "setId": "art-cubiti",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 12?",
+        "answer": "Corpus radii.",
+        "imageUrl": "/images/flashcards/cubiti_botten_1_13.png"
+      },
+      {
+        "id": "cub-19",
+        "setId": "art-cubiti",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 13?",
+        "answer": "Tuberositas radii.",
+        "imageUrl": "/images/flashcards/cubiti_botten_1_13.png"
+      },
+      {
+        "id": "cub-20",
+        "setId": "art-cubiti",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de origo van de twee koppen van de m. biceps brachii?",
+        "answer": "• Caput breve: processus coracoideus\n• Caput longum: net boven de gewrichtskom van het schoudergewricht"
+      },
+      {
+        "id": "cub-21",
+        "setId": "art-cubiti",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de insertie van de m. biceps brachii?",
+        "answer": "Tuberositas radii."
+      },
+      {
+        "id": "cub-22",
+        "setId": "art-cubiti",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. biceps brachii?",
+        "answer": "• Art. cubiti: flexie en supinatie\n• Art. humeri: abductie"
+      },
+      {
+        "id": "cub-23",
+        "setId": "art-cubiti",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de m. brachialis?",
+        "answer": "• Origo: distale helft ventrale zijde humerus\n• Insertie: tuberositas ulnae"
+      },
+      {
+        "id": "cub-24",
+        "setId": "art-cubiti",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. brachialis?",
+        "answer": "Flexie in art. cubiti."
+      },
+      {
+        "id": "cub-25",
+        "setId": "art-cubiti",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de origo van de drie koppen van de m. triceps brachii?",
+        "answer": "• Caput longum: net onder de gewrichtskom van het schoudergewricht\n• Caput mediale: mediaal op dorsale vlak humerus\n• Caput laterale: lateraal op dorsale vlak humerus"
+      },
+      {
+        "id": "cub-26",
+        "setId": "art-cubiti",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de insertie van de m. triceps brachii?",
+        "answer": "Olecranon."
+      },
+      {
+        "id": "cub-27",
+        "setId": "art-cubiti",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. triceps brachii?",
+        "answer": "• Art. cubiti: extensie\n• Art. humeri: retroflexie en adductie (caput longum)"
+      },
+      {
+        "id": "cub-28",
+        "setId": "art-cubiti",
+        "categoryLabel": "Botstructuren",
+        "question": "Op welke botstructuur hecht de pees van de m. biceps brachii aan?",
+        "answer": "Tuberositas radii (nr. 13)."
+      },
+      {
+        "id": "cub-29",
+        "setId": "art-cubiti",
+        "categoryLabel": "Botstructuren",
+        "question": "Op welke botstructuur hecht de pees van de m. brachialis aan?",
+        "answer": "Tuberositas ulnae."
+      },
+      {
+        "id": "cub-30",
+        "setId": "art-cubiti",
+        "categoryLabel": "Botstructuren",
+        "question": "Op welke botstructuur hecht de pees van de m. triceps brachii aan?",
+        "answer": "Olecranon (nr. 8)."
+      },
+      {
+        "id": "cub-31",
+        "setId": "art-cubiti",
+        "categoryLabel": "Deelgewrichten",
+        "question": "Wat vormen kop en kom van art. humero-ulnaris en van art. humero-radialis?",
+        "answer": "• Art. humero-ulnaris: kop = trochlea humeri, kom = olecranon (ulna)\n• Art. humero-radialis: kop = capitulum humeri, kom = caput radii"
+      },
+      {
+        "id": "cub-32",
+        "setId": "art-cubiti",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke twee spierkoppen zijn 1. longum en 1. breve in deze figuur?",
+        "answer": "Caput longum en caput breve van de m. biceps brachii.",
+        "imageUrl": "/images/flashcards/cubiti_spieren_fig.png"
+      },
+      {
+        "id": "cub-33",
+        "setId": "art-cubiti",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 2 in deze figuur?",
+        "answer": "M. brachialis.",
+        "imageUrl": "/images/flashcards/cubiti_spieren_fig.png"
+      },
+      {
+        "id": "cub-34",
+        "setId": "art-cubiti",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke drie spierkoppen zijn 3. longum, 3. laterale en 3. mediale in deze figuur?",
+        "answer": "Caput longum, caput laterale en caput mediale van de m. triceps brachii.",
+        "imageUrl": "/images/flashcards/cubiti_spieren_fig.png"
+      },
+      {
+        "id": "cub-35",
+        "setId": "art-cubiti",
+        "categoryLabel": "Spieren",
+        "question": "Waar ligt de origo van het caput breve van de m. biceps brachii?",
+        "answer": "Processus coracoideus (op het schouderblad)."
+      },
+      {
+        "id": "cub-36",
+        "setId": "art-cubiti",
+        "categoryLabel": "Spieren",
+        "question": "Waar ligt de origo van het caput longum van de m. biceps brachii?",
+        "answer": "Net boven de gewrichtskom (cavitas glenoidalis) van het schoudergewricht."
+      },
+      {
+        "id": "cub-37",
+        "setId": "art-cubiti",
+        "categoryLabel": "Spieren",
+        "question": "Waar ligt de origo van het caput longum van de m. triceps brachii?",
+        "answer": "Net onder de gewrichtskom (cavitas glenoidalis) van het schoudergewricht."
+      },
+      {
+        "id": "cub-38",
+        "setId": "art-cubiti",
+        "categoryLabel": "Spieren",
+        "question": "Waar liggen de origo’s van het caput mediale en caput laterale van de m. triceps brachii?",
+        "answer": "• Caput mediale: mediaal op het dorsale vlak van de humerus\n• Caput laterale: lateraal op het dorsale vlak van de humerus"
+      },
+      {
+        "id": "cub-39",
+        "setId": "art-cubiti",
+        "categoryLabel": "Spieren per beweging",
+        "question": "Welke twee spieren zorgen voor flexie in art. cubiti?",
+        "answer": "• M. biceps brachii\n• M. brachialis"
+      },
+      {
+        "id": "cub-40",
+        "setId": "art-cubiti",
+        "categoryLabel": "Spieren per beweging",
+        "question": "Welke spier zorgt voor extensie in art. cubiti en welke voor supinatie in art. cubiti?",
+        "answer": "• Extensie: m. triceps brachii\n• Supinatie: m. biceps brachii"
+      },
+      {
+        "id": "cub-41",
+        "setId": "art-cubiti",
+        "categoryLabel": "Botstructuren",
+        "question": "Op welk bot liggen het olecranon en de tuberositas ulnae, en op welk bot liggen het caput radii en de tuberositas radii?",
+        "answer": "• Os ulna: olecranon en tuberositas ulnae\n• Os radius: caput radii en tuberositas radii",
+        "imageUrl": "/images/flashcards/cubiti_botten_1_13.png"
+      },
+      {
+        "id": "cub-42",
+        "setId": "art-cubiti",
+        "categoryLabel": "Botstructuren",
+        "question": "Op welk bot liggen de trochlea humeri, het capitulum humeri en de epicondylus medialis/lateralis?",
+        "answer": "Op het distale uiteinde van de os humerus.",
+        "imageUrl": "/images/flashcards/cubiti_botten_1_13.png"
+      }
+    ]
+  },
+  {
+    "id": "art-humeri",
+    "title": "9. Art. humeri (Schoudergewricht)",
+    "shortTitle": "9. Art. humeri",
+    "pdfSource": "ANTWOORDEN  humeri.pdf",
+    "description": "Rotator cuff, botstructuren scapula/humerus (1-14) en schouderspieren.",
+    "cards": [
+      {
+        "id": "hum-1",
+        "setId": "art-humeri",
+        "categoryLabel": "Gewricht & type",
+        "question": "Wat is de Nederlandse naam van art. humeri?",
+        "answer": "Schoudergewricht."
+      },
+      {
+        "id": "hum-2",
+        "setId": "art-humeri",
+        "categoryLabel": "Algemeen",
+        "question": "Welk type gewricht is art. humeri en hoeveel assen heeft het?",
+        "answer": "Art. spheroidea (bolgewricht) — 3 assen."
+      },
+      {
+        "id": "hum-3",
+        "setId": "art-humeri",
+        "categoryLabel": "Algemeen",
+        "question": "Welke twee botten vormen samen art. humeri?",
+        "answer": "• Os humerus (opperarmbeen)\n• Os scapula (schouderblad)"
+      },
+      {
+        "id": "hum-4",
+        "setId": "art-humeri",
+        "categoryLabel": "Algemeen",
+        "question": "Wat vormt de gewrichtskom en wat vormt de gewrichtskop van art. humeri?",
+        "answer": "• Kom: Cavitas glenoidalis\n• Kop: Caput humeri"
+      },
+      {
+        "id": "hum-5",
+        "setId": "art-humeri",
+        "categoryLabel": "Algemeen",
+        "question": "Welke bewegingen zijn mogelijk in art. humeri (met bijbehorende as)?",
+        "answer": "• Anteflexie en retroflexie (transversale as)\n• Abductie en adductie (sagittale as)\n• Endorotatie en exorotatie (longitudinale as)"
+      },
+      {
+        "id": "hum-6",
+        "setId": "art-humeri",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 1?",
+        "answer": "Os humerus.",
+        "imageUrl": "/images/flashcards/humeri_botten_1_14.png"
+      },
+      {
+        "id": "hum-7",
+        "setId": "art-humeri",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 2?",
+        "answer": "Corpus humeri.",
+        "imageUrl": "/images/flashcards/humeri_botten_1_14.png"
+      },
+      {
+        "id": "hum-8",
+        "setId": "art-humeri",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 3?",
+        "answer": "Caput humeri.",
+        "imageUrl": "/images/flashcards/humeri_botten_1_14.png"
+      },
+      {
+        "id": "hum-9",
+        "setId": "art-humeri",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 4?",
+        "answer": "Tuberculum majus.",
+        "imageUrl": "/images/flashcards/humeri_botten_1_14.png"
+      },
+      {
+        "id": "hum-10",
+        "setId": "art-humeri",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 5?",
+        "answer": "Tuberculum minus.",
+        "imageUrl": "/images/flashcards/humeri_botten_1_14.png"
+      },
+      {
+        "id": "hum-11",
+        "setId": "art-humeri",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 6?",
+        "answer": "Os scapula.",
+        "imageUrl": "/images/flashcards/humeri_botten_1_14.png"
+      },
+      {
+        "id": "hum-12",
+        "setId": "art-humeri",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 7?",
+        "answer": "Angulus superior.",
+        "imageUrl": "/images/flashcards/humeri_botten_1_14.png"
+      },
+      {
+        "id": "hum-13",
+        "setId": "art-humeri",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 8?",
+        "answer": "Angulus inferior.",
+        "imageUrl": "/images/flashcards/humeri_botten_1_14.png"
+      },
+      {
+        "id": "hum-14",
+        "setId": "art-humeri",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 9?",
+        "answer": "Margo medialis.",
+        "imageUrl": "/images/flashcards/humeri_botten_1_14.png"
+      },
+      {
+        "id": "hum-15",
+        "setId": "art-humeri",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 10?",
+        "answer": "Margo lateralis.",
+        "imageUrl": "/images/flashcards/humeri_botten_1_14.png"
+      },
+      {
+        "id": "hum-16",
+        "setId": "art-humeri",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 11?",
+        "answer": "Spina scapula.",
+        "imageUrl": "/images/flashcards/humeri_botten_1_14.png"
+      },
+      {
+        "id": "hum-17",
+        "setId": "art-humeri",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 12?",
+        "answer": "Acromion.",
+        "imageUrl": "/images/flashcards/humeri_botten_1_14.png"
+      },
+      {
+        "id": "hum-18",
+        "setId": "art-humeri",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 13?",
+        "answer": "Processus coracoideus.",
+        "imageUrl": "/images/flashcards/humeri_botten_1_14.png"
+      },
+      {
+        "id": "hum-19",
+        "setId": "art-humeri",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 14?",
+        "answer": "Cavitas glenoidalis.",
+        "imageUrl": "/images/flashcards/humeri_botten_1_14.png"
+      },
+      {
+        "id": "hum-20",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de m. latissimus dorsi?",
+        "answer": "• Origo: processus spinosus T7–T12, lumbale wervels, sacrum en crista iliaca\n• Insertie: tuberculum minus (ventrale zijde humerus)"
+      },
+      {
+        "id": "hum-21",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. latissimus dorsi in art. humeri?",
+        "answer": "Adductie, endorotatie en retroflexie."
+      },
+      {
+        "id": "hum-22",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren",
+        "question": "Uit welke drie delen bestaat de m. deltoideus en wat is hun origo?",
+        "answer": "• Pars clavicularis: laterale 1/3 deel clavicula\n• Pars acromialis: acromion\n• Pars spinalis: spina scapula"
+      },
+      {
+        "id": "hum-23",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de insertie van de m. deltoideus?",
+        "answer": "Lateraal op de humerus (op 1/3 deel van het corpus)."
+      },
+      {
+        "id": "hum-24",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de functies van de drie delen van de m. deltoideus?",
+        "answer": "• Pars acromialis: abductie\n• Pars clavicularis: anteflexie\n• Pars spinalis: retroflexie"
+      },
+      {
+        "id": "hum-25",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de m. pectoralis major?",
+        "answer": "• Origo: mediale 1/3 deel clavicula, sternum, kraakbeen 2e–6e rib\n• Insertie: tuberculum majus (proximaal ventraal op humerus)"
+      },
+      {
+        "id": "hum-26",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. pectoralis major?",
+        "answer": "Adductie en endorotatie in art. humeri."
+      },
+      {
+        "id": "hum-27",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de m. teres major?",
+        "answer": "• Origo: angulus inferior scapula\n• Insertie: proximaal ventraal op humerus"
+      },
+      {
+        "id": "hum-28",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. teres major?",
+        "answer": "Endorotatie, retroflexie en adductie in art. humeri."
+      },
+      {
+        "id": "hum-29",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de m. teres minor?",
+        "answer": "• Origo: margo lateralis scapula\n• Insertie: dorsale gedeelte tuberculum majus"
+      },
+      {
+        "id": "hum-30",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. teres minor?",
+        "answer": "Exorotatie en retroflexie in art. humeri."
+      },
+      {
+        "id": "hum-31",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren",
+        "question": "Welke spier zorgt voor exorotatie in art. humeri?",
+        "answer": "M. teres minor."
+      },
+      {
+        "id": "hum-32",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 1 in deze figuur?",
+        "answer": "M. latissimus dorsi.",
+        "imageUrl": "/images/flashcards/humeri_spieren_fig.png"
+      },
+      {
+        "id": "hum-33",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 2 in deze figuur?",
+        "answer": "M. deltoideus.",
+        "imageUrl": "/images/flashcards/humeri_spieren_fig.png"
+      },
+      {
+        "id": "hum-34",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 3 in deze figuur?",
+        "answer": "M. pectoralis major.",
+        "imageUrl": "/images/flashcards/humeri_spieren_fig.png"
+      },
+      {
+        "id": "hum-35",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 4 in deze figuur?",
+        "answer": "M. teres major.",
+        "imageUrl": "/images/flashcards/humeri_spieren_fig.png"
+      },
+      {
+        "id": "hum-36",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 5 in deze figuur?",
+        "answer": "M. teres minor.",
+        "imageUrl": "/images/flashcards/humeri_spieren_fig.png"
+      },
+      {
+        "id": "hum-37",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren",
+        "question": "Aan welke zijde (ventraal of dorsaal) van de humerus hechten de m. latissimus dorsi en m. teres major aan?",
+        "answer": "Aan de ventrale zijde van de humerus (daarom geven beide spieren endorotatie).",
+        "imageUrl": "/images/flashcards/humeri_spieren_fig.png"
+      },
+      {
+        "id": "hum-38",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren per beweging",
+        "question": "Welke drie spieren zorgen voor endorotatie in art. humeri?",
+        "answer": "• M. pectoralis major\n• M. latissimus dorsi\n• M. teres major"
+      },
+      {
+        "id": "hum-39",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren per beweging",
+        "question": "Welke vier spieren zorgen voor adductie in art. humeri?",
+        "answer": "• M. pectoralis major\n• M. latissimus dorsi\n• M. teres major\n• M. triceps brachii (caput longum)"
+      },
+      {
+        "id": "hum-40",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren per beweging",
+        "question": "Welke twee spieren zorgen volgens de tabellen voor abductie in art. humeri?",
+        "answer": "• M. deltoideus (pars acromialis)\n• M. biceps brachii"
+      },
+      {
+        "id": "hum-41",
+        "setId": "art-humeri",
+        "categoryLabel": "Spieren per beweging",
+        "question": "Welke spieren zorgen voor retroflexie in art. humeri en welke voor anteflexie?",
+        "answer": "• Retroflexie: m. latissimus dorsi, m. deltoideus (pars spinalis), m. teres major, m. teres minor, m. triceps brachii (caput longum)\n• Anteflexie: m. deltoideus (pars clavicularis)"
+      },
+      {
+        "id": "hum-42",
+        "setId": "art-humeri",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke vijf botstructuren horen bij de humerus (nr. 1 t/m 5)?",
+        "answer": "• 1 = Os humerus\n• 2 = Corpus humeri\n• 3 = Caput humeri\n• 4 = Tuberculum majus\n• 5 = Tuberculum minus",
+        "imageUrl": "/images/flashcards/humeri_botten_1_14.png"
+      },
+      {
+        "id": "hum-43",
+        "setId": "art-humeri",
+        "categoryLabel": "Botstukken & structuren",
+        "question": "Welk botuitsteeksel aan de bovenzijde van de scapula is nummer 12?",
+        "answer": "Acromion.",
+        "imageUrl": "/images/flashcards/humeri_botten_1_14.png"
+      },
+      {
+        "id": "hum-44",
+        "setId": "art-humeri",
+        "categoryLabel": "Botstukken & structuren",
+        "question": "Welk ravenbekuitsteeksel aan de voor-/bovenzijde van de scapula is nummer 13?",
+        "answer": "Processus coracoideus.",
+        "imageUrl": "/images/flashcards/humeri_botten_1_14.png"
+      },
+      {
+        "id": "hum-45",
+        "setId": "art-humeri",
+        "categoryLabel": "Aanzichten",
+        "question": "Welk aanzicht (ventraal of dorsaal) hebben het linker en rechter botstuk van de schouder (scapula & humerus)?",
+        "answer": "• Links = ventraal aanzicht (voorzijde — te zien aan de fossa subscapularis en processus coracoideus)\n• Rechts = dorsaal aanzicht (achterzijde — duidelijk herkenbaar aan de spina scapulae / schouderbladkam)",
+        "imageUrl": "/images/flashcards/humeri_botten_1_14.png"
+      }
+    ]
+  },
+  {
+    "id": "cingulum-pectorale",
+    "title": "10. Cingulum Pectorale (Schoudergordel)",
+    "shortTitle": "10. Cingulum",
+    "pdfSource": "ANTWOORDEN cingulum pectorale.pdf",
+    "description": "Gewrichten (SC, AC, schoudergordel-thorax), structuren en schoudergordelspieren.",
+    "cards": [
+      {
+        "id": "cin-1",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Gewrichten & botten",
+        "question": "Wat is de Nederlandse naam van het cingulum pectorale?",
+        "answer": "Schoudergordel."
+      },
+      {
+        "id": "cin-2",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Algemeen",
+        "question": "Welke drie botten vormen samen het cingulum pectorale (schoudergordel)?",
+        "answer": "• Os sternum (borstbeen)\n• Os clavicula (sleutelbeen)\n• Os scapula (schouderblad)"
+      },
+      {
+        "id": "cin-3",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Algemeen",
+        "question": "Hoe heet het gewricht tussen de clavicula en het sternum?",
+        "answer": "Art. sterno-clavicularis (SC-gewricht)."
+      },
+      {
+        "id": "cin-4",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Algemeen",
+        "question": "Hoe heet het gewricht tussen de clavicula en het acromion?",
+        "answer": "Art. acromio-clavicularis (AC-gewricht)."
+      },
+      {
+        "id": "cin-5",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Algemeen",
+        "question": "Welke drie bewegingsparen zijn mogelijk in het cingulum pectorale?",
+        "answer": "• Protractie en retractie\n• Elevatie en detractie (depressie)\n• Laterorotatie en mediorotatie"
+      },
+      {
+        "id": "cin-6",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 1?",
+        "answer": "Os sternum (borstbeen).",
+        "imageUrl": "/images/flashcards/cingulum_sternum_clavicula.png"
+      },
+      {
+        "id": "cin-7",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 2?",
+        "answer": "Manubrium sterni.",
+        "imageUrl": "/images/flashcards/cingulum_sternum_clavicula.png"
+      },
+      {
+        "id": "cin-8",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 3?",
+        "answer": "Corpus sterni.",
+        "imageUrl": "/images/flashcards/cingulum_sternum_clavicula.png"
+      },
+      {
+        "id": "cin-9",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 4?",
+        "answer": "Processus xiphoideus (zwaardvormig aanhangsel).",
+        "imageUrl": "/images/flashcards/cingulum_sternum_clavicula.png"
+      },
+      {
+        "id": "cin-10",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 5?",
+        "answer": "Os clavicula (sleutelbeen).",
+        "imageUrl": "/images/flashcards/cingulum_sternum_clavicula.png"
+      },
+      {
+        "id": "cin-11",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 6?",
+        "answer": "Extremitas sternalis.",
+        "imageUrl": "/images/flashcards/cingulum_sternum_clavicula.png"
+      },
+      {
+        "id": "cin-12",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Botstructuren",
+        "question": "Welke botstructuur is nummer 7?",
+        "answer": "Extremitas acromialis.",
+        "imageUrl": "/images/flashcards/cingulum_sternum_clavicula.png"
+      },
+      {
+        "id": "cin-13",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Scapulahumeraal patroon",
+        "question": "Door welke rotatie van het os scapula wordt de abductie in art. humeri vergroot?",
+        "answer": "Laterorotatie van het os scapula.",
+        "imageUrl": "/images/flashcards/cingulum_scapulahumeraal.png"
+      },
+      {
+        "id": "cin-14",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. latissimus dorsi op het cingulum pectorale?",
+        "answer": "Detractie (depressie) van de schoudergordel."
+      },
+      {
+        "id": "cin-15",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren",
+        "question": "Uit welke drie delen bestaat de m. trapezius?",
+        "answer": "• Pars descendens (dalend deel)\n• Pars transversa (dwars deel)\n• Pars ascendens (stijgend deel)"
+      },
+      {
+        "id": "cin-16",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de m. trapezius pars descendens?",
+        "answer": "• Origo: dorsaal onderzijde schedel, proc. spinosus C1–C6\n• Insertie: laterale 1/3 deel clavicula"
+      },
+      {
+        "id": "cin-17",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. trapezius pars descendens?",
+        "answer": "Elevatie van het os scapula."
+      },
+      {
+        "id": "cin-18",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de m. trapezius pars transversa?",
+        "answer": "• Origo: proc. spinosus C7 en T1–T3\n• Insertie: acromion"
+      },
+      {
+        "id": "cin-19",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. trapezius pars transversa?",
+        "answer": "Retractie van het os scapula."
+      },
+      {
+        "id": "cin-20",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de m. trapezius pars ascendens?",
+        "answer": "• Origo: proc. spinosus T3–T12\n• Insertie: spina scapula"
+      },
+      {
+        "id": "cin-21",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. trapezius pars ascendens?",
+        "answer": "Detractie (depressie) van het os scapula."
+      },
+      {
+        "id": "cin-22",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de m. levator scapulae?",
+        "answer": "• Origo: processus transversus van bovenste 4 vertebrae cervicales (C1–C4)\n• Insertie: angulus superior scapula"
+      },
+      {
+        "id": "cin-23",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. levator scapulae?",
+        "answer": "Elevatie van het os scapula."
+      },
+      {
+        "id": "cin-24",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de m. serratus anterior?",
+        "answer": "• Origo: 1e tot 9e costa (rib)\n• Insertie: margo medialis, angulus superior en angulus inferior scapula"
+      },
+      {
+        "id": "cin-25",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. serratus anterior?",
+        "answer": "Protractie en laterorotatie van het os scapula."
+      },
+      {
+        "id": "cin-26",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de mm. rhomboidei?",
+        "answer": "• Origo: processus spinosus C7 en T1–T5\n• Insertie: margo medialis scapula"
+      },
+      {
+        "id": "cin-27",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de mm. rhomboidei?",
+        "answer": "Mediorotatie en retractie van het os scapula."
+      },
+      {
+        "id": "cin-28",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren",
+        "question": "Welke twee spieren zorgen voor elevatie van het os scapula?",
+        "answer": "• M. trapezius (pars descendens)\n• M. levator scapulae"
+      },
+      {
+        "id": "cin-29",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren",
+        "question": "Welke twee spieren zorgen voor detractie (depressie) van de schoudergordel?",
+        "answer": "• M. trapezius (pars ascendens)\n• M. latissimus dorsi"
+      },
+      {
+        "id": "cin-30",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren",
+        "question": "Welke twee spieren zorgen voor retractie van het os scapula?",
+        "answer": "• M. trapezius (pars transversa)\n• Mm. rhomboidei"
+      },
+      {
+        "id": "cin-31",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Scapulahumeraal patroon",
+        "question": "Door welke beweging van het os scapula wordt een horizontale anteflexie en een horizontale retroflexie in art. humeri vergroot?",
+        "answer": "• Horizontale anteflexie: door protractie van het os scapula\n• Horizontale retroflexie: door retractie van het os scapula"
+      },
+      {
+        "id": "cin-32",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 1 in deze figuur?",
+        "answer": "M. latissimus dorsi.",
+        "imageUrl": "/images/flashcards/cingulum_spieren_fig.png"
+      },
+      {
+        "id": "cin-33",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 2 in deze figuur?",
+        "answer": "M. trapezius.",
+        "imageUrl": "/images/flashcards/cingulum_spieren_fig.png"
+      },
+      {
+        "id": "cin-34",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 3 in deze figuur?",
+        "answer": "M. levator scapulae.",
+        "imageUrl": "/images/flashcards/cingulum_spieren_fig.png"
+      },
+      {
+        "id": "cin-35",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 4 in deze figuur?",
+        "answer": "M. serratus anterior.",
+        "imageUrl": "/images/flashcards/cingulum_spieren_fig.png"
+      },
+      {
+        "id": "cin-36",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 5 in deze figuur?",
+        "answer": "Mm. rhomboidei.",
+        "imageUrl": "/images/flashcards/cingulum_spieren_fig.png"
+      },
+      {
+        "id": "cin-37",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren per beweging",
+        "question": "Welke spier zorgt voor protractie en laterorotatie van het os scapula?",
+        "answer": "M. serratus anterior."
+      },
+      {
+        "id": "cin-38",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren per beweging",
+        "question": "Welke spier zorgt voor mediorotatie van het os scapula?",
+        "answer": "Mm. rhomboidei."
+      },
+      {
+        "id": "cin-39",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Botstructuren",
+        "question": "Uit welke drie onderdelen (nr. 2, 3 en 4) bestaat het os sternum (nr. 1)?",
+        "answer": "• 2 = Manubrium sterni\n• 3 = Corpus sterni\n• 4 = Processus xiphoideus",
+        "imageUrl": "/images/flashcards/cingulum_sternum_clavicula.png"
+      },
+      {
+        "id": "cin-40",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Botstructuren",
+        "question": "Hoe heten de twee uiteinden (nr. 6 en 7) van de os clavicula (nr. 5)?",
+        "answer": "• 6 = Extremitas sternalis (mediale uiteinde)\n• 7 = Extremitas acromialis (laterale uiteinde)",
+        "imageUrl": "/images/flashcards/cingulum_sternum_clavicula.png"
+      },
+      {
+        "id": "cin-41",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Spieren",
+        "question": "Welke twee spieren hechten aan op de margo medialis van de scapula?",
+        "answer": "• M. serratus anterior\n• Mm. rhomboidei"
+      },
+      {
+        "id": "cin-42",
+        "setId": "cingulum-pectorale",
+        "categoryLabel": "Algemeen",
+        "question": "Hoeveel vrijheidsgraden (assen) heeft het cingulum pectorale volgens het moduulboek?",
+        "answer": "2 assen."
+      }
+    ]
+  },
+  {
+    "id": "romp",
+    "title": "11. Romp (Wervelkolom, Thorax & Buikspieren)",
+    "shortTitle": "11. Romp",
+    "pdfSource": "ANTWOORDEN romp.pdf",
+    "description": "Wervelkolom en ribbenkast (1-10), opbouw van een wervel (1-8) en spieren van de romp.",
+    "cards": [
+      {
+        "id": "romp-1",
+        "setId": "romp",
+        "categoryLabel": "Algemeen",
+        "question": "Welke botgroepen vormen samen de romp?",
+        "answer": "• Os coxae\n• Vertebrae (wervels)\n• Costae (ribben)\n• Os sternum (borstbeen)"
+      },
+      {
+        "id": "romp-2",
+        "setId": "romp",
+        "categoryLabel": "Algemeen",
+        "question": "Welke drie bewegingsmogelijkheden heeft de gehele romp (met bijbehorende as)?",
+        "answer": "• Flexie en extensie (transversale as)\n• Lateroflexie (sagittale as)\n• Rotatie (longitudinale as)"
+      },
+      {
+        "id": "romp-3",
+        "setId": "romp",
+        "categoryLabel": "Wervelkolom & ribben",
+        "question": "Welke botstructuur is nummer 1?",
+        "answer": "Os coxae (heupbeen).",
+        "imageUrl": "/images/flashcards/romp_wervelkolom_1_10.png"
+      },
+      {
+        "id": "romp-4",
+        "setId": "romp",
+        "categoryLabel": "Wervelkolom & ribben",
+        "question": "Welke wervels zijn nummer 2 in dit wervelkolomoverzicht?",
+        "answer": "Vertebrae cervicales (halswervels).",
+        "imageUrl": "/images/flashcards/romp_wervelkolom_1_10.png"
+      },
+      {
+        "id": "romp-5",
+        "setId": "romp",
+        "categoryLabel": "Wervelkolom & ribben",
+        "question": "Hoeveel vertebrae cervicales (halswervels) heeft het menselijk lichaam?",
+        "answer": "7 halswervels (C1 t/m C7)."
+      },
+      {
+        "id": "romp-6",
+        "setId": "romp",
+        "categoryLabel": "Wervelkolom & ribben",
+        "question": "Welke wervels zijn nummer 3 in dit wervelkolomoverzicht?",
+        "answer": "Vertebrae thoracales (borstwervels).",
+        "imageUrl": "/images/flashcards/romp_wervelkolom_1_10.png"
+      },
+      {
+        "id": "romp-7",
+        "setId": "romp",
+        "categoryLabel": "Wervelkolom & ribben",
+        "question": "Hoeveel vertebrae thoracales (borstwervels) heeft het menselijk lichaam?",
+        "answer": "12 borstwervels (Th1 t/m Th12)."
+      },
+      {
+        "id": "romp-8",
+        "setId": "romp",
+        "categoryLabel": "Wervelkolom & ribben",
+        "question": "Welke wervels zijn nummer 4 in dit wervelkolomoverzicht?",
+        "answer": "Vertebrae lumbales (lendenwervels).",
+        "imageUrl": "/images/flashcards/romp_wervelkolom_1_10.png"
+      },
+      {
+        "id": "romp-9",
+        "setId": "romp",
+        "categoryLabel": "Wervelkolom & ribben",
+        "question": "Hoeveel vertebrae lumbales (lendenwervels) heeft het menselijk lichaam?",
+        "answer": "5 lendenwervels (L1 t/m L5)."
+      },
+      {
+        "id": "romp-10",
+        "setId": "romp",
+        "categoryLabel": "Wervelkolom & ribben",
+        "question": "Welke botstructuur is nummer 5?",
+        "answer": "Os sacrum (heiligbeen).",
+        "imageUrl": "/images/flashcards/romp_wervelkolom_1_10.png"
+      },
+      {
+        "id": "romp-11",
+        "setId": "romp",
+        "categoryLabel": "Wervelkolom & ribben",
+        "question": "Welke botstructuur is nummer 6?",
+        "answer": "Os coccygis (staartbeen).",
+        "imageUrl": "/images/flashcards/romp_wervelkolom_1_10.png"
+      },
+      {
+        "id": "romp-12",
+        "setId": "romp",
+        "categoryLabel": "Wervelkolom & ribben",
+        "question": "Hoe heten de ware ribben (nummer 7) in het Latijn?",
+        "answer": "Costae verae.",
+        "imageUrl": "/images/flashcards/romp_wervelkolom_1_10.png"
+      },
+      {
+        "id": "romp-13",
+        "setId": "romp",
+        "categoryLabel": "Wervelkolom & ribben",
+        "question": "Hoeveel paar costae verae (ware ribben) heeft de mens?",
+        "answer": "7 paar (rib 1 t/m 7, hechten direct aan sternum)."
+      },
+      {
+        "id": "romp-14",
+        "setId": "romp",
+        "categoryLabel": "Wervelkolom & ribben",
+        "question": "Hoe heten de valse ribben (nummer 8) in het Latijn?",
+        "answer": "Costae spuriae.",
+        "imageUrl": "/images/flashcards/romp_wervelkolom_1_10.png"
+      },
+      {
+        "id": "romp-15",
+        "setId": "romp",
+        "categoryLabel": "Wervelkolom & ribben",
+        "question": "Hoeveel paar costae spuriae (valse ribben) heeft de mens?",
+        "answer": "3 paar (rib 8 t/m 10, hechten via kraakbeenboog)."
+      },
+      {
+        "id": "romp-16",
+        "setId": "romp",
+        "categoryLabel": "Wervelkolom & ribben",
+        "question": "Hoe heten de zwevende ribben (nummer 9) in het Latijn?",
+        "answer": "Costae fluctuantes.",
+        "imageUrl": "/images/flashcards/romp_wervelkolom_1_10.png"
+      },
+      {
+        "id": "romp-17",
+        "setId": "romp",
+        "categoryLabel": "Wervelkolom & ribben",
+        "question": "Hoeveel paar costae fluctuantes (zwevende ribben) heeft de mens?",
+        "answer": "2 paar (rib 11 en 12, hechten ventraal niet)."
+      },
+      {
+        "id": "romp-18",
+        "setId": "romp",
+        "categoryLabel": "Wervelkolom & ribben",
+        "question": "Welke botstructuur is nummer 10?",
+        "answer": "Os sternum (borstbeen).",
+        "imageUrl": "/images/flashcards/romp_wervelkolom_1_10.png"
+      },
+      {
+        "id": "romp-19",
+        "setId": "romp",
+        "categoryLabel": "Wervel",
+        "question": "Welke structuur is nummer 1?",
+        "answer": "Vertebra (wervel).",
+        "imageUrl": "/images/flashcards/romp_wervel_1_8.png"
+      },
+      {
+        "id": "romp-20",
+        "setId": "romp",
+        "categoryLabel": "Wervel",
+        "question": "Welke structuur is nummer 2?",
+        "answer": "Corpus vertebrae (wervellichaam).",
+        "imageUrl": "/images/flashcards/romp_wervel_1_8.png"
+      },
+      {
+        "id": "romp-21",
+        "setId": "romp",
+        "categoryLabel": "Wervel",
+        "question": "Welke structuur is nummer 3?",
+        "answer": "Arcus vertebrae (wervelboog).",
+        "imageUrl": "/images/flashcards/romp_wervel_1_8.png"
+      },
+      {
+        "id": "romp-22",
+        "setId": "romp",
+        "categoryLabel": "Wervel",
+        "question": "Welke structuur is nummer 4?",
+        "answer": "Discus intervertebralis (tussenwervelschijf).",
+        "imageUrl": "/images/flashcards/romp_wervel_1_8.png"
+      },
+      {
+        "id": "romp-23",
+        "setId": "romp",
+        "categoryLabel": "Wervel",
+        "question": "Welke structuur is nummer 5?",
+        "answer": "Processus transversus (dwarsuitsteeksel).",
+        "imageUrl": "/images/flashcards/romp_wervel_1_8.png"
+      },
+      {
+        "id": "romp-24",
+        "setId": "romp",
+        "categoryLabel": "Wervel",
+        "question": "Welke structuur is nummer 6?",
+        "answer": "Processus articularis inferior (onderste gewrichtsuitsteeksel).",
+        "imageUrl": "/images/flashcards/romp_wervel_1_8.png"
+      },
+      {
+        "id": "romp-25",
+        "setId": "romp",
+        "categoryLabel": "Wervel",
+        "question": "Welke structuur is nummer 7?",
+        "answer": "Processus articularis superior (bovenste gewrichtsuitsteeksel).",
+        "imageUrl": "/images/flashcards/romp_wervel_1_8.png"
+      },
+      {
+        "id": "romp-26",
+        "setId": "romp",
+        "categoryLabel": "Wervel",
+        "question": "Welke structuur is nummer 8?",
+        "answer": "Processus spinosus (doornuitsteeksel).",
+        "imageUrl": "/images/flashcards/romp_wervel_1_8.png"
+      },
+      {
+        "id": "romp-27",
+        "setId": "romp",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de m. rectus abdominis?",
+        "answer": "• Origo: Os pubis (schaambeen)\n• Insertie: Kraakbeen van de 5e–7e costa en het processus xiphoideus"
+      },
+      {
+        "id": "romp-28",
+        "setId": "romp",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. rectus abdominis?",
+        "answer": "Flexie van de wervelkolom."
+      },
+      {
+        "id": "romp-29",
+        "setId": "romp",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de m. obliquus internus abdominis?",
+        "answer": "• Origo: crista iliaca en SIAS\n• Insertie: kraakbeen laatste 3 costae en linea alba"
+      },
+      {
+        "id": "romp-30",
+        "setId": "romp",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. obliquus internus abdominis?",
+        "answer": "Rotatie naar dezelfde zijde en lateroflexie van de wervelkolom."
+      },
+      {
+        "id": "romp-31",
+        "setId": "romp",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo en insertie van de m. obliquus externus abdominis?",
+        "answer": "• Origo: 5e tot 12e costa\n• Insertie: crista iliaca en linea alba"
+      },
+      {
+        "id": "romp-32",
+        "setId": "romp",
+        "categoryLabel": "Spieren",
+        "question": "Wat is de functie van de m. obliquus externus abdominis?",
+        "answer": "Rotatie naar de tegenovergestelde zijde en lateroflexie van de wervelkolom."
+      },
+      {
+        "id": "romp-33",
+        "setId": "romp",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo, insertie en functie van de m. erector spinae?",
+        "answer": "• Origo en insertie: alle wervels en os sacrum\n• Functie: (hyper)extensie van de wervelkolom"
+      },
+      {
+        "id": "romp-34",
+        "setId": "romp",
+        "categoryLabel": "Spieren",
+        "question": "Wat zijn de origo, insertie en functie van de m. iliopsoas?",
+        "answer": "• Origo: 12e vertebra thoracalis, 1e–5e vertebrae lumbales en ventrale vlak os ilium\n• Insertie: trochanter minor\n• Functie: flexie van de wervelkolom, anteflexie en exorotatie art. coxae"
+      },
+      {
+        "id": "romp-35",
+        "setId": "romp",
+        "categoryLabel": "Spieren",
+        "question": "Welke schuine buikspier roteert de wervelkolom naar dezelfde zijde en welke naar de tegenovergestelde zijde?",
+        "answer": "• Zelfde zijde: m. obliquus internus abdominis\n• Tegenovergestelde zijde: m. obliquus externus abdominis"
+      },
+      {
+        "id": "romp-36",
+        "setId": "romp",
+        "categoryLabel": "Spieren",
+        "question": "Welke spieren zorgen voor flexie van de wervelkolom?",
+        "answer": "• M. rectus abdominis\n• M. iliopsoas"
+      },
+      {
+        "id": "romp-37",
+        "setId": "romp",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 1 in deze figuur?",
+        "answer": "M. rectus abdominis.",
+        "imageUrl": "/images/flashcards/romp_spieren_fig.png"
+      },
+      {
+        "id": "romp-38",
+        "setId": "romp",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 2 in deze figuur?",
+        "answer": "M. obliquus internus abdominis.",
+        "imageUrl": "/images/flashcards/romp_spieren_fig.png"
+      },
+      {
+        "id": "romp-39",
+        "setId": "romp",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 3 in deze figuur?",
+        "answer": "M. obliquus externus abdominis.",
+        "imageUrl": "/images/flashcards/romp_spieren_fig.png"
+      },
+      {
+        "id": "romp-40",
+        "setId": "romp",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 4 in deze figuur?",
+        "answer": "M. erector spinae.",
+        "imageUrl": "/images/flashcards/romp_spieren_fig.png"
+      },
+      {
+        "id": "romp-41",
+        "setId": "romp",
+        "categoryLabel": "Spieren figuur",
+        "question": "Welke spier is nummer 5 in deze figuur?",
+        "answer": "M. iliopsoas.",
+        "imageUrl": "/images/flashcards/romp_spieren_fig.png"
+      },
+      {
+        "id": "romp-42",
+        "setId": "romp",
+        "categoryLabel": "Spieren per beweging",
+        "question": "Welke spier zorgt voor (hyper)extensie van de wervelkolom?",
+        "answer": "M. erector spinae."
+      },
+      {
+        "id": "romp-43",
+        "setId": "romp",
+        "categoryLabel": "Spieren per beweging",
+        "question": "Welke twee buikspieren zorgen voor lateroflexie van de wervelkolom?",
+        "answer": "• M. obliquus internus abdominis\n• M. obliquus externus abdominis"
+      },
+      {
+        "id": "romp-44",
+        "setId": "romp",
+        "categoryLabel": "Wervelkolom",
+        "question": "Uit hoeveel hals-, borst- en lendenwervels bestaat de wervelkolom?",
+        "answer": "• 7 vertebrae cervicales (halswervels)\n• 12 vertebrae thoracales (borstwervels)\n• 5 vertebrae lumbales (lendenwervels)",
+        "imageUrl": "/images/flashcards/romp_wervelkolom_1_10.png"
+      },
+      {
+        "id": "romp-45",
+        "setId": "romp",
+        "categoryLabel": "Ribben",
+        "question": "Hoe zijn de 12 paar costae (ribben) verdeeld over ware, valse en zwevende ribben?",
+        "answer": "• 7 paar costae verae (ware ribben)\n• 3 paar costae spuriae (valse ribben)\n• 2 paar costae fluctuantes (zwevende ribben)",
+        "imageUrl": "/images/flashcards/romp_wervelkolom_1_10.png"
+      },
+      {
+        "id": "romp-46",
+        "setId": "romp",
+        "categoryLabel": "Wervel",
+        "question": "Wat is het verschil in ligging tussen de processus spinosus (nr. 8) en de processus transversus (nr. 5)?",
+        "answer": "• Processus spinosus (nr. 8): doornuitsteeksel aan de dorsale zijde\n• Processus transversus (nr. 5): dwarsuitsteeksel aan de laterale zijde",
+        "imageUrl": "/images/flashcards/romp_wervel_1_8.png"
+      },
+      {
+        "id": "romp-47",
+        "setId": "romp",
+        "categoryLabel": "Spieren",
+        "question": "Welke spier beweegt zowel de wervelkolom (flexie) als het art. coxae (anteflexie en exorotatie)?",
+        "answer": "M. iliopsoas."
+      },
+      {
+        "id": "romp-48",
+        "setId": "romp",
+        "categoryLabel": "Spieren",
+        "question": "Op welke twee structuren hechten zowel de m. obliquus internus als de m. obliquus externus abdominis aan?",
+        "answer": "Op de crista iliaca en de linea alba (en de onderste costae)."
+      }
+    ]
+  },
+  {
+    "id": "oefentoets_mix",
+    "title": "12. Oefentoets & Examentraining Mix",
+    "shortTitle": "12. Oefentoets",
+    "pdfSource": "OEFENTOETS ANATOMIE ANTWOORDEN.pdf",
+    "description": "Toepassingsvragen uit de proeftoets en herkenningsvragen van de overzichtsplaten p. 71-74.",
+    "cards": [
+      {
+        "id": "oef-1",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 1",
+        "question": "Welke as staat loodrecht op het frontale vlak?",
+        "answer": "Sagittale as."
+      },
+      {
+        "id": "oef-2",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 2",
+        "question": "Welk vlak verdeelt het lichaam in een linker- en rechterhelft?",
+        "answer": "Sagittaal vlak.",
+        "imageUrl": "/images/flashcards/assen_vlakken_3vlakken.png"
+      },
+      {
+        "id": "oef-3",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 3",
+        "question": "Hoe benoem je de stand van de schoudergordel wanneer deze naar voren is bewogen?",
+        "answer": "Protractie.",
+        "imageUrl": "/images/flashcards/bewegingen_cingulum.png"
+      },
+      {
+        "id": "oef-4",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 4",
+        "question": "Om welke as vindt anteflexie in art. humeri plaats?",
+        "answer": "Transversale as."
+      },
+      {
+        "id": "oef-5",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 5",
+        "question": "In de anatomische houding ligt je pink …… ten opzichte van je wijsvinger.",
+        "answer": "Mediaal."
+      },
+      {
+        "id": "oef-6",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 6",
+        "question": "Hoe noem je de beweging waarbij je onderbeen binnenwaarts draait ten opzichte van je bovenbeen?",
+        "answer": "Endorotatie (in art. genus)."
+      },
+      {
+        "id": "oef-7",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 7",
+        "question": "Wat voor soort gewricht (Latijnse naam) zijn je vingerkootjes?",
+        "answer": "Art. ginglymus (scharniergewricht)."
+      },
+      {
+        "id": "oef-8",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 8",
+        "question": "Hoeveel vrijheidsgraden (assen) heeft art. coxae?",
+        "answer": "3 vrijheidsgraden (3 assen)."
+      },
+      {
+        "id": "oef-9",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 9",
+        "question": "Wat is de functie van ligamenten in een gewricht?",
+        "answer": "Versterking van het gewricht en remming van de beweging."
+      },
+      {
+        "id": "oef-10",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 10",
+        "question": "In welke stand staat art. cubiti wanneer de arm gestrekt is?",
+        "answer": "Extensie."
+      },
+      {
+        "id": "oef-11",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 11",
+        "question": "Welke twee botten vormen samen art. coxae?",
+        "answer": "Os femur en os coxae."
+      },
+      {
+        "id": "oef-12",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 12",
+        "question": "Wat is de functie van de m. iliopsoas over art. coxae?",
+        "answer": "Anteflexie (en exorotatie)."
+      },
+      {
+        "id": "oef-13",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 13",
+        "question": "Wat zijn de origo en insertie van de m. rectus femoris?",
+        "answer": "• Origo: SIAI\n• Insertie: via patellapees aan tuberositas tibiae"
+      },
+      {
+        "id": "oef-14",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 14",
+        "question": "Wat is de insertie van de m. biceps femoris?",
+        "answer": "Caput fibulae."
+      },
+      {
+        "id": "oef-15",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 15",
+        "question": "Welke bewegingen in art. coxae worden door de m. gluteus maximus veroorzaakt?",
+        "answer": "Retroflexie en exorotatie in art. coxae."
+      },
+      {
+        "id": "oef-16",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 16",
+        "question": "Welke botstructuur op het os coxae is nummer 5 (en c op het losse heupbeen)?",
+        "answer": "Spina iliaca posterior superior (SIPS).",
+        "imageUrl": "/images/flashcards/coxae_botten_1_15.png"
+      },
+      {
+        "id": "oef-17",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 17",
+        "question": "Waaraan herken je een dorsaal aanzicht van het os femur of de knie?",
+        "answer": "Aan de twee zichtbare condylen (condylus medialis en lateralis femoris) en het ontbreken van de patella.",
+        "imageUrl": "/images/flashcards/genus_botten_1_9.png"
+      },
+      {
+        "id": "oef-18",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 18",
+        "question": "Welke tweekoppige spier aan de achterzijde van het bovenbeen hecht aan op het caput fibulae?",
+        "answer": "M. biceps femoris.",
+        "imageUrl": "/images/flashcards/coxae_spieren_fig.png"
+      },
+      {
+        "id": "oef-19",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 19",
+        "question": "Welke beweging maakt de heup wanneer het been vanuit geheven stand terug naar achteren beweegt?",
+        "answer": "Retroflexie in art. coxae."
+      },
+      {
+        "id": "oef-20",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Oefentoets vraag 20",
+        "question": "Noem de spieren die retroflexie in art. coxae veroorzaken.",
+        "answer": "• M. gluteus maximus\n• M. biceps femoris\n• M. semimembranosus\n• M. semitendinosus"
+      },
+      {
+        "id": "oef-21",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Kernvraag",
+        "question": "Welke kruisband voorkomt het naar voren schuiven van de tibia ten opzichte van het femur?",
+        "answer": "Lig. cruciatum anterior (voorste kruisband).",
+        "imageUrl": "/images/flashcards/genus_ligamenten_1_7.png"
+      },
+      {
+        "id": "oef-22",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Kernvraag",
+        "question": "Welke collaterale band voorkomt een valgusstand (X-benen) in de knie?",
+        "answer": "Lig. collaterale medialis.",
+        "imageUrl": "/images/flashcards/genus_ligamenten_1_7.png"
+      },
+      {
+        "id": "oef-23",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Kernvraag",
+        "question": "Welke enkelband aan de mediale zijde remt eversie (pronatie)?",
+        "answer": "Lig. deltoideum.",
+        "imageUrl": "/images/flashcards/pedis_ligamenten_1_4.png"
+      },
+      {
+        "id": "oef-24",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Kernvraag",
+        "question": "Welke drie enkelbanden aan de laterale zijde remmen inversie (supinatie)?",
+        "answer": "• Lig. calcaneofibulare\n• Lig. talofibulare anterior\n• Lig. talofibulare posterior",
+        "imageUrl": "/images/flashcards/pedis_ligamenten_1_4.png"
+      },
+      {
+        "id": "oef-25",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht botten ventraal",
+        "question": "Welke botten van de thorax zijn nummer 7 en 13 in dit ventrale overzicht?",
+        "answer": "• 7 = Sternum (borstbeen)\n• 13 = Clavicula (sleutelbeen)",
+        "imageUrl": "/images/flashcards/overzicht_botten_ventraal.png"
+      },
+      {
+        "id": "oef-26",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht botten ventraal",
+        "question": "Welke onderarmbotten zijn nummer 19 en 20 in dit ventrale overzicht?",
+        "answer": "• 19 = Radius (spaakbeen)\n• 20 = Ulna (ellepijp)",
+        "imageUrl": "/images/flashcards/overzicht_botten_ventraal.png"
+      },
+      {
+        "id": "oef-27",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht botten ventraal",
+        "question": "Welke botten van bovenbeen en knie zijn nummer 28 en 29 in dit ventrale overzicht?",
+        "answer": "• 28 = Os femur (dijbeen)\n• 29 = Os patella (knieschijf)",
+        "imageUrl": "/images/flashcards/overzicht_botten_ventraal.png"
+      },
+      {
+        "id": "oef-28",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht botten ventraal",
+        "question": "Welke onderbeenbotten zijn nummer 30 en 31 in dit ventrale overzicht?",
+        "answer": "• 30 = Os tibia (scheenbeen)\n• 31 = Os fibula (kuitbeen)",
+        "imageUrl": "/images/flashcards/overzicht_botten_ventraal.png"
+      },
+      {
+        "id": "oef-29",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht spieren ventraal",
+        "question": "Welke spieren aan de binnenzijde en buitenzijde van het bovenbeen zijn nummer 1 en 4?",
+        "answer": "• 1 = Adductorengroep\n• 4 = M. vastus lateralis",
+        "imageUrl": "/images/flashcards/overzicht_spieren_ventraal.png"
+      },
+      {
+        "id": "oef-30",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht spieren ventraal",
+        "question": "Welke spieren aan voorzijde bovenbeen en onderbeen zijn nummer 5 en 6?",
+        "answer": "• 5 = M. rectus femoris\n• 6 = M. tibialis anterior",
+        "imageUrl": "/images/flashcards/overzicht_spieren_ventraal.png"
+      },
+      {
+        "id": "oef-31",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht spieren ventraal",
+        "question": "Welke schouder- en armspieren zijn nummer 11 en 12 in dit ventrale spieroverzicht?",
+        "answer": "• 11 = M. deltoideus\n• 12 = M. biceps brachii",
+        "imageUrl": "/images/flashcards/overzicht_spieren_ventraal.png"
+      },
+      {
+        "id": "oef-32",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht spieren ventraal",
+        "question": "Welke diepe armspier en buikspier zijn nummer 13 en 14 in dit ventrale overzicht?",
+        "answer": "• 13 = M. brachialis\n• 14 = M. rectus abdominis",
+        "imageUrl": "/images/flashcards/overzicht_spieren_ventraal.png"
+      },
+      {
+        "id": "oef-33",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht botten dorsaal",
+        "question": "Welke botstructuren aan de bovenzijde zijn nummer 2 en 3 in dit dorsale overzicht?",
+        "answer": "• 2 = Acromion\n• 3 = Scapula (schouderblad)",
+        "imageUrl": "/images/flashcards/overzicht_botten_dorsaal.png"
+      },
+      {
+        "id": "oef-34",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht botten dorsaal",
+        "question": "Welke botstructuren aan heiligbeen en schouderblad zijn nummer 9 en 13 in dit dorsale overzicht?",
+        "answer": "• 9 = Os sacrum (heiligbeen)\n• 13 = Spina scapulae (schouderbladkam)",
+        "imageUrl": "/images/flashcards/overzicht_botten_dorsaal.png"
+      },
+      {
+        "id": "oef-35",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht spieren dorsaal",
+        "question": "Welke bilspier en hamstring zijn nummer 17 en 20 in dit dorsale spieroverzicht?",
+        "answer": "• 17 = M. gluteus maximus\n• 20 = M. biceps femoris",
+        "imageUrl": "/images/flashcards/overzicht_spieren_dorsaal.png"
+      },
+      {
+        "id": "oef-36",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht spieren dorsaal",
+        "question": "Welke kuitspier en armspier zijn nummer 21 en 26 in dit dorsale spieroverzicht?",
+        "answer": "• 21 = M. gastrocnemius\n• 26 = M. triceps brachii",
+        "imageUrl": "/images/flashcards/overzicht_spieren_dorsaal.png"
+      },
+      {
+        "id": "oef-37",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht spieren dorsaal",
+        "question": "Welke twee grote rugspieren zijn nummer 23 en 24 in dit dorsale spieroverzicht?",
+        "answer": "• 23 = M. trapezius\n• 24 = M. latissimus dorsi",
+        "imageUrl": "/images/flashcards/overzicht_spieren_dorsaal.png"
+      },
+      {
+        "id": "oef-38",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht botten ventraal",
+        "question": "Welke botstructuren van het bekken zijn nummer 9 en 10 in dit ventrale overzicht?",
+        "answer": "• 9 = Os coxae (gehele heupbeen)\n• 10 = Os ilium (darmbeen)",
+        "imageUrl": "/images/flashcards/overzicht_botten_ventraal.png"
+      },
+      {
+        "id": "oef-39",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht botten ventraal",
+        "question": "Welke botstructuren van het bekken zijn nummer 24 en 25 in dit ventrale overzicht?",
+        "answer": "• 24 = Os pubis (schaambeen)\n• 25 = Os ischii (zitbeen)",
+        "imageUrl": "/images/flashcards/overzicht_botten_ventraal.png"
+      },
+      {
+        "id": "oef-40",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht botten ventraal",
+        "question": "Welke botstukken aan het einde van de wervelkolom zijn nummer 11 en 12?",
+        "answer": "• 11 = Os sacrum (heiligbeen)\n• 12 = Os coccygis (staartbeen)",
+        "imageUrl": "/images/flashcards/overzicht_botten_ventraal.png"
+      },
+      {
+        "id": "oef-41",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht botten ventraal",
+        "question": "Welke twee onderdelen van het sternum zijn nummer 14 en 16?",
+        "answer": "• 14 = Manubrium sterni\n• 16 = Processus xiphoideus",
+        "imageUrl": "/images/flashcards/overzicht_botten_ventraal.png"
+      },
+      {
+        "id": "oef-42",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht botten ventraal",
+        "question": "Welke structuren aan de arm en knie zijn nummer 17 en 18 in dit overzicht?",
+        "answer": "• 17 = Humerus (opperarmbeen)\n• 18 = Condylus lateralis",
+        "imageUrl": "/images/flashcards/overzicht_botten_ventraal.png"
+      },
+      {
+        "id": "oef-43",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht botten ventraal",
+        "question": "Welke structuren aan de heup en enkel zijn nummer 26 en 27 in dit overzicht?",
+        "answer": "• 26 = Trochanter major\n• 27 = Malleolus lateralis",
+        "imageUrl": "/images/flashcards/overzicht_botten_ventraal.png"
+      },
+      {
+        "id": "oef-44",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Spieroverzicht",
+        "question": "Welke twee koppen van de quadriceps zijn nummer 2 en 3 op pagina 72?",
+        "answer": "• 2 = M. vastus medialis\n• 3 = M. vastus intermedius (diep gelegen)"
+      },
+      {
+        "id": "oef-45",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Spieroverzicht",
+        "question": "Welke twee koppen van de quadriceps zijn nummer 4 en 5 op pagina 72?",
+        "answer": "• 4 = M. vastus lateralis\n• 5 = M. rectus femoris"
+      },
+      {
+        "id": "oef-46",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Spieroverzicht",
+        "question": "Welke rechte buikspier is nummer 14 op pagina 72?",
+        "answer": "M. rectus abdominis."
+      },
+      {
+        "id": "oef-47",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Spieroverzicht",
+        "question": "Welke schuine buikspieren zijn nummer 15 en 16 op pagina 72?",
+        "answer": "• 15 = M. obliquus internus abdominis\n• 16 = M. obliquus externus abdominis"
+      },
+      {
+        "id": "oef-48",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht botten dorsaal",
+        "question": "Welke wervels zijn nummer 12 en 14 in dit dorsale werveloverzicht?",
+        "answer": "• 12 = Vertebra cervicalis (halswervel)\n• 14 = Vertebra thoracica (borstwervel)",
+        "imageUrl": "/images/flashcards/overzicht_botten_dorsaal.png"
+      },
+      {
+        "id": "oef-49",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht botten dorsaal",
+        "question": "Welke wervels en botstukken zijn nummer 15 en 16 in dit dorsale overzicht?",
+        "answer": "• 15 = Vertebra lumbalis (lendenwervel)\n• 16 = Os coccygis (staartbeen)",
+        "imageUrl": "/images/flashcards/overzicht_botten_dorsaal.png"
+      },
+      {
+        "id": "oef-50",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht botten dorsaal",
+        "question": "Welke armbotten zijn nummer 5, 6 en 7 in dit dorsale overzicht?",
+        "answer": "• 5 = Humerus (opperarmbeen)\n• 6 = Ulna (ellepijp)\n• 7 = Radius (spaakbeen)",
+        "imageUrl": "/images/flashcards/overzicht_botten_dorsaal.png"
+      },
+      {
+        "id": "oef-51",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Overzicht botten dorsaal",
+        "question": "Welke beenbotten zijn nummer 21, 22 en 23 in dit dorsale overzicht?",
+        "answer": "• 21 = Os femur (dijbeen)\n• 22 = Os tibia (scheenbeen)\n• 23 = Os fibula (kuitbeen)",
+        "imageUrl": "/images/flashcards/overzicht_botten_dorsaal.png"
+      },
+      {
+        "id": "oef-52",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Spieroverzicht",
+        "question": "Welke drie hamstrings zijn nummer 18, 19 en 20 op pagina 74?",
+        "answer": "• 18 = M. semimembranosus\n• 19 = M. semitendinosus\n• 20 = M. biceps femoris"
+      },
+      {
+        "id": "oef-53",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Spieroverzicht",
+        "question": "Welke twee kuitspieren zijn nummer 21 en 22 op pagina 74?",
+        "answer": "• 21 = M. gastrocnemius\n• 22 = M. soleus"
+      },
+      {
+        "id": "oef-54",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Structurenlijst p. 11",
+        "question": "Welke zes ligamenten en menisci horen volgens de structurenlijst bij art. genus?",
+        "answer": "• Lig. collaterale mediale\n• Lig. collaterale laterale\n• Lig. cruciatum anterius\n• Lig. cruciatum posterius\n• Meniscus medialis\n• Meniscus lateralis",
+        "imageUrl": "/images/flashcards/genus_ligamenten_1_7.png"
+      },
+      {
+        "id": "oef-55",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Structurenlijst p. 11",
+        "question": "Welke vier enkelbanden staan in de structurenlijst en welke ligt mediaal vs. lateraal?",
+        "answer": "• Mediaal: lig. deltoideum\n• Lateraal: lig. calcaneofibulare, lig. talofibulare posterius, lig. talofibulare anterius",
+        "imageUrl": "/images/flashcards/pedis_ligamenten_1_4.png"
+      },
+      {
+        "id": "oef-56",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Structurenlijst p. 8",
+        "question": "Welke twee gewrichten in het moduulboek zijn een bolgewricht (art. spheroidea, 3 assen)?",
+        "answer": "• Art. coxae (heupgewricht)\n• Art. humeri (schoudergewricht)"
+      },
+      {
+        "id": "oef-57",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Structurenlijst p. 8",
+        "question": "Welke twee gewrichten in het moduulboek zijn een draai-scharniergewricht (art. trocho-ginglymus, 2 assen)?",
+        "answer": "• Art. genus (kniegewricht)\n• Art. cubiti (ellebooggewricht)"
+      },
+      {
+        "id": "oef-58",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Structurenlijst p. 9",
+        "question": "Welke vier spina-punten en welke kam liggen op het os ilium?",
+        "answer": "• Spina iliaca anterior superior (SIAS)\n• Spina iliaca anterior inferior (SIAI)\n• Spina iliaca posterior superior (SIPS)\n• Spina iliaca posterior inferior (SIPI)\n• Crista iliaca",
+        "imageUrl": "/images/flashcards/richtingen_os_coxae.png"
+      },
+      {
+        "id": "oef-59",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Structurenlijst p. 10",
+        "question": "Welke grote spier van het bovenbeen heeft zijn origo op de SIAI (spina iliaca anterior inferior)?",
+        "answer": "M. rectus femoris."
+      },
+      {
+        "id": "oef-60",
+        "setId": "oefentoets_mix",
+        "categoryLabel": "Structurenlijst p. 10",
+        "question": "Welke drie spieren hebben hun origo op het tuber ischiadicum (zitbeenknobbel)?",
+        "answer": "• M. biceps femoris (caput longum)\n• M. semimembranosus\n• M. semitendinosus"
+      }
+    ]
+  }
+]

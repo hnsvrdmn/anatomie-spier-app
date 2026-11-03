@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useFlashcards } from '../../context/FlashcardContext';
 import { useMuscles } from '../../context/MuscleContext';
 import {
@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Eye,
+  ZoomIn,
   X,
   FileQuestion,
 } from 'lucide-react';
@@ -85,6 +86,17 @@ export const FlashcardEditorView: React.FC = () => {
   });
 
   const [isFlippedPreview, setIsFlippedPreview] = useState(false);
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setZoomedImage(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
   const [isSavingDisk, setIsSavingDisk] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -413,13 +425,19 @@ export const FlashcardEditorView: React.FC = () => {
                           {card.categoryLabel || 'Algemeen'}
                         </span>
                         {card.imageUrl && (
-                          <span
-                            className="text-[10px] flex items-center gap-0.5 text-sky-600 bg-sky-50 px-1 py-0.5 rounded font-medium"
-                            title="Heeft gekoppelde afbeelding"
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setZoomedImage(card.imageUrl || null);
+                            }}
+                            className="text-[10px] flex items-center gap-1 text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200/70 px-1.5 py-0.5 rounded font-bold transition shadow-2xs"
+                            title="Klik om gekoppelde afbeelding direct groot te bekijken"
                           >
                             <ImageIcon className="w-2.5 h-2.5" />
                             <span>Afbeelding</span>
-                          </span>
+                            <ZoomIn className="w-2.5 h-2.5 text-sky-600" />
+                          </button>
                         )}
                       </div>
                       <p className="text-xs font-semibold text-clinical-900 line-clamp-2 leading-snug">
@@ -651,27 +669,46 @@ export const FlashcardEditorView: React.FC = () => {
                     />
                   </div>
 
-                  {/* Thumbnail & Preview van gekoppelde afbeelding */}
+                  {/* Thumbnail & Preview van gekoppelde afbeelding (klikbaar voor vergroten) */}
                   {selectedCard.imageUrl && (
-                    <div className="mt-3 p-3 bg-clinical-50 rounded-xl border border-clinical-200 flex items-center gap-4">
-                      <div className="w-24 h-24 rounded-lg bg-white border border-clinical-200 overflow-hidden flex items-center justify-center shrink-0 p-1">
-                        <img
-                          src={selectedCard.imageUrl}
-                          alt="Gekoppelde afbeelding preview"
-                          className="max-h-full max-w-full object-contain"
-                          onError={(e) => {
-                            (e.target as HTMLElement).style.display = 'none';
-                          }}
-                        />
+                    <div className="mt-3 p-3 bg-clinical-50 rounded-xl border border-clinical-200 flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div
+                          onClick={() => setZoomedImage(selectedCard.imageUrl || null)}
+                          className="relative group w-20 h-20 rounded-xl bg-white border border-clinical-200 overflow-hidden flex items-center justify-center shrink-0 p-1 cursor-pointer hover:border-indigo-400 transition shadow-2xs"
+                          title="Klik om te vergroten"
+                        >
+                          <img
+                            src={selectedCard.imageUrl}
+                            alt="Gekoppelde afbeelding preview"
+                            className="max-h-full max-w-full object-contain"
+                            onError={(e) => {
+                              (e.target as HTMLElement).style.display = 'none';
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-slate-900/40 text-white rounded-xl opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+                            <ZoomIn className="w-5 h-5 drop-shadow" />
+                          </div>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold text-clinical-900 truncate">
+                            {selectedCard.imageUrl}
+                          </p>
+                          <p className="text-[11px] text-clinical-500 mt-0.5">
+                            Gekoppelde afbeelding. Klik op de miniatuur of knop om te vergroten.
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-bold text-clinical-900 truncate">
-                          {selectedCard.imageUrl}
-                        </p>
-                        <p className="text-[11px] text-clinical-500 mt-0.5">
-                          Deze afbeelding wordt getoond bij de vraag en kan door de student worden vergroot.
-                        </p>
-                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setZoomedImage(selectedCard.imageUrl || null)}
+                        className="shrink-0 px-3 py-1.5 rounded-xl bg-white hover:bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-bold flex items-center gap-1.5 transition shadow-2xs active:scale-95"
+                        title="Afbeelding groot bekijken"
+                      >
+                        <ZoomIn className="w-3.5 h-3.5" />
+                        <span>Vergroten</span>
+                      </button>
                     </div>
                   )}
                 </div>
@@ -708,12 +745,23 @@ export const FlashcardEditorView: React.FC = () => {
                         {selectedCard.question}
                       </h3>
                       {selectedCard.imageUrl && (
-                        <div className="mt-2 max-h-48 overflow-hidden rounded-xl border border-clinical-100 bg-clinical-50/50 p-2 flex justify-center">
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setZoomedImage(selectedCard.imageUrl || null);
+                          }}
+                          className="relative group cursor-zoom-in mt-2 max-h-56 overflow-hidden rounded-xl border border-clinical-200/80 bg-clinical-50/50 p-2 flex justify-center hover:border-indigo-300 transition"
+                          title="Klik om afbeelding groot te bekijken"
+                        >
                           <img
                             src={selectedCard.imageUrl}
                             alt="Voorbeeld figuur"
-                            className="max-h-44 object-contain"
+                            className="max-h-52 object-contain"
                           />
+                          <span className="absolute top-2 right-2 px-2 py-1 rounded-lg bg-slate-900/80 hover:bg-slate-900 text-white text-[10.5px] font-bold flex items-center gap-1 backdrop-blur-xs opacity-90 group-hover:opacity-100 transition shadow-sm">
+                            <ZoomIn className="w-3.5 h-3.5" />
+                            <span>Vergroten</span>
+                          </span>
                         </div>
                       )}
                     </div>
@@ -754,6 +802,56 @@ export const FlashcardEditorView: React.FC = () => {
           )}
         </div>
       </div>
+      {/* Lightbox Modal om afbeelding groot te bekijken */}
+      {zoomedImage && (
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-150"
+          onClick={() => setZoomedImage(null)}
+        >
+          <div
+            className="relative max-w-5xl w-full max-h-[92vh] bg-white rounded-3xl p-3 sm:p-5 shadow-2xl flex flex-col items-center border border-slate-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-full flex items-center justify-between pb-3 mb-2 border-b border-slate-100 px-1">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center shrink-0">
+                  <ZoomIn className="w-4 h-4" />
+                </div>
+                <span className="text-xs sm:text-sm font-bold text-slate-800 truncate">
+                  {zoomedImage}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setZoomedImage(null)}
+                className="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
+                title="Sluiten (Esc)"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="w-full max-h-[78vh] overflow-auto flex items-center justify-center bg-slate-50/80 rounded-2xl p-2 sm:p-4 border border-slate-100">
+              <img
+                src={zoomedImage}
+                alt="Vergrote weergave"
+                className="max-h-[74vh] max-w-full w-auto object-contain rounded-xl shadow-xs"
+              />
+            </div>
+
+            <div className="w-full flex items-center justify-between pt-2 px-1 text-[11px] text-slate-400">
+              <span>Tip: Druk op Esc of klik buiten de afbeelding om te sluiten</span>
+              <button
+                type="button"
+                onClick={() => setZoomedImage(null)}
+                className="px-3 py-1 rounded-lg bg-slate-900 text-white font-bold hover:bg-slate-800 transition"
+              >
+                Sluiten
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

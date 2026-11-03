@@ -2498,3 +2498,24 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 - **Verificatie & Deployment:**
   - `npm run build` foutloos geslaagd (`✓ built in 4.04s`).
   - Gecommit en gepusht naar `main` op GitHub.
+
+
+---
+
+## 79. Afbeeldingen Vergroten in Flashcards Bewerk Tab Geïmplementeerd (03-11-2026 19:37)
+- **Status:** Succesvol geïmplementeerd, gebouwd en gepusht naar GitHub.
+- **Aanleiding & Gebruikerswens:**
+  - De gebruiker wil in de Flashcards Bewerk Tab afbeeldingen gemakkelijk op groot formaat kunnen bekijken om details goed te kunnen beoordelen tijdens het bewerken.
+- **Doorgevoerde Aanpassingen ([FlashcardEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/FlashcardEditorView.tsx)):**
+  1. *Meerdere Toegangspunten voor Vergroten:*
+     - **Formulier-miniatuur:** De miniatuur in het bewerkformulier heeft nu een subtiele hover-overlay met `ZoomIn`-icoon en opent de afbeelding direct op volledig scherm bij een klik.
+     - **Dedicated 'Vergroten' knop:** Een duidelijke knop `🔍 Vergroten` naast de bestandsnaam in het formulier.
+     - **Live Preview kaart:** De afbeelding in de interactieve preview-kaart heeft een cursor-zoom (`cursor-zoom-in`) en een duidelijke `🔍 Vergroten` badge in de hoek; bij een klik opent direct de grote weergave zonder dat de kaart per ongeluk omdraait (`e.stopPropagation()`).
+     - **Kaartenlijst (linkerkolom):** Het afbeeldingslabel bij elke kaart in de lijst is nu een klikbare knop met zoom-indicator, zodat je meteen vanuit het overzicht een afbeelding groot kunt inspecteren.
+  2. *Lightbox Modal:*
+     - Donkere achtergrondoverlay (`bg-slate-950/85 backdrop-blur-xs`) met royale witte kaart.
+     - Toont de afbeelding haarscherp tot maximaal schermformaat (`max-h-[74vh] object-contain`).
+     - Sluiten kan via de `X`-knop, door buiten de afbeelding te klikken, of met de `Escape`-toets op het toetsenbord.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos geslaagd (`✓ built in 4.13s`).
+  - Gecommit en gepusht naar `main` op GitHub.
