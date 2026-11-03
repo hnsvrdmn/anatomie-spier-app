@@ -2450,3 +2450,28 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
   - Beeld gecontroleerd via visuele inspectie: de *fossa olecrani* is direct haarscherp herkenbaar.
   - `npm run build` foutloos geslaagd (`✓ built in 4.13s`).
   - Gecommit en gepusht naar `main` op GitHub.
+
+
+---
+
+## 77. Nieuwe Flashcardset: Terminologie (Nederlands ➔ Latijn) Toegevoegd (03-11-2026 19:30)
+- **Status:** Succesvol geïmplementeerd, gebouwd en gepusht naar GitHub.
+- **Aanleiding & Gebruikerswens:**
+  - De bestaande terminologieset vroeg alleen van Latijn naar Nederlands.
+  - Verzoek van de gebruiker: Maak er ook een flashcardset bij waar dit is omgedraaid (Nederlands ➔ Latijn), zodat studenten actief de Latijnse vaktermen kunnen oefenen en memoriseren.
+- **Doorgevoerde Aanpassingen ([flashcardsPart1.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/flashcardsPart1.ts), [FlashcardContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/FlashcardContext.tsx)):**
+  1. *Set 2a Hernoemd:*
+     - `2a. Terminologie (Latijn ➔ Nederlands)` (korte titel: `2a. Latijn ➔ NL`).
+  2. *Nieuwe Set 2b Toegevoegd:*
+     - `2b. Terminologie (Nederlands ➔ Latijn)` (korte titel: `2b. NL ➔ Latijn`, id: `terminologie-nl-lat`).
+     - Bevat **alle 77 officiële begrippen** uit de woordenlijst van `ANTWOORDEN richtingen.pdf`:
+       - Botstukken (schouderblad ➔ *scapula*, sleutelbeen ➔ *clavicula*, opperarmbeen ➔ *humerus*, etc.).
+       - Botvormen & uitsteeksels (kop ➔ *caput*, hals ➔ *collum*, doorn ➔ *spina*, kam ➔ *crista*, uitsteeksel ➔ *processus*, etc.).
+       - Vlakken en assen (voorhoofdvlak ➔ *frontaal*, pijlnaadvlak ➔ *sagittaal*, horizontaal ➔ *transversaal*, lengte-as ➔ *longitudinaal*).
+       - Bewegingen (afvoeren ➔ *abductie*, buigen ➔ *flexie*, binnenwaarts draaien ➔ *endorotatie*, heffen ➔ *elevatie*, etc.).
+       - Gewrichten (heupgewricht ➔ *art. coxae*, kniegewricht ➔ *art. genus*, bovenste spronggewricht ➔ *art. talocruralis*, etc.).
+  3. *Cache-vernieuwing in FlashcardContext:*
+     - Opslagsleutel verhoogd naar `pmt_anatomie_flashcards_custom_v6` zodat de nieuwe set direct zichtbaar is in alle browsers.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos geslaagd (`✓ built in 4.18s`).
+  - Gecommit en gepusht naar `main` op GitHub.
