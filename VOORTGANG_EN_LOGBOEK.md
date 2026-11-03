@@ -2562,3 +2562,19 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 - **Verificatie & Deployment:**
   - `npm run build` foutloos geslaagd (`✓ built in 4.35s`, 0 fouten).
   - Gecommit en gepusht naar `main` op GitHub.
+
+
+---
+
+## 82. Waarschuwingstekst Flashcards Ingekort (03-11-2026 20:07)
+- **Status:** Succesvol geïmplementeerd, gebouwd en gepusht naar GitHub.
+- **Aanleiding & Gebruikerswens:**
+  - De disclaimer *"in ontwikkeling..."* bij de flashcards mag nog een stuk korter en beknopter.
+- **Doorgevoerde Aanpassingen ([FlashcardsView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/flashcards/FlashcardsView.tsx)):**
+  1. *Landingspagina (set-selectie):*
+     - De disclaimertekst ingekort tot één strakke, beknopte zin: *"In ontwikkeling: kan fouten bevatten."*
+  2. *Flashcard Studie-weergave:*
+     - Het balkje onder de voortgangsbalk eveneens ingekort naar *"In ontwikkeling: kan fouten bevatten"*.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos geslaagd (`✓ built in 3.91s`, 0 fouten).
+  - Gecommit en gepusht naar `main` op GitHub.

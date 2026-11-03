@@ -495,11 +495,9 @@ export const FlashcardsView: React.FC = () => {
           </div>
 
           {/* Beknopte disclaimer */}
-          <div className="w-full bg-amber-50 border border-amber-200/90 rounded-xl px-3 py-2 flex items-center gap-2 text-amber-900 text-xs font-medium shadow-2xs">
-            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
-            <div>
-              <strong className="font-bold">Let op:</strong> De flashcards zijn nog in ontwikkeling en kunnen fouten bevatten.
-            </div>
+          <div className="w-full bg-amber-50 border border-amber-200/90 rounded-xl px-3 py-1.5 flex items-center gap-2 text-amber-900 text-xs font-medium shadow-2xs">
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+            <span>In ontwikkeling: kan fouten bevatten.</span>
           </div>
 
           {/* Random Flashcards Optie (mengt dynamisch alle sets) */}
@@ -771,7 +769,7 @@ export const FlashcardsView: React.FC = () => {
         {/* Subtiele disclaimer op het flashcard scherm */}
         <div className="w-full flex items-center justify-center gap-1.5 py-1 px-2.5 bg-amber-50/80 border border-amber-200/70 rounded-xl text-amber-900 text-[10px] sm:text-[11px] font-medium shrink-0">
           <AlertTriangle className="w-3 h-3 text-amber-600 shrink-0" />
-          <span className="truncate">In ontwikkeling: de inhoud bevat nog fouten en onnauwkeurigheden</span>
+          <span className="truncate">In ontwikkeling: kan fouten bevatten</span>
         </div>
 
         {/* MIDDEN: De Flipcard (flex-1 min-h-0 zodat deze ALTIJD exact past op elk schermformaat) */}
