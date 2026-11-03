@@ -2150,3 +2150,16 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
     - Sternum 2 + Rib 2 geklikt -> `isPassed: true` (100% correct).
     - Sternum 1 + Rib 2 geklikt -> `isPassed: true` (100% correct).
 - **Conclusie:** Klopt 100%. De student hoeft van sternum en van ribben slechts **één van de twee** juist te plaatsen om de zone goedgerekend te krijgen.
+
+
+---
+
+## 64. Zones / Aanhechtingslijnen Verborgen Buiten de Bewerk Tab (03-11-2026 18:14)
+- **Status:** Succesvol doorgevoerd en geverifieerd.
+- **Uitgevoerde Actie ([MuscleMarkers.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/MuscleMarkers.tsx)):**
+  - De weergave van aanhechtingslijnen/zones (gestippelde lijnen en halos) in `MuscleMarkers.tsx` is verwijderd.
+  - Hierdoor zijn zones **nooit meer zichtbaar buiten de bewerk tab** (ze zijn niet meer te zien in de studiemodus, bewegingsmodus of toetsmodus).
+  - In de **bewerk tab** blijven ze uiteraard 100% zichtbaar en bewerkbaar via `EditorOverlay.tsx`, inclusief sleepbare punten en `Ctrl+Z`.
+  - In de **toetsmodus** blijft de tolerantiezone onder de motorkap actief meegerekend in `evaluatePointSet` voor een soepele en eerlijke beoordeling, maar het skelet blijft visueel rustig en schoon.
+- **Verificatie:**
+  - `npm run build` succesvol geslaagd zonder fouten (`built in 3.88s`).
