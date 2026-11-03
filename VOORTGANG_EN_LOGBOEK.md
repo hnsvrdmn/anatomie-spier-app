@@ -2433,3 +2433,20 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 - **Verificatie & Deployment:**
   - `npm run build` foutloos geslaagd (`✓ built in 4.08s`).
   - Gecommit en gepusht naar `main` op GitHub.
+
+
+---
+
+## 76. Humeri Aanzichten Afbeelding Volledig Opnieuw Geëxtraheerd Zonder Afsnijding (03-11-2026 19:28)
+- **Status:** Succesvol opgelost, gevalideerd en gepusht naar GitHub.
+- **Aanleiding & Gebruikerswens:**
+  - In `public/images/flashcards/richtingen_aanzichten.png` was de onderkant van de humeri net afgesneden, waardoor de *fossa olecrani* (het cruciale herkenningspunt voor het dorsale aanzicht van de humerus) niet goed zichtbaar was.
+  - Verzoek: Het beeld opnieuw en ruimer uitsnijden vanuit de bron-PDF (`ANTWOORDEN richtingen.pdf`), zodat het distale uiteinde inclusief fossa olecrani volledig zichtbaar is.
+- **Doorgevoerde Aanpassing ([richtingen_aanzichten.png](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/public/images/flashcards/richtingen_aanzichten.png)):**
+  - Rechtstreeks vanuit de officiële vector-PDF `E:\windesheim\anatomie blok 1\ANTWOORDEN richtingen.pdf` zijn de originele embedded beelden geëxtraheerd.
+  - De humerus-foto is nu 100% compleet, van caput humeri tot en met het volledige distale uiteinde met de epicondyli en de diepe *fossa olecrani* op de rechter humerus.
+  - De drie figuren (art. genus met patella, scapula met spina, en humeri links/rechts) zijn opnieuw samengesteld met royale padding rondom en een heldere witte achtergrond, zodat de flashcardvraag (`rich-15`) nu moeiteloos en eenduidig te beantwoorden is.
+- **Verificatie & Deployment:**
+  - Beeld gecontroleerd via visuele inspectie: de *fossa olecrani* is direct haarscherp herkenbaar.
+  - `npm run build` foutloos geslaagd (`✓ built in 4.13s`).
+  - Gecommit en gepusht naar `main` op GitHub.
