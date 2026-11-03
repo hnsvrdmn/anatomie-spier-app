@@ -2132,3 +2132,21 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 - **Verificatie:**
   - Automated tests gedraaid via `test_same_name.js`: beide posities getest met 1 punt, resulteert in `isPassed: true`.
   - `npm run build` foutloos geslaagd (`built in 4.27s`).
+
+
+---
+
+## 63. Verificatie Pectoralis Major Meervoudige Punten (03-11-2026 18:00)
+- **Status:** Bezig met verificatie en toetsing van de nieuwe groeperingslogica.
+- **Getoetst:**
+  - *M. pectoralis major* bevat in de dataset 5 origo punten: 1x clavicula, 2x sternum en 2x kraakbeen van 2e-6e rib.
+  - De nieuwe logica in `getDistinctTargets` en `getDistinctTargetCount` groepeert deze 5 punten automatisch naar de **3 unieke anatomische zones**:
+    1. `zone_clavicula` (1 punt)
+    2. `zone_sternum` (beide sternumpunten)
+    3. `zone_costae` (beide ribpunten)
+  - Verwacht aantal vereiste origo's in de toets (`expectedCount`): exact **3** (i.p.v. 5).
+  - Geautomatiseerde test met alle combinaties gedraaid:
+    - Sternum 1 + Rib 1 geklikt -> `isPassed: true` (100% correct).
+    - Sternum 2 + Rib 2 geklikt -> `isPassed: true` (100% correct).
+    - Sternum 1 + Rib 2 geklikt -> `isPassed: true` (100% correct).
+- **Conclusie:** Klopt 100%. De student hoeft van sternum en van ribben slechts **één van de twee** juist te plaatsen om de zone goedgerekend te krijgen.
