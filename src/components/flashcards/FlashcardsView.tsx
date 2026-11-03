@@ -60,10 +60,29 @@ export const FlashcardsView: React.FC = () => {
     return {};
   });
 
-  const activeSet: FlashcardSet = useMemo(
-    () => currentSets.find((s) => s.id === activeSetId) || currentSets[0],
-    [currentSets, activeSetId]
+  // Dynamisch alle kaarten uit alle actieve sets verzamelen (geen duplicatie in storage of files)
+  const allCardsCombined = useMemo(() => {
+    return currentSets.flatMap((s) => s.cards);
+  }, [currentSets]);
+
+  const randomMixedSet: FlashcardSet = useMemo(
+    () => ({
+      id: 'random-all',
+      title: '🔀 Alle flashcards gemengd (Random Mix)',
+      shortTitle: '🔀 Random Mix',
+      pdfSource: 'Alle hoofdstukken & bronnen gemengd',
+      description: `Willekeurige mix van alle ${allCardsCombined.length} flashcards uit alle sets.`,
+      cards: allCardsCombined,
+    }),
+    [allCardsCombined]
   );
+
+  const activeSet: FlashcardSet = useMemo(() => {
+    if (activeSetId === 'random-all') {
+      return randomMixedSet;
+    }
+    return currentSets.find((s) => s.id === activeSetId) || currentSets[0];
+  }, [currentSets, activeSetId, randomMixedSet]);
 
   const [isFlipped, setIsFlipped] = useState(false);
   const [exitDirection, setExitDirection] = useState<'left' | 'right' | null>(null);
@@ -169,6 +188,24 @@ export const FlashcardsView: React.FC = () => {
     setDragOffset({ x: 0, y: 0 });
     setActiveSetId(setId);
     setIsDropdownOpen(false);
+
+    if (setId === 'random-all') {
+      // Direct alle kaarten shufflen voor een frisse random mix
+      const shuffledIds = allCardsCombined.map((c) => c.id);
+      for (let i = shuffledIds.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledIds[i], shuffledIds[j]] = [shuffledIds[j], shuffledIds[i]];
+      }
+      setProgressBySet((prev) => ({
+        ...prev,
+        ['random-all']: {
+          results: {},
+          activeQueueIds: shuffledIds,
+          currentIndex: 0,
+          isRetryMode: false,
+        },
+      }));
+    }
   };
 
   const handleBackToLanding = () => {
@@ -465,6 +502,56 @@ export const FlashcardsView: React.FC = () => {
             </div>
           </div>
 
+          {/* Prominente Random Flashcards Optie (mengt dynamisch alle sets) */}
+          <button
+            type="button"
+            onClick={() => handleSelectSet('random-all')}
+            className="group w-full text-left bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700 text-white rounded-2xl p-3.5 sm:p-4 shadow-sm hover:shadow-md transition active:scale-[0.99] flex flex-col gap-2.5 border border-indigo-400/30"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0 shadow-inner">
+                  <Shuffle className="w-5 h-5 text-white animate-pulse" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm sm:text-base font-extrabold truncate text-white">
+                      Alle flashcards gemengd
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full bg-white/25 text-white text-[10px] font-black uppercase tracking-wider shrink-0 shadow-2xs">
+                      Random
+                    </span>
+                  </div>
+                  <p className="text-[11px] sm:text-xs text-white/90 truncate mt-0.5">
+                    Willekeurige mix van alle {allCardsCombined.length} flashcards door elkaar
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="px-2.5 py-1 rounded-full bg-white/20 text-white text-xs font-black shadow-2xs">
+                  {allCardsCombined.length} kaarten
+                </span>
+                <ChevronRight className="w-5 h-5 text-white/80 group-hover:text-white group-hover:translate-x-0.5 transition-transform" />
+              </div>
+            </div>
+
+            {/* Voortgangsbalkje als er al kaarten geoefend zijn in random mix */}
+            {(() => {
+              const randomRes = progressBySet['random-all']?.results || {};
+              const correct = allCardsCombined.filter((c) => randomRes[c.id] === 'correct').length;
+              const incorrect = allCardsCombined.filter((c) => randomRes[c.id] === 'incorrect').length;
+              const totalAnswered = correct + incorrect;
+              if (totalAnswered === 0) return null;
+              return (
+                <div className="w-full bg-black/20 rounded-full h-1.5 overflow-hidden flex mt-1">
+                  <div className="h-full bg-emerald-400" style={{ width: `${Math.round((correct / allCardsCombined.length) * 100)}%` }} />
+                  <div className="h-full bg-rose-400" style={{ width: `${Math.round((incorrect / allCardsCombined.length) * 100)}%` }} />
+                </div>
+              );
+            })()}
+          </button>
+
           <div className="grid grid-cols-1 gap-2 pb-4">
             {currentSets.map((set) => {
               const setRes = progressBySet[set.id]?.results || {};
@@ -571,6 +658,26 @@ export const FlashcardsView: React.FC = () => {
                     onClick={() => setIsDropdownOpen(false)}
                   />
                   <div className="absolute left-0 right-0 top-full mt-1 z-40 bg-white border border-slate-200 rounded-2xl shadow-xl max-h-[65dvh] overflow-y-auto p-1.5 space-y-1">
+                    {/* Random Mix optie bovenaan in dropdown */}
+                    <button
+                      type="button"
+                      onClick={() => handleSelectSet('random-all')}
+                      className={`w-full text-left px-3 py-2 rounded-xl flex items-center justify-between gap-2 text-xs font-bold transition ${
+                        activeSet.id === 'random-all'
+                          ? 'bg-purple-50 text-purple-900 ring-1 ring-purple-300'
+                          : 'text-purple-700 hover:bg-purple-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 truncate">
+                        <Shuffle className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+                        <span className="truncate">🔀 Alle flashcards gemengd (Random Mix)</span>
+                      </div>
+                      <span className="px-1.5 py-0.5 rounded-md bg-purple-100 text-purple-700 text-[11px] font-extrabold shrink-0">
+                        {allCardsCombined.length}
+                      </span>
+                    </button>
+
+                    <div className="h-px bg-slate-100 my-1" />
                     {currentSets.map((set) => {
                       const isSelected = set.id === activeSet.id;
                       const setRes = progressBySet[set.id]?.results || {};

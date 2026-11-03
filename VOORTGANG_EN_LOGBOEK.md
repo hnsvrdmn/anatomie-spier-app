@@ -2475,3 +2475,26 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 - **Verificatie & Deployment:**
   - `npm run build` foutloos geslaagd (`✓ built in 4.18s`).
   - Gecommit en gepusht naar `main` op GitHub.
+
+
+---
+
+## 78. Dynamische Random Flashcards Optie (Alle Sets Gemengd) Geïmplementeerd (03-11-2026 19:32)
+- **Status:** Succesvol geïmplementeerd, gebouwd en gepusht naar GitHub.
+- **Aanleiding & Gebruikerswensen:**
+  1. Een optie toevoegen om alle flashcards willekeurig door elkaar te oefenen ("Random flashcards").
+  2. **Cruciale architectuureis:** De flashcards mogen **niet** statisch gedupliceerd of gekopieerd worden in databestanden. Als een gebruiker een kaart toevoegt, bewerkt of verwijdert, moet deze wijziging **automatisch en direct** doorwerken in de random flashcards.
+- **Doorgevoerde Architectuur & Aanpassingen ([FlashcardsView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/flashcards/FlashcardsView.tsx)):**
+  1. *Dynamische Verzameling (Zero-duplication):*
+     - `allCardsCombined` berekend via `useMemo(() => currentSets.flatMap((s) => s.cards), [currentSets])`. Hierdoor is er **geen enkele statische kopie** in broncode of opslag; de random mix is een reactieve, virtuele projectie van de actuele sets.
+     - Eventuele toevoegingen, tekstcorrecties of verwijderingen in welke set dan ook werken onmiddellijk en automatisch door in de random mix.
+  2. *Automatische Shuffle bij Start:*
+     - Bij het selecteren van de random mix wordt de wachtrij (`activeQueueIds`) direct via het Fisher-Yates algoritme willekeurig geschud.
+     - De bestaande shuffle-knop (`Shuffle`) kan op ieder moment gebruikt worden om de resterende of alle kaarten opnieuw te husselen.
+  3. *UI & Toegankelijkheid:*
+     - **Landingspagina:** Prominente, stijlvolle paars-roze gradient banner (`Alle flashcards gemengd • Random Mix`) met actueel aantal kaarten en voortgangsindicator.
+     - **Hoofdstuk-dropdown:** Bovenaan de keuzelijst direct beschikbaar met icoon en totaaltelling.
+     - Elke individuele kaart toont tijdens het oefenen nog steeds het bijbehorende onderwerplabel (`categoryLabel`), zodat studenten weten welk anatomisch thema het betreft.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos geslaagd (`✓ built in 4.04s`).
+  - Gecommit en gepusht naar `main` op GitHub.
