@@ -55,6 +55,7 @@ interface DraggableSkeletonProps {
   isDeleteMode?: boolean;
   onDeletePoint?: (point: EditablePoint) => void;
   onCopyName?: (name: string) => void;
+  onSelectPoint?: (point: EditablePoint) => void;
   highlightedName?: string;
 }
 
@@ -71,6 +72,7 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
   isDeleteMode = false,
   onDeletePoint,
   onCopyName,
+  onSelectPoint,
   highlightedName,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -377,11 +379,14 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
             const radius = (isDragging ? baseRadius + 1.5 : isHovered ? baseRadius + 1 : baseRadius) / zoom;
             const hitRadius = (isStructure ? 26 : 34) / zoom;
 
+            const isSelected = Boolean(highlightedName && (pt.rawName?.toLowerCase() === highlightedName.toLowerCase() || pt.name.toLowerCase() === highlightedName.toLowerCase()));
             const fillColor = isDeleteMode
               ? isHovered
                 ? '#ef4444'
                 : '#f87171'
               : isDragging
+              ? '#0284c7'
+              : isSelected
               ? '#0284c7'
               : isHovered
               ? '#0ea5e9'
@@ -401,7 +406,14 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
                     ? 'pointer-events-auto cursor-pointer'
                     : 'pointer-events-auto cursor-grab active:cursor-grabbing'
                 }
-                onPointerDown={(e) => handlePointerDownMarker(e, pt)}
+                onPointerDown={(e) => {
+                  handlePointerDownMarker(e, pt);
+                  if (!isDeleteMode && e.button === 0) onSelectPoint?.(pt);
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!isDeleteMode) onSelectPoint?.(pt);
+                }}
                 onContextMenu={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -603,10 +615,45 @@ export const BoneEditorView: React.FC = () => {
 
   const [selectedStructIdx, setSelectedStructIdx] = useState<number>(0);
 
-  // Zorg dat geselecteerde index binnen bereik blijft bij filterwissel
+  // Zorg dat geselecteerde structuur bewaard of geactiveerd wordt bij filterwissel
+  const pendingSelectedNameRef = useRef<string | null>(null);
+
   useEffect(() => {
-    setSelectedStructIdx(0);
-  }, [selectedFilterBone]);
+    if (pendingSelectedNameRef.current) {
+      const target = pendingSelectedNameRef.current.toLowerCase().trim();
+      const foundIdx = uniqueStructures.findIndex((s) => s.name.toLowerCase().trim() === target);
+      if (foundIdx !== -1) {
+        setSelectedStructIdx(foundIdx);
+      } else {
+        setSelectedStructIdx(0);
+      }
+      pendingSelectedNameRef.current = null;
+    } else {
+      setSelectedStructIdx(0);
+    }
+  }, [selectedFilterBone, uniqueStructures]);
+
+  // Klikken op een bot- of structuurpunt selecteert direct deze structuur
+  const handleSelectPoint = useCallback((pt: EditablePoint) => {
+    if (pt.type === 'structure') {
+      setEditTarget('structures');
+      const raw = (pt.rawName || pt.name).trim();
+      pendingSelectedNameRef.current = raw;
+      if (selectedFilterBone !== 'all' && pt.boneId && selectedFilterBone !== pt.boneId) {
+        setSelectedFilterBone(pt.boneId);
+      } else {
+        const idx = uniqueStructures.findIndex(
+          (s) => s.name.toLowerCase().trim() === raw.toLowerCase()
+        );
+        if (idx !== -1) {
+          setSelectedStructIdx(idx);
+          pendingSelectedNameRef.current = null;
+        }
+      }
+    } else if (pt.type === 'bone') {
+      setSelectedFilterBone(pt.boneId);
+    }
+  }, [selectedFilterBone, uniqueStructures]);
 
   const currentActiveStructure = uniqueStructures[selectedStructIdx] || null;
 
@@ -1738,6 +1785,7 @@ export const BoneEditorView: React.FC = () => {
             isDeleteMode={isDeleteMode}
             onDeletePoint={handleDeletePoint}
             onCopyName={handleCopyName}
+            onSelectPoint={handleSelectPoint}
             highlightedName={currentActiveStructure?.name}
           />
         </div>
@@ -1760,6 +1808,7 @@ export const BoneEditorView: React.FC = () => {
             isDeleteMode={isDeleteMode}
             onDeletePoint={handleDeletePoint}
             onCopyName={handleCopyName}
+            onSelectPoint={handleSelectPoint}
             highlightedName={currentActiveStructure?.name}
           />
         </div>

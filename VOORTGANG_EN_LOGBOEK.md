@@ -2238,3 +2238,22 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
      - Hierdoor verschijnt de zoekopdracht direct in een overzichtelijk compact venster naast of over de app zonder tabs te vervuilen.
 - **Verificatie:**
   - `npm run build` foutloos geslaagd (`✓ built in 4.30s`).
+
+
+---
+
+## 68. Directe Selectie van Botstructuur bij 1x Klikken op Skelet (03-11-2026 18:36)
+- **Status:** Succesvol doorgevoerd en geverifieerd.
+- **Aanleiding & Gebruikerswens:**
+  - De gebruiker wil dat een botstructuur direct geselecteerd wordt als er één keer op een marker op het skelet geklikt wordt ("als ik een botstructuur een keer aanklik moet die geselecteerd worden").
+- **Uitgevoerde Acties ([BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx)):**
+  1. **Selectie-koppeling op Marker Klik:**
+     - `onSelectPoint` toegevoegd aan `DraggableSkeletonProps` en gekoppeld aan de marker `<g>` (`onPointerDown` en `onClick`).
+     - Bij 1x klikken op een structuurmarker wordt deze structuur direct als actieve structuur ingesteld (`selectedStructIdx`).
+     - Indien het botfilter op een ander bot stond, schakelt het filter automatisch mee zodat de structuur direct actief en zichtbaar is.
+  2. **Visuele Highlight & Bediening:**
+     - De aangeklikte structuur (en diens corresponderende punten op links/rechts/ventraal/dorsaal) licht direct op met de geanimeerde ring en helderblauwe kleur (`#0284c7`).
+     - De naam en actieve teller (bijv. `3/18`) in de werkbalk springen direct naar deze structuur.
+     - Alle actieknoppen (Google Zoeken popup, Kopiëren, Hernoemen, Verwijderen) en de links/rechts pijltjesbediening sluiten naadloos aan op de zojuist aangeklikte structuur.
+- **Verificatie:**
+  - `npm run build` foutloos geslaagd (`✓ built in 4.24s`).

@@ -22,7 +22,7 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "view": "ventral",
     "side": "right",
     "x": 0.4114,
-    "y": 0.4538
+    "y": 0.4577
   },
   {
     "id": "coxae_acetabulum_r_d",
@@ -32,8 +32,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Acetabulum (heupkom)",
     "view": "dorsal",
     "side": "right",
-    "x": 0.5886,
-    "y": 0.4538
+    "x": 0.6042,
+    "y": 0.4747
   },
   {
     "id": "coxae_acetabulum_l_v",
@@ -44,7 +44,7 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "view": "ventral",
     "side": "left",
     "x": 0.5886,
-    "y": 0.4538
+    "y": 0.4577
   },
   {
     "id": "coxae_acetabulum_l_d",
@@ -54,8 +54,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Acetabulum (heupkom)",
     "view": "dorsal",
     "side": "left",
-    "x": 0.4114,
-    "y": 0.4538
+    "x": 0.3958,
+    "y": 0.4747
   },
   {
     "id": "coxae_pubis_r",
@@ -131,8 +131,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Os ilium (darmbeen) met: SIAS, SIAI, SIPS, SIPI & crista iliaca",
     "view": "ventral",
     "side": "right",
-    "x": 0.3395,
-    "y": 0.4009
+    "x": 0.3506,
+    "y": 0.397
   },
   {
     "id": "coxae_crista_r_d",
@@ -153,8 +153,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Os ilium (darmbeen) met: SIAS, SIAI, SIPS, SIPI & crista iliaca",
     "view": "ventral",
     "side": "left",
-    "x": 0.6605,
-    "y": 0.4009
+    "x": 0.6494,
+    "y": 0.397
   },
   {
     "id": "coxae_crista_l_d",
@@ -197,8 +197,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Os ischium (zitbeen) met: tuber ischiadicum",
     "view": "dorsal",
     "side": "right",
-    "x": 0.3533,
-    "y": 0.4779
+    "x": 0.4161,
+    "y": 0.4996
   },
   {
     "id": "coxae_tuber_l",
@@ -208,8 +208,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Os ischium (zitbeen) met: tuber ischiadicum",
     "view": "dorsal",
     "side": "left",
-    "x": 0.6467,
-    "y": 0.4779
+    "x": 0.5839,
+    "y": 0.4996
   },
   {
     "id": "femur_caput_r_v",
@@ -263,8 +263,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Collum femoris (dijbeenhals)",
     "view": "ventral",
     "side": "right",
-    "x": 0.4055,
-    "y": 0.4922
+    "x": 0.3506,
+    "y": 0.4763
   },
   {
     "id": "femur_collum_r_d",
@@ -285,8 +285,8 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "parentStructure": "Collum femoris (dijbeenhals)",
     "view": "ventral",
     "side": "left",
-    "x": 0.5945,
-    "y": 0.4922
+    "x": 0.6494,
+    "y": 0.4763
   },
   {
     "id": "femur_collum_l_d",
@@ -1983,3 +1983,7 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "y": 0.4499
   }
 ];
+
+export function getStructuresForBone(boneId: string, view: AnatomicalView): BoneStructurePoint[] {
+  return BONE_STRUCTURES.filter(s => s.boneId === boneId && (s.view === view || s.view === 'both'));
+}
