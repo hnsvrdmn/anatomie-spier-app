@@ -2358,3 +2358,25 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 - **Verificatie & Deployment:**
   - `npm run build` foutloos geslaagd (`✓ built in 4.25s`).
   - Gecommit en gepusht naar `main` op GitHub.
+
+
+---
+
+## 73. Os Ilium Structuren Opgesplitst naar Losse Structuren (03-11-2026 19:07)
+- **Status:** Succesvol opgesplitst en direct gepusht naar GitHub.
+- **Aanleiding & Gebruikerswens:**
+  - De samengestelde structuur `"Os ilium (darmbeen) met: SIAS, SIAI, SIPS, SIPI & crista iliaca"` moest worden opgesplitst in afzonderlijke, losse structuren zodat ze individueel selecteerbaar en herkenbaar zijn in de botten tab.
+- **Uitgevoerde Acties ([bonesData.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/bonesData.ts), [boneStructures.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/boneStructures.ts), [BoneContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/BoneContext.tsx)):**
+  1. *Opgesplitst in bonesData.ts:*
+     - `SIAS (Spina iliaca anterior superior)`
+     - `SIAI (Spina iliaca anterior inferior)`
+     - `Crista iliaca (darmbeenkam)`
+     - `SIPS (Spina iliaca posterior superior)`
+     - `SIPI (Spina iliaca posterior inferior)`
+  2. *ParentStructures geüpdatet in boneStructures.ts:*
+     - De punten voor SIAS, SIAI, Crista iliaca, SIPS en SIPI verwijzen nu direct naar hun eigen specifieke structuurnaam.
+  3. *Cache-vernieuwing in BoneContext.tsx:*
+     - `BONES_LOCAL_STORAGE_KEY` opgehoogd naar `pmt_anatomie_bones_reader_v2` zodat alle browsers en mobiele toestellen direct de nieuwe losse structuren tonen.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos geslaagd (`✓ built in 4.13s`).
+  - Gecommit en gepusht naar `main` op GitHub.
