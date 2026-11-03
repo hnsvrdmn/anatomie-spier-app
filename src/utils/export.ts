@@ -75,17 +75,24 @@ export function saveMusclesToLocalStorage(muscles: Muscle[]): void {
  */
 export function loadMusclesFromLocalStorage(): Muscle[] | null {
   try {
-    // Verwijder alle verouderde cache-versies zodat de officiële muscles.json altijd 1:1 leidend is
+    // Ruim verouderde versies op (alles wat niet overeenkomt met de huidige sleutel)
     const keysToRemove: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
-      if (k && k.startsWith('pmt_anatomie_muscles_dataset')) {
+      if (k && k.startsWith('pmt_anatomie_muscles_dataset') && k !== LOCAL_STORAGE_KEY) {
         keysToRemove.push(k);
       }
     }
     keysToRemove.forEach(k => localStorage.removeItem(k));
+
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (!saved) return null;
+    const parsed = JSON.parse(saved);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed.filter(m => !isForbiddenMuscle(m));
+    }
   } catch (err) {
-    console.error('Fout bij opschonen LocalStorage:', err);
+    console.error('Fout bij laden LocalStorage:', err);
   }
   return null;
 }

@@ -293,37 +293,82 @@ export function resolveZoneKey(name: string = '', lineName?: string, explicitZon
 }
 
 /**
+ * Schoon een aanhechtingsnaam op door toevoegingen zoals (craniaal), (caudaal), (boven), (onder) etc. te strippen.
+ * Hierdoor worden punten met dezelfde basisnaam (bijv. "margo medialis scapula") als hetzelfde doel herkend.
+ */
+export function getBaseAttachmentName(name?: string): string {
+  if (!name) return '';
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/\s*\([^)]*\)/g, '')
+    .replace(/^[-–—•\s]+/, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * Berekent de unieke groeperingssleutel voor een aanhechtingspunt.
+ * Punten die anatomisch of qua naam bij elkaar horen (of letterlijk dezelfde naam hebben)
+ * delen dezelfde sleutel. Hierdoor hoeft de student er maar één van te plaatsen!
+ */
+export function getAttachmentGroupingKey(pt: Point2D, lineName?: string): string {
+  const zone = resolveZoneKey(pt.name || '', lineName, pt.zone);
+  if (zone && zone.startsWith('zone_')) {
+    return zone;
+  }
+  const baseName = getBaseAttachmentName(pt.name || lineName || '');
+  if (baseName) {
+    return `name_${baseName}`;
+  }
+  return `pt_${(pt.name || '').trim().toLowerCase()}`;
+}
+
+/**
  * Groepeert doelpunten en aanhechtingslijnen tot unieke anatomische doelen.
+ * Als meerdere origo's of inserties dezelfde naam of zone hebben, worden ze
+ * samengevoegd in één DistinctTarget. De student hoeft er dan maar één van te plaatsen!
  */
 export function getDistinctTargets(
   targetPoints: Point2D[] = [],
   attachmentLines: AttachmentLine[] = [],
-  targetType: 'origin' | 'insertion' | 'path'
+  targetType: 'origin' | 'insertion' | 'path' = 'origin'
 ): DistinctTarget[] {
   const matchingLines = (attachmentLines || []).filter(
     (l) => l.type === targetType && l.points && l.points.length >= 2
   );
 
-  const targets: DistinctTarget[] = [];
+  const targetMap = new Map<string, DistinctTarget>();
 
-  targetPoints.forEach((pt, idx) => {
+  targetPoints.forEach((pt) => {
     const rawName = (pt.name || '').trim();
-    const key = `pt_${idx}_${rawName.toLowerCase()}`;
     const matchedLine = rawName
       ? matchingLines.find((l) => (l.name || '').trim().toLowerCase() === rawName.toLowerCase())
       : undefined;
+    const groupingKey = getAttachmentGroupingKey(pt, matchedLine?.name);
     const zoneId = resolveZoneKey(rawName, matchedLine?.name, pt.zone);
     const isZone = !!matchedLine || !!pt.zone || zoneId.startsWith('zone_');
 
-    targets.push({
-      key,
-      name: rawName,
-      points: [pt],
-      line: matchedLine,
-      zoneId,
-      isZone,
-    });
+    if (targetMap.has(groupingKey)) {
+      const existing = targetMap.get(groupingKey)!;
+      existing.points.push(pt);
+      if (!existing.line && matchedLine) {
+        existing.line = matchedLine;
+        existing.isZone = true;
+      }
+    } else {
+      targetMap.set(groupingKey, {
+        key: groupingKey,
+        name: rawName,
+        points: [pt],
+        line: matchedLine,
+        zoneId,
+        isZone,
+      });
+    }
   });
+
+  const targets: DistinctTarget[] = Array.from(targetMap.values());
 
   // Indien er slechts 1 uniek doelpunt is en 1 lijn van hetzelfde type zonder exacte naammatch, koppel ze
   if (targets.length === 1 && !targets[0].line && matchingLines.length === 1) {
@@ -354,10 +399,16 @@ export function getDistinctTargets(
 
 /**
  * Geeft het aantal unieke anatomische aanhechtingsdoelen voor een zijde terug.
+ * Als meerdere punten dezelfde naam of zone hebben, telt dit als 1 doel.
  */
-export function getDistinctTargetCount(points?: Point2D[]): number {
+export function getDistinctTargetCount(
+  points?: Point2D[],
+  attachmentLines?: AttachmentLine[],
+  targetType?: 'origin' | 'insertion' | 'path'
+): number {
   if (!points || points.length === 0) return 1;
-  return Math.max(1, points.length);
+  const targets = getDistinctTargets(points, attachmentLines || [], targetType || 'origin');
+  return Math.max(1, targets.length);
 }
 
 /**

@@ -19,6 +19,7 @@ interface EditorOverlayProps {
   onSelectPoint: (item: { point: Point2D; type: 'origin' | 'insertion' | 'path' | 'line_point'; index: number; lineIndex?: number } | null) => void;
   onUpdateVisuals: (newVisuals: MuscleVisualData) => void;
   onPointAdded?: (type: 'origin' | 'insertion' | 'path', point: Point2D) => void;
+  onDragStart?: () => void;
   showTooltip?: boolean;
 }
 
@@ -31,6 +32,7 @@ export const EditorOverlay: React.FC<EditorOverlayProps> = ({
   onSelectPoint,
   onUpdateVisuals,
   onPointAdded,
+  onDragStart,
   showTooltip = true,
 }) => {
   const zoom = useZoom();
@@ -270,6 +272,7 @@ export const EditorOverlay: React.FC<EditorOverlayProps> = ({
   ) => {
     e.stopPropagation();
     e.preventDefault();
+    onDragStart?.();
     isDraggingRef.current = true;
     setDraggedItem({ type, index, startPoint: point });
     onSelectPoint({ point, type, index });
@@ -340,6 +343,7 @@ export const EditorOverlay: React.FC<EditorOverlayProps> = ({
                   onPointerDown={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
+                    onDragStart?.();
                     isDraggingRef.current = true;
                     setDraggedItem({ type: 'line_point', index: ptIdx, lineIndex: lineIdx, startPoint: pt });
                     onSelectPoint({ point: pt, type: 'line_point', index: ptIdx, lineIndex: lineIdx });

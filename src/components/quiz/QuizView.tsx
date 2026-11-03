@@ -301,9 +301,9 @@ export const QuizView: React.FC = () => {
   // Aantal verwachte punten per zijde (gebaseerd op unieke anatomische structuren/zones)
   const getExpectedCounts = useCallback((side: 'left' | 'right' | 'midline') => {
     if (!currentQuestion || !currentQuestion.muscle) return { origins: 1, insertions: 1, rawOrigins: 1, rawInsertions: 1, total: 2, isMultiSpan: false };
-    const vis = currentQuestion.muscle.visuals[side] || { origins: [], insertions: [] };
-    const rawOrigins = getDistinctTargetCount(vis.origins);
-    const rawInsertions = getDistinctTargetCount(vis.insertions);
+    const vis = currentQuestion.muscle.visuals[side] || { origins: [], insertions: [], attachmentLines: [] };
+    const rawOrigins = getDistinctTargetCount(vis.origins, (vis as any).attachmentLines, 'origin');
+    const rawInsertions = getDistinctTargetCount(vis.insertions, (vis as any).attachmentLines, 'insertion');
     const origins = Math.max(1, rawOrigins);
     const insertions = Math.max(1, rawInsertions);
 

@@ -2100,3 +2100,35 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 
 
 
+
+
+---
+
+## 62. Ctrl+Z in Bewerk Tab (Spieren & Botten) + Zelfde Naam Origo/Insertie Regel (03-11-2026 17:55)
+- **Aanleiding:**
+  - Vraag van gebruiker waarom aanpassingen in de spierbewerk-tab plots verdwenen leken ("in eens zijn al mn aanpassingen weg? Hoe kan dat?").
+  - Verzoek om werkende `Ctrl+Z` functionaliteit in de bewerktab (zowel bij spieren als bij botten).
+  - Nieuwe quiz-regel: als een origo of insertie dezelfde naam hebben (of dezelfde zone), hoeft de student er maar **één** juist te plaatsen om goedgekeurd te worden.
+- **Uitgevoerde Acties & Technische Analyse:**
+  1. **Reden van het 'verdwijnen' opgespoord & data veiliggesteld ([muscles.json](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/muscles.json) & [MuscleContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/MuscleContext.tsx)):**
+     - Goed nieuws: de aanpassingen van de gebruiker aan de *m. rhomboideus*, *m. brachialis* en *m. triceps brachii* waren **niet** kwijt! Ze stonden op schijf al veilig opgeslagen in `src/data/muscles.json`.
+     - *Oorzaak 1:* Om 17:31 uur voerde Vite een `hmr invalidate` uit vanwege code-updates in de context. Hierdoor ververste de browserpagina volledig, waardoor de geselecteerde spier terugsprong naar de standaard ventrale spier. Omdat rhomboideus en triceps dorsaal liggen, leek de app leeg/gereset.
+     - *Oorzaak 2:* In `MuscleContext.tsx` kopieerde de bilaterale symmetrie-code (`updateMuscleVisuals`) alleen `origins`, `insertions` en `musclePath`, maar liet het `attachmentLines` vallen op de andere zijde. Dit is nu structureel opgelost met `mirrorAttachmentLines`.
+     - *Oorzaak 3:* In `export.ts` wiste `loadMusclesFromLocalStorage` voorheen bij elke paginaherlaad de lokale opslag. Dit is hersteld zodat edits ook lokaal veilig behouden blijven.
+  2. **Ctrl+Z / Cmd+Z Undo Functionaliteit Geïmplementeerd:**
+     - **Spieren bewerken ([EditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/EditorView.tsx) & [EditorOverlay.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/EditorOverlay.tsx)):**
+       - Globale `window.addEventListener('keydown')` toegevoegd voor `Ctrl+Z` en `Cmd+Z` (negeert actieve tekstvelden).
+       - In `EditorOverlay.tsx` wordt nu vóór de start van elke versleepactie (`startDrag`) direct een snapshot gemaakt via `onDragStart`. Hierdoor kan ook het verplaatsen van punten direct met `Ctrl+Z` ongedaan gemaakt worden.
+     - **Botten bewerken ([BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx)):**
+       - Volledige geschiedenis-stack toegevoegd (`boneHistory`, tot 25 snapshots).
+       - `Ctrl+Z` en `Cmd+Z` luisteraar gekoppeld aan `handleUndo`.
+       - Zichtbare herstelknop met `RotateCcw` icoon en actieve tellers (`Herstel (Ctrl+Z)`) in de bovenbalk geplaatst.
+       - Snapshots worden automatisch opgeslagen bij verslepen, toevoegen en verwijderen van botstructuren en botpunten.
+  3. **Quiz-regel: Zelfde naam / zone vereist slechts 1 plaatsing ([coordinates.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/utils/coordinates.ts) & [QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx)):**
+     - `getBaseAttachmentName` toegevoegd om toevoegingen zoals `(craniaal)`, `(caudaal)`, `(1)`, `(2)` etc. af te strippen.
+     - `getDistinctTargets` groepeert nu alle doelpunten met dezelfde basisnaam of zone in één overkoepelend doel (`DistinctTarget`).
+     - `getDistinctTargetCount` berekent nu het aantal unieke doelen i.p.v. blindelings `points.length`.
+     - Voorbeeld: *m. rhomboideus* heeft twee inserties (`margo medialis scapula craniaal` en `caudaal`). Dit telt nu als **1** vereiste insertie. Plaatst de student 1 punt op een van beide plekken, dan is het antwoord 100% correct goedgekeurd.
+- **Verificatie:**
+  - Automated tests gedraaid via `test_same_name.js`: beide posities getest met 1 punt, resulteert in `isPassed: true`.
+  - `npm run build` foutloos geslaagd (`built in 4.27s`).

@@ -330,6 +330,20 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return a === b;
   };
 
+  // Helper om aanhechtingslijnen (zones) te spiegelen naar de tegenoverliggende lichaamszijde
+  const mirrorAttachmentLines = useCallback((lines?: any[]): any[] => {
+    if (!lines || lines.length === 0) return [];
+    return lines.map((l) => ({
+      ...l,
+      id: l.id.includes('-right')
+        ? l.id.replace('-right', '-left')
+        : l.id.includes('-left')
+        ? l.id.replace('-left', '-right')
+        : `${l.id}-mirrored`,
+      points: mirrorPoints(l.points || []),
+    }));
+  }, []);
+
   // Debounce ref voor saveMusclesToDisk zodat frequente updates (zoals slepen) niet continu schijftoegang forceren
   const saveDiskTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const debouncedSaveToDisk = useCallback((updatedMuscles: Muscle[]) => {
@@ -409,7 +423,8 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 [otherSide]: {
                   origins: mirrorPoints(newVisuals.origins),
                   insertions: mirrorPoints(newVisuals.insertions),
-                  musclePath: mirrorPoints(newVisuals.musclePath || [])
+                  musclePath: mirrorPoints(newVisuals.musclePath || []),
+                  attachmentLines: mirrorAttachmentLines(newVisuals.attachmentLines),
                 }
               } : {})
             }
@@ -477,7 +492,8 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                   [otherSide]: {
                     origins: mirrorPoints(newTargetVisuals.origins),
                     insertions: mirrorPoints(newTargetVisuals.insertions),
-                    musclePath: mirrorPoints(newTargetVisuals.musclePath || [])
+                    musclePath: mirrorPoints(newTargetVisuals.musclePath || []),
+                    attachmentLines: mirrorAttachmentLines(newTargetVisuals.attachmentLines),
                   }
                 } : {})
               }

@@ -89,14 +89,34 @@ export const EditorView: React.FC = () => {
   };
 
   // Ongedaan maken
-  const handleUndo = () => {
+  const handleUndo = useCallback(() => {
     if (history.length === 0 || !selectedMuscle) return;
     const previous = history[history.length - 1];
     setHistory(prev => prev.slice(0, -1));
     updateMuscleVisuals(selectedMuscle.id, activeSide, previous);
     setSelectedPoint(null);
-    showToast('Laatste bewerking ongedaan gemaakt', 'info');
-  };
+    showToast('Laatste bewerking ongedaan gemaakt (Ctrl+Z)', 'info');
+  }, [history, selectedMuscle, activeSide, updateMuscleVisuals, showToast]);
+
+  // Luister naar Ctrl+Z / Cmd+Z om direct ongedaan te maken in spierbewerkmodus
+  useEffect(() => {
+    if (editorTab !== 'muscles') return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        e.stopPropagation();
+        handleUndo();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [editorTab, handleUndo]);
 
   // Verwijder geselecteerd punt
   const handleDeleteSelected = () => {
@@ -319,6 +339,7 @@ export const EditorView: React.FC = () => {
               onSelectPoint={setSelectedPoint}
               onUpdateVisuals={handleUpdateVisuals}
               onPointAdded={handlePointAdded}
+              onDragStart={pushToHistory}
               showTooltip={showTooltip}
             />
           </SkeletonViewer>

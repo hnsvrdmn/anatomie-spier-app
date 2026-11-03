@@ -519,6 +519,49 @@ export const BoneEditorView: React.FC = () => {
   // Verwijder-modus via klik op een punt (icoontje van prullenbak)
   const [isDeleteMode, setIsDeleteMode] = useState(false);
 
+  // Undo / Ongedaan maken geschiedenis voor botten en botstructuren
+  interface BoneHistorySnapshot {
+    bones: typeof bones;
+    structures: typeof structures;
+  }
+  const [boneHistory, setBoneHistory] = useState<BoneHistorySnapshot[]>([]);
+
+  const pushBoneHistory = useCallback(() => {
+    setBoneHistory((prev) => [
+      ...prev.slice(-25),
+      {
+        bones: JSON.parse(JSON.stringify(bones)),
+        structures: JSON.parse(JSON.stringify(structures)),
+      },
+    ]);
+  }, [bones, structures]);
+
+  const handleUndo = useCallback(() => {
+    if (boneHistory.length === 0) return;
+    const previous = boneHistory[boneHistory.length - 1];
+    setBoneHistory((prev) => prev.slice(0, -1));
+    importBonesJson(previous.bones);
+    importStructuresJson(previous.structures);
+    showToast('Laatste botbewerking ongedaan gemaakt (Ctrl+Z)', 'info');
+  }, [boneHistory, importBonesJson, importStructuresJson, showToast]);
+
+  // Luister naar Ctrl+Z / Cmd+Z om botbewerkingen ongedaan te maken
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        e.stopPropagation();
+        handleUndo();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleUndo]);
+
   // Escape toets om delete-modus of toevoegen-paneel te sluiten
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -696,6 +739,7 @@ export const BoneEditorView: React.FC = () => {
 
   const handleDragStart = useCallback(
     (pt: EditablePoint) => {
+      pushBoneHistory();
       if (pt.type === 'bone') {
         const bone = bones.find((b) => b.id === pt.boneId);
         if (!bone || pt.markerIndex === undefined) return;
@@ -946,6 +990,7 @@ export const BoneEditorView: React.FC = () => {
       const uniqueSuffix = Date.now().toString().slice(-4);
       const stem = `${newStructBoneId}_${slug}_${uniqueSuffix}`;
 
+      pushBoneHistory();
       const newPoints: BoneStructurePoint[] = [];
 
       // Ventraal: screenLeftX = anatomisch rechts, screenRightX = anatomisch links
@@ -1020,11 +1065,13 @@ export const BoneEditorView: React.FC = () => {
       if (pt.type === 'structure') {
         const name = pt.rawName || pt.name;
         if (confirm(`Weet je zeker dat je structuur '${name}' wilt verwijderen (links én rechts)?`)) {
+          pushBoneHistory();
           deleteStructurePoints(name, pt.boneId);
           showToast(`Structuur '${name}' verwijderd (L + R)`, 'info');
         }
       } else if (pt.type === 'bone' && pt.markerIndex !== undefined) {
         if (confirm(`Weet je zeker dat je botpunt '${pt.name}' wilt verwijderen?`)) {
+          pushBoneHistory();
           deleteBonePoint(pt.boneId, pt.markerIndex);
           showToast(`Botpunt '${pt.name}' verwijderd`, 'info');
         }
@@ -1253,6 +1300,17 @@ export const BoneEditorView: React.FC = () => {
 
         {/* Rechterzijde: Knoppen voor Opslaan, Herstellen en JSON */}
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            disabled={boneHistory.length === 0}
+            onClick={handleUndo}
+            className="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold transition flex items-center gap-1.5 shadow-2xs active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+            title="Laatste bewerking ongedaan maken (Ctrl+Z)"
+          >
+            <RotateCcw className="w-3.5 h-3.5 text-slate-600" />
+            <span>Herstel (Ctrl+Z){boneHistory.length > 0 ? ` (${boneHistory.length})` : ''}</span>
+          </button>
+
           <button
             type="button"
             disabled={isSaving}
