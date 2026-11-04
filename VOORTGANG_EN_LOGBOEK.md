@@ -2616,3 +2616,38 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 - **Verificatie & Deployment:**
   - `npm run build` foutloos uitgevoerd (`✓ built in 4.10s`).
   - Opslagsleutels verhoogd voor schone herlaad in de browser.
+
+
+---
+
+## 84. Losse Rib- en Wervelpunten in Editor, Compacte Werveltoggle, Zwevende Trapezius Knoppen & Uitgebreide Hulp (04-11-2026 21:20)
+- **Status:** Succesvol geïmplementeerd, geverifieerd via `npm run build` en live getest.
+- **Aanleiding & Gebruikerswensen:**
+  1. *Ribben en wervels als losse puntjes:* In de editor ("Wervels & Ribben") mogen geen ranges meer getoond worden, maar moeten alle ribben (Costa 1 t/m 12 L/R, ventraal & dorsaal) en alle wervels (C1 t/m C7, Th1 t/m Th12, L1 t/m L5, ventraal & dorsaal) afzonderlijk als individuele punten geselecteerd en gefinetuned kunnen worden.
+  2. *Toggle 'Alle wervels vereisen' compacter:* De werveltoggle mag niet als een groot blok in beeld staan, maar moet net als `Autom. roteren` en `Autom. zoomen` als een subtiele switchknop in de toggle-balk staan.
+  3. *Trapezius knoppenlocatie & Geen spoilers:* De partes-knoppen in de sidebar/drawer gaven de origo en insertie weg en vielen niet op. Ze moeten als een minimalistische balk direct over het skelet zweven (bovenin, naast de O/I knoppen) met uitsluitend de knoppen *1. Descendens*, *2. Transversa*, *3. Ascendens* zonder hints of tekstuele antwoorden.
+  4. *Hulp & Uitleg uitbreiden:* Er ontbraken nog onderdelen in de helpmodal (Flashcards spaced repetition, de 4 minigames, kinesiologie vlakken & assen, bewegingsanalyse fasen).
+- **Doorgevoerde Aanpassingen:**
+  1. *Losse Ribben & Wervels in Editor ([boneStructures.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/boneStructures.ts), [bonesData.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/bonesData.ts), [BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx), [BoneContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/BoneContext.tsx)):*
+     - De gegroepeerde ranges (zoals `Costae verae 1-7`, `Vertebrae thoracicae Th1-Th12`) vervangen door 48 individuele ribpunten (Costa 1 t/m 12, links en rechts, ventraal en dorsaal) en 48 individuele wervelpunten (C1-C7, Th1-Th12, L1-L5, ventraal en dorsaal).
+     - Filterdropdown in de editor geoptimaliseerd met opties voor *Alle wervels & ribben*, *Wervels*, *Ribben* en *Borstbeen*.
+     - Actieve structuur navigatie geactiveerd in `vertebrae_ribs` mode, zodat elke wervel en rib met de pijltjestoetsen of klik direct geselecteerd en versleept kan worden.
+     - Opslagsleutel verhoogd naar `pmt_anatomie_bone_structures_v6` voor schone cache.
+  2. *Compacte Wervel-toggle ([QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx), [MobileQuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/MobileQuizView.tsx)):*
+     - Het grote blok uit de sidebar/drawer verwijderd.
+     - Geïntegreerd in de uniforme balk met toggles als 4e compacte knop (`Roteren`, `Zoomen`, `Switch`, `Wervels`).
+     - Tooltip en label: *"Alle wervels vereisen. Standaard uit: minimaal eerste en laatste wervel (meer mag)"*.
+  3. *Trapezius Zwevende Knoppen over het Skelet ([QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx), [MobileQuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/MobileQuizView.tsx)):*
+     - Oude verklarende teksten en badges ("Origo = ...", "Insertie = ...") compleet verwijderd.
+     - Zwevende balk toegevoegd over het skelet, direct naast de Origo/Insertie knoppen linksboven (`1. Descendens`, `2. Transversa`, `3. Ascendens`).
+     - Zowel op PC als mobiel direct onder handbereik tijdens het tekenen met minimale informatie.
+  4. *Hulp & Uitleg Uitgebreid ([HelpModal.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/common/HelpModal.tsx)):*
+     - Zes overzichtelijke thematische tabbladen:
+       1. *Overzicht:* Alle 6 app-hoofdonderdelen (Spieren, Botten, Bewegingen, Toetsen, Flashcards, Spellen).
+       2. *Bediening:* Touchgebaren, muisbediening (rechtermuisknop truc voor snelle insertie) en sneltoetsen (1-4, Spatie, Enter, Backspace).
+       3. *Toetsen & Intekenen:* Alle vraagtypen, regels voor meervoudige koppen, de nieuwe wervelrijregel, trapezius partes en toelichting op alle 4 de compacte toggles.
+       4. *Flashcards & Spellen:* Uitleg over de spaced repetition leermethode (Leitner/SM2), kaarten omkeren, random flashcards, en de 4 anatomische minigames (Queens Grid, Skeleton Puzzle, Muscle Guess, Connections).
+       5. *Kinesiologie:* Vlakken (sagittaal, frontaal, transversaal) en assen (transversaal, sagittaal, longitudinaal), bewegingsanalyse in 3 fasen, spierwerk (concentrisch, excentrisch, isometrisch) en toetstips over boekinconsequenties.
+       6. *Bewerken (PC):* Handleiding voor het visueel kalibreren van spieren, botten, en de nieuwe wervels & ribben editor.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos uitgevoerd (`✓ built in 4.32s`).

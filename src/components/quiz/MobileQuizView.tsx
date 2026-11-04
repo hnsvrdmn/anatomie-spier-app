@@ -284,9 +284,9 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
           <RotateCcw className="w-4 h-4 text-slate-700" />
         </button>
 
-        {/* Compacte O (Origo, blauw) en I (Insertie, rood) knoppen */}
+        {/* Compacte O (Origo, blauw) en I (Insertie, rood) knoppen + Trapezius partes over het skelet */}
         {isDrawingType && !isEvaluated && (
-          <div className="absolute top-2.5 left-2.5 z-30 flex items-center gap-1.5 pointer-events-auto">
+          <div className="absolute top-2.5 left-2.5 z-30 flex flex-wrap items-center gap-1.5 pointer-events-auto max-w-[calc(100vw-4.5rem)]">
             <div className="flex items-center gap-1 bg-slate-950/80 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 shadow-lg">
               <button
                 type="button"
@@ -315,6 +315,34 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                 I
               </button>
             </div>
+
+            {muscle?.id === 'trapezius' && setActiveTrapeziusPart && (
+              <div className="flex items-center gap-1 bg-slate-950/80 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 shadow-lg">
+                {(['descendens', 'transversa', 'ascendens'] as const).map((partKey) => {
+                  const label =
+                    partKey === 'descendens'
+                      ? '1. Desc.'
+                      : partKey === 'transversa'
+                      ? '2. Transv.'
+                      : '3. Ascend.';
+                  const isActive = activeTrapeziusPart === partKey;
+                  return (
+                    <button
+                      key={partKey}
+                      type="button"
+                      onClick={() => setActiveTrapeziusPart(partKey)}
+                      className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                        isActive
+                          ? 'bg-blue-600 text-white shadow-xs'
+                          : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
 
             {hasPlacedPoints && (
               <button
@@ -522,8 +550,8 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                 </div>
               )}
 
-              {/* Compacte balk met toggles voor automatisch roteren, inzoomen en type-switch */}
-              <div className="pt-2 border-t border-slate-200 grid grid-cols-3 gap-1.5 text-[10px]">
+              {/* Compacte balk met toggles voor automatisch roteren, inzoomen, switch en alle wervels vereisen */}
+              <div className="pt-2 border-t border-slate-200 grid grid-cols-4 gap-1 text-[10px]">
                 {onToggleAutoRotate && (
                   <button
                     type="button"
@@ -590,9 +618,9 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                         ? 'bg-blue-50 border-blue-200 text-blue-800'
                         : 'bg-slate-50 border-slate-200 text-slate-500'
                     }`}
-                    title="Toggle of alle wervels vereist zijn ipv minimaal de eerste en laatste wervel van de rij"
+                    title="Alle wervels vereisen. Standaard uit: minimaal eerste en laatste wervel (meer mag)"
                   >
-                    <span className="font-medium text-[10px] leading-tight">Alle wervels</span>
+                    <span className="font-medium text-[10px] leading-tight">Wervels</span>
                     <span className={`mt-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded ${
                       requireAllVertebrae ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
                     }`}>
@@ -703,33 +731,6 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                   <h2 className="text-xs sm:text-sm font-black text-slate-900 leading-snug">
                     Plaats origo & insertie: {cleanMuscleName(muscle?.name)}
                   </h2>
-                )}
-                {muscle?.id === 'trapezius' && setActiveTrapeziusPart && (
-                  <div className="flex items-center gap-1 my-1 p-1 bg-blue-50/90 rounded-xl border border-blue-200">
-                    {(['descendens', 'transversa', 'ascendens'] as const).map((partKey) => {
-                      const partLabel = partKey === 'descendens' ? '1. Desc.' : partKey === 'transversa' ? '2. Transv.' : '3. Ascend.';
-                      const isActive = activeTrapeziusPart === partKey;
-                      const hasO = userOrigins.some((p) => p.name?.toLowerCase().includes(partKey));
-                      const hasI = userInsertions.some((p) => p.name?.toLowerCase().includes(partKey));
-                      return (
-                        <button
-                          key={partKey}
-                          type="button"
-                          onClick={() => setActiveTrapeziusPart(partKey)}
-                          className={`flex-1 py-1 px-1 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-0.5 ${
-                            isActive
-                              ? 'bg-blue-600 text-white shadow-xs'
-                              : hasO && hasI
-                              ? 'bg-emerald-50 text-emerald-800 border border-emerald-300'
-                              : 'bg-white text-slate-700 border border-slate-200'
-                          }`}
-                        >
-                          <span>{partLabel}</span>
-                          {hasO && hasI && <span className="text-[9px]">✓</span>}
-                        </button>
-                      );
-                    })}
-                  </div>
                 )}
               </div>
             </div>

@@ -595,9 +595,16 @@ export const BoneEditorView: React.FC = () => {
 
   // Unieke structuren voor het geselecteerde bot/overzicht
   const activeStructuresList = useMemo(() => {
+    if (editTarget === 'vertebrae_ribs') {
+      const allowed = new Set(['os_vertebra', 'os_costa', 'os_sternum']);
+      if (selectedFilterBone === 'all') {
+        return structures.filter((s) => allowed.has(s.boneId));
+      }
+      return structures.filter((s) => s.boneId === selectedFilterBone);
+    }
     if (selectedFilterBone === 'all') return structures;
     return structures.filter((s) => s.boneId === selectedFilterBone);
-  }, [structures, selectedFilterBone]);
+  }, [structures, selectedFilterBone, editTarget]);
 
   const uniqueStructures = useMemo(() => {
     const map = new Map<string, BoneStructurePoint>();
@@ -626,12 +633,14 @@ export const BoneEditorView: React.FC = () => {
     } else {
       setSelectedStructIdx(0);
     }
-  }, [selectedFilterBone, uniqueStructures]);
+  }, [selectedFilterBone, uniqueStructures, editTarget]);
 
   // Klikken op een bot- of structuurpunt selecteert direct deze structuur
   const handleSelectPoint = useCallback((pt: EditablePoint) => {
     if (pt.type === 'structure') {
-      setEditTarget('structures');
+      if (editTarget !== 'vertebrae_ribs') {
+        setEditTarget('structures');
+      }
       const raw = (pt.rawName || pt.name).trim();
       pendingSelectedNameRef.current = raw;
       if (selectedFilterBone !== 'all' && pt.boneId && selectedFilterBone !== pt.boneId) {
@@ -648,7 +657,7 @@ export const BoneEditorView: React.FC = () => {
     } else if (pt.type === 'bone') {
       setSelectedFilterBone(pt.boneId);
     }
-  }, [selectedFilterBone, uniqueStructures]);
+  }, [selectedFilterBone, uniqueStructures, editTarget]);
 
   const currentActiveStructure = uniqueStructures[selectedStructIdx] || null;
 
@@ -1544,7 +1553,14 @@ export const BoneEditorView: React.FC = () => {
               onChange={(e) => setSelectedFilterBone(e.target.value)}
               className="flex-1 min-w-0 px-2.5 py-2 bg-clinical-50 border border-clinical-200 rounded-xl text-xs font-bold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition truncate"
             >
-              {editTarget === 'structures' ? (
+              {editTarget === 'vertebrae_ribs' ? (
+                <>
+                  <option value="all">Alle wervels & ribben ({activeStructuresList.length})</option>
+                  <option value="os_vertebra">Wervels (os_vertebra)</option>
+                  <option value="os_costa">Ribben (os_costa)</option>
+                  <option value="os_sternum">Borstbeen (os_sternum)</option>
+                </>
+              ) : editTarget === 'structures' ? (
                 <>
                   <option value="all">Alle botten ({structures.length} structuren)</option>
                   {bones
@@ -1578,7 +1594,7 @@ export const BoneEditorView: React.FC = () => {
         </div>
 
         {/* 2. Actieve Structuur Card met Navigatie en Actieknoppen */}
-        {editTarget === 'structures' && (
+        {(editTarget === 'structures' || editTarget === 'vertebrae_ribs') && (
           <div className="bg-white p-4 rounded-2xl border border-clinical-200/80 shadow-xs space-y-3">
             <div className="flex items-center justify-between">
               <label className="text-[11px] font-black text-clinical-700 uppercase tracking-wider flex items-center gap-1.5">

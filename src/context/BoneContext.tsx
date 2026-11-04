@@ -4,7 +4,7 @@ import { BoneStructurePoint, BONE_STRUCTURES } from '../data/boneStructures';
 import { AnatomicalView } from '../types/anatomy';
 
 const BONES_LOCAL_STORAGE_KEY = 'pmt_anatomie_bones_reader_v3';
-const STRUCTURES_LOCAL_STORAGE_KEY = 'pmt_anatomie_bone_structures_v5';
+const STRUCTURES_LOCAL_STORAGE_KEY = 'pmt_anatomie_bone_structures_v6';
 
 // Ruim oude versies op
 try {
@@ -14,6 +14,8 @@ try {
   localStorage.removeItem('pmt_anatomie_bone_structures_v1');
   localStorage.removeItem('pmt_anatomie_bone_structures_v2');
   localStorage.removeItem('pmt_anatomie_bone_structures_v3');
+  localStorage.removeItem('pmt_anatomie_bone_structures_v4');
+  localStorage.removeItem('pmt_anatomie_bone_structures_v5');
 } catch {}
 
 interface BoneContextType {

@@ -1658,31 +1658,61 @@ export const QuizView: React.FC = () => {
           {/* Origo & Insertie knoppen links naast het hoofd van het skelet, onder elkaar */}
           {!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'landmark' && type !== 'open_question' && type !== 'bone' && (
             <div className="absolute left-3 sm:left-5 top-3 sm:top-5 z-20 flex flex-col gap-2">
-              <button
-                type="button"
-                onClick={() => setActiveQuizTool('origin')}
-                className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-all ${
-                  activeQuizTool === 'origin'
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-xs ring-2 ring-blue-400'
-                    : 'bg-white text-blue-800 border-blue-200 hover:bg-blue-50'
-                }`}
-              >
-                <span className={`w-2 h-2 rounded-full shrink-0 ${activeQuizTool === 'origin' ? 'bg-white' : 'bg-blue-600'}`} />
-                <span>Origo</span>
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setActiveQuizTool('origin')}
+                  className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-all ${
+                    activeQuizTool === 'origin'
+                      ? 'bg-blue-600 text-white border-blue-600 shadow-xs ring-2 ring-blue-400'
+                      : 'bg-white text-blue-800 border-blue-200 hover:bg-blue-50'
+                  }`}
+                >
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${activeQuizTool === 'origin' ? 'bg-white' : 'bg-blue-600'}`} />
+                  <span>Origo</span>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => setActiveQuizTool('insertion')}
-                className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-all ${
-                  activeQuizTool === 'insertion'
-                    ? 'bg-orange-600 text-white border-orange-600 shadow-xs ring-2 ring-orange-400'
-                    : 'bg-white text-orange-800 border-orange-200 hover:bg-orange-50'
-                } ${isScalingInsertion ? 'animate-subtle-scale' : ''}`}
-              >
-                <span className={`w-2 h-2 rounded-full shrink-0 ${activeQuizTool === 'insertion' ? 'bg-white' : 'bg-orange-600'}`} />
-                <span>Insertie</span>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveQuizTool('insertion')}
+                  className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-all ${
+                    activeQuizTool === 'insertion'
+                      ? 'bg-orange-600 text-white border-orange-600 shadow-xs ring-2 ring-orange-400'
+                      : 'bg-white text-orange-800 border-orange-200 hover:bg-orange-50'
+                  } ${isScalingInsertion ? 'animate-subtle-scale' : ''}`}
+                >
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${activeQuizTool === 'insertion' ? 'bg-white' : 'bg-orange-600'}`} />
+                  <span>Insertie</span>
+                </button>
+              </div>
+
+              {muscle?.id === 'trapezius' && !isEvaluated && (
+                <div className="flex items-center gap-1 bg-white/95 backdrop-blur-xs p-1 rounded-xl border border-slate-200 shadow-md">
+                  {(['descendens', 'transversa', 'ascendens'] as const).map((partKey) => {
+                    const label =
+                      partKey === 'descendens'
+                        ? '1. Descendens'
+                        : partKey === 'transversa'
+                        ? '2. Transversa'
+                        : '3. Ascendens';
+                    const isActive = activeTrapeziusPart === partKey;
+                    return (
+                      <button
+                        key={partKey}
+                        type="button"
+                        onClick={() => setActiveTrapeziusPart(partKey)}
+                        className={`py-1 px-2.5 rounded-lg text-xs font-bold transition-all ${
+                          isActive
+                            ? 'bg-blue-600 text-white shadow-xs'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
@@ -1859,34 +1889,6 @@ export const QuizView: React.FC = () => {
 
           {practiceMode === 'joint' ? (
             <div className="space-y-2">
-              
-            {/* Toggle voor Wervelkolom precisie */}
-            <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200 mt-2">
-              <div className="flex flex-col pr-2">
-                <span className="text-xs font-bold text-slate-800">Alle wervels vereisen</span>
-                <span className="text-[10px] text-slate-500 leading-tight">
-                  {requireAllVertebrae 
-                    ? 'Aan: elke wervel in het traject moet worden aangeklikt.' 
-                    : 'Standaard uit: minimaal eerste en laatste wervel (meer mag).'}
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setRequireAllVertebrae(!requireAllVertebrae)}
-                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  requireAllVertebrae ? 'bg-blue-600' : 'bg-slate-300'
-                }`}
-                role="switch"
-                aria-checked={requireAllVertebrae}
-                title="Wervel nauwkeurigheid schakelen"
-              >
-                <span
-                  className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
-                    requireAllVertebrae ? 'translate-x-4' : 'translate-x-0'
-                  }`}
-                />
-              </button>
-            </div>
               <select
                 value={selectedJointId}
                 onChange={(e) => {
@@ -1925,8 +1927,8 @@ export const QuizView: React.FC = () => {
             </select>
           )}
 
-          {/* Compacte balk met switches voor automatisch roteren, inzoomen en type-switch */}
-          <div className="pt-2 border-t border-clinical-100 grid grid-cols-3 gap-1.5 text-[10px]">
+          {/* Compacte balk met switches voor automatisch roteren, inzoomen, type-switch en alle wervels vereisen */}
+          <div className="pt-2 border-t border-clinical-100 grid grid-cols-4 gap-1 text-[10px]">
             <button
               type="button"
               onClick={handleToggleAutoRotate}
@@ -1937,7 +1939,7 @@ export const QuizView: React.FC = () => {
               }`}
               title="Aanzicht automatisch roteren bij een nieuwe vraag"
             >
-              <span className="font-semibold text-[10px] leading-tight">Autom. roteren</span>
+              <span className="font-semibold text-[10px] leading-tight">Roteren</span>
               <span className={`mt-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded ${
                 autoRotateView ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
               }`}>
@@ -1954,7 +1956,7 @@ export const QuizView: React.FC = () => {
               }`}
               title="Automatisch inzoomen op de actieve spierzone"
             >
-              <span className="font-semibold text-[10px] leading-tight">Autom. zoomen</span>
+              <span className="font-semibold text-[10px] leading-tight">Zoomen</span>
               <span className={`mt-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded ${
                 autoZoom ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
               }`}>
@@ -1971,11 +1973,28 @@ export const QuizView: React.FC = () => {
               }`}
               title="Automatisch wisselen naar insertie zodra alle origo's geplaatst zijn"
             >
-              <span className="font-semibold text-[10px] leading-tight">Autom. switch</span>
+              <span className="font-semibold text-[10px] leading-tight">Switch</span>
               <span className={`mt-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded ${
                 autoSwitchPointType ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
               }`}>
                 {autoSwitchPointType ? 'Aan' : 'Uit'}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setRequireAllVertebrae(!requireAllVertebrae)}
+              className={`flex flex-col items-center justify-center p-1.5 rounded-lg border transition ${
+                requireAllVertebrae
+                  ? 'bg-blue-50 border-blue-200 text-blue-800'
+                  : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
+              }`}
+              title="Alle wervels vereisen. Standaard uit: minimaal eerste en laatste wervel (meer mag)"
+            >
+              <span className="font-semibold text-[10px] leading-tight">Wervels</span>
+              <span className={`mt-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded ${
+                requireAllVertebrae ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
+              }`}>
+                {requireAllVertebrae ? 'Aan' : 'Uit'}
               </span>
             </button>
           </div>
@@ -2123,59 +2142,6 @@ export const QuizView: React.FC = () => {
                   <h3 className="text-xl sm:text-2xl font-black text-blue-950 tracking-tight">
                     {cleanMuscleName(muscle?.name || '')}
                   </h3>
-            {/* Unieke Trapezius Pars Selector */}
-            {muscle?.id === 'trapezius' && (
-              <div className="p-3 bg-blue-50/70 border border-blue-200/90 rounded-2xl space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-black text-blue-950 uppercase tracking-wider flex items-center gap-1.5">
-                    <span>👑 Unieke spier:</span>
-                    <span>Teken in per pars</span>
-                  </span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-200/70 text-blue-900">
-                    3 partes
-                  </span>
-                </div>
-                <div className="grid grid-cols-3 gap-1.5">
-                  {(['descendens', 'transversa', 'ascendens'] as const).map((partKey) => {
-                    const partLabel =
-                      partKey === 'descendens'
-                        ? '1. Descendens'
-                        : partKey === 'transversa'
-                        ? '2. Transversa'
-                        : '3. Ascendens';
-                    const hasO = userOrigins.some((p) => p.name?.toLowerCase().includes(partKey));
-                    const hasI = userInsertions.some((p) => p.name?.toLowerCase().includes(partKey));
-                    const isComplete = hasO && hasI;
-                    const isActive = activeTrapeziusPart === partKey;
-
-                    return (
-                      <button
-                        key={partKey}
-                        type="button"
-                        onClick={() => setActiveTrapeziusPart(partKey)}
-                        className={`py-2 px-2 rounded-xl text-xs font-bold transition flex flex-col items-center justify-center gap-0.5 border ${
-                          isActive
-                            ? 'bg-blue-600 text-white border-blue-500 shadow-sm ring-2 ring-blue-300'
-                            : isComplete
-                            ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
-                            : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-                        }`}
-                      >
-                        <span className="truncate">{partLabel}</span>
-                        <span className="text-[10px] opacity-80">
-                          {isComplete ? '✓ Compleet' : hasO ? 'Alleen origo' : hasI ? 'Alleen insertie' : 'Nog leeg'}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-                <p className="text-[11px] text-blue-900/90 font-medium">
-                  {activeTrapeziusPart === 'descendens' && '💡 Pars descendens: Origo = schedelbasis / C1-C6 • Insertie = laterale 1/3 van clavicula'}
-                  {activeTrapeziusPart === 'transversa' && '💡 Pars transversa: Origo = proc. spinosus C7 en T1-T3 • Insertie = acromion'}
-                  {activeTrapeziusPart === 'ascendens' && '💡 Pars ascendens: Origo = proc. spinosus T3-T12 • Insertie = spina scapulae'}
-                </p>
-              </div>
-            )}
                 </div>
               ) : type === 'joints' ? (
                 <div>
