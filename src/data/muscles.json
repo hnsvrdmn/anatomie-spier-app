@@ -699,33 +699,33 @@
         "origins": [
           {
             "x": 0.4995,
-            "y": 0.095,
-            "name": "Pars descendens: dorsaal onderzijde schedel en proc. spinosus C1"
+            "y": 0.1136,
+            "name": "Pars descendens: proc. spinosus t-7"
           },
           {
-            "x": 0.4995,
-            "y": 0.158,
-            "name": "Pars descendens: proc. spinosus C6"
+            "x": 0.4967,
+            "y": 0.1791,
+            "name": "Pars transversa: proc. spinosus t-1"
           },
           {
-            "x": 0.4968,
-            "y": 0.1703,
-            "name": "Pars transversa: proc. spinosus C7"
+            "x": 0.5033,
+            "y": 0.3426,
+            "name": "Pars ascendens: proc. spinosus T12"
           },
           {
-            "x": 0.5005,
-            "y": 0.215,
-            "name": "Pars transversa: proc. spinosus Th3"
+            "x": 0.5033,
+            "y": 0.2238,
+            "name": "Pars ascendens: proc. spinosus T3"
           },
           {
-            "x": 0.5005,
-            "y": 0.215,
-            "name": "Pars ascendens: proc. spinosus Th3"
+            "x": 0.5015,
+            "y": 0.1797,
+            "name": "Pars descendens: proc. spinosus t-1"
           },
           {
-            "x": 0.5000,
-            "y": 0.328,
-            "name": "Pars ascendens: proc. spinosus Th12"
+            "x": 0.5042,
+            "y": 0.2221,
+            "name": "Pars transversa: proc. spinosus T3"
           }
         ],
         "insertions": [
@@ -746,90 +746,39 @@
           }
         ],
         "musclePath": [],
-        "attachmentLines": [
-          {
-            "id": "line-trap-o-desc-right",
-            "name": "Pars descendens: dorsaal onderzijde schedel en proc. spinosus C1-C6",
-            "type": "origin",
-            "points": [
-              { "x": 0.4995, "y": 0.095 },
-              { "x": 0.4995, "y": 0.158 }
-            ],
-            "tolerance": 0.024
-          },
-          {
-            "id": "line-trap-o-tran-right",
-            "name": "Pars transversa: proc. spinosus C7 en T1-T3",
-            "type": "origin",
-            "points": [
-              { "x": 0.4968, "y": 0.1703 },
-              { "x": 0.5005, "y": 0.215 }
-            ],
-            "tolerance": 0.024
-          },
-          {
-            "id": "line-trap-o-asc-right",
-            "name": "Pars ascendens: proc. spinosus T3-T12",
-            "type": "origin",
-            "points": [
-              { "x": 0.5005, "y": 0.215 },
-              { "x": 0.5000, "y": 0.328 }
-            ],
-            "tolerance": 0.024
-          },
-          {
-            "id": "line-trap-i-clav-right",
-            "name": "Pars descendens: laterale 1/3 deel van clavicula",
-            "type": "insertion",
-            "points": [
-              { "x": 0.645, "y": 0.198 },
-              { "x": 0.694, "y": 0.1989 }
-            ],
-            "tolerance": 0.022
-          },
-          {
-            "id": "line-trap-i-spina-right",
-            "name": "Pars ascendens: spina scapula",
-            "type": "insertion",
-            "points": [
-              { "x": 0.615, "y": 0.214 },
-              { "x": 0.6392, "y": 0.211 }
-            ],
-            "tolerance": 0.022
-          }
-        ]
+        "attachmentLines": []
       },
       "left": {
         "origins": [
           {
             "x": 0.5005,
-            "y": 0.095,
-            "name": "Pars descendens: dorsaal onderzijde schedel en proc. spinosus C1"
+            "y": 0.1136,
+            "name": "Pars descendens: proc. spinosus t-7"
           },
           {
-            "x": 0.5005,
-            "y": 0.158,
-            "name": "Pars descendens: proc. spinosus C6"
+            "x": 0.5033,
+            "y": 0.1791,
+            "name": "Pars transversa: proc. spinosus t-1"
           },
           {
-            "x": 0.5032,
-            "y": 0.1703,
-            "name": "Pars transversa: proc. spinosus C7"
+            "x": 0.4967,
+            "y": 0.3426,
+            "name": "Pars ascendens: proc. spinosus T12"
           },
           {
-            "x": 0.4995,
-            "y": 0.215,
-            "name": "Pars transversa: proc. spinosus Th3"
+            "x": 0.4967,
+            "y": 0.2238,
+            "name": "Pars ascendens: proc. spinosus T3"
           },
           {
-            "x": 0.4995,
-            "y": 0.215,
-            "name": "Pars ascendens: proc. spinosus Th3"
+            "x": 0.4985,
+            "y": 0.1797,
+            "name": "Pars descendens: proc. spinosus t-1"
           },
           {
-            "x": 0.5000,
-            "y": 0.328,
-            "name": "Pars ascendens: proc. spinosus Th12"
+            "x": 0.4958,
+            "y": 0.2221,
+            "name": "Pars transversa: proc. spinosus T3"
           }
         ],
         "insertions": [
@@ -850,58 +799,7 @@
           }
         ],
         "musclePath": [],
-        "attachmentLines": [
-          {
-            "id": "line-trap-o-desc-left",
-            "name": "Pars descendens: dorsaal onderzijde schedel en proc. spinosus C1-C6",
-            "type": "origin",
-            "points": [
-              { "x": 0.5005, "y": 0.095 },
-              { "x": 0.5005, "y": 0.158 }
-            ],
-            "tolerance": 0.024
-          },
-          {
-            "id": "line-trap-o-tran-left",
-            "name": "Pars transversa: proc. spinosus C7 en T1-T3",
-            "type": "origin",
-            "points": [
-              { "x": 0.5032, "y": 0.1703 },
-              { "x": 0.4995, "y": 0.215 }
-            ],
-            "tolerance": 0.024
-          },
-          {
-            "id": "line-trap-o-asc-left",
-            "name": "Pars ascendens: proc. spinosus T3-T12",
-            "type": "origin",
-            "points": [
-              { "x": 0.4995, "y": 0.215 },
-              { "x": 0.5000, "y": 0.328 }
-            ],
-            "tolerance": 0.024
-          },
-          {
-            "id": "line-trap-i-clav-left",
-            "name": "Pars descendens: laterale 1/3 deel van clavicula",
-            "type": "insertion",
-            "points": [
-              { "x": 0.355, "y": 0.198 },
-              { "x": 0.306, "y": 0.1989 }
-            ],
-            "tolerance": 0.022
-          },
-          {
-            "id": "line-trap-i-spina-left",
-            "name": "Pars ascendens: spina scapula",
-            "type": "insertion",
-            "points": [
-              { "x": 0.385, "y": 0.214 },
-              { "x": 0.3608, "y": 0.211 }
-            ],
-            "tolerance": 0.022
-          }
-        ]
+        "attachmentLines": []
       }
     },
     "otherFunctions": "Belangrijkste spier voor positionering van de schoudergordel bij armbewegingen."

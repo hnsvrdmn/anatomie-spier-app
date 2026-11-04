@@ -168,7 +168,6 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
   setRequireAllVertebrae,
   onUndoLastPoint,
   hoppingButton,
-  expectedCounts,
 }) => {
   const { quizOpenOptionsTrigger } = useMuscles();
 
@@ -289,14 +288,6 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
         >
           <RotateCcw className="w-4 h-4 text-slate-700" />
         </button>
-
-        {/* Subtiele tip voor spieren met meerdere wervelaanhechtingen */}
-        {expectedCounts?.isMultiSpan && !isEvaluated && (
-          <div className="absolute top-12 left-2.5 z-20 pointer-events-none px-2.5 py-1 bg-amber-50/95 backdrop-blur-xs border border-amber-200/90 rounded-lg text-[10px] leading-tight font-semibold text-amber-900 shadow-xs flex items-center gap-1 max-w-[calc(100vw-5rem)]">
-            <span className="shrink-0">💡</span>
-            <span>Bij meerdere aanhechtingen: plaats uiterste punten (hoogste en laagste).</span>
-          </div>
-        )}
 
         {/* Compacte O (Origo, blauw) en I (Insertie, rood) knoppen + Trapezius partes over het skelet */}
         {isDrawingType && !isEvaluated && (

@@ -1891,13 +1891,6 @@ export const QuizView: React.FC = () => {
 
         {/* Skelet Container met SVG Overlay (vaste stabiele hoogte, beweegt NOOIT naar beneden) */}
         <div className="flex-1 min-h-0 w-full h-full flex items-center justify-center py-1 overflow-hidden relative">
-          {expectedCounts.isMultiSpan && !isEvaluated && (
-            <div className="absolute top-2.5 z-20 pointer-events-none px-3.5 py-1.5 bg-amber-50/95 backdrop-blur-xs border border-amber-200/90 rounded-full text-xs font-semibold text-amber-900 shadow-xs flex items-center gap-1.5">
-              <span>💡</span>
-              <span>Bij meerdere aanhechtingen (bijv. wervelkolom): plaats minimaal de uiterste punten (hoogste en laagste).</span>
-            </div>
-          )}
-
           {/* Origo & Insertie knoppen links naast het skelet */}
           {!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'landmark' && type !== 'open_question' && type !== 'bone' && (
             <div className="absolute left-3 sm:left-5 top-3 sm:top-5 z-20 flex flex-col gap-2">
@@ -2172,7 +2165,7 @@ export const QuizView: React.FC = () => {
               >
                 {JOINT_CATEGORIES.map((cat) => (
                   <option key={cat.id} value={cat.id}>
-                    {cat.title} ({cat.muscleIds.length} spieren)
+                    {cat.name} ({cat.muscleIds.length} spieren)
                   </option>
                 ))}
               </select>

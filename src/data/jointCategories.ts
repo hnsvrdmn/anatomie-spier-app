@@ -6,7 +6,7 @@ export const JOINT_CATEGORIES: JointCategory[] = [
     code: 'A',
     name: 'Art. COXAE',
     pageInfo: 'Heupgewricht',
-    title: 'Art. COXAE (Heupgewricht)',
+    title: 'Art. COXAE',
     muscleIds: [
       'rectus_femoris',
       'biceps_femoris',
@@ -22,7 +22,7 @@ export const JOINT_CATEGORIES: JointCategory[] = [
     code: 'B',
     name: 'Art. GENUS',
     pageInfo: 'Kniegewricht',
-    title: 'Art. GENUS (Kniegewricht)',
+    title: 'Art. GENUS',
     muscleIds: [
       'rectus_femoris',
       'vastus_lateralis',
@@ -38,7 +38,7 @@ export const JOINT_CATEGORIES: JointCategory[] = [
     code: 'C',
     name: 'Art. PEDIS',
     pageInfo: 'Enkelgewrichten',
-    title: 'Art. PEDIS (Enkelgewrichten)',
+    title: 'Art. PEDIS',
     muscleIds: [
       'tibialis_anterior',
       'fibularis_brevis',
@@ -52,7 +52,7 @@ export const JOINT_CATEGORIES: JointCategory[] = [
     code: 'D',
     name: 'Art. CUBITI',
     pageInfo: 'Ellebooggewricht',
-    title: 'Art. CUBITI (Ellebooggewricht)',
+    title: 'Art. CUBITI',
     muscleIds: [
       'biceps_brachii',
       'brachialis',
@@ -64,7 +64,7 @@ export const JOINT_CATEGORIES: JointCategory[] = [
     code: 'E',
     name: 'Art. HUMERI',
     pageInfo: 'Schoudergewricht',
-    title: 'Art. HUMERI (Schoudergewricht)',
+    title: 'Art. HUMERI',
     muscleIds: [
       'latissimus_dorsi',
       'deltoideus',
@@ -80,7 +80,7 @@ export const JOINT_CATEGORIES: JointCategory[] = [
     code: 'F',
     name: 'CINGULUM PECTORALE',
     pageInfo: 'Schoudergordel',
-    title: 'CINGULUM PECTORALE (Schoudergordel)',
+    title: 'CINGULUM PECTORALE',
     muscleIds: [
       'trapezius',
       'latissimus_dorsi',
