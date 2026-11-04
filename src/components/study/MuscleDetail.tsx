@@ -3,7 +3,7 @@ import { useMuscles } from '../../context/MuscleContext';
 import { JOINT_CATEGORIES } from '../../data/jointCategories';
 import { MUSCLE_MOVEMENTS } from '../../data/muscleMovements';
 import { MovementIcon } from '../common/MovementIcon';
-import { ChevronLeft, ChevronRight, Pin, ArrowDownRight, Activity, AlertTriangle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Pin, ArrowDownRight, Activity } from 'lucide-react';
 
 export const MuscleDetail: React.FC = () => {
   const { 
@@ -46,14 +46,6 @@ export const MuscleDetail: React.FC = () => {
         <h2 className="text-xl sm:text-2xl font-extrabold text-clinical-900 tracking-tight">
           {displayedMuscle.name}
         </h2>
-      </div>
-
-      {/* Waarschuwing disclaimer over curriculum-inconsequenties */}
-      <div className="w-full bg-amber-50 border border-amber-200/90 rounded-xl px-3 py-2 flex items-start gap-2 text-amber-900 text-xs font-medium shadow-2xs">
-        <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-        <span className="leading-snug">
-          <strong>Let op:</strong> De inconsequenties tussen het moduleboek, antwoord-PDF's en PowerPoint zitten er nog in.
-        </span>
       </div>
 
       {/* Anatomische Aanhechtingen & Functie */}

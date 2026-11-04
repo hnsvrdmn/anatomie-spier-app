@@ -1740,7 +1740,6 @@ export const QuizView: React.FC = () => {
         activeTrapeziusPart={activeTrapeziusPart}
         setActiveTrapeziusPart={setActiveTrapeziusPart}
         hoppingButton={hoppingButton}
-        isPartDone={(part) => Boolean(completedPartesRef.current[part] || isPartComplete(part, userOrigins, userInsertions))}
         requireAllVertebrae={requireAllVertebrae}
         setRequireAllVertebrae={setRequireAllVertebrae}
         onUndoLastPoint={handleUndoLastPoint}
@@ -1909,7 +1908,6 @@ export const QuizView: React.FC = () => {
                           : 'Ascendens';
                       const isActive = activeTrapeziusPart === partKey;
                       const isHopping = hoppingButton === partKey;
-                      const isDone = Boolean(completedPartesRef.current[partKey] || isPartComplete(partKey, userOrigins, userInsertions));
 
                       return (
                         <button
@@ -1919,7 +1917,7 @@ export const QuizView: React.FC = () => {
                             setActiveTrapeziusPart(partKey);
                             setActiveQuizTool('origin');
                           }}
-                          className={`py-1 px-2.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
+                          className={`py-1 px-2.5 rounded-lg text-xs font-bold transition-all ${
                             isActive
                               ? 'bg-blue-600 text-white shadow-xs'
                               : isHopping
@@ -1927,10 +1925,7 @@ export const QuizView: React.FC = () => {
                               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                           }`}
                         >
-                          <span>{label}</span>
-                          {isDone && (
-                            <span className={isActive ? 'text-emerald-300 font-bold' : 'text-emerald-600 font-bold'}>✓</span>
-                          )}
+                          {label}
                         </button>
                       );
                     })}

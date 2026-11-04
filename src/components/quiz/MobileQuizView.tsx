@@ -107,7 +107,6 @@ interface MobileQuizViewProps {
   setRequireAllVertebrae?: (val: boolean) => void;
   onUndoLastPoint?: () => void;
   hoppingButton?: string | null;
-  isPartDone?: (val: 'descendens' | 'transversa' | 'ascendens') => boolean;
 }
 
 export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
@@ -169,7 +168,6 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
   setRequireAllVertebrae,
   onUndoLastPoint,
   hoppingButton,
-  isPartDone,
 }) => {
   const { quizOpenOptionsTrigger } = useMuscles();
 
@@ -334,7 +332,6 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                       : 'Ascend.';
                   const isActive = activeTrapeziusPart === partKey;
                   const isHopping = hoppingButton === partKey;
-                  const isDone = isPartDone?.(partKey);
 
                   return (
                     <button
@@ -344,7 +341,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                         setActiveTrapeziusPart(partKey);
                         setActiveQuizTool('origin');
                       }}
-                      className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 ${
+                      className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all ${
                         isActive
                           ? 'bg-blue-600 text-white shadow-xs'
                           : isHopping
@@ -352,10 +349,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                           : 'text-slate-300 hover:text-white hover:bg-slate-800'
                       }`}
                     >
-                      <span>{label}</span>
-                      {isDone && (
-                        <span className={`font-bold ${isActive ? 'text-emerald-300' : 'text-emerald-400'}`}>✓</span>
-                      )}
+                      {label}
                     </button>
                   );
                 })}

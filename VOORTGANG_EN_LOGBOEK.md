@@ -2893,3 +2893,23 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 - **Verificatie:**
   - `npm run build` foutloos uitgevoerd (`✓ built in 4.88s`).
   - Unit tests op `isPartComplete` bevestigen dat geldige combinaties (zoals C1+C6, C2+C5, C7+Th3, Th3+Th12) direct slagen, terwijl ongeldige combinaties (zoals C5+C6 of Th1+Th2) worden afgekeurd.
+
+---
+
+## 93. Verwijdering Pars Vinkjes & Onthubbeling Waarschuwingsbanner Studeertab (04-11-2026 23:26)
+- **Status:** Succesvol doorgevoerd en geverifieerd via `npm run build`.
+- **Aanleiding:** Gebruiker vroeg:
+  1. *"Dat goed vinkje naast de pars als je hem goed hebt mag weg."*
+  2. *"'Let op: De inconsequenties tussen het moduleboek, antwoord-PDF's en PowerPoint zitten er nog in.' Staat er nu 2 keer, 1 keer lijkt me voldoende,."*
+- **Aanpassingen:**
+  1. *Verwijdering Pars Vinkjes ([QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx), [MobileQuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/MobileQuizView.tsx)):*
+     - De groene vinkjes (`✓`) zijn verwijderd van de pars-knoppen op zowel Desktop als Mobiel.
+     - De soepele hop-animatie met zachte blauwe highlight bij voltooiing van een pars blijft behouden.
+  2. *Ontdubbeling Disclaimer in Studeertab ([MuscleDetail.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/study/MuscleDetail.tsx), [StudyView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/study/StudyView.tsx), [MobileStudyView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/study/MobileStudyView.tsx)):*
+     - `StudyView.tsx` renderde `<MuscleDetail />` direct in hetzelfde rechterpaneel als waar de banner al bovenin stond.
+     - De tweede banner in `MuscleDetail.tsx` is verwijderd.
+     - De banner staat nu exact 1 keer:
+       - **Desktop:** bovenaan het rechterpaneel in `StudyView.tsx`.
+       - **Mobiel:** bovenaan de uitschuiflade in `MobileStudyView.tsx`.
+- **Verificatie:**
+  - `npm run build` foutloos uitgevoerd (`✓ built in 4.05s`).
