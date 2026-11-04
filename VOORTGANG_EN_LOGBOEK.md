@@ -2859,3 +2859,37 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 - **Verificatie & Deployment:**
   - `npm run build` foutloos uitgevoerd (`✓ built in 4.34s`).
   - Simulatietests bevestigen: T7 voor descendens -> `incorrect` (rood), C3 -> `correct` (groen) maar faalt op ontbrekende C1/C6, T2 -> `close` (geel, faalt), Clavicula 2/3 -> `close` (geel, faalt), juiste plaatsing -> `correct` (groen, slaagt).
+
+---
+
+## 92. Analyse en Herstel: Zichtbare Hop- en Highlight-Animatie bij Trapezius Pars-Tabs (04-11-2026 23:20)
+- **Status:** Volledig opgelost, robuust gemaakt en geverifieerd via `npm run build`.
+- **Aanleiding:** Gebruiker vroeg: *"ik zie de de beweging (highlight) nu niet meer bij de pars tabs. Hoe kan dat?"*
+- **Onderzoek & Root Cause Analyse:**
+  1. *Oorzaak 1 (Te krappe drempelwaarden in `isPartComplete`):*
+     - De controle of een pars afgerond was (`isPartComplete`) gebruikte voor de wervelkolom te strikte, hardcoded grenzen (`y <= 0.125` en `y >= 0.145` bij descendens; `y <= 0.180` en `y >= 0.195` bij transversa; `y <= 0.230` en `y >= 0.295` bij ascendens).
+     - Als de student netjes op C2 (`y ≈ 0.128`) of C5 (`y ≈ 0.148`) klikte, viel dit buiten de krappe marges en evalueerde `isPartComplete` naar `false`. Hierdoor werd de animatie (`hoppingButton`) simpelweg **nooit** getriggerd!
+  2. *Oorzaak 2 (Animatie te kort en onzichtbaar zonder styling):*
+     - In eerdere pogingen om kermis/glow te vermijden was `@keyframes subtle-hop` teruggeschroefd naar een minimale verplaatsing van slechts 4 pixels (`translateY(-4px)`) gedurende slechts 0,45 seconden met een timeout van 550ms.
+     - Terwijl de ogen van de student op het skelet gericht zijn om een punt te plaatsen, was deze 4px-verschuiving in de hoek van het scherm al lang voorbij voordat de gebruiker naar de knoppen keek.
+     - Bovendien had de knop tijdens het hoppen geen enkele achtergrondkleur of rand (`text-slate-600`), waardoor hij er exact hetzelfde uitzag als een inactieve grijze tab.
+  3. *Oorzaak 3 (Geen blijvende statusindicatie):*
+     - Zodra een pars klaar was, verdween elke indicatie. Er was geen groen vinkje (`✓`) dat bevestigde dat die specifieke pars compleet en goedgekeurd was.
+- **Doorgevoerde Oplossingen:**
+  1. *Robuuste wervelvalidatie in `isPartComplete` ([QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx)):*
+     - Realistische bounds en spanwijdte geïntroduceerd:
+       - *Descendens:* Eerste punt `p.y <= 0.135` (schedelbasis, C1-C3), laatste punt `p.y >= 0.145` (C5-C6), span `span >= 0.025` (geen tussenliggende 2 wervels).
+       - *Transversa:* Eerste punt `p.y <= 0.188` (C7, Th1), laatste punt `p.y >= 0.198` (Th2, Th3), span `span >= 0.018`.
+       - *Ascendens:* Eerste punt `p.y <= 0.245` (Th3, Th4), laatste punt `p.y >= 0.295` (Th10-Th12), span `span >= 0.045`.
+     - Timeout in `useEffect` verhoogd naar 1200ms.
+  2. *Vloeiende dubbele hop-animatie ([index.css](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/index.css)):*
+     - `@keyframes subtle-hop` beweegt zuiver verticaal op en neer met een soepele 1,1s 'double hop' curve (`0% -> -8px -> -2px -> -6px -> 0%`).
+  3. *Duidelijke, rustige highlight tijdens de hop:*
+     - **Desktop:** `bg-blue-100 text-blue-900 ring-2 ring-blue-500 shadow-sm animate-subtle-hop`.
+     - **Mobiel:** `bg-blue-600/40 text-white ring-2 ring-blue-400 shadow-md animate-subtle-hop`.
+     - **Controleerknop:** `ring-4 ring-emerald-300 ring-offset-2 animate-subtle-hop`.
+  4. *Blijvend groen vinkje (`✓`) op voltooide partes:*
+     - Zowel op Desktop als Mobiel krijgt een voltooide pars een subtiel groen vinkje (`Descendens ✓`, `Transv. ✓`). Zo ziet de student direct dat de pars klaar is en dat er naar de volgende kan worden overgeschakeld.
+- **Verificatie:**
+  - `npm run build` foutloos uitgevoerd (`✓ built in 4.88s`).
+  - Unit tests op `isPartComplete` bevestigen dat geldige combinaties (zoals C1+C6, C2+C5, C7+Th3, Th3+Th12) direct slagen, terwijl ongeldige combinaties (zoals C5+C6 of Th1+Th2) worden afgekeurd.

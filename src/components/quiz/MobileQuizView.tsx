@@ -107,6 +107,7 @@ interface MobileQuizViewProps {
   setRequireAllVertebrae?: (val: boolean) => void;
   onUndoLastPoint?: () => void;
   hoppingButton?: string | null;
+  isPartDone?: (val: 'descendens' | 'transversa' | 'ascendens') => boolean;
 }
 
 export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
@@ -168,6 +169,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
   setRequireAllVertebrae,
   onUndoLastPoint,
   hoppingButton,
+  isPartDone,
 }) => {
   const { quizOpenOptionsTrigger } = useMuscles();
 
@@ -332,6 +334,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                       : 'Ascend.';
                   const isActive = activeTrapeziusPart === partKey;
                   const isHopping = hoppingButton === partKey;
+                  const isDone = isPartDone?.(partKey);
 
                   return (
                     <button
@@ -341,13 +344,18 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                         setActiveTrapeziusPart(partKey);
                         setActiveQuizTool('origin');
                       }}
-                      className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                      className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 ${
                         isActive
                           ? 'bg-blue-600 text-white shadow-xs'
+                          : isHopping
+                          ? 'bg-blue-600/40 text-white ring-2 ring-blue-400 shadow-md animate-subtle-hop'
                           : 'text-slate-300 hover:text-white hover:bg-slate-800'
-                      } ${isHopping ? 'animate-subtle-hop' : ''}`}
+                      }`}
                     >
-                      {label}
+                      <span>{label}</span>
+                      {isDone && (
+                        <span className={`font-bold ${isActive ? 'text-emerald-300' : 'text-emerald-400'}`}>✓</span>
+                      )}
                     </button>
                   );
                 })}
@@ -793,7 +801,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
               <button
                 type="button"
                 onClick={() => evaluateAttempt(userOrigins, userInsertions)}
-                className={`w-full h-10 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold shadow-md transition flex items-center justify-center gap-2 ${hoppingButton === 'check' ? 'animate-subtle-hop' : ''}`}
+                className={`w-full h-10 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold shadow-md transition flex items-center justify-center gap-2 ${hoppingButton === 'check' ? 'ring-4 ring-emerald-300 ring-offset-2 animate-subtle-hop' : ''}`}
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Controleer antwoord</span>

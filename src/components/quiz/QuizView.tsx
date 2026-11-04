@@ -273,42 +273,46 @@ export const QuizView: React.FC = () => {
 
   const isPartComplete = useCallback((part: 'descendens' | 'transversa' | 'ascendens', origins: Point2D[], insertions: Point2D[]) => {
     const partOrigins = origins.filter(p => 
-      p.name?.toLowerCase().includes(part) &&
+      (p.name || '').toLowerCase().includes(part) &&
       isTrapeziusPointAccurate(p, 'origin', part)
     );
     const iCount = insertions.filter(p => 
-      p.name?.toLowerCase().includes(part) &&
+      (p.name || '').toLowerCase().includes(part) &&
       isTrapeziusPointAccurate(p, 'insertion', part)
     ).length;
 
-    if (iCount < 1) return false;
+    if (iCount < 1 || partOrigins.length < 2) return false;
 
     // Vertebrae validatie per pars: minimaal eerste én laatste wervel in het bereik (meer mag, minder niet)
-    let hasFirst = false;
-    let hasLast = false;
-    let minCount = 2;
+    const ys = partOrigins.map(p => p.y);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+    const span = maxY - minY;
 
     if (part === 'descendens') {
-      // Eerste: dorsaal onderzijde schedel / C1 (y <= 0.125)
-      // Laatste: C6/C7 (y >= 0.145)
-      hasFirst = partOrigins.some(p => p.y <= 0.125);
-      hasLast = partOrigins.some(p => p.y >= 0.145);
-      minCount = requireAllVertebrae ? 5 : 2;
+      // Eerste: dorsaal onderzijde schedel / C1-C3 (y <= 0.135)
+      // Laatste: C5/C6 (y >= 0.145)
+      const hasFirst = partOrigins.some(p => p.y <= 0.135);
+      const hasLast = partOrigins.some(p => p.y >= 0.145);
+      const minCount = requireAllVertebrae ? 5 : 2;
+      return hasFirst && hasLast && span >= 0.025 && partOrigins.length >= minCount;
     } else if (part === 'transversa') {
-      // Eerste: C7 (y <= 0.180)
-      // Laatste: T3 (y >= 0.195)
-      hasFirst = partOrigins.some(p => p.y <= 0.180);
-      hasLast = partOrigins.some(p => p.y >= 0.195);
-      minCount = requireAllVertebrae ? 3 : 2;
+      // Eerste: C7 / Th1 (y <= 0.188)
+      // Laatste: Th2 / Th3 (y >= 0.198)
+      const hasFirst = partOrigins.some(p => p.y <= 0.188);
+      const hasLast = partOrigins.some(p => p.y >= 0.198);
+      const minCount = requireAllVertebrae ? 3 : 2;
+      return hasFirst && hasLast && span >= 0.018 && partOrigins.length >= minCount;
     } else if (part === 'ascendens') {
-      // Eerste: T3 (y <= 0.230)
-      // Laatste: T12 (y >= 0.295)
-      hasFirst = partOrigins.some(p => p.y <= 0.230);
-      hasLast = partOrigins.some(p => p.y >= 0.295);
-      minCount = requireAllVertebrae ? 8 : 2;
+      // Eerste: Th3 / Th4 (y <= 0.245)
+      // Laatste: Th10 / Th11 / Th12 (y >= 0.295)
+      const hasFirst = partOrigins.some(p => p.y <= 0.245);
+      const hasLast = partOrigins.some(p => p.y >= 0.295);
+      const minCount = requireAllVertebrae ? 7 : 2;
+      return hasFirst && hasLast && span >= 0.045 && partOrigins.length >= minCount;
     }
 
-    return hasFirst && hasLast && partOrigins.length >= minCount;
+    return false;
   }, [requireAllVertebrae]);
 
   useEffect(() => {
@@ -331,7 +335,7 @@ export const QuizView: React.FC = () => {
         setHoppingButton(nextTarget);
         const timer = setTimeout(() => {
           setHoppingButton(null);
-        }, 550);
+        }, 1200);
         return () => clearTimeout(timer);
       }
     } else if (wasComplete && !isCompleteNow) {
@@ -1736,6 +1740,7 @@ export const QuizView: React.FC = () => {
         activeTrapeziusPart={activeTrapeziusPart}
         setActiveTrapeziusPart={setActiveTrapeziusPart}
         hoppingButton={hoppingButton}
+        isPartDone={(part) => Boolean(completedPartesRef.current[part] || isPartComplete(part, userOrigins, userInsertions))}
         requireAllVertebrae={requireAllVertebrae}
         setRequireAllVertebrae={setRequireAllVertebrae}
         onUndoLastPoint={handleUndoLastPoint}
@@ -1904,6 +1909,7 @@ export const QuizView: React.FC = () => {
                           : 'Ascendens';
                       const isActive = activeTrapeziusPart === partKey;
                       const isHopping = hoppingButton === partKey;
+                      const isDone = Boolean(completedPartesRef.current[partKey] || isPartComplete(partKey, userOrigins, userInsertions));
 
                       return (
                         <button
@@ -1913,13 +1919,18 @@ export const QuizView: React.FC = () => {
                             setActiveTrapeziusPart(partKey);
                             setActiveQuizTool('origin');
                           }}
-                          className={`py-1 px-2.5 rounded-lg text-xs font-bold transition-all ${
+                          className={`py-1 px-2.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
                             isActive
                               ? 'bg-blue-600 text-white shadow-xs'
+                              : isHopping
+                              ? 'bg-blue-100 text-blue-900 ring-2 ring-blue-500 shadow-sm animate-subtle-hop'
                               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                          } ${isHopping ? 'animate-subtle-hop' : ''}`}
+                          }`}
                         >
-                          {label}
+                          <span>{label}</span>
+                          {isDone && (
+                            <span className={isActive ? 'text-emerald-300 font-bold' : 'text-emerald-600 font-bold'}>✓</span>
+                          )}
                         </button>
                       );
                     })}
@@ -2487,7 +2498,7 @@ export const QuizView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => evaluateAttempt(userOrigins, userInsertions)}
-                className={`w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition flex items-center justify-center gap-2 ${hoppingButton === 'check' ? 'animate-subtle-hop' : ''}`}
+                className={`w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition flex items-center justify-center gap-2 ${hoppingButton === 'check' ? 'ring-4 ring-emerald-300 ring-offset-2 animate-subtle-hop' : ''}`}
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Controleer antwoord</span>
