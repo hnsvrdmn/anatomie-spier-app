@@ -497,11 +497,9 @@ export function evaluatePointSet(
 
     for (const line of linesToEval) {
       if (line.points && line.points.length >= 2) {
-        // Een aanhechtingszone heeft een anatomische breedte (bijv. dikte van een rib, wervellichaam of botkam).
-        // Zorg dat de zone-tolerantie realistisch en touch-vriendelijk is (nooit strenger dan een punt!).
-        const baseTol = Math.max(line.tolerance || 0.030, toleranceCorrect);
-        const lineTolCorrect = baseTol * 1.25;
-        const lineTolClose = lineTolCorrect * 1.6;
+        // Gebruik de specifieke lijntolerantie (of de gekozen modus-tolerantie) zonder kunstmatig opblazen
+        const lineTolCorrect = line.tolerance ? Math.min(line.tolerance, toleranceCorrect) : toleranceCorrect;
+        const lineTolClose = lineTolCorrect * 1.5;
         const polyRes = distanceToPolyline(upt, line.points);
         const lineAcc = getAccuracy(polyRes.distance, lineTolCorrect, lineTolClose);
         const norm = polyRes.distance / lineTolCorrect;
@@ -609,7 +607,7 @@ export function evaluatePointSet(
         const tgt = distinctTargets[tIdx];
         if (tgt.line || tgt.isZone) {
           const res = evalAgainstTarget(userPoints[uIdx], tgt);
-          if (res.distance <= ptTolClose * 1.25) {
+          if (res.distance <= ptTolClose) {
             fallbackZoneRes = {
               ...res,
               accuracy: 'close',
@@ -721,9 +719,9 @@ export function evaluatePointSet(
 
   const allZonesSatisfied = Array.from(requiredZones).every((z) => satisfiedZones.has(z));
   const incorrectCount = matches.filter((m) => m.accuracy === 'incorrect').length;
-  const allowMinorFlaw = correctCount >= requiredCount && incorrectCount <= 1 && userPoints.length >= 4;
-  const hasNoIncorrectPoints = incorrectCount === 0 || allowMinorFlaw;
-  const isPassed = allZonesSatisfied && hasNoIncorrectPoints && vertebraeConditionMet && userPoints.length > 0;
+  // Geen foutieve (rood) of net-fout/rand (geel) punten toegestaan: fout is fout!
+  const hasNoFlaws = incorrectCount === 0 && closeCount === 0;
+  const isPassed = allZonesSatisfied && hasNoFlaws && vertebraeConditionMet && userPoints.length > 0;
 
   return {
     matches,
@@ -1065,9 +1063,9 @@ export function isTrapeziusPointAccurate(
     // Origo's liggen dorsaal mediaal op de wervelkolom (x ≈ 0.50)
     const isMidline = Math.abs(pt.x - 0.50) <= 0.095;
     if (!isMidline) return false;
-    if (part === 'descendens') return pt.y >= 0.06 && pt.y <= 0.195;
-    if (part === 'transversa') return pt.y >= 0.13 && pt.y <= 0.255;
-    if (part === 'ascendens') return pt.y >= 0.185 && pt.y <= 0.395;
+    if (part === 'descendens') return pt.y >= 0.07 && pt.y <= 0.175;
+    if (part === 'transversa') return pt.y >= 0.150 && pt.y <= 0.225;
+    if (part === 'ascendens') return pt.y >= 0.200 && pt.y <= 0.355;
     return false;
   } else {
     // Insertie ligt lateraal op clavicula, acromion of spina scapulae (links of rechts)

@@ -683,9 +683,11 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                         bestOrigAcc = m.accuracy;
                       }
                     }
-                    origColor = (bestOrigDist < 0.04 && (bestOrigAcc === 'correct' || bestOrigAcc === 'close'))
-                      ? '#16a34a'
-                      : '#dc2626';
+                    if (bestOrigDist < 0.04) {
+                      origColor = bestOrigAcc === 'correct' ? '#16a34a' : bestOrigAcc === 'close' ? '#eab308' : '#dc2626';
+                    } else {
+                      origColor = '#dc2626';
+                    }
 
                     const insMatches = quizMatches?.filter(m => m.targetType === 'insertion' || !m.targetType) || [];
                     let bestInsDist = Infinity;
@@ -697,9 +699,11 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                         bestInsAcc = m.accuracy;
                       }
                     }
-                    insColor = (bestInsDist < 0.04 && (bestInsAcc === 'correct' || bestInsAcc === 'close'))
-                      ? '#16a34a'
-                      : '#dc2626';
+                    if (bestInsDist < 0.04) {
+                      insColor = bestInsAcc === 'correct' ? '#16a34a' : bestInsAcc === 'close' ? '#eab308' : '#dc2626';
+                    } else {
+                      insColor = '#dc2626';
+                    }
                   }
 
                   const gradId = `user-line-grad-${oIdx}-${iIdx}`;
@@ -768,7 +772,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                 acc = (bestMatch && bestDist < 0.03) ? bestMatch.accuracy : 'incorrect';
               }
 
-              const badgeColor = acc === 'correct' ? '#16a34a' : acc === 'close' ? '#d97706' : '#dc2626';
+              const badgeColor = acc === 'correct' ? '#16a34a' : acc === 'close' ? '#eab308' : '#dc2626';
               const badgeSymbol = acc === 'correct' ? '✓' : acc === 'close' ? '~' : '✗';
 
               const isTrapezius = activeMuscle?.id === 'trapezius';
@@ -877,7 +881,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                 acc = (bestMatch && bestDist < 0.03) ? bestMatch.accuracy : 'incorrect';
               }
 
-              const badgeColor = acc === 'correct' ? '#16a34a' : acc === 'close' ? '#d97706' : '#dc2626';
+              const badgeColor = acc === 'correct' ? '#16a34a' : acc === 'close' ? '#eab308' : '#dc2626';
               const badgeSymbol = acc === 'correct' ? '✓' : acc === 'close' ? '~' : '✗';
 
               const isTrapezius = activeMuscle?.id === 'trapezius';

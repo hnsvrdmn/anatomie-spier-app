@@ -2828,3 +2828,34 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
      - Bij het niet raken van de eerste of laatste wervel wordt de zone uit `satisfiedZones` verwijderd en slaagt de poging niet.
 - **Verificatie & Deployment:**
   - `npm run build` foutloos uitgevoerd (`✓ built in 4.29s`). Tests bevestigen dat C6+C7 afgekeurd wordt en C1+C6 goedgekeurd wordt.
+
+---
+
+## 91. Strikte Pars-Validatie Trapezius, Gele & Rode Lijn/Punt Kleuring, Knoppenlayout PC & Waarschuwing Studeertab (04-11-2026 23:05)
+- **Status:** Succesvol geïmplementeerd, geverifieerd via `npm run build` en live getest.
+- **Aanleiding & Gebruikerswensen:**
+  1. *Foutieve goedkeuring T7 bij Pars Descendens opgelost:* In eerdere tests werd een punt op T7 (thoracaal) goedgekeurd voor Pars descendens. Oorzaak was dat alle origo's gezamenlijk tegen alle doelen van de gehele spier werden geëvalueerd, waardoor T7 matchte met de lijn van Pars ascendens.
+  2. *Kleurcodering punten & verbindingslijnen (Groen, Geel, Rood):* 
+     - Correcte punten kleuren groen (`#16a34a`, symbool `✓`).
+     - Punten op de rand / net buiten bereik kleuren geel (`#eab308`, symbool `~`).
+     - Foute punten (zoals T7 bij pars descendens) kleuren rood (`#dc2626`, symbool `✗`).
+     - **Verbindingslijnen kleuren mee:** De gradiënt van de lijn neemt aan de origo- en insertiekant exact de kleur van het betreffende punt aan (groen, geel of rood).
+  3. *Strikte slaagconditie ("Fout is fout"):* Als een punt geel (net fout) of rood (fout) is, of als een begin-/eindwervel ontbreekt, wordt de vraag **altijd** afgekeurd. `allowMinorFlaw` is verwijderd.
+  4. *Knoppenlayout op PC:* De terug- (`Undo2`) en verwijder-knoppen (`Trash2`) zaten verstopt achter de navigatorbalk. Deze zijn verplaatst naar een tweede regel onder Origo/Insertie, met bij de m. trapezius de pars-knoppen (`Descendens`, `Transversa`, `Ascendens`) direct daarnaast.
+  5. *Curriculum-inconsequenties disclaimer:* In de spieren/studeertab is een duidelijke amber waarschuwingsbanner toegevoegd (analoog aan de flashcards) over de inconsequenties tussen moduleboek, antwoord-PDF's en PowerPoint.
+- **Doorgevoerde Aanpassingen:**
+  1. *QuizView.tsx ([QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx)):*
+     - Bij `trapezius` worden de 3 partes (`descendens`, `transversa`, `ascendens`) strikt afzonderlijk geëvalueerd tegen hun eigen origo/insertie doelen en aanhechtingslijnen. Een punt geplaatst voor descendens wordt uitsluitend getoetst aan de C1-C6 origolijn en de clavicula insertielijn.
+     - PC UI: Origo en Insertie staan op rij 1; Undo en Trash staan op rij 2, met direct daarnaast de Trapezius pars-tabs.
+  2. *SkeletonViewer.tsx ([SkeletonViewer.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/SkeletonViewer.tsx)):*
+     - Verbindingslijnen (`origColor` en `insColor`) nemen nu dynamisch de geëvalueerde status van het punt aan: groen (`#16a34a`), geel (`#eab308`), of rood (`#dc2626`).
+     - Randpunten (`acc === 'close'`) kleuren helder geel (`#eab308`) voor zowel het punt, de gestippelde ring als de verbindingslijn.
+  3. *coordinates.ts ([coordinates.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/utils/coordinates.ts)):*
+     - `isTrapeziusPointAccurate` aangescherpt naar zuivere anatomische grenzen (descendens Y: 0.07-0.175, transversa Y: 0.150-0.225, ascendens Y: 0.200-0.355).
+     - Lijn- en zonetoleranties ontdaan van kunstmatige 1.25x vermenigvuldiging.
+     - `isPassed` vereist nu `incorrectCount === 0 && closeCount === 0` (geen enkele fout of bijna-fout toegestaan).
+  4. *StudyView.tsx & MuscleDetail.tsx ([StudyView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/study/StudyView.tsx), [MuscleDetail.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/study/MuscleDetail.tsx)):*
+     - Amber disclaimerbanner met `AlertTriangle` toegevoegd bovenin het spierdetailpaneel en in de studeerview.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos uitgevoerd (`✓ built in 4.34s`).
+  - Simulatietests bevestigen: T7 voor descendens -> `incorrect` (rood), C3 -> `correct` (groen) maar faalt op ontbrekende C1/C6, T2 -> `close` (geel, faalt), Clavicula 2/3 -> `close` (geel, faalt), juiste plaatsing -> `correct` (groen, slaagt).

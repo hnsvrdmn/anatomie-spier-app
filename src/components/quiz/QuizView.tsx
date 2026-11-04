@@ -1234,6 +1234,59 @@ export const QuizView: React.FC = () => {
         sideRequired = 2;
         sideCorrect = resOrig.correctCount + resIns.correctCount;
         sidePassed = resOrig.isPassed && resIns.isPassed;
+      } else if (muscle.id === 'trapezius') {
+        // M. trapezius: evalueer elke pars (descendens, transversa, ascendens) AFZONDERLIJK tegen haar eigen doelen en lijnen!
+        // Hierdoor kan een punt dat voor pars descendens is geplaatst (bijv. op T7) NOOIT gematcht worden
+        // aan pars ascendens, maar wordt het direct als 'incorrect' (rood) geëvalueerd!
+        const descOrigins = validOrigins.filter((p) => (p.name || '').toLowerCase().includes('descendens'));
+        const descInsertions = validInsertions.filter((p) => (p.name || '').toLowerCase().includes('descendens'));
+        const transOrigins = validOrigins.filter((p) => (p.name || '').toLowerCase().includes('transversa'));
+        const transInsertions = validInsertions.filter((p) => (p.name || '').toLowerCase().includes('transversa'));
+        const ascOrigins = validOrigins.filter((p) => (p.name || '').toLowerCase().includes('ascendens'));
+        const ascInsertions = validInsertions.filter((p) => (p.name || '').toLowerCase().includes('ascendens'));
+
+        // Pars descendens: origo C1-C6, insertie laterale 1/3 clavicula
+        const descOrigTarget = targetOrigins.filter((p) => (p.name || '').toLowerCase().includes('descendens'));
+        const descInsTarget = targetInsertions.filter((p) => (p.name || '').toLowerCase().includes('descendens'));
+        const descLines = (vis.attachmentLines || []).filter((l) => (l.name || '').toLowerCase().includes('descendens') || l.id.includes('desc') || l.id.includes('clav'));
+
+        // Pars transversa: origo C7-T3, insertie acromion
+        const transOrigTarget = targetOrigins.filter((p) => (p.name || '').toLowerCase().includes('transversa'));
+        const transInsTarget = targetInsertions.filter((p) => (p.name || '').toLowerCase().includes('transversa'));
+        const transLines = (vis.attachmentLines || []).filter((l) => (l.name || '').toLowerCase().includes('transversa') || l.id.includes('tran'));
+
+        // Pars ascendens: origo T3-T12, insertie spina scapulae
+        const ascOrigTarget = targetOrigins.filter((p) => (p.name || '').toLowerCase().includes('ascendens'));
+        const ascInsTarget = targetInsertions.filter((p) => (p.name || '').toLowerCase().includes('ascendens'));
+        const ascLines = (vis.attachmentLines || []).filter((l) => (l.name || '').toLowerCase().includes('ascendens') || l.id.includes('asc') || l.id.includes('spina'));
+
+        const resOrigDesc = evaluatePointSet(descOrigins, descOrigTarget, 'origin', toleranceValue, descLines, requireAllVertebrae);
+        const resInsDesc = evaluatePointSet(descInsertions, descInsTarget, 'insertion', toleranceValue, descLines, requireAllVertebrae);
+
+        const resOrigTrans = evaluatePointSet(transOrigins, transOrigTarget, 'origin', toleranceValue, transLines, requireAllVertebrae);
+        const resInsTrans = evaluatePointSet(transInsertions, transInsTarget, 'insertion', toleranceValue, transLines, requireAllVertebrae);
+
+        const resOrigAsc = evaluatePointSet(ascOrigins, ascOrigTarget, 'origin', toleranceValue, ascLines, requireAllVertebrae);
+        const resInsAsc = evaluatePointSet(ascInsertions, ascInsTarget, 'insertion', toleranceValue, ascLines, requireAllVertebrae);
+
+        sideMatches = [
+          ...resOrigDesc.matches,
+          ...resInsDesc.matches,
+          ...resOrigTrans.matches,
+          ...resInsTrans.matches,
+          ...resOrigAsc.matches,
+          ...resInsAsc.matches,
+        ];
+        sideRequired = resOrigDesc.requiredCount + resInsDesc.requiredCount +
+                       resOrigTrans.requiredCount + resInsTrans.requiredCount +
+                       resOrigAsc.requiredCount + resInsAsc.requiredCount;
+        sideCorrect = resOrigDesc.correctCount + resInsDesc.correctCount +
+                      resOrigTrans.correctCount + resInsTrans.correctCount +
+                      resOrigAsc.correctCount + resInsAsc.correctCount;
+        sidePassed = resOrigDesc.isPassed && resInsDesc.isPassed &&
+                     resOrigTrans.isPassed && resInsTrans.isPassed &&
+                     resOrigAsc.isPassed && resInsAsc.isPassed;
+        sideVertebraeTip = resOrigDesc.missingVertebraeTip || resOrigTrans.missingVertebraeTip || resOrigAsc.missingVertebraeTip;
       } else {
         // 'full' of 'joint': match origo's en inserties afzonderlijk tegen hun doelen (inclusief aanhechtingslijnen/zones)
         const resOrig = evaluatePointSet(validOrigins, targetOrigins, 'origin', toleranceValue, vis.attachmentLines || [], requireAllVertebrae);
@@ -1785,9 +1838,10 @@ export const QuizView: React.FC = () => {
 
         {/* Skelet Container met SVG Overlay (vaste stabiele hoogte, beweegt NOOIT naar beneden) */}
         <div className="flex-1 min-h-0 w-full h-full flex items-center justify-center py-1 overflow-hidden relative">
-          {/* Origo & Insertie knoppen links naast het hoofd van het skelet, onder elkaar */}
+          {/* Origo & Insertie knoppen links naast het skelet */}
           {!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'landmark' && type !== 'open_question' && type !== 'bone' && (
             <div className="absolute left-3 sm:left-5 top-3 sm:top-5 z-20 flex flex-col gap-2">
+              {/* Regel 1: Origo en Insertie */}
               <div className="flex items-center gap-1.5">
                 <button
                   type="button"
@@ -1814,14 +1868,17 @@ export const QuizView: React.FC = () => {
                   <span className={`w-2 h-2 rounded-full shrink-0 ${activeQuizTool === 'insertion' ? 'bg-white' : 'bg-orange-600'}`} />
                   <span>Insertie</span>
                 </button>
+              </div>
 
+              {/* Regel 2: Terug en Verwijder knoppen, met bij de trapezius de pars tabs direct hiernaast */}
+              <div className="flex items-center gap-2">
                 {(userOrigins.length > 0 || userInsertions.length > 0) && (
-                  <div className="flex items-center gap-1 ml-1 pl-1 border-l border-slate-200">
+                  <div className="flex items-center gap-1 bg-white/90 backdrop-blur-xs p-0.5 rounded-xl border border-slate-200 shadow-xs">
                     <button
                       type="button"
                       onClick={handleUndoLastPoint}
-                      title="Vorige punt ongedaan maken"
-                      className="p-1.5 bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200 rounded-xl shadow-xs transition flex items-center justify-center"
+                      title="Laatste punt ongedaan maken"
+                      className="p-1.5 bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 rounded-lg transition flex items-center justify-center"
                     >
                       <Undo2 className="w-4 h-4" />
                     </button>
@@ -1829,46 +1886,46 @@ export const QuizView: React.FC = () => {
                       type="button"
                       onClick={handleClearAllPoints}
                       title="Alle geplaatste punten wissen"
-                      className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 hover:text-rose-700 border border-rose-200 rounded-xl shadow-xs transition flex items-center justify-center"
+                      className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 hover:text-rose-700 rounded-lg transition flex items-center justify-center"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 )}
+
+                {muscle?.id === 'trapezius' && !isEvaluated && (
+                  <div className="flex items-center gap-1 bg-white/95 backdrop-blur-xs p-1 rounded-xl border border-slate-200 shadow-md">
+                    {(['descendens', 'transversa', 'ascendens'] as const).map((partKey) => {
+                      const label =
+                        partKey === 'descendens'
+                          ? 'Descendens'
+                          : partKey === 'transversa'
+                          ? 'Transversa'
+                          : 'Ascendens';
+                      const isActive = activeTrapeziusPart === partKey;
+                      const isHopping = hoppingButton === partKey;
+
+                      return (
+                        <button
+                          key={partKey}
+                          type="button"
+                          onClick={() => {
+                            setActiveTrapeziusPart(partKey);
+                            setActiveQuizTool('origin');
+                          }}
+                          className={`py-1 px-2.5 rounded-lg text-xs font-bold transition-all ${
+                            isActive
+                              ? 'bg-blue-600 text-white shadow-xs'
+                              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                          } ${isHopping ? 'animate-subtle-hop' : ''}`}
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-
-              {muscle?.id === 'trapezius' && !isEvaluated && (
-                <div className="flex items-center gap-1 bg-white/95 backdrop-blur-xs p-1 rounded-xl border border-slate-200 shadow-md">
-                  {(['descendens', 'transversa', 'ascendens'] as const).map((partKey) => {
-                    const label =
-                      partKey === 'descendens'
-                        ? 'Descendens'
-                        : partKey === 'transversa'
-                        ? 'Transversa'
-                        : 'Ascendens';
-                    const isActive = activeTrapeziusPart === partKey;
-                    const isHopping = hoppingButton === partKey;
-
-                    return (
-                      <button
-                        key={partKey}
-                        type="button"
-                        onClick={() => {
-                          setActiveTrapeziusPart(partKey);
-                          setActiveQuizTool('origin');
-                        }}
-                        className={`py-1 px-2.5 rounded-lg text-xs font-bold transition-all ${
-                          isActive
-                            ? 'bg-blue-600 text-white shadow-xs'
-                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                        } ${isHopping ? 'animate-subtle-hop' : ''}`}
-                      >
-                        {label}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
             </div>
           )}
 
