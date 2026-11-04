@@ -47,6 +47,7 @@ interface SkeletonViewerProps {
   resetOnMuscleChange?: boolean;
   hideMuscleMarkers?: boolean;
   uniformColor?: string;
+  activeTrapeziusPart?: 'descendens' | 'transversa' | 'ascendens';
 }
 
 export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
@@ -76,6 +77,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
   resetOnMuscleChange = false,
   hideMuscleMarkers = false,
   uniformColor,
+  activeTrapeziusPart,
 }) => {
   const localContainerRef = useRef<HTMLDivElement>(null);
   const containerRef = innerRef || localContainerRef;
@@ -313,6 +315,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
 
   // Touch handlers voor telefoon (pinch zoom & 2-vinger pan)
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (isDraggingPointRef.current) return;
     if (e.touches.length === 2) {
       // 2 vingers: pinch-to-zoom en pan
       touchStateRef.current.isPinching = true;
@@ -341,6 +344,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
   };
 
   const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (isDraggingPointRef.current) return;
     if (e.touches.length === 2 && touchStateRef.current.isPinching) {
       const t1 = e.touches[0];
       const t2 = e.touches[1];
@@ -381,6 +385,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
   };
 
   const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (isDraggingPointRef.current) return;
     if (touchStateRef.current.isPinching) {
       if (e.touches.length === 0) {
         setTimeout(() => {
@@ -485,29 +490,41 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
 
   const handleStartDrag = (e: React.PointerEvent, type: 'origin' | 'insertion', index: number) => {
     if (!interactive || !onUpdateUserPoint) return;
-    if (e.button !== 0) return; // Alleen met linkermuisknop verslepen
+    if (e.button !== 0 && e.pointerType === 'mouse') return; // Alleen met linkermuisknop op desktop
     e.stopPropagation();
     e.preventDefault();
 
     isDraggingPointRef.current = true;
+    touchStateRef.current.singleTouchStart = null;
+    touchStateRef.current.hasMoved = true;
+
+    try {
+      (e.currentTarget as Element).setPointerCapture(e.pointerId);
+    } catch {}
 
     const handlePointerMove = (moveEv: PointerEvent) => {
+      moveEv.preventDefault();
+      moveEv.stopPropagation();
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       const normalized = clientToNormalized(moveEv.clientX, moveEv.clientY, rect);
       onUpdateUserPoint(type, index, normalized);
     };
 
-    const handlePointerUp = () => {
+    const handlePointerUp = (upEv: PointerEvent) => {
+      try {
+        (e.currentTarget as Element).releasePointerCapture(upEv.pointerId);
+      } catch {}
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);
       setTimeout(() => {
         isDraggingPointRef.current = false;
-      }, 60);
+        touchStateRef.current.singleTouchStart = null;
+      }, 100);
     };
 
-    window.addEventListener('pointermove', handlePointerMove);
-    window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointermove', handlePointerMove, { passive: false });
+    window.addEventListener('pointerup', handlePointerUp, { passive: false });
   };
 
   // Normaliseer actieve spieren: toon alle geselecteerde spieren (ook van het andere aanzicht via doorschijning!)
@@ -747,11 +764,30 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
               const badgeColor = acc === 'correct' ? '#16a34a' : acc === 'close' ? '#d97706' : '#dc2626';
               const badgeSymbol = acc === 'correct' ? '✓' : acc === 'close' ? '~' : '✗';
 
+              const isTrapezius = activeMuscle?.id === 'trapezius';
+              // C7 is op y ≈ 0.160; Th3 is op y ≈ 0.210
+              const isNearC7 = Math.abs(pt.x - 0.50) < 0.06 && Math.abs(pt.y - 0.16) < 0.035;
+              const isNearTh3 = Math.abs(pt.x - 0.50) < 0.06 && Math.abs(pt.y - 0.21) < 0.035;
+              const isDoubleAttachmentPoint = isTrapezius && (isNearC7 || isNearTh3);
+              const pointPart = pt.name?.toLowerCase() || '';
+              const isFromOtherPart = isTrapezius && Boolean(activeTrapeziusPart) && !pointPart.includes((activeTrapeziusPart || '').toLowerCase());
+              // Alleen deze specifieke aanhechtingspunten niet meer verplaatsen indien ze al tot een andere pars behoren!
+              const isLockedPoint = isDoubleAttachmentPoint && isFromOtherPart;
+              const canDragThisPoint = canDragPoints && !isLockedPoint;
+
               return (
                 <g 
                   key={`user-orig-${idx}`}
-                  className={canDragPoints ? "pointer-events-auto cursor-grab active:cursor-grabbing" : "pointer-events-none"}
-                  onPointerDown={(e) => canDragPoints && handleStartDrag(e, 'origin', idx)}
+                  className={canDragThisPoint ? "pointer-events-auto cursor-grab active:cursor-grabbing" : "pointer-events-none"}
+                  style={{ touchAction: 'none' }}
+                  onTouchStart={(e) => {
+                    if (canDragThisPoint) {
+                      e.stopPropagation();
+                      isDraggingPointRef.current = true;
+                      touchStateRef.current.singleTouchStart = null;
+                    }
+                  }}
+                  onPointerDown={(e) => canDragThisPoint && handleStartDrag(e, 'origin', idx)}
                   onContextMenu={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -844,6 +880,14 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                 <g 
                   key={`user-ins-${idx}`}
                   className={canDragPoints ? "pointer-events-auto cursor-grab active:cursor-grabbing" : "pointer-events-none"}
+                  style={{ touchAction: 'none' }}
+                  onTouchStart={(e) => {
+                    if (canDragPoints) {
+                      e.stopPropagation();
+                      isDraggingPointRef.current = true;
+                      touchStateRef.current.singleTouchStart = null;
+                    }
+                  }}
                   onPointerDown={(e) => canDragPoints && handleStartDrag(e, 'insertion', idx)}
                   onContextMenu={(e) => {
                     e.preventDefault();

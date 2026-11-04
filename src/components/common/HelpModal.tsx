@@ -3,15 +3,10 @@ import {
   X, 
   HelpCircle, 
   Navigation, 
-  MousePointer, 
-  Layers, 
-  Edit3, 
   Smartphone, 
   Monitor, 
-  Gamepad2, 
-  Activity, 
-  CheckCircle2,
-  Sparkles,
+  Layers, 
+  Edit3,
   RotateCcw,
   Sliders
 } from 'lucide-react';
@@ -24,7 +19,7 @@ interface HelpModalProps {
 
 export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
   const isMobile = useIsMobile();
-  const [activeTab, setActiveTab] = useState<'navigation' | 'controls' | 'quiz' | 'cards_games' | 'kinesiology' | 'editor'>('navigation');
+  const [activeTab, setActiveTab] = useState<'navigation' | 'controls' | 'quiz' | 'flashcards' | 'editor'>('navigation');
 
   if (!isOpen) return null;
 
@@ -45,7 +40,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                 Hulp & Uitleg
               </h2>
               <p className="text-[11px] text-slate-300 font-medium">
-                Volledige gids voor navigatie, toetsen, spellen, kinesiologie en bewerken
+                Volledige gids voor navigatie, bediening, toetsen en bewerken
               </p>
             </div>
           </div>
@@ -84,8 +79,8 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
             }`}
           >
-            <MousePointer className="w-3.5 h-3.5" />
-            <span>Bediening</span>
+            <Smartphone className="w-3.5 h-3.5" />
+            <span>Bediening & Gebaren</span>
           </button>
 
           <button
@@ -103,28 +98,15 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
 
           <button
             type="button"
-            onClick={() => setActiveTab('cards_games')}
+            onClick={() => setActiveTab('flashcards')}
             className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 shrink-0 ${
-              activeTab === 'cards_games'
+              activeTab === 'flashcards'
                 ? 'bg-blue-600 text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
             }`}
           >
-            <Gamepad2 className="w-3.5 h-3.5" />
-            <span>Flashcards & Spellen</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('kinesiology')}
-            className={`px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 shrink-0 ${
-              activeTab === 'kinesiology'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
-            }`}
-          >
-            <Activity className="w-3.5 h-3.5" />
-            <span>Kinesiologie</span>
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Flashcards</span>
           </button>
 
           {!isMobile && (
@@ -143,14 +125,13 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
           )}
         </div>
 
-        {/* Inhoud van de actieve tab */}
-        <div className="p-4 sm:p-5 overflow-y-auto space-y-4 text-slate-700 text-xs sm:text-sm leading-relaxed custom-scrollbar">
-          
-          {/* TAB 1: OVERZICHT & NAVIGATIE */}
+        {/* Scrollbare inhoud per tabblad */}
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs sm:text-sm text-slate-700 leading-relaxed custom-scrollbar">
+          {/* TAB 1: OVERZICHT */}
           {activeTab === 'navigation' && (
             <div className="space-y-3.5">
               <p className="text-slate-600">
-                De app bundelt alle theorie, atlasweergaven, oefentoetsen en spelvormen voor de spierleer en functionele anatomie:
+                De app bundelt alle theorie, atlasweergaven, oefentoetsen en leertools voor spierleer en anatomie:
               </p>
 
               <div className="grid gap-2.5">
@@ -160,7 +141,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                     <span>1. Spieren (Interactieve Atlas)</span>
                   </div>
                   <p className="text-xs text-slate-600">
-                    Bekijk alle spieren uit het curriculum in ventraal en dorsaal aanzicht. Filter direct per gewricht (art. humeri, genus, coxae, cingulum, etc.) of zoek op naam. Tik op een spier om direct de origo, insertie, primaire en secundaire functies en anatomische markers te bestuderen.
+                    Bekijk alle spieren uit het curriculum in ventraal en dorsaal aanzicht. Filter direct per gewricht (art. humeri, genus, coxae, cingulum, etc.) of zoek op naam. Tik op een spier om direct de origo, insertie, functies en anatomische markers te bestuderen.
                   </p>
                 </div>
 
@@ -177,7 +158,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                 <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200">
                   <div className="font-black text-slate-900 flex items-center gap-2 mb-1">
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                    <span>3. Bewegingen (Functionele Kinesiologie)</span>
+                    <span>3. Bewegingen</span>
                   </div>
                   <p className="text-xs text-slate-600">
                     Overzicht van alle gewrichtsbewegingen (flexie, extensie, rotatie, etc.). Tik op een beweging om direct te zien welke spieren hier primair en secundair verantwoordelijk voor zijn.
@@ -203,16 +184,6 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                     Studeer met slimme digitale flitskaarten verdeeld over thema's (Botten, Spieren, Gewrichten, Cingulum, Algemeen) of kies voor de snelle 'Random flashcards'. Kaarten passen hun herhalingsmoment automatisch aan op basis van jouw zelfbeoordeling.
                   </p>
                 </div>
-
-                <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200">
-                  <div className="font-black text-slate-900 flex items-center gap-2 mb-1">
-                    <span className="w-2.5 h-2.5 rounded-full bg-purple-600" />
-                    <span>6. Spellen (Minigames)</span>
-                  </div>
-                  <p className="text-xs text-slate-600">
-                    Vier interactieve spellen om spelenderwijs anatomische connecties te automatiseren: Queens Grid, Skeleton Puzzle, Muscle Guess en Connections.
-                  </p>
-                </div>
               </div>
             </div>
           )}
@@ -227,25 +198,32 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                 </div>
                 <ul className="text-xs text-slate-700 space-y-1.5 list-disc pl-5">
                   <li>
-                    <strong>1 vinger vegen (swipe):</strong> beweegt het beeld (pannen) soepel mee. Er wordt dan <em>nooit</em> per ongeluk een punt geplaatst.
+                    <strong>1 vinger over het skelet vegen (swipe):</strong> beweegt het skeletbeeld (pannen) soepel mee. Er wordt dan <em>nooit</em> per ongeluk een punt geplaatst.
                   </li>
                   <li>
                     <strong>1 vinger kort tikken (tap):</strong> plaatst direct een Origo (blauw) of Insertie (oranje) op de aangetikte plek.
                   </li>
                   <li>
+                    <strong>Punten verplaatsen (verslepen):</strong> Houd je vinger op een reeds geplaatst bolletje (origo of insertie) om het nauwkeurig te verslepen. Het beeld van het skelet blijft dan automatisch roerloos op zijn plek staan zodat je precies kunt richten.
+                  </li>
+                  <li>
+                    <strong>Onderste bedieningsframe openen & sluiten:</strong>
+                    <span className="block mt-0.5 pl-2 text-slate-600">
+                      • <strong>Sluiten (inklappen):</strong> veeg met je vinger omlaag over de grijpbalk bovenin het onderste paneel (of tik op het pijltje). Het frame zakt naar de bodem zodat je maximaal vrij zicht hebt op het skelet.<br />
+                      • <strong>Openen (uitklappen):</strong> veeg omhoog over de balk of tik onderin op de balk om alle instellingen, gewrichtskeuze en handige toggles (Roteren, Zoomen, Switch, Alle wervels) direct te tonen.
+                    </span>
+                  </li>
+                  <li>
                     <strong>2 vingers knijpen/spreiden:</strong> soepel in- en uitzoomen (pinch-to-zoom) tot 3.5× vergroting.
                   </li>
                   <li>
-                    <strong>Dubbeltik:</strong> herstelt de weergave direct naar 100% (reset zoom en positie).
+                    <strong>Dubbeltik op skelet:</strong> herstelt de weergave direct naar 100% (reset zoom en positie).
                   </li>
                   <li>
                     <strong>Zwevende O en I knoppen (linksboven):</strong> tik op <em>O</em> voor blauwe origo's of <em>I</em> voor oranje inserties.
                   </li>
                   <li>
-                    <strong>Zwevende Trapezius knoppen:</strong> bij de <em>m. trapezius</em> verschijnen bovenin direct de 3 knoppen (<em>1. Desc.</em>, <em>2. Transv.</em>, <em>3. Ascend.</em>) zodat je tijdens het tekenen met één tik schakelt.
-                  </li>
-                  <li>
-                    <strong>Uitschuifpaneel onderin:</strong> tik of sleep het paneel omhoog voor gewrichts- en testkeuze, en handige switches (Roteren, Zoomen, Switch, Alle wervels).
+                    <strong>Zwevende Trapezius knoppen:</strong> bij de <em>m. trapezius</em> verschijnen bovenin direct de partes (<em>Desc.</em>, <em>Transv.</em>, <em>Ascend.</em>) zodat je tijdens het tekenen met één tik schakelt.
                   </li>
                 </ul>
               </div>
@@ -260,19 +238,22 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                     <strong>Linkermuisknop:</strong> plaatst het actieve type punt (blauw voor origo of oranje voor insertie).
                   </li>
                   <li>
-                    <strong>Rechtermuisknop:</strong> plaatst direct het <em>tegenovergestelde</em> type punt (bijv. direct een insertie plaatsen terwijl origo actief staat). Ideaal om razendsnel te tekenen zonder knoppen aan te klikken!
+                    <strong>Rechtermuisknop op skelet:</strong> snelle insertie-sneltoets! Plaatst direct een oranje insertie zonder eerst op de knop 'Insertie' te hoeven klikken.
                   </li>
                   <li>
-                    <strong>Muiswiel:</strong> in- en uitzoomen op de exacte positie van de muiscursor.
+                    <strong>Muiswiel:</strong> in- en uitzoomen op de positie van je cursor.
                   </li>
                   <li>
-                    <strong>Muis slepen:</strong> wanneer ingezoomd, sleep met de muis om over het skelet te bewegen.
+                    <strong>Slepen met muis:</strong> wanneer ingezoomd, sleep met de muis (of houd de middelmuisknop/spatiebalk ingedrukt) om het beeld te verplaatsen.
                   </li>
                   <li>
-                    <strong>Spatiebalk:</strong> ingedrukt houden activeert de pan-modus om te slepen zonder punten te plaatsen.
-                  </li>
-                  <li>
-                    <strong>Sneltoetsen:</strong> <em>1 / 2 / 3</em> voor de trapezius partes of moeilijkheidsgraad bij flashcards, <em>Enter / Spatie</em> voor Controleer of Volgende, en <em>Backspace</em> om geplaatste punten te wissen.
+                    <strong>Sneltoetsen:</strong>
+                    <span className="block mt-1 pl-2 text-slate-600 font-mono text-[11px]">
+                      • 1 / O = Schakel naar Origo intekenen<br />
+                      • 2 / I = Schakel naar Insertie intekenen<br />
+                      • Ctrl+Z = Laatste punt ongedaan maken<br />
+                      • Enter / Spatie = Controleer antwoord of volgende vraag
+                    </span>
                   </li>
                 </ul>
               </div>
@@ -282,86 +263,69 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
           {/* TAB 3: TOETSEN & INTEKENEN */}
           {activeTab === 'quiz' && (
             <div className="space-y-4">
-              {/* Belangrijke regels voor Origo & Insertie */}
-              <div className="p-4 bg-blue-50/80 rounded-2xl border border-blue-200/90 space-y-3">
-                <div className="flex items-center gap-2 text-blue-950 font-black text-sm">
-                  <Sparkles className="w-4 h-4 text-blue-600" />
-                  <h4>Regels voor het Intekenen van Spieren</h4>
+              <div className="p-3.5 bg-indigo-50/70 rounded-2xl border border-indigo-200 space-y-2">
+                <div className="font-black text-indigo-950 flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-indigo-600" />
+                  <span>Vraagtypen & Intekenregels</span>
                 </div>
-
+                <p className="text-xs text-slate-700">
+                  De toetsmodule bevat 5 verschillende leervormen:
+                </p>
                 <div className="grid gap-2 text-xs">
-                  <div className="p-2.5 bg-white rounded-xl border border-blue-200/60 space-y-1">
-                    <div className="font-bold text-blue-900 flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-blue-600 shrink-0" />
-                      <span>Standaard spieren (1 origo en 1 insertie):</span>
-                    </div>
-                    <p className="text-slate-600 pl-3.5">
-                      Plaats eerst de blauwe origo. De selectie verspringt automatisch naar oranje (insertie). Plaats vervolgens de insertie en de app controleert direct automatisch je score.
-                    </p>
+                  <div className="p-2.5 bg-white rounded-xl border border-indigo-200/70">
+                    <span className="font-bold text-indigo-900 block mb-0.5">1. Origo & Insertie intekenen</span>
+                    <span className="text-slate-600">
+                      Plaats de aanhechtingspunten direct op het skelet. Zodra je het verwachte aantal punten hebt geplaatst, klik je op <strong>Controleer</strong>.
+                    </span>
                   </div>
-
-                  <div className="p-2.5 bg-white rounded-xl border border-amber-200/80 bg-amber-50/40 space-y-1">
-                    <div className="font-bold text-amber-950 flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
-                      <span>Meervoudige koppen of brede wervelaanhechtingen:</span>
-                    </div>
-                    <p className="text-slate-700 pl-3.5">
-                      Heeft een spier meerdere koppen (zoals <em>biceps</em> of <em>triceps</em>) of loopt hij over meerdere wervels? Dan verspringt de app bewust <strong>niet</strong> na de 1e klik, zodat je rustig alle origopunten kunt plaatsen. Schakel zelf naar de insertieknop en rond af met de groene knop <strong>Controleer</strong>.
-                    </p>
+                  <div className="p-2.5 bg-white rounded-xl border border-indigo-200/70">
+                    <span className="font-bold text-indigo-900 block mb-0.5">2. Spieren met een brede wervelrij (Nieuw)</span>
+                    <span className="text-slate-600">
+                      Bij spieren die langs een wervelrij lopen hoef je standaard <strong>alleen de eerste en de laatste wervel</strong> uit de rij aan te klikken (meer mag altijd). Met de toggle <em>Alle wervels</em> kun je instellen dat je verplicht alle tussenliggende wervels moet aankruisen.
+                    </span>
+                  </div>
+                  <div className="p-2.5 bg-white rounded-xl border border-indigo-200/70">
+                    <span className="font-bold text-indigo-900 block mb-0.5">3. M. Trapezius (Partes los intekenen)</span>
+                    <span className="text-slate-600">
+                      De <em>m. trapezius</em> teken je in één vraag in per pars: gebruik de knoppen boven het skelet om te schakelen tussen <em>Descendens</em>, <em>Transversa</em> en <em>Ascendens</em>. Zodra de minimale juiste punten zijn geplaatst, licht de volgende knop subtiel op.
+                    </span>
+                  </div>
+                  <div className="p-2.5 bg-white rounded-xl border border-indigo-200/70">
+                    <span className="font-bold text-indigo-900 block mb-0.5">4. Botten benoemen & Meerkeuze</span>
+                    <span className="text-slate-600">
+                      Typ de naam van het met een gele stip gemarkeerde bot, of beantwoord meerkeuzevragen over origo, insertie, functies en gewrichten.
+                    </span>
+                  </div>
+                  <div className="p-2.5 bg-white rounded-xl border border-indigo-200/70">
+                    <span className="font-bold text-indigo-900 block mb-0.5">5. Bewegingen & Gewrichten</span>
+                    <span className="text-slate-600">
+                      Selecteer welke bewegingen mogelijk zijn in een specifiek gewricht of welke spieren deze beweging uitvoeren.
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {/* De nieuwe wervelkolom en trapezius regels */}
-              <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2.5">
-                <h4 className="font-black text-slate-900 flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Specifieke Toetsregels & Curriculum</span>
-                </h4>
-                
-                <ul className="text-xs text-slate-700 space-y-2 list-disc pl-5">
-                  <li>
-                    <strong>Wervelkolom regel (multi-span spieren):</strong> Bij spieren die over een wervelrij lopen (zoals <em>m. latissimus dorsi</em>, <em>m. trapezius</em>, <em>m. erector spinae</em>, <em>mm. rhomboidei</em>, <em>m. iliopsoas</em>) moet je <strong>minimaal de eerste én de laatste wervel</strong> uit de rij aanklikken. Meer mag (alle tussenliggende wervels aanklikken mag gerust), minder niet.
-                  </li>
-                  <li>
-                    <strong>Toggle 'Wervels' (Alle wervels vereisen):</strong> In de balk met switches vind je de toggle <em>Wervels</em> (standaard <strong>UIT</strong>). Zet je deze aan, dan moet je élke individuele wervel in het traject aanklikken om de vraag goed te rekenen.
-                  </li>
-                  <li>
-                    <strong>M. trapezius (unieke spier per pars):</strong> De trapezius wordt in één vraag getoetst. Boven het skelet kies je via de 3 knoppen welke pars je tekent: <em>1. Descendens</em>, <em>2. Transversa</em> of <em>3. Ascendens</em>. De punten worden anatomisch zuiver per pars gekoppeld aan de juiste insertie.
-                  </li>
-                  <li>
-                    <strong>Curriculum-updates:</strong> <em>M. serratus anterior</em> en <em>m. levator scapulae</em> hoeven niet meer geleerd te worden en zijn uit de app verwijderd. De botstructuur <em>tuberculum minus</em> hoeft niet als botstructuur gekend te worden; de aanhechting van de <em>m. latissimus dorsi</em> heet <em>proximaal ventraal op de humerus</em>.
-                  </li>
-                  <li>
-                    <strong>Beide lichaamshelften:</strong> Je mag naar keuze links of rechts intekenen; het nakijksysteem evalueert automatisch beide zijden en kent de hoogste score toe.
-                  </li>
-                  <li>
-                    <strong>Tolerantie-instelling:</strong> In het optiepaneel kun je de tolerantie instellen op <em>Ruim</em> (3.5% marge), <em>Medium</em> (2.5%) of <em>Strikt</em> (1.5%).
-                  </li>
-                </ul>
-              </div>
-
-              {/* Toggles overzicht */}
+              {/* De 4 Compacte Toggles */}
               <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
-                <h4 className="font-black text-slate-900 flex items-center gap-2">
+                <div className="font-black text-slate-900 flex items-center gap-2">
                   <Sliders className="w-4 h-4 text-slate-700" />
-                  <span>Snelle Opties (Toggles in het Paneel)</span>
-                </h4>
+                  <span>De 4 Handige Switches</span>
+                </div>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="p-2 bg-white rounded-xl border border-slate-200">
                     <span className="font-bold text-slate-900 block">Roteren (Aan/Uit)</span>
-                    <span className="text-slate-500 text-[11px]">Draait het skelet automatisch naar het juiste aanzicht bij een nieuwe vraag.</span>
+                    <span className="text-slate-500 text-[11px]">Draait het skelet automatisch naar het aanbevolen aanzicht bij een nieuwe vraag.</span>
                   </div>
                   <div className="p-2 bg-white rounded-xl border border-slate-200">
                     <span className="font-bold text-slate-900 block">Zoomen (Aan/Uit)</span>
-                    <span className="text-slate-500 text-[11px]">Zoomt automatisch in op het relevante lichaamsdeel van de actieve spier.</span>
+                    <span className="text-slate-500 text-[11px]">Zoomt automatisch in op de regio van de te testen spier.</span>
                   </div>
                   <div className="p-2 bg-white rounded-xl border border-slate-200">
                     <span className="font-bold text-slate-900 block">Switch (Aan/Uit)</span>
                     <span className="text-slate-500 text-[11px]">Schakelt automatisch van origo naar insertie zodra de origo compleet is.</span>
                   </div>
                   <div className="p-2 bg-white rounded-xl border border-slate-200">
-                    <span className="font-bold text-slate-900 block">Wervels (Aan/Uit)</span>
+                    <span className="font-bold text-slate-900 block">Alle wervels (Aan/Uit)</span>
                     <span className="text-slate-500 text-[11px]">Vereist alle individuele wervels i.p.v. minimaal de eerste en laatste wervel.</span>
                   </div>
                 </div>
@@ -369,10 +333,9 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
             </div>
           )}
 
-          {/* TAB 4: FLASHCARDS & SPELLEN */}
-          {activeTab === 'cards_games' && (
+          {/* TAB 4: FLASHCARDS */}
+          {activeTab === 'flashcards' && (
             <div className="space-y-4">
-              {/* Flashcards */}
               <div className="p-3.5 bg-amber-50/70 rounded-2xl border border-amber-200 space-y-2">
                 <div className="font-black text-amber-950 flex items-center gap-2">
                   <RotateCcw className="w-4 h-4 text-amber-600" />
@@ -402,107 +365,10 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                   </li>
                 </ul>
               </div>
-
-              {/* Minigames */}
-              <div className="p-3.5 bg-purple-50/70 rounded-2xl border border-purple-200 space-y-2">
-                <div className="font-black text-purple-950 flex items-center gap-2">
-                  <Gamepad2 className="w-4 h-4 text-purple-600" />
-                  <span>De 4 Anatomische Spelletjes</span>
-                </div>
-                <div className="grid gap-2 text-xs">
-                  <div className="p-2.5 bg-white rounded-xl border border-purple-200/70">
-                    <span className="font-bold text-purple-900 block mb-0.5">1. Queens Grid</span>
-                    <span className="text-slate-600">
-                      Logische puzzel gebaseerd op het bekende damesspel. Plaats anatomische iconen zo in het raster dat rijen, kolommen en kleurvlakken elkaar niet doorkruisen.
-                    </span>
-                  </div>
-                  <div className="p-2.5 bg-white rounded-xl border border-purple-200/70">
-                    <span className="font-bold text-purple-900 block mb-0.5">2. Skeleton Puzzle</span>
-                    <span className="text-slate-600">
-                      Sleep botten, gewrichten en spieren naar de juiste plek op het skelet voordat de tijd om is.
-                    </span>
-                  </div>
-                  <div className="p-2.5 bg-white rounded-xl border border-purple-200/70">
-                    <span className="font-bold text-purple-900 block mb-0.5">3. Muscle Guess ("Wie ben ik?")</span>
-                    <span className="text-slate-600">
-                      Ontvang stapsgewijs cryptische hints over origo, insertie, werking en gewrichten. Raad de spier in zo min mogelijk pogingen!
-                    </span>
-                  </div>
-                  <div className="p-2.5 bg-white rounded-xl border border-purple-200/70">
-                    <span className="font-bold text-purple-900 block mb-0.5">4. Connections Game</span>
-                    <span className="text-slate-600">
-                      Zoek vier groepen van vier begrippen die een anatomisch verband delen (bijv. 4 adductoren, 4 pezen van de pes anserinus/omgeving, 4 structuren van het os coxae).
-                    </span>
-                  </div>
-                </div>
-              </div>
             </div>
           )}
 
-          {/* TAB 5: KINESIOLOGIE & ASSEN */}
-          {activeTab === 'kinesiology' && (
-            <div className="space-y-4">
-              <div className="p-3.5 bg-emerald-50/70 rounded-2xl border border-emerald-200 space-y-2">
-                <div className="font-black text-emerald-950 flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-emerald-600" />
-                  <span>Vlakken en Assen van het Menselijk Lichaam</span>
-                </div>
-                <p className="text-xs text-slate-700">
-                  Alle bewegingen vinden plaats in een anatomisch vlak rondom een loodrechte bewegingsas vanuit de anatomische nulstand:
-                </p>
-                
-                <div className="grid gap-2 text-xs">
-                  <div className="p-2.5 bg-white rounded-xl border border-emerald-200/70">
-                    <strong className="text-emerald-900 block">1. Sagittaal vlak (loopt van voor naar achter)</strong>
-                    <span className="text-slate-600">
-                      Draait om de <strong>transversale (frontale) as</strong>. <br />
-                      <em>Bewegingen:</em> Flexie / Extensie, Anteflexie / Retroflexie.
-                    </span>
-                  </div>
-                  <div className="p-2.5 bg-white rounded-xl border border-emerald-200/70">
-                    <strong className="text-emerald-900 block">2. Frontaal vlak (loopt van links naar rechts)</strong>
-                    <span className="text-slate-600">
-                      Draait om de <strong>sagittale (sagittotransversale) as</strong>. <br />
-                      <em>Bewegingen:</em> Abductie / Adductie, Lateroflexie van de wervelkolom.
-                    </span>
-                  </div>
-                  <div className="p-2.5 bg-white rounded-xl border border-emerald-200/70">
-                    <strong className="text-emerald-900 block">3. Transversaal vlak (horizontaal doorsnedevlak)</strong>
-                    <span className="text-slate-600">
-                      Draait om de <strong>longitudinale (verticale) as</strong>. <br />
-                      <em>Bewegingen:</em> Endorotatie / Exorotatie, Horizontale abductie / adductie van de schouder.
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bewegingsanalyse in fasen */}
-              <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
-                <h4 className="font-black text-slate-900">
-                  Bewegingsanalyse in 3 Fasen
-                </h4>
-                <ul className="text-xs text-slate-700 space-y-1.5 list-disc pl-5">
-                  <li><strong>Fase 1 (Uitgangshouding):</strong> De statische beginstand van de gewrichten (bijv. heup in flexie/anteflexie).</li>
-                  <li><strong>Fase 2 (Beweging & Spierwerk):</strong> De dynamische overgang. Let op het spierwerk: <em>concentrisch</em> (spier verkort tijdens krachtlevering), <em>excentrisch</em> (spier verlengt gecontroleerd tegen de zwaartekracht in) of <em>isometrisch/statisch</em> (kracht zonder lengteverandering).</li>
-                  <li><strong>Fase 3 (Eindstand / Terugkeer):</strong> De bereikte eindpositie of stabilisatie.</li>
-                </ul>
-              </div>
-
-              {/* Belangrijke toetstips & Inconsequenties */}
-              <div className="p-3.5 bg-amber-50/80 rounded-2xl border border-amber-200 space-y-1.5">
-                <h4 className="font-black text-amber-950">
-                  💡 Let op bij de Toets (Inconsequenties Moduleboek vs. Antwoorden)
-                </h4>
-                <ul className="text-xs text-slate-700 space-y-1.5 list-disc pl-5">
-                  <li><strong>Stand heup:</strong> Het antwoordenblad rekent <em>anteflexie</em> goed bij de stand van de heup (ook al is het strikt genomen flexie).</li>
-                  <li><strong>Kop en kom art. genus:</strong> Condyli femoris (kop) en condyli tibiae + menisci (kom).</li>
-                  <li><strong>Richtingstermen romp:</strong> Lateroflexie en rotatie van de romp geven de richting aan met <em>dextra</em> (rechts) en <em>sinistra</em> (links).</li>
-                </ul>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 6: BEWERKEN (ALLEEN PC) */}
+          {/* TAB 5: BEWERKEN (ALLEEN PC) */}
           {!isMobile && activeTab === 'editor' && (
             <div className="space-y-4">
               <div className="p-3.5 bg-purple-50/70 rounded-2xl border border-purple-200 space-y-2">

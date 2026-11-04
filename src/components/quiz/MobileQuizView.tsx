@@ -11,6 +11,7 @@ import {
 } from '../../types/anatomy';
 import { JOINT_CATEGORIES } from '../../data/jointCategories';
 import { getJointLocation } from '../../data/jointQuestions';
+import { isTrapeziusPointAccurate } from '../../utils/coordinates';
 import { MovementIcon } from '../common/MovementIcon';
 import { AnswerValidationResult } from '../../utils/answerMatching';
 import { 
@@ -169,10 +170,21 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
 }) => {
   const { quizOpenOptionsTrigger } = useMuscles();
 
-  // Subtiele highlight voor trapezius gereedheid op mobiel
-  const trapeziusPartOriginsCount = userOrigins.filter(p => p.name?.toLowerCase().includes(activeTrapeziusPart)).length;
-  const trapeziusPartInsertionsCount = userInsertions.filter(p => p.name?.toLowerCase().includes(activeTrapeziusPart)).length;
+  // Subtiele highlight voor trapezius gereedheid op mobiel (alleen bij JUISTE punten)
   const isTrapezius = muscle?.id === 'trapezius';
+  const trapeziusPartOriginsCount = isTrapezius 
+    ? userOrigins.filter(p => 
+        p.name?.toLowerCase().includes(activeTrapeziusPart) &&
+        isTrapeziusPointAccurate(p, 'origin', activeTrapeziusPart)
+      ).length 
+    : 0;
+
+  const trapeziusPartInsertionsCount = isTrapezius 
+    ? userInsertions.filter(p => 
+        p.name?.toLowerCase().includes(activeTrapeziusPart) &&
+        isTrapeziusPointAccurate(p, 'insertion', activeTrapeziusPart)
+      ).length 
+    : 0;
 
   const shouldSubtlyHighlightInsertion = 
     isTrapezius && 
@@ -180,10 +192,12 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
     trapeziusPartOriginsCount >= 2 && 
     trapeziusPartInsertionsCount === 0;
 
-  const shouldSubtlyHighlightOrigin = 
+  const shouldSubtlyHighlightNextPart = 
     isTrapezius && 
-    activeQuizTool === 'insertion' && 
+    trapeziusPartOriginsCount >= 2 && 
     trapeziusPartInsertionsCount >= 1;
+
+  const shouldSubtlyHighlightOrigin = false;
 
   // Stand van het frame:
   // - false (minimale stand): toont altijd de vraag, origo & insertie, en antwoordknoppen.
@@ -349,14 +363,23 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                       ? 'Transv.'
                       : 'Ascend.';
                   const isActive = activeTrapeziusPart === partKey;
+                  const isNextSuggested =
+                    (activeTrapeziusPart === 'descendens' && partKey === 'transversa' && shouldSubtlyHighlightNextPart) ||
+                    (activeTrapeziusPart === 'transversa' && partKey === 'ascendens' && shouldSubtlyHighlightNextPart);
+
                   return (
                     <button
                       key={partKey}
                       type="button"
-                      onClick={() => setActiveTrapeziusPart(partKey)}
+                      onClick={() => {
+                        setActiveTrapeziusPart(partKey);
+                        setActiveQuizTool('origin');
+                      }}
                       className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all ${
                         isActive
                           ? 'bg-blue-600 text-white shadow-xs'
+                          : isNextSuggested
+                          ? 'bg-blue-950/90 text-blue-300 ring-2 ring-blue-400/90 shadow-sm'
                           : 'text-slate-300 hover:text-white hover:bg-slate-800'
                       }`}
                     >

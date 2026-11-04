@@ -2690,3 +2690,43 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
      - `Ctrl+Z` / `Cmd+Z` sneltoetsondersteuning op PC om het laatst geplaatste punt ongedaan te maken.
 - **Verificatie & Deployment:**
   - `npm run build` foutloos uitgevoerd (`✓ built in 4.08s`).
+
+
+---
+
+## 86. Trapezius Dubbele Origo's (C7/Th3) Locking, Mobiel Slepen Beeldbevriezing, Subtiele Switch-Indicatie bij Juiste Punten & Hulp Cleanup (04-11-2026 21:46)
+- **Status:** Succesvol geïmplementeerd, geverifieerd via `npm run build` en live getest.
+- **Aanleiding & Gebruikerswensen:**
+  1. *Subtiele switch-indicatie bij Trapezius alleen bij JUISTE punten:*
+     - Het oplichten van de switch (naar insertie of naar de volgende pars) mag uitsluitend optreden als de geplaatste origo's en insertie *anatomisch correct* zijn voor de actieve pars. Als er willekeurige of foute punten staan, mag er niets oplichten ("anders moet je nog niets doen").
+  2. *Trapezius dubbele origo's (C7 en Th3):*
+     - Bij Trapezius overlappen de partes elkaar bij C7 (einde descendens, begin transversa) en Th3 (einde transversa, begin ascendens).
+     - Op mobiel was het plaatsen van een 2e punt op dezelfde plek erg lastig omdat de interactie de al geplaatste stip selecteerde/versleepte in plaats van een nieuw punt neer te zetten.
+     - Oplossing: vergrendel de punten op C7 en Th3 zodra ze tot een andere/vorige pars behoren, zodat ze niet meer versleept kunnen worden (`pointer-events: none` voor die specifieke punten). Hierdoor tikt de gebruiker direct op het skelet eronder en wordt het nieuwe punt voor de volgende pars moeiteloos geplaatst.
+  3. *Mobiel punten verslepen vs. meebewegen van het beeld:*
+     - Bij het proberen te verslepen van een punt bewoog het hele skelet (de pan-viewport) mee waardoor je het punt niet kon verplaatsen. Het beeld moet stil blijven staan zodra je een punt versleept.
+  4. *Hulp & Uitleg opschoning:*
+     - Kinesiologie-tabblad verwijderd.
+     - Spellen (minigames) verwijderd (is een easter egg).
+     - Touchscreen-gebaren uitgebreid met uitleg over het inklappen en uitklappen van het onderste bedieningsframe en het verslepen van punten.
+- **Doorgevoerde Aanpassingen:**
+  1. *Subtiele Switch-indicatie alleen bij JUISTE punten ([coordinates.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/utils/coordinates.ts), [QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx), [MobileQuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/MobileQuizView.tsx)):*
+     - Functie `isTrapeziusPointAccurate` toegevoegd die realtime verifieert of een punt binnen de correcte anatomische origo- of insertiezone valt per pars.
+     - Zodra er minimaal 2 *correcte* origo's zijn en nog 0 inserties: licht de `Insertie` knop subtiel op.
+     - Zodra er minimaal 2 *correcte* origo's én minimaal 1 *correcte* insertie zijn: licht de volgende pars-knop (`Transversa` of `Ascendens`) subtiel op als suggestie. Bij aantikken van die pars-knop schakelt de tool direct weer naar `origo`.
+     - Bij foute punten licht er niets op.
+  2. *Locking van C7 & Th3 bij Trapezius ([SkeletonViewer.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/SkeletonViewer.tsx)):*
+     - `activeTrapeziusPart` doorgegeven aan `<SkeletonViewer>`.
+     - Indien een origo op C7 (`y ≈ 0.160`) of Th3 (`y ≈ 0.210`) geplaatst is voor een eerdere/andere pars, wordt dit punt vergrendeld (`canDragThisPoint = false` en `pointer-events: none`).
+     - Hierdoor kan de student voor `Pars transversa` of `Pars ascendens` direct op C7 of Th3 tikken zonder de reeds bestaande stip te verslepen of te blokkeren.
+  3. *Beeldbevriezing bij Punten Verslepen op Mobiel ([SkeletonViewer.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/SkeletonViewer.tsx)):*
+     - `isDraggingPointRef.current` controle toegevoegd aan `handleTouchStart`, `handleTouchMove` en `handleTouchEnd`.
+     - `onTouchStart` op de SVG-markers vangt het event direct af (`e.stopPropagation()`, `touchStateRef.current.singleTouchStart = null`).
+     - `style={{ touchAction: 'none' }}` toegevoegd aan de draggable punt-elementen.
+     - Pointer capture toegevoegd (`setPointerCapture`) in `handleStartDrag`. Het skelet blijft nu 100% stilstaan tijdens het verslepen van een punt op een touchscreen.
+  4. *Opschoning Hulp & Uitleg Modal ([HelpModal.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/common/HelpModal.tsx)):*
+     - Kinesiologie-tab en spelletjes-sectie compleet verwijderd.
+     - Tabbladen teruggebracht tot 5 overzichtelijke kernsecties: Overzicht, Bediening & Gebaren, Toetsen & Intekenen, Flashcards, en Bewerken (PC).
+     - Touchscreen-instructies uitgebreid met duidelijke uitleg over het inklappen (omlaag vegen over de balk) en uitklappen (omhoog vegen of aantikken) van het onderste bedieningspaneel, en het nauwkeurig verslepen van geplaatste punten.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos uitgevoerd (`✓ built in 4.17s`).

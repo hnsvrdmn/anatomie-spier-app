@@ -1030,3 +1030,42 @@ export function getMuscleConnections(origins: Point2D[], insertions: Point2D[]):
 
   return connections;
 }
+
+
+/**
+ * Controleert of een geplaatst punt voor m. trapezius anatomisch correct is
+ * voor de geselecteerde pars (descendens, transversa, ascendens).
+ */
+export function isTrapeziusPointAccurate(
+  pt: Point2D,
+  type: 'origin' | 'insertion',
+  part: 'descendens' | 'transversa' | 'ascendens'
+): boolean {
+  if (type === 'origin') {
+    // Origo's liggen dorsaal mediaal op de wervelkolom (x ≈ 0.50)
+    const isMidline = Math.abs(pt.x - 0.50) <= 0.06;
+    if (!isMidline) return false;
+    if (part === 'descendens') return pt.y >= 0.08 && pt.y <= 0.18;
+    if (part === 'transversa') return pt.y >= 0.145 && pt.y <= 0.235;
+    if (part === 'ascendens') return pt.y >= 0.195 && pt.y <= 0.365;
+    return false;
+  } else {
+    // Insertie ligt lateraal op clavicula, acromion of spina scapulae (links of rechts)
+    if (part === 'descendens') {
+      const isLeft = Math.abs(pt.x - 0.31) <= 0.065 && Math.abs(pt.y - 0.20) <= 0.045;
+      const isRight = Math.abs(pt.x - 0.69) <= 0.065 && Math.abs(pt.y - 0.20) <= 0.045;
+      return isLeft || isRight;
+    }
+    if (part === 'transversa') {
+      const isLeft = Math.abs(pt.x - 0.275) <= 0.065 && Math.abs(pt.y - 0.205) <= 0.045;
+      const isRight = Math.abs(pt.x - 0.725) <= 0.065 && Math.abs(pt.y - 0.205) <= 0.045;
+      return isLeft || isRight;
+    }
+    if (part === 'ascendens') {
+      const isLeft = Math.abs(pt.x - 0.36) <= 0.065 && Math.abs(pt.y - 0.21) <= 0.045;
+      const isRight = Math.abs(pt.x - 0.64) <= 0.065 && Math.abs(pt.y - 0.21) <= 0.045;
+      return isLeft || isRight;
+    }
+    return false;
+  }
+}

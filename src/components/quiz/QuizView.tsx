@@ -18,7 +18,7 @@ import { JOINT_CATEGORIES, getJointCategory } from '../../data/jointCategories';
 import { getMovementQuestionOptions, MUSCLE_MOVEMENTS } from '../../data/muscleMovements';
 import { READER_BONES } from '../../data/bonesData';
 import { getRandomJointQuestion, getJointMCOptions, JointQuizItem, getJointLocation, JOINT_QUIZ_ITEMS } from '../../data/jointQuestions';
-import { evaluatePointSet, distanceToSegment, projectToSegment, getAccuracy, getDistinctTargetCount } from '../../utils/coordinates';
+import { evaluatePointSet, distanceToSegment, projectToSegment, getAccuracy, getDistinctTargetCount, isTrapeziusPointAccurate } from '../../utils/coordinates';
 import { validateAnatomicalAnswer, AnswerValidationResult } from '../../utils/answerMatching';
 import { isForbiddenMuscle } from '../../utils/export';
 import { MovementIcon } from '../common/MovementIcon';
@@ -265,15 +265,21 @@ export const QuizView: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleUndoLastPoint]);
 
-  // Subtiele highlights voor trapezius gereedheid
+  // Subtiele highlights voor trapezius gereedheid (alleen oplichten bij JUISTE punten)
   const trapeziusPartOriginsCount = useMemo(() => {
     if (currentQuestion?.muscle?.id !== 'trapezius') return 0;
-    return userOrigins.filter(p => p.name?.toLowerCase().includes(activeTrapeziusPart)).length;
+    return userOrigins.filter(p => 
+      p.name?.toLowerCase().includes(activeTrapeziusPart) &&
+      isTrapeziusPointAccurate(p, 'origin', activeTrapeziusPart)
+    ).length;
   }, [currentQuestion?.muscle?.id, userOrigins, activeTrapeziusPart]);
 
   const trapeziusPartInsertionsCount = useMemo(() => {
     if (currentQuestion?.muscle?.id !== 'trapezius') return 0;
-    return userInsertions.filter(p => p.name?.toLowerCase().includes(activeTrapeziusPart)).length;
+    return userInsertions.filter(p => 
+      p.name?.toLowerCase().includes(activeTrapeziusPart) &&
+      isTrapeziusPointAccurate(p, 'insertion', activeTrapeziusPart)
+    ).length;
   }, [currentQuestion?.muscle?.id, userInsertions, activeTrapeziusPart]);
 
   const shouldSubtlyHighlightInsertion = 
@@ -282,10 +288,12 @@ export const QuizView: React.FC = () => {
     trapeziusPartOriginsCount >= 2 && 
     trapeziusPartInsertionsCount === 0;
 
-  const shouldSubtlyHighlightOrigin = 
+  const shouldSubtlyHighlightNextPart = 
     currentQuestion?.muscle?.id === 'trapezius' && 
-    activeQuizTool === 'insertion' && 
+    trapeziusPartOriginsCount >= 2 && 
     trapeziusPartInsertionsCount >= 1;
+
+  const shouldSubtlyHighlightOrigin = false;
 
   // Desktop weergavemodus: 'both' is verplicht de standaard op desktop!
   const [viewLayout, setViewLayout] = useState<ViewLayoutMode>('both');
@@ -1795,14 +1803,23 @@ export const QuizView: React.FC = () => {
                         ? 'Transversa'
                         : 'Ascendens';
                     const isActive = activeTrapeziusPart === partKey;
+                    const isNextSuggested =
+                      (activeTrapeziusPart === 'descendens' && partKey === 'transversa' && shouldSubtlyHighlightNextPart) ||
+                      (activeTrapeziusPart === 'transversa' && partKey === 'ascendens' && shouldSubtlyHighlightNextPart);
+
                     return (
                       <button
                         key={partKey}
                         type="button"
-                        onClick={() => setActiveTrapeziusPart(partKey)}
+                        onClick={() => {
+                          setActiveTrapeziusPart(partKey);
+                          setActiveQuizTool('origin');
+                        }}
                         className={`py-1 px-2.5 rounded-lg text-xs font-bold transition-all ${
                           isActive
                             ? 'bg-blue-600 text-white shadow-xs'
+                            : isNextSuggested
+                            ? 'bg-blue-50 text-blue-900 border border-blue-400 ring-2 ring-blue-400/80 shadow-xs'
                             : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                         }`}
                       >
