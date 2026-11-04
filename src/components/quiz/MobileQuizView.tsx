@@ -100,6 +100,10 @@ interface MobileQuizViewProps {
   onToggleAutoZoom?: () => void;
   autoSwitchPointType?: boolean;
   onToggleAutoSwitch?: () => void;
+  activeTrapeziusPart?: 'descendens' | 'transversa' | 'ascendens';
+  setActiveTrapeziusPart?: (val: 'descendens' | 'transversa' | 'ascendens') => void;
+  requireAllVertebrae?: boolean;
+  setRequireAllVertebrae?: (val: boolean) => void;
 }
 
 export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
@@ -155,6 +159,10 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
   onToggleAutoZoom,
   autoSwitchPointType = true,
   onToggleAutoSwitch,
+  activeTrapeziusPart = 'descendens',
+  setActiveTrapeziusPart,
+  requireAllVertebrae = false,
+  setRequireAllVertebrae,
 }) => {
   const { quizOpenOptionsTrigger } = useMuscles();
 
@@ -572,6 +580,26 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                     </span>
                   </button>
                 )}
+
+                {setRequireAllVertebrae && (
+                  <button
+                    type="button"
+                    onClick={() => setRequireAllVertebrae(!requireAllVertebrae)}
+                    className={`flex flex-col items-center justify-center p-1.5 rounded-lg border transition ${
+                      requireAllVertebrae
+                        ? 'bg-blue-50 border-blue-200 text-blue-800'
+                        : 'bg-slate-50 border-slate-200 text-slate-500'
+                    }`}
+                    title="Toggle of alle wervels vereist zijn ipv minimaal de eerste en laatste wervel van de rij"
+                  >
+                    <span className="font-medium text-[10px] leading-tight">Alle wervels</span>
+                    <span className={`mt-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded ${
+                      requireAllVertebrae ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
+                    }`}>
+                      {requireAllVertebrae ? 'Aan' : 'Uit'}
+                    </span>
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -675,6 +703,33 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                   <h2 className="text-xs sm:text-sm font-black text-slate-900 leading-snug">
                     Plaats origo & insertie: {cleanMuscleName(muscle?.name)}
                   </h2>
+                )}
+                {muscle?.id === 'trapezius' && setActiveTrapeziusPart && (
+                  <div className="flex items-center gap-1 my-1 p-1 bg-blue-50/90 rounded-xl border border-blue-200">
+                    {(['descendens', 'transversa', 'ascendens'] as const).map((partKey) => {
+                      const partLabel = partKey === 'descendens' ? '1. Desc.' : partKey === 'transversa' ? '2. Transv.' : '3. Ascend.';
+                      const isActive = activeTrapeziusPart === partKey;
+                      const hasO = userOrigins.some((p) => p.name?.toLowerCase().includes(partKey));
+                      const hasI = userInsertions.some((p) => p.name?.toLowerCase().includes(partKey));
+                      return (
+                        <button
+                          key={partKey}
+                          type="button"
+                          onClick={() => setActiveTrapeziusPart(partKey)}
+                          className={`flex-1 py-1 px-1 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-0.5 ${
+                            isActive
+                              ? 'bg-blue-600 text-white shadow-xs'
+                              : hasO && hasI
+                              ? 'bg-emerald-50 text-emerald-800 border border-emerald-300'
+                              : 'bg-white text-slate-700 border border-slate-200'
+                          }`}
+                        >
+                          <span>{partLabel}</span>
+                          {hasO && hasI && <span className="text-[9px]">✓</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
                 )}
               </div>
             </div>

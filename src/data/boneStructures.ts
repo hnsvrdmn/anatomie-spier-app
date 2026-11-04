@@ -960,28 +960,6 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "y": 0.2241
   },
   {
-    "id": "humerus_tub_min_r",
-    "boneId": "os_humerus",
-    "name": "Tuberculum minus",
-    "fullName": "Tuberculum minus (kleine knobbel)",
-    "parentStructure": "Tuberculum minus (kleine knobbel)",
-    "view": "ventral",
-    "side": "right",
-    "x": 0.2638,
-    "y": 0.2286
-  },
-  {
-    "id": "humerus_tub_min_l",
-    "boneId": "os_humerus",
-    "name": "Tuberculum minus",
-    "fullName": "Tuberculum minus (kleine knobbel)",
-    "parentStructure": "Tuberculum minus (kleine knobbel)",
-    "view": "ventral",
-    "side": "left",
-    "x": 0.7362,
-    "y": 0.2286
-  },
-  {
     "id": "humerus_corpus_r_v",
     "boneId": "os_humerus",
     "name": "Corpus humeri",
@@ -1981,6 +1959,138 @@ export const BONE_STRUCTURES: BoneStructurePoint[] = [
     "side": "left",
     "x": 0.4437,
     "y": 0.4499
+  },
+  {
+    "id": "vert_c1_v",
+    "boneId": "os_vertebra",
+    "name": "C1 (Atlas)",
+    "fullName": "C1 (Atlas - 1e halswervel)",
+    "parentStructure": "Vertebrae cervicales (halswervels C1-C7)",
+    "view": "ventral",
+    "side": "midline",
+    "x": 0.5,
+    "y": 0.108
+  },
+  {
+    "id": "vert_c1_d",
+    "boneId": "os_vertebra",
+    "name": "C1 (Atlas)",
+    "fullName": "C1 (Atlas - 1e halswervel)",
+    "parentStructure": "Vertebrae cervicales (halswervels C1-C7)",
+    "view": "dorsal",
+    "side": "midline",
+    "x": 0.5,
+    "y": 0.108
+  },
+  {
+    "id": "vert_c7_v",
+    "boneId": "os_vertebra",
+    "name": "C7 (Vertebra prominens)",
+    "fullName": "C7 (Vertebra prominens - 7e halswervel)",
+    "parentStructure": "Vertebrae cervicales (halswervels C1-C7)",
+    "view": "ventral",
+    "side": "midline",
+    "x": 0.5,
+    "y": 0.163
+  },
+  {
+    "id": "vert_c7_d",
+    "boneId": "os_vertebra",
+    "name": "C7 (Vertebra prominens)",
+    "fullName": "C7 (Vertebra prominens - 7e halswervel)",
+    "parentStructure": "Vertebrae cervicales (halswervels C1-C7)",
+    "view": "dorsal",
+    "side": "midline",
+    "x": 0.5,
+    "y": 0.163
+  },
+  {
+    "id": "vert_th1_v",
+    "boneId": "os_vertebra",
+    "name": "Th1 (1e borstwervel)",
+    "fullName": "Th1 (1e borstwervel)",
+    "parentStructure": "Vertebrae thoracicae (borstwervels Th1-Th12)",
+    "view": "ventral",
+    "side": "midline",
+    "x": 0.5,
+    "y": 0.178
+  },
+  {
+    "id": "vert_th1_d",
+    "boneId": "os_vertebra",
+    "name": "Th1 (1e borstwervel)",
+    "fullName": "Th1 (1e borstwervel)",
+    "parentStructure": "Vertebrae thoracicae (borstwervels Th1-Th12)",
+    "view": "dorsal",
+    "side": "midline",
+    "x": 0.5,
+    "y": 0.178
+  },
+  {
+    "id": "vert_th12_v",
+    "boneId": "os_vertebra",
+    "name": "Th12 (12e borstwervel)",
+    "fullName": "Th12 (12e borstwervel)",
+    "parentStructure": "Vertebrae thoracicae (borstwervels Th1-Th12)",
+    "view": "ventral",
+    "side": "midline",
+    "x": 0.5,
+    "y": 0.328
+  },
+  {
+    "id": "vert_th12_d",
+    "boneId": "os_vertebra",
+    "name": "Th12 (12e borstwervel)",
+    "fullName": "Th12 (12e borstwervel)",
+    "parentStructure": "Vertebrae thoracicae (borstwervels Th1-Th12)",
+    "view": "dorsal",
+    "side": "midline",
+    "x": 0.5,
+    "y": 0.328
+  },
+  {
+    "id": "vert_l1_v",
+    "boneId": "os_vertebra",
+    "name": "L1 (1e lendenwervel)",
+    "fullName": "L1 (1e lendenwervel)",
+    "parentStructure": "Vertebrae lumbales (lendenwervels L1-L5)",
+    "view": "ventral",
+    "side": "midline",
+    "x": 0.5,
+    "y": 0.348
+  },
+  {
+    "id": "vert_l1_d",
+    "boneId": "os_vertebra",
+    "name": "L1 (1e lendenwervel)",
+    "fullName": "L1 (1e lendenwervel)",
+    "parentStructure": "Vertebrae lumbales (lendenwervels L1-L5)",
+    "view": "dorsal",
+    "side": "midline",
+    "x": 0.5,
+    "y": 0.348
+  },
+  {
+    "id": "vert_l5_v",
+    "boneId": "os_vertebra",
+    "name": "L5 (5e lendenwervel)",
+    "fullName": "L5 (5e lendenwervel)",
+    "parentStructure": "Vertebrae lumbales (lendenwervels L1-L5)",
+    "view": "ventral",
+    "side": "midline",
+    "x": 0.5,
+    "y": 0.424
+  },
+  {
+    "id": "vert_l5_d",
+    "boneId": "os_vertebra",
+    "name": "L5 (5e lendenwervel)",
+    "fullName": "L5 (5e lendenwervel)",
+    "parentStructure": "Vertebrae lumbales (lendenwervels L1-L5)",
+    "view": "dorsal",
+    "side": "midline",
+    "x": 0.5,
+    "y": 0.424
   }
 ];
 

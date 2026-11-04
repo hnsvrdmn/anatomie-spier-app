@@ -39,6 +39,8 @@ interface MuscleContextType {
   triggerQuizOpenOptions: () => void;
   jointPracticeType: 'attachments' | 'movements';
   setJointPracticeType: (type: 'attachments' | 'movements') => void;
+  requireAllVertebrae: boolean;
+  setRequireAllVertebrae: (val: boolean) => void;
   toast: ToastMessage | null;
   selectMuscle: (id: string, autoSwitchView?: boolean) => void;
   toggleMuscleSelection: (id: string) => void;
@@ -179,6 +181,19 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setQuizOpenOptionsTrigger((c) => c + 1);
   }, []);
   const [jointPracticeType, setJointPracticeType] = useState<'attachments' | 'movements'>('attachments');
+  const [requireAllVertebrae, setRequireAllVertebraeState] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('pmt_require_all_vertebrae') === 'true';
+    } catch {
+      return false;
+    }
+  });
+  const setRequireAllVertebrae = useCallback((val: boolean) => {
+    setRequireAllVertebraeState(val);
+    try {
+      localStorage.setItem('pmt_require_all_vertebrae', String(val));
+    } catch {}
+  }, []);
   const [toast, setToast] = useState<ToastMessage | null>(null);
 
   const selectedMuscle = useMemo(() => {
@@ -680,6 +695,8 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         triggerQuizOpenOptions,
         jointPracticeType,
         setJointPracticeType,
+        requireAllVertebrae,
+        setRequireAllVertebrae,
         toast,
         selectMuscle,
         toggleMuscleSelection,

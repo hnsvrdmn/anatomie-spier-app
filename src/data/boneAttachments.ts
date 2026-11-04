@@ -281,7 +281,7 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'latissimus_dorsi',
         muscleName: 'm. latissimus dorsi',
-        location: 'tuberculum minus',
+        location: 'proximaal ventraal op de humerus',
       },
       {
         muscleId: 'teres_major',
@@ -335,19 +335,9 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
         location: 'acromion (pars transversa) | spina scapula (pars ascendens)',
       },
       {
-        muscleId: 'serratus_anterior',
-        muscleName: 'm. serratus anterior',
-        location: 'margo medialis scapula, angulus superior scapula, angulus inferior scapula',
-      },
-      {
         muscleId: 'rhomboidei',
         muscleName: 'mm. Rhomboideii',
         location: 'margo medialis scapula',
-      },
-      {
-        muscleId: 'levator_scapulae',
-        muscleName: 'm. levator scapula',
-        location: 'angulus superior scapula',
       },
     ],
   },
@@ -455,11 +445,6 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
   os_costa: {
     origins: [
       {
-        muscleId: 'serratus_anterior',
-        muscleName: 'm. serratus anterior',
-        location: '1e tot 9e costa (rib)',
-      },
-      {
         muscleId: 'pectoralis_major',
         muscleName: 'm. pectoralis major',
         location: 'kraakbeen van 2e-6e rib',
@@ -500,11 +485,6 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
         muscleId: 'rhomboidei',
         muscleName: 'mm. Rhomboideii',
         location: 'processus spinosus 7e cervicale en 1-5 thoracale vertebra',
-      },
-      {
-        muscleId: 'levator_scapulae',
-        muscleName: 'm. levator scapula',
-        location: 'processus transversus van bovenste 4 vertebra cervicales',
       },
       {
         muscleId: 'iliopsoas',

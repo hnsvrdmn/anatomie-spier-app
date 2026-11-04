@@ -84,8 +84,6 @@ export const JOINT_CATEGORIES: JointCategory[] = [
     muscleIds: [
       'latissimus_dorsi',
       'trapezius',
-      'levator_scapulae',
-      'serratus_anterior',
       'rhomboidei'
     ]
   },

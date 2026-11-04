@@ -361,7 +361,6 @@ export const READER_BONES: Bone[] = [
       "Caput humeri (opperarmbeenkop)",
       "Corpus humeri (opperarmbeenschacht)",
       "Tuberculum majus (grote knobbel)",
-      "Tuberculum minus (kleine knobbel)",
       "Epicondylus medialis (binneste elleboogknobbel)",
       "Epicondylus lateralis (buitenste elleboogknobbel)",
       "Trochlea humeri (katrol voor ellepijp)",

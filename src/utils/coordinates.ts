@@ -204,6 +204,7 @@ export interface EvaluationSetResult {
   correctCount: number;
   closeCount: number;
   isPassed: boolean;
+  missingVertebraeTip?: string;
 }
 
 export interface DistinctTarget {
@@ -444,7 +445,8 @@ export function evaluatePointSet(
   targetPoints: Point2D[],
   targetType: 'origin' | 'insertion' | 'path',
   toleranceCorrect: number = TOLERANCE_CORRECT,
-  attachmentLines?: AttachmentLine[]
+  attachmentLines?: AttachmentLine[],
+  requireAllVertebrae: boolean = false
 ): EvaluationSetResult {
   const distinctTargets = getDistinctTargets(targetPoints, attachmentLines || [], targetType);
 
@@ -658,11 +660,53 @@ export function evaluatePointSet(
   // 2. Er mogen géén flagrant foute punten buiten de anatomische zones geplaatst zijn.
   //    Bij uitgebreide aanhechtingen (>= 4 punten, zoals serratus anterior langs ribben of trapezius langs wervels)
   //    wordt 1 klein randpuntje vergeven mits alle verplichte zones gedekt zijn en correctCount >= requiredCount.
+  // Wervelrij validatie: minimaal eerste én laatste wervel (of alle wervels als toggle aan staat)
+  let missingVertebraeTip: string | undefined;
+  let vertebraeConditionMet = true;
+
+  for (const t of distinctTargets) {
+    const isVertebral = (t.zoneId && t.zoneId.startsWith('zone_vertebrae')) ||
+      (t.name && (t.name.toLowerCase().includes('wervel') || t.name.toLowerCase().includes('spinosus') || t.name.toLowerCase().includes('vertebra')));
+    if (!isVertebral) continue;
+
+    const lines = (t.lines && t.lines.length > 0) ? t.lines : (t.line ? [t.line] : []);
+    for (const l of lines) {
+      if (!l.points || l.points.length < 2) continue;
+      const sortedPts = [...l.points].sort((a, b) => a.y - b.y);
+      const firstPt = sortedPts[0];
+      const lastPt = sortedPts[sortedPts.length - 1];
+      const span = lastPt.y - firstPt.y;
+      if (span < 0.035) continue; // Geen doorlopende rij wervels, maar een enkele wervel
+
+      const matchedPts = userPoints.filter((up) => {
+        const poly = distanceToPolyline(up, l.points);
+        return poly.distance <= Math.max(l.tolerance || 0.030, ptTolClose * 1.3);
+      });
+
+      if (requireAllVertebrae) {
+        const expectedCount = Math.max(2, Math.round(span / 0.022));
+        if (matchedPts.length < expectedCount) {
+          vertebraeConditionMet = false;
+          missingVertebraeTip = `Optie 'Alle wervels vereisen' staat aan: plaats minimaal ${expectedCount} punten langs de wervelkolom (${t.name}).`;
+        }
+      } else {
+        const tolEnd = Math.max(0.034, (l.tolerance || 0.030) * 1.35);
+        const hasFirst = matchedPts.some((up) => Math.hypot((up.x - firstPt.x) * SKELETON_ASPECT_RATIO, up.y - firstPt.y) <= tolEnd);
+        const hasLast = matchedPts.some((up) => Math.hypot((up.x - lastPt.x) * SKELETON_ASPECT_RATIO, up.y - lastPt.y) <= tolEnd);
+
+        if (!hasFirst || !hasLast) {
+          vertebraeConditionMet = false;
+          missingVertebraeTip = `Bij een wervelrij (${t.name}): klik minimaal de eerste én de laatste wervel aan (meer mag, minder niet).`;
+        }
+      }
+    }
+  }
+
   const allZonesSatisfied = Array.from(requiredZones).every((z) => satisfiedZones.has(z));
   const incorrectCount = matches.filter((m) => m.accuracy === 'incorrect').length;
   const allowMinorFlaw = correctCount >= requiredCount && incorrectCount <= 1 && userPoints.length >= 4;
   const hasNoIncorrectPoints = incorrectCount === 0 || allowMinorFlaw;
-  const isPassed = allZonesSatisfied && hasNoIncorrectPoints && userPoints.length > 0;
+  const isPassed = allZonesSatisfied && hasNoIncorrectPoints && vertebraeConditionMet && userPoints.length > 0;
 
   return {
     matches,
@@ -670,6 +714,7 @@ export function evaluatePointSet(
     correctCount,
     closeCount,
     isPassed,
+    missingVertebraeTip,
   };
 }
 

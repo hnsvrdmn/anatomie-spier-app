@@ -39,6 +39,8 @@ interface DraggableSkeletonProps {
   onCopyName?: (name: string) => void;
   onSelectPoint?: (point: EditablePoint) => void;
   highlightedName?: string;
+  targetZoom?: number;
+  targetPan?: { x: number; y: number };
 }
 
 const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
@@ -56,6 +58,8 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
   onCopyName,
   onSelectPoint,
   highlightedName,
+  targetZoom,
+  targetPan,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -64,6 +68,15 @@ const DraggableSkeleton: React.FC<DraggableSkeletonProps> = ({
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [panMode, setPanMode] = useState(false);
+
+  useEffect(() => {
+    if (targetZoom !== undefined) {
+      setZoom(targetZoom);
+    }
+    if (targetPan !== undefined) {
+      setPan(targetPan);
+    }
+  }, [targetZoom, targetPan]);
 
   const [draggingPoint, setDraggingPoint] = useState<EditablePoint | null>(null);
   const [hoveredPoint, setHoveredPoint] = useState<EditablePoint | null>(null);
@@ -536,7 +549,7 @@ export const BoneEditorView: React.FC = () => {
   const [viewLayout, setViewLayout] = useState<ViewLayoutMode>('both');
 
   // Keuze tussen het bewerken van 'bones' (hoofd-botposities) of 'structures' (relevante botstructuren)
-  const [editTarget, setEditTarget] = useState<'bones' | 'structures'>('structures');
+  const [editTarget, setEditTarget] = useState<'bones' | 'structures' | 'vertebrae_ribs'>('structures');
   // Optioneel filter per bot wanneer structuren worden bewerkt
   const [selectedFilterBone, setSelectedFilterBone] = useState<string>('all');
 
@@ -815,7 +828,27 @@ export const BoneEditorView: React.FC = () => {
 
   // Verzamel ventrale punten afhankelijk van editTarget
   const ventralPoints = useMemo<EditablePoint[]>(() => {
-    if (editTarget === 'bones') {
+    if (editTarget === 'vertebrae_ribs') {
+      const allowedBones = new Set(['os_vertebra', 'os_costa', 'os_sternum']);
+      return structures
+        .filter((s) => s.view === 'ventral' || s.view === 'both')
+        .filter((s) => selectedFilterBone === 'all' ? allowedBones.has(s.boneId) : s.boneId === selectedFilterBone)
+        .map((s) => {
+          const bone = bones.find((b) => b.id === s.boneId);
+          return {
+            id: s.id,
+            name: s.fullName || s.name,
+            rawName: s.name,
+            subName: bone ? `Romp • ${bone.latinName}` : undefined,
+            x: s.x,
+            y: s.y,
+            type: 'structure' as const,
+            boneId: s.boneId,
+            side: s.side,
+            view: s.view === 'both' ? 'ventral' : s.view,
+          };
+        });
+    } else if (editTarget === 'bones') {
       return bones
         .filter((bone) => selectedFilterBone === 'all' || bone.id === selectedFilterBone)
         .flatMap((bone) =>
@@ -861,7 +894,27 @@ export const BoneEditorView: React.FC = () => {
 
   // Verzamel dorsale punten afhankelijk van editTarget
   const dorsalPoints = useMemo<EditablePoint[]>(() => {
-    if (editTarget === 'bones') {
+    if (editTarget === 'vertebrae_ribs') {
+      const allowedBones = new Set(['os_vertebra', 'os_costa', 'os_sternum']);
+      return structures
+        .filter((s) => s.view === 'dorsal' || s.view === 'both')
+        .filter((s) => selectedFilterBone === 'all' ? allowedBones.has(s.boneId) : s.boneId === selectedFilterBone)
+        .map((s) => {
+          const bone = bones.find((b) => b.id === s.boneId);
+          return {
+            id: s.id,
+            name: s.fullName || s.name,
+            rawName: s.name,
+            subName: bone ? `Romp • ${bone.latinName}` : undefined,
+            x: s.x,
+            y: s.y,
+            type: 'structure' as const,
+            boneId: s.boneId,
+            side: s.side,
+            view: s.view === 'both' ? 'dorsal' : s.view,
+          };
+        });
+    } else if (editTarget === 'bones') {
       return bones
         .filter((bone) => selectedFilterBone === 'all' || bone.id === selectedFilterBone)
         .flatMap((bone) =>
@@ -1435,7 +1488,7 @@ export const BoneEditorView: React.FC = () => {
         <div className="bg-white p-4 rounded-2xl border border-clinical-200/80 shadow-xs space-y-3">
           <div className="flex items-center justify-between">
             <label className="text-[11px] font-black text-clinical-700 uppercase tracking-wider">
-              {editTarget === 'structures' ? 'Botstructuren' : 'Botten'} Selecteren
+              {editTarget === 'structures' ? 'Botstructuren' : editTarget === 'bones' ? 'Botten' : 'Wervels & Ribben'} Selecteren
             </label>
             <div className="inline-flex rounded-xl bg-slate-100 p-0.5 border border-slate-200">
               <button
@@ -1459,6 +1512,20 @@ export const BoneEditorView: React.FC = () => {
                 }`}
               >
                 Botten
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEditTarget('vertebrae_ribs');
+                  setSelectedFilterBone('all');
+                }}
+                className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition ${
+                  editTarget === 'vertebrae_ribs'
+                    ? 'bg-blue-600 text-white shadow-2xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Wervels & Ribben
               </button>
             </div>
           </div>

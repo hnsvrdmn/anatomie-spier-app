@@ -309,8 +309,8 @@ export const JOINTS_LEARNING_DATA: Record<string, JointDetail> = {
     movements: [
       {
         movement: 'Elevatie',
-        muscleIds: ['trapezius', 'levator_scapulae'],
-        note: 'Omhoog trekken van het schouderblad (schouders ophalen)',
+        muscleIds: ['trapezius'],
+        note: 'Omhoog trekken van het schouderblad (pars descendens)',
       },
       {
         movement: 'Depressie',
@@ -321,16 +321,6 @@ export const JOINTS_LEARNING_DATA: Record<string, JointDetail> = {
         movement: 'Retractie',
         muscleIds: ['trapezius', 'rhomboidei'],
         note: 'Naar elkaar toe trekken van de schouderbladen naar de wervelkolom',
-      },
-      {
-        movement: 'Protractie',
-        muscleIds: ['serratus_anterior'],
-        note: 'Naar voren en opzij trekken van het schouderblad rond de ribbenkast',
-      },
-      {
-        movement: 'Laterorotatie',
-        muscleIds: ['serratus_anterior'],
-        note: 'Draaiing van de scapulapunt naar lateraal-boven (voor abductie boven 90°)',
       },
       {
         movement: 'Mediorotatie',

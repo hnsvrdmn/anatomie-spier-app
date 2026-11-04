@@ -293,7 +293,13 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                     <strong>Afstands- en segmentkoppeling:</strong> Elk geplaatst punt wordt gekoppeld aan het dichtstbijzijnde doelpunt of geprojecteerd op de anatomische aanhechtingslijn (zoals de crista iliaca of de wervelkolom).
                   </li>
                   <li>
-                    <strong>Uiterste punten (multi-span spieren):</strong> Bij spieren die over meerdere wervels lopen hoef je niet elke individuele wervel aan te stippen; het plaatsen van minimaal de hoogste en laagste uiterste aanhechtingspunten is voldoende.
+                    <strong>Wervelrijen (multi-span spieren):</strong> Bij spieren die over meerdere wervels lopen (zoals <em>m. latissimus dorsi</em>, <em>m. trapezius</em>, <em>m. erector spinae</em>, <em>mm. rhomboidei</em>, <em>m. iliopsoas</em>) moet je altijd <strong>minimaal de eerste én de laatste wervel</strong> uit de rij aanklikken. Meer mag (alle tussenliggende wervels aanklikken mag gerust), minder niet. Wil je jezelf uitdagen om écht alle wervels in het traject aan te kruisen? Schakel dan in het testpaneel de toggle <strong>'Alle wervels vereisen'</strong> in (staat standaard uit).
+                  </li>
+                  <li>
+                    <strong>M. trapezius (unieke spier per pars):</strong> Omdat je de 3 afzonderlijke partes (descendens, transversa, ascendens) moet kennen, teken je deze spier in één keer in via de 3 pars-knoppen (<em>1. Descendens</em>, <em>2. Transversa</em>, <em>3. Ascendens</em>). De bijbehorende origo's en inserties worden direct per pars zuiver met elkaar verbonden.
+                  </li>
+                  <li>
+                    <strong>Curriculum-update:</strong> <em>M. serratus anterior</em> en <em>m. levator scapulae</em> hoeven niet meer geleerd te worden en zijn overal in de app verwijderd. De botstructuur <em>tuberculum minus</em> hoeft niet als botstructuur geleerd te worden; de aanhechting van de <em>m. latissimus dorsi</em> heet <em>proximaal ventraal op de humerus</em>.
                   </li>
                   <li>
                     <strong>Volgorde is vrij:</strong> Het maakt niet uit of je eerst de proximale of distale punten intekent, of in welke volgorde je de koppen aanklikt.

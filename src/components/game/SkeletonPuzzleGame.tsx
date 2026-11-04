@@ -66,10 +66,8 @@ const PUZZLE_BOARDS: PuzzleBoardDef[] = [
     id: 'cingulum',
     title: 'Cingulum pectorale',
     muscleIds: [
-      'serratus_anterior',
       'latissimus_dorsi',
       'trapezius',
-      'levator_scapulae',
       'rhomboidei',
     ],
   },
@@ -181,8 +179,8 @@ function canonicalizeLandmark(rawName?: string): { key: string; label: string } 
   if (low.includes('tuberculum majus')) {
     return { key: 'tuberculum_majus', label: 'tuberculum majus' };
   }
-  if (low.includes('tuberculum minus')) {
-    return { key: 'tuberculum_minus', label: 'tuberculum minus' };
+  if (low.includes('proximaal ventraal op de humerus') || low.includes('tuberculum minus')) {
+    return { key: 'proximaal_ventraal_humerus', label: 'proximaal ventraal humerus' };
   }
   if (low.includes('mediale voetrand')) {
     return { key: 'mediale_voetrand', label: 'mediale voetrand' };

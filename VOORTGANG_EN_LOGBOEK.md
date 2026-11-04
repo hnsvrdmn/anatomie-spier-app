@@ -2578,3 +2578,41 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 - **Verificatie & Deployment:**
   - `npm run build` foutloos geslaagd (`✓ built in 3.91s`, 0 fouten).
   - Gecommit en gepusht naar `main` op GitHub.
+
+
+---
+
+## 83. Curriculum-update: Serratus/Levator weg, Tuberculum minus weg, Wervelrij-logica & Trapezius per Pars (04-11-2026 20:55)
+- **Status:** Succesvol geïmplementeerd, geverifieerd en klaargezet voor deployment.
+- **Aanleiding & Gebruikerswensen:**
+  1. *Serratus anterior & Levator scapulae:* Deze spieren komen NIET meer voor in de leerstof en moeten door de gehele app worden verwijderd (spierenlijst, quiz, gewrichten, games, flashcards).
+  2. *Wervels selecteren (1e en laatste regel + toggle):* Bij spieren over een wervelrij (multi-span spieren zoals latissimus dorsi, trapezius, erector spinae, iliopsoas) moet standaard minimaal de eerste en laatste wervel uit de rij worden aangeklikt (meer mag, minder niet). Er moet een optionele toggle komen ("Alle wervels") die standaard uit staat.
+  3. *Botten bewerken:* Toevoegen van een speciale tab voor *Wervels & Ribben* (niet standaard geselecteerd), met automatische focus/zoom op de romp (zoom: 2.2).
+  4. *Tuberculum minus verwijderen:* De term *Tuberculum minus* hoeven de studenten niet meer te leren. Het aanhechtingspunt wordt *proximaal ventraal op de humerus*. Tuberculum minus als botstructuur overal uit de app verwijderd (inclusief flashcards en games).
+  5. *M. Trapezius uniek intekenen per Pars:* De partes (Pars descendens, Pars transversa, Pars ascendens) moeten qua origo's en inserties per pars verbonden worden, maar wel in één vraag/spier worden ingetekend.
+  6. *Hulpbestand geüpdatet:* Alle nieuwe regels en curriculumwijzigingen toelichten in het helpvenster.
+  7. *Inconsequenties-overzicht:* Duidelijk overzicht van tegensprekingen tussen het moduleboek en de antwoordenbladen.
+- **Doorgevoerde Aanpassingen:**
+  1. *Serratus & Levator verwijderd:*
+     - Verwijderd uit `src/data/muscles.json`, `src/data/muscles-v2.json`, `src/data/muscleMovements.ts`, `src/data/jointCategories.ts`, `src/data/jointTypesData.ts`, `src/data/boneAttachments.ts`, `src/utils/export.ts` (`isForbiddenMuscle` verhoogd naar v18).
+     - Verwijderd uit alle spellen (`ConnectionsGame.tsx`, `MuscleGuessGame.tsx`, `QueensGridGame.tsx`, `SkeletonPuzzleGame.tsx`).
+     - Flashcards over Serratus & Levator (`cin-22`, `cin-23`, `cin-24`, `cin-25`, `cin-34`, `cin-35`, `cin-37`) opgeschoond.
+  2. *Tuberculum minus hernoemd/verwijderd:*
+     - Verwijderd als botstructuur uit `src/data/bonesData.ts` en `src/data/boneStructures.ts`.
+     - Insertie van Latissimus dorsi overal hernoemd naar `proximaal ventraal op de humerus`.
+     - Flashcards over tuberculum minus (`hum-10`, `hum-20`, `hum-42`) geüpdatet of verwijderd.
+  3. *Wervelkolom 1e & laatste wervel regel + Toggle:*
+     - In `src/context/MuscleContext.tsx` de boolean state `requireAllVertebrae` (default `false`) en persistentie via `pmt_require_all_vertebrae` toegevoegd.
+     - In `src/utils/coordinates.ts` de evaluatie `evaluatePointSet` aangepast: bij span-spieren wordt geverifieerd of de uiterste wervels (bovenste en onderste Y) gedekt zijn.
+     - Toggles toegevoegd in zowel desktop ([QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx)) als mobiel ([MobileQuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/MobileQuizView.tsx)).
+  4. *Botten editor – Wervels & Ribben tab:*
+     - Tab `vertebrae_ribs` toegevoegd aan [BoneEditorView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/editor/BoneEditorView.tsx) met automatische zoom op de romp (`targetZoom: 2.2`, `pan.y: 130`).
+     - Individuele wervellandmarks C1, C7, Th1, Th12, L1, L5 (ventraal en dorsaal) toegevoegd aan `boneStructures.ts`.
+  5. *Trapezius Pars-selectie bij intekenen:*
+     - Selector-knoppen (`Pars descendens`, `Pars transversa`, `Pars ascendens`) toegevoegd in [QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx) en [MobileQuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/MobileQuizView.tsx).
+     - Geplaatste punten worden gelabeld met de actieve pars, zodat de spier in één vloeiende vraag getekend kan worden en per pars visueel verbonden wordt met de juiste insertie.
+  6. *Helpmodal geüpdatet:*
+     - [HelpModal.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/common/HelpModal.tsx) voorzien van uitleg over de wervelrij-regel, Trapezius partes en de verwijderde spieren/termen.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos uitgevoerd (`✓ built in 4.10s`).
+  - Opslagsleutels verhoogd voor schone herlaad in de browser.

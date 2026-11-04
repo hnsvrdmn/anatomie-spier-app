@@ -1,10 +1,10 @@
 import { Muscle } from '../types/anatomy';
 
-const LOCAL_STORAGE_KEY = 'pmt_anatomie_muscles_dataset_v17';
+const LOCAL_STORAGE_KEY = 'pmt_anatomie_muscles_dataset_v18';
 
 /**
- * Filtert spieren die niet in het PMT-curriculum / de reader horen
- * (zoals m. tensor fascia latae en m. gluteus medius).
+ * Filtert spieren die niet meer in het PMT-curriculum / de reader horen
+ * (zoals m. tensor fascia latae, m. gluteus medius, m. serratus anterior en m. levator scapulae).
  * Let op: m. vastus intermedius hoort WEL in het curriculum en wordt behouden.
  */
 export function isForbiddenMuscle(m: { id?: string; name?: string; latinName?: string }): boolean {
@@ -15,8 +15,10 @@ export function isForbiddenMuscle(m: { id?: string; name?: string; latinName?: s
   const isTensor = idLower.includes('tensor') || nameLower.includes('tensor') || latinLower.includes('tensor');
   const isGluteusMedius = (idLower.includes('medius') || nameLower.includes('medius') || latinLower.includes('medius'))
     && !(idLower.includes('intermedius') || nameLower.includes('intermedius') || latinLower.includes('intermedius'));
+  const isSerratus = idLower.includes('serratus') || nameLower.includes('serratus') || latinLower.includes('serratus');
+  const isLevator = idLower.includes('levator') || nameLower.includes('levator') || latinLower.includes('levator');
 
-  return isTensor || isGluteusMedius;
+  return isTensor || isGluteusMedius || isSerratus || isLevator;
 }
 
 /**

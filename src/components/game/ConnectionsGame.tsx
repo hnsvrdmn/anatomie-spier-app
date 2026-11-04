@@ -136,7 +136,7 @@ const ALL_GROUPS: ConnectionGroup[] = [
     tier: 2,
     items: [
       'Tuberculum majus',
-      'Tuberculum minus',
+      'Epicondylus medialis',
       'Trochlea humeri',
       'Capitulum humeri',
     ],
@@ -154,11 +154,11 @@ const ALL_GROUPS: ConnectionGroup[] = [
   },
   {
     id: 'scapula_insertie_spieren',
-    title: 'Hechten aan op margo of angulus van os scapula',
+    title: 'Hechten aan op het os scapula',
     tier: 4,
     items: [
-      'm. levator scapulae',
-      'm. serratus anterior',
+      'm. trapezius',
+      'm. deltoideus',
       'mm. rhomboidei',
       'm. teres major',
     ],

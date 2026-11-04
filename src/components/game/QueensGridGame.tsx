@@ -45,7 +45,7 @@ const GRID_PUZZLES: GridPuzzleDef[] = [
     rowHeader: 'Spier',
     colHeader: 'Insertie',
     pairs: [
-      { rowLabel: 'm. latissimus dorsi', colLabel: 'Tuberculum minus' },
+      { rowLabel: 'm. latissimus dorsi', colLabel: 'Proximaal ventraal humerus' },
       { rowLabel: 'm. pectoralis major', colLabel: 'Tuberculum majus' },
       { rowLabel: 'm. biceps brachii', colLabel: 'Tuberositas radii' },
       { rowLabel: 'm. brachialis', colLabel: 'Tuberositas ulnae' },
@@ -57,10 +57,10 @@ const GRID_PUZZLES: GridPuzzleDef[] = [
     rowHeader: 'Spier',
     colHeader: 'Werking op os scapula',
     pairs: [
-      { rowLabel: 'm. serratus anterior', colLabel: 'Protractie + laterorotatie' },
+      { rowLabel: 'm. trapezius (descendens)', colLabel: 'Elevatie (clavicula)' },
+      { rowLabel: 'm. trapezius (transversa)', colLabel: 'Retractie (acromion)' },
+      { rowLabel: 'm. trapezius (ascendens)', colLabel: 'Depressie (spina scapula)' },
       { rowLabel: 'mm. rhomboidei', colLabel: 'Retractie + mediorotatie' },
-      { rowLabel: 'm. levator scapulae', colLabel: 'Elevatie (angulus superior)' },
-      { rowLabel: 'm. trapezius (ascendens)', colLabel: 'Detractie (spina scapula)' },
     ],
   },
   {

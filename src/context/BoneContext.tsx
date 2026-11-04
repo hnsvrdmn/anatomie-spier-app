@@ -3,8 +3,8 @@ import { Bone, BoneMarker, READER_BONES } from '../data/bonesData';
 import { BoneStructurePoint, BONE_STRUCTURES } from '../data/boneStructures';
 import { AnatomicalView } from '../types/anatomy';
 
-const BONES_LOCAL_STORAGE_KEY = 'pmt_anatomie_bones_reader_v2';
-const STRUCTURES_LOCAL_STORAGE_KEY = 'pmt_anatomie_bone_structures_v4';
+const BONES_LOCAL_STORAGE_KEY = 'pmt_anatomie_bones_reader_v3';
+const STRUCTURES_LOCAL_STORAGE_KEY = 'pmt_anatomie_bone_structures_v5';
 
 // Ruim oude versies op
 try {

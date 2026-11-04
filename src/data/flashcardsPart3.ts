@@ -403,15 +403,7 @@ export const FLASHCARDS_PART_3: FlashcardSet[] = [
         answer: 'Tuberculum majus.',
         imageUrl: '/images/flashcards/humeri_botten_1_14.png',
       },
-      {
-        id: 'hum-10',
-        setId: 'art-humeri',
-        categoryLabel: 'Botstructuren',
-        question: 'Welke botstructuur is nummer 5?',
-        answer: 'Tuberculum minus.',
-        imageUrl: '/images/flashcards/humeri_botten_1_14.png',
-      },
-      {
+            {
         id: 'hum-11',
         setId: 'art-humeri',
         categoryLabel: 'Botstructuren',
@@ -488,7 +480,7 @@ export const FLASHCARDS_PART_3: FlashcardSet[] = [
         setId: 'art-humeri',
         categoryLabel: 'Spieren',
         question: 'Wat zijn de origo en insertie van de m. latissimus dorsi?',
-        answer: '• Origo: processus spinosus T7–T12, lumbale wervels, sacrum en crista iliaca\n• Insertie: tuberculum minus (ventrale zijde humerus)',
+        answer: '• Origo: processus spinosus T7–T12, lumbale wervels, sacrum en crista iliaca\n• Insertie: proximaal ventraal op de humerus',
       },
       {
         id: 'hum-21',
@@ -647,8 +639,8 @@ export const FLASHCARDS_PART_3: FlashcardSet[] = [
         id: 'hum-42',
         setId: 'art-humeri',
         categoryLabel: 'Botstructuren',
-        question: 'Welke vijf botstructuren horen bij de humerus (nr. 1 t/m 5)?',
-        answer: '• 1 = Os humerus\n• 2 = Corpus humeri\n• 3 = Caput humeri\n• 4 = Tuberculum majus\n• 5 = Tuberculum minus',
+        question: 'Welke vier botstructuren horen bij de humerus (nr. 1 t/m 4)?',
+        answer: '• 1 = Os humerus\n• 2 = Corpus humeri\n• 3 = Caput humeri\n• 4 = Tuberculum majus',
         imageUrl: '/images/flashcards/humeri_botten_1_14.png',
       },
       {
@@ -843,35 +835,7 @@ export const FLASHCARDS_PART_3: FlashcardSet[] = [
         question: 'Wat is de functie van de m. trapezius pars ascendens?',
         answer: 'Detractie (depressie) van het os scapula.',
       },
-      {
-        id: 'cin-22',
-        setId: 'cingulum-pectorale',
-        categoryLabel: 'Spieren',
-        question: 'Wat zijn de origo en insertie van de m. levator scapulae?',
-        answer: '• Origo: processus transversus van bovenste 4 vertebrae cervicales (C1–C4)\n• Insertie: angulus superior scapula',
-      },
-      {
-        id: 'cin-23',
-        setId: 'cingulum-pectorale',
-        categoryLabel: 'Spieren',
-        question: 'Wat is de functie van de m. levator scapulae?',
-        answer: 'Elevatie van het os scapula.',
-      },
-      {
-        id: 'cin-24',
-        setId: 'cingulum-pectorale',
-        categoryLabel: 'Spieren',
-        question: 'Wat zijn de origo en insertie van de m. serratus anterior?',
-        answer: '• Origo: 1e tot 9e costa (rib)\n• Insertie: margo medialis, angulus superior en angulus inferior scapula',
-      },
-      {
-        id: 'cin-25',
-        setId: 'cingulum-pectorale',
-        categoryLabel: 'Spieren',
-        question: 'Wat is de functie van de m. serratus anterior?',
-        answer: 'Protractie en laterorotatie van het os scapula.',
-      },
-      {
+                              {
         id: 'cin-26',
         setId: 'cingulum-pectorale',
         categoryLabel: 'Spieren',
@@ -889,8 +853,8 @@ export const FLASHCARDS_PART_3: FlashcardSet[] = [
         id: 'cin-28',
         setId: 'cingulum-pectorale',
         categoryLabel: 'Spieren',
-        question: 'Welke twee spieren zorgen voor elevatie van het os scapula?',
-        answer: '• M. trapezius (pars descendens)\n• M. levator scapulae',
+        question: 'Welke spier zorgt voor elevatie van het os scapula?',
+        answer: 'M. trapezius (pars descendens).',
       },
       {
         id: 'cin-29',
@@ -929,23 +893,7 @@ export const FLASHCARDS_PART_3: FlashcardSet[] = [
         answer: 'M. trapezius.',
         imageUrl: '/images/flashcards/cingulum_spieren_fig.png',
       },
-      {
-        id: 'cin-34',
-        setId: 'cingulum-pectorale',
-        categoryLabel: 'Spieren figuur',
-        question: 'Welke spier is nummer 3 in deze figuur?',
-        answer: 'M. levator scapulae.',
-        imageUrl: '/images/flashcards/cingulum_spieren_fig.png',
-      },
-      {
-        id: 'cin-35',
-        setId: 'cingulum-pectorale',
-        categoryLabel: 'Spieren figuur',
-        question: 'Welke spier is nummer 4 in deze figuur?',
-        answer: 'M. serratus anterior.',
-        imageUrl: '/images/flashcards/cingulum_spieren_fig.png',
-      },
-      {
+                  {
         id: 'cin-36',
         setId: 'cingulum-pectorale',
         categoryLabel: 'Spieren figuur',
@@ -953,14 +901,7 @@ export const FLASHCARDS_PART_3: FlashcardSet[] = [
         answer: 'Mm. rhomboidei.',
         imageUrl: '/images/flashcards/cingulum_spieren_fig.png',
       },
-      {
-        id: 'cin-37',
-        setId: 'cingulum-pectorale',
-        categoryLabel: 'Spieren per beweging',
-        question: 'Welke spier zorgt voor protractie en laterorotatie van het os scapula?',
-        answer: 'M. serratus anterior.',
-      },
-      {
+            {
         id: 'cin-38',
         setId: 'cingulum-pectorale',
         categoryLabel: 'Spieren per beweging',
@@ -987,8 +928,8 @@ export const FLASHCARDS_PART_3: FlashcardSet[] = [
         id: 'cin-41',
         setId: 'cingulum-pectorale',
         categoryLabel: 'Spieren',
-        question: 'Welke twee spieren hechten aan op de margo medialis van de scapula?',
-        answer: '• M. serratus anterior\n• Mm. rhomboidei',
+        question: 'Welke spieren hechten aan op de margo medialis van de scapula?',
+        answer: 'Mm. rhomboidei (rhomboideus major en minor).',
       },
       {
         id: 'cin-42',

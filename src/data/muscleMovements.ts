@@ -29,8 +29,6 @@ export const MUSCLE_MOVEMENTS: Record<string, string[]> = {
   teres_major: ['Endorotatie', 'Adductie'],
   teres_minor: ['Exorotatie'],
   trapezius: ['Retractie', 'Elevatie', 'Depressie'],
-  levator_scapulae: ['Elevatie'],
-  serratus_anterior: ['Protractie', 'Laterorotatie'],
   rhomboidei: ['Mediorotatie', 'Retractie'],
   biceps_brachii: ['Flexie', 'Supinatie'],
   brachialis: ['Flexie'],

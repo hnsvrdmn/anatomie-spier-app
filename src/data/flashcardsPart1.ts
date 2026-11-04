@@ -1226,7 +1226,7 @@ export const FLASHCARDS_PART_1: FlashcardSet[] = [
         setId: 'terminologie-nl-lat',
         categoryLabel: 'Terminologie NL ➔ Latijn',
         question: 'Welke Latijnse spierfunctieterm betekent heffer (spier die omhoog beweegt)?',
-        answer: 'Levator (bijv. m. levator scapulae).',
+        answer: 'Levator.',
       },
       {
         id: 'termnl-erector',
