@@ -197,7 +197,12 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
     trapeziusPartOriginsCount >= 2 && 
     trapeziusPartInsertionsCount >= 1;
 
-  const shouldSubtlyHighlightOrigin = false;
+  const shouldSubtlyHighlightOrigin = 
+    isTrapezius && 
+    activeQuizTool === 'insertion' && 
+    trapeziusPartOriginsCount >= 2 && 
+    trapeziusPartInsertionsCount >= 1 &&
+    activeTrapeziusPart !== 'ascendens';
 
   // Stand van het frame:
   // - false (minimale stand): toont altijd de vraag, origo & insertie, en antwoordknoppen.
@@ -323,14 +328,20 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
             <div className="flex items-center gap-1 bg-slate-950/80 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 shadow-lg">
               <button
                 type="button"
-                onClick={() => setActiveQuizTool('origin')}
+                onClick={() => {
+                  if (shouldSubtlyHighlightOrigin) {
+                    if (activeTrapeziusPart === 'descendens' && setActiveTrapeziusPart) setActiveTrapeziusPart('transversa');
+                    else if (activeTrapeziusPart === 'transversa' && setActiveTrapeziusPart) setActiveTrapeziusPart('ascendens');
+                  }
+                  setActiveQuizTool('origin');
+                }}
                 title="Plaats Origo (blauw)"
                 aria-label="Origo"
                 className={`w-7 h-7 rounded-lg text-xs font-black transition-all flex items-center justify-center ${
                   activeQuizTool === 'origin'
                     ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-400'
                     : shouldSubtlyHighlightOrigin
-                    ? 'bg-blue-950/90 text-blue-300 ring-2 ring-blue-400/90 shadow-sm'
+                    ? 'bg-blue-500 text-white ring-4 ring-blue-400 shadow-lg animate-hint-bounce'
                     : 'text-blue-400 hover:bg-slate-800'
                 }`}
               >
@@ -345,7 +356,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                   activeQuizTool === 'insertion'
                     ? 'bg-orange-600 text-white shadow-sm ring-2 ring-orange-400'
                     : shouldSubtlyHighlightInsertion
-                    ? 'bg-orange-950/90 text-orange-300 ring-2 ring-orange-400/90 shadow-sm'
+                    ? 'bg-orange-500 text-white ring-4 ring-orange-400 shadow-lg animate-hint-bounce'
                     : 'text-orange-400 hover:bg-slate-800'
                 }`}
               >
@@ -379,7 +390,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                         isActive
                           ? 'bg-blue-600 text-white shadow-xs'
                           : isNextSuggested
-                          ? 'bg-blue-950/90 text-blue-300 ring-2 ring-blue-400/90 shadow-sm'
+                          ? 'bg-blue-500 text-white ring-4 ring-blue-400 shadow-lg animate-hint-bounce font-black'
                           : 'text-slate-300 hover:text-white hover:bg-slate-800'
                       }`}
                     >

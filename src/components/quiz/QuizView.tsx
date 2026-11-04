@@ -293,7 +293,12 @@ export const QuizView: React.FC = () => {
     trapeziusPartOriginsCount >= 2 && 
     trapeziusPartInsertionsCount >= 1;
 
-  const shouldSubtlyHighlightOrigin = false;
+  const shouldSubtlyHighlightOrigin = 
+    currentQuestion?.muscle?.id === 'trapezius' && 
+    activeQuizTool === 'insertion' && 
+    trapeziusPartOriginsCount >= 2 && 
+    trapeziusPartInsertionsCount >= 1 &&
+    activeTrapeziusPart !== 'ascendens';
 
   // Desktop weergavemodus: 'both' is verplicht de standaard op desktop!
   const [viewLayout, setViewLayout] = useState<ViewLayoutMode>('both');
@@ -1720,19 +1725,8 @@ export const QuizView: React.FC = () => {
             />
           </div>
 
-          {/* Rechterzijde: Controleer knop */}
-          <div className="flex items-center justify-end flex-1 min-w-0">
-            {!isEvaluated && canEvaluateManual && (
-              <button
-                type="button"
-                onClick={() => evaluateAttempt(userOrigins, userInsertions)}
-                className="py-1 px-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-xs transition flex items-center gap-1.5"
-              >
-                <CheckCircle2 className="w-4 h-4" />
-                <span>Controleer</span>
-              </button>
-            )}
-          </div>
+          {/* Rechterzijde: flex spacer zodat ViewToggle gecentreerd blijft */}
+          <div className="flex-1 min-w-0" />
         </div>
 
         {/* Skelet Container met SVG Overlay (vaste stabiele hoogte, beweegt NOOIT naar beneden) */}
@@ -1743,12 +1737,18 @@ export const QuizView: React.FC = () => {
               <div className="flex items-center gap-1.5">
                 <button
                   type="button"
-                  onClick={() => setActiveQuizTool('origin')}
+                  onClick={() => {
+                    if (shouldSubtlyHighlightOrigin) {
+                      if (activeTrapeziusPart === 'descendens') setActiveTrapeziusPart('transversa');
+                      else if (activeTrapeziusPart === 'transversa') setActiveTrapeziusPart('ascendens');
+                    }
+                    setActiveQuizTool('origin');
+                  }}
                   className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-all ${
                     activeQuizTool === 'origin'
                       ? 'bg-blue-600 text-white border-blue-600 shadow-xs ring-2 ring-blue-400'
                       : shouldSubtlyHighlightOrigin
-                      ? 'bg-blue-50 text-blue-900 border-blue-400 ring-2 ring-blue-400/80 shadow-xs'
+                      ? 'bg-blue-100 text-blue-950 border-2 border-blue-500 ring-4 ring-blue-400/80 shadow-md animate-hint-bounce'
                       : 'bg-white text-blue-800 border-blue-200 hover:bg-blue-50'
                   }`}
                 >
@@ -1763,7 +1763,7 @@ export const QuizView: React.FC = () => {
                     activeQuizTool === 'insertion'
                       ? 'bg-orange-600 text-white border-orange-600 shadow-xs ring-2 ring-orange-400'
                       : shouldSubtlyHighlightInsertion
-                      ? 'bg-orange-50 text-orange-900 border-orange-400 ring-2 ring-orange-400/80 shadow-xs'
+                      ? 'bg-orange-100 text-orange-950 border-2 border-orange-500 ring-4 ring-orange-400/80 shadow-md animate-hint-bounce'
                       : 'bg-white text-orange-800 border-orange-200 hover:bg-orange-50'
                   } ${isScalingInsertion ? 'animate-subtle-scale' : ''}`}
                 >
@@ -1819,7 +1819,7 @@ export const QuizView: React.FC = () => {
                           isActive
                             ? 'bg-blue-600 text-white shadow-xs'
                             : isNextSuggested
-                            ? 'bg-blue-50 text-blue-900 border border-blue-400 ring-2 ring-blue-400/80 shadow-xs'
+                            ? 'bg-blue-100 text-blue-950 border-2 border-blue-500 ring-4 ring-blue-400/80 shadow-md animate-hint-bounce'
                             : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                         }`}
                       >
@@ -2398,7 +2398,7 @@ export const QuizView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => evaluateAttempt(userOrigins, userInsertions)}
-                className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition flex items-center justify-center gap-2"
+                className={`w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition flex items-center justify-center gap-2 ${currentQuestion?.muscle?.id === 'trapezius' && activeTrapeziusPart === 'ascendens' && shouldSubtlyHighlightNextPart ? 'ring-4 ring-emerald-400 shadow-lg animate-hint-bounce font-black' : ''}`}
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Controleer antwoord</span>

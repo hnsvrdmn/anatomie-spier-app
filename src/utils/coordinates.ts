@@ -766,16 +766,19 @@ function getPartPrefix(name?: string): string | null {
   if (!name) return null;
   const nameLower = name.toLowerCase();
   const prefixes = [
-    'pars descendens',
-    'pars transversa',
-    'pars ascendens',
+    'descendens',
+    'transversa',
+    'ascendens',
+    'clavicularis',
+    'sternocostalis',
+    'abdominalis',
     'caput longum',
     'caput breve',
     'caput mediale',
     'caput laterale',
   ];
   for (const p of prefixes) {
-    if (nameLower.startsWith(p) || nameLower.includes(p)) {
+    if (nameLower.includes(p)) {
       return p;
     }
   }
@@ -1043,27 +1046,27 @@ export function isTrapeziusPointAccurate(
 ): boolean {
   if (type === 'origin') {
     // Origo's liggen dorsaal mediaal op de wervelkolom (x ≈ 0.50)
-    const isMidline = Math.abs(pt.x - 0.50) <= 0.06;
+    const isMidline = Math.abs(pt.x - 0.50) <= 0.085;
     if (!isMidline) return false;
-    if (part === 'descendens') return pt.y >= 0.08 && pt.y <= 0.18;
-    if (part === 'transversa') return pt.y >= 0.145 && pt.y <= 0.235;
-    if (part === 'ascendens') return pt.y >= 0.195 && pt.y <= 0.365;
+    if (part === 'descendens') return pt.y >= 0.06 && pt.y <= 0.19;
+    if (part === 'transversa') return pt.y >= 0.13 && pt.y <= 0.25;
+    if (part === 'ascendens') return pt.y >= 0.185 && pt.y <= 0.39;
     return false;
   } else {
     // Insertie ligt lateraal op clavicula, acromion of spina scapulae (links of rechts)
     if (part === 'descendens') {
-      const isLeft = Math.abs(pt.x - 0.31) <= 0.065 && Math.abs(pt.y - 0.20) <= 0.045;
-      const isRight = Math.abs(pt.x - 0.69) <= 0.065 && Math.abs(pt.y - 0.20) <= 0.045;
+      const isLeft = Math.hypot((pt.x - 0.31) * SKELETON_ASPECT_RATIO, pt.y - 0.20) <= 0.09;
+      const isRight = Math.hypot((pt.x - 0.69) * SKELETON_ASPECT_RATIO, pt.y - 0.20) <= 0.09;
       return isLeft || isRight;
     }
     if (part === 'transversa') {
-      const isLeft = Math.abs(pt.x - 0.275) <= 0.065 && Math.abs(pt.y - 0.205) <= 0.045;
-      const isRight = Math.abs(pt.x - 0.725) <= 0.065 && Math.abs(pt.y - 0.205) <= 0.045;
+      const isLeft = Math.hypot((pt.x - 0.275) * SKELETON_ASPECT_RATIO, pt.y - 0.205) <= 0.09;
+      const isRight = Math.hypot((pt.x - 0.725) * SKELETON_ASPECT_RATIO, pt.y - 0.205) <= 0.09;
       return isLeft || isRight;
     }
     if (part === 'ascendens') {
-      const isLeft = Math.abs(pt.x - 0.36) <= 0.065 && Math.abs(pt.y - 0.21) <= 0.045;
-      const isRight = Math.abs(pt.x - 0.64) <= 0.065 && Math.abs(pt.y - 0.21) <= 0.045;
+      const isLeft = Math.hypot((pt.x - 0.36) * SKELETON_ASPECT_RATIO, pt.y - 0.21) <= 0.09;
+      const isRight = Math.hypot((pt.x - 0.64) * SKELETON_ASPECT_RATIO, pt.y - 0.21) <= 0.09;
       return isLeft || isRight;
     }
     return false;

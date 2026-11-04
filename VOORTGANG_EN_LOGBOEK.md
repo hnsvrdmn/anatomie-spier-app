@@ -2730,3 +2730,30 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
      - Touchscreen-instructies uitgebreid met duidelijke uitleg over het inklappen (omlaag vegen over de balk) en uitklappen (omhoog vegen of aantikken) van het onderste bedieningspaneel, en het nauwkeurig verslepen van geplaatste punten.
 - **Verificatie & Deployment:**
   - `npm run build` foutloos uitgevoerd (`✓ built in 4.17s`).
+
+
+---
+
+## 87. Bovenbalk Controleer Knop Verwijderd, Trapezius Lijnen Per Pars Hersteld & Duidelijke Spring-animatie Knoppen (04-11-2026 21:55)
+- **Status:** Succesvol geïmplementeerd, geverifieerd via `npm run build` en live getest.
+- **Aanleiding & Gebruikerswensen:**
+  1. *Bovenbalk Controleer knop verwijderen:* De knop naast de ventraal/dorsaal schakelaar stond er nog steeds bij multi-point spieren. Deze moest volledig weg zodat de aanzicht-switch gecentreerd staat en de controleerknop uitsluitend in het actiepaneel staat.
+  2. *Trapezius knoppen highlighten / opspringen:* De gebruiker zag de knop niet oplichten of opspringen als hint bij het correct invullen van origo of insertie. Er moet een duidelijke, voelbare hint zijn die een beetje opspringt (`animate-hint-bounce`).
+  3. *Verdwenen verbindingslijnen bij Trapezius herstellen:* Alle verbindingslijnen bij Trapezius waren verdwenen. Ze moeten per pars verbinden (alle origo's van descendens naar insertie descendens, idem voor transversa en ascendens).
+- **Doorgevoerde Aanpassingen:**
+  1. *Verwijdering Bovenbalk Controleer Knop ([QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx)):*
+     - De conditional `<button ...>Controleer</button>` in de bovenbalk naast `ViewToggle` compleet verwijderd en vervangen door een gebalanceerde `flex-1 min-w-0` spacer. De 'Controleer' knop staat nu uitsluitend in het zijpaneel (desktop) of in de uitschuifbare actiebalk (mobiel).
+  2. *Herstel Trapezius Verbindingslijnen ([coordinates.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/utils/coordinates.ts)):*
+     - Oorzaak achterhaald: `getPartPrefix` retourneerde vroeger `'pars descendens'` terwijl de filterlus vergeleek met `'descendens'`, waardoor alle Trapezius-punten als leeg werden geclassificeerd en `getMuscleConnections` een lege array teruggaf.
+     - `getPartPrefix` geoptimaliseerd zodat het direct de genormaliseerde functienaam (`descendens`, `transversa`, `ascendens`) retourneert.
+     - Lijnen verbinden nu direct en uitsluitend binnen dezelfde pars (alle origo's van descendens naar de insertie van descendens, transversa naar transversa, ascendens naar ascendens).
+  3. *Duidelijke Spring- en Hint-animatie Knoppen ([index.css](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/index.css), [QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx), [MobileQuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/MobileQuizView.tsx)):*
+     - `@keyframes hint-bounce` en `.animate-hint-bounce` toegevoegd aan `index.css`.
+     - Validatietoleranties in `isTrapeziusPointAccurate` geoptimaliseerd naar realistische menselijke klikmarges op het skelet.
+     - **Workflow hints:**
+       - Na minimaal 2 *juiste* origo's van de actieve pars: de **Insertie** knop springt op (`animate-hint-bounce`) met een oranje ring en opvallende gloed.
+       - Na de *juiste* insertie van die pars: de **Origo** knop én de **volgende Pars knop** springen op (`animate-hint-bounce`) met een blauwe ring.
+       - Tikken op de opspringende Origo knop óf op de volgende Pars knop schakelt automatisch door naar de volgende pars en zet de tekentool direct op Origo.
+       - Zodra de laatste pars (ascendens) klaar is, springt de **Controleer** knop op.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos uitgevoerd (`✓ built in 4.58s`).

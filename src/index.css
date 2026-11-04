@@ -41,6 +41,23 @@
   animation: subtle-scale-once 0.65s ease-in-out;
 }
 
+/* Subtiele hint spring-animatie voor knoppen (Origo, Insertie, Partes) */
+@keyframes hint-bounce {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  30% {
+    transform: translateY(-4px) scale(1.08);
+  }
+  60% {
+    transform: translateY(0) scale(1.03);
+  }
+}
+
+.animate-hint-bounce {
+  animation: hint-bounce 1s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+}
+
 /* Voorkom ongewenst horizontaal/verticaal scrollen bij slepen op mobiel/touch */
 .touch-canvas {
   touch-action: none;
