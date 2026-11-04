@@ -267,9 +267,31 @@ export const QuizView: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleUndoLastPoint]);
 
-  // Subtiele eenmalige hop-animatie voor Trapezius knoppen bij volledige afronding van een pars (origo >= 2 EN insertie >= 1)
+  // Subtiele eenmalige hop-animatie voor knoppen bij afronding van origo's of een pars
   const [hoppingButton, setHoppingButton] = useState<string | null>(null);
   const completedPartesRef = useRef<{ [k in 'descendens' | 'transversa' | 'ascendens']?: boolean }>({});
+  const hasPromptedInsertionRef = useRef<{ [k: string]: boolean }>({});
+
+  const hasPartOrigins = useCallback((part: 'descendens' | 'transversa' | 'ascendens', origins: Point2D[]) => {
+    const partOrigins = origins.filter(p => 
+      (p.name || '').toLowerCase().includes(part) &&
+      isTrapeziusPointAccurate(p, 'origin', part)
+    );
+    if (partOrigins.length < 2) return false;
+    const ys = partOrigins.map(p => p.y);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+    const span = maxY - minY;
+
+    if (part === 'descendens') {
+      return partOrigins.some(p => p.y <= 0.135) && partOrigins.some(p => p.y >= 0.145) && span >= 0.025;
+    } else if (part === 'transversa') {
+      return partOrigins.some(p => p.y <= 0.188) && partOrigins.some(p => p.y >= 0.198) && span >= 0.018;
+    } else if (part === 'ascendens') {
+      return partOrigins.some(p => p.y <= 0.245) && partOrigins.some(p => p.y >= 0.295) && span >= 0.045;
+    }
+    return false;
+  }, []);
 
   const isPartComplete = useCallback((part: 'descendens' | 'transversa' | 'ascendens', origins: Point2D[], insertions: Point2D[]) => {
     const partOrigins = origins.filter(p => 
@@ -321,6 +343,32 @@ export const QuizView: React.FC = () => {
       return;
     }
 
+    if (userOrigins.length === 0 && userInsertions.length === 0) {
+      completedPartesRef.current = {};
+      hasPromptedInsertionRef.current = {};
+      setHoppingButton(null);
+      return;
+    }
+
+    const currentPartInsertions = userInsertions.filter(p => 
+      (p.name || '').toLowerCase().includes(activeTrapeziusPart) &&
+      isTrapeziusPointAccurate(p, 'insertion', activeTrapeziusPart)
+    );
+
+    // 1. Zodra minimale origo's voor de actieve pars zijn geplaatst, licht de Insertie knop op
+    const originsComplete = hasPartOrigins(activeTrapeziusPart, userOrigins);
+    const promptedForThisPart = hasPromptedInsertionRef.current[activeTrapeziusPart];
+
+    if (originsComplete && currentPartInsertions.length === 0 && !promptedForThisPart) {
+      hasPromptedInsertionRef.current[activeTrapeziusPart] = true;
+      setHoppingButton('insertion');
+      const timer = setTimeout(() => {
+        setHoppingButton(null);
+      }, 1200);
+      return () => clearTimeout(timer);
+    }
+
+    // 2. Zodra de actieve pars geheel compleet is (origo EN insertie), licht de volgende pars knop op
     const isCompleteNow = isPartComplete(activeTrapeziusPart, userOrigins, userInsertions);
     const wasComplete = completedPartesRef.current[activeTrapeziusPart];
 
@@ -340,9 +388,10 @@ export const QuizView: React.FC = () => {
       }
     } else if (wasComplete && !isCompleteNow) {
       completedPartesRef.current[activeTrapeziusPart] = false;
+      hasPromptedInsertionRef.current[activeTrapeziusPart] = false;
       setHoppingButton(null);
     }
-  }, [currentQuestion?.muscle?.id, isEvaluated, activeTrapeziusPart, userOrigins, userInsertions, isPartComplete]);
+  }, [currentQuestion?.muscle?.id, isEvaluated, activeTrapeziusPart, userOrigins, userInsertions, hasPartOrigins, isPartComplete]);
 
   // Desktop weergavemodus: 'both' is verplicht de standaard op desktop!
   const [viewLayout, setViewLayout] = useState<ViewLayoutMode>('both');
@@ -1842,6 +1891,13 @@ export const QuizView: React.FC = () => {
 
         {/* Skelet Container met SVG Overlay (vaste stabiele hoogte, beweegt NOOIT naar beneden) */}
         <div className="flex-1 min-h-0 w-full h-full flex items-center justify-center py-1 overflow-hidden relative">
+          {expectedCounts.isMultiSpan && !isEvaluated && (
+            <div className="absolute top-2.5 z-20 pointer-events-none px-3.5 py-1.5 bg-amber-50/95 backdrop-blur-xs border border-amber-200/90 rounded-full text-xs font-semibold text-amber-900 shadow-xs flex items-center gap-1.5">
+              <span>💡</span>
+              <span>Bij meerdere aanhechtingen (bijv. wervelkolom): plaats minimaal de uiterste punten (hoogste en laagste).</span>
+            </div>
+          )}
+
           {/* Origo & Insertie knoppen links naast het skelet */}
           {!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'landmark' && type !== 'open_question' && type !== 'bone' && (
             <div className="absolute left-3 sm:left-5 top-3 sm:top-5 z-20 flex flex-col gap-2">
@@ -1850,7 +1906,7 @@ export const QuizView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActiveQuizTool('origin')}
-                  className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-all ${
+                  className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-colors ${
                     activeQuizTool === 'origin'
                       ? 'bg-blue-600 text-white border-blue-600 shadow-xs ring-2 ring-blue-400'
                       : 'bg-white text-blue-800 border-blue-200 hover:bg-blue-50'
@@ -1863,9 +1919,11 @@ export const QuizView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActiveQuizTool('insertion')}
-                  className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-all ${
+                  className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-colors ${
                     activeQuizTool === 'insertion'
                       ? 'bg-orange-600 text-white border-orange-600 shadow-xs ring-2 ring-orange-400'
+                      : hoppingButton === 'insertion'
+                      ? 'bg-orange-100 text-orange-950 border-orange-400 ring-4 ring-orange-300 ring-offset-1 animate-subtle-hop'
                       : 'bg-white text-orange-800 border-orange-200 hover:bg-orange-50'
                   } ${isScalingInsertion ? 'animate-subtle-scale' : ''}`}
                 >
@@ -1917,9 +1975,11 @@ export const QuizView: React.FC = () => {
                             setActiveTrapeziusPart(partKey);
                             setActiveQuizTool('origin');
                           }}
-                          className={`py-1 px-2.5 rounded-lg text-xs font-bold transition-all ${
+                          className={`py-1 px-2.5 rounded-lg text-xs font-bold transition-colors ${
                             isActive
-                              ? 'bg-blue-600 text-white shadow-xs'
+                              ? isHopping
+                                ? 'bg-blue-600 text-white ring-4 ring-blue-300 ring-offset-1 animate-subtle-hop'
+                                : 'bg-blue-600 text-white shadow-xs'
                               : isHopping
                               ? 'bg-blue-100 text-blue-900 ring-2 ring-blue-500 shadow-sm animate-subtle-hop'
                               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
@@ -2448,11 +2508,6 @@ export const QuizView: React.FC = () => {
                 </div>
               )}
 
-              {type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'landmark' && type !== 'open_question' && type !== 'bone' && type !== 'joints' && expectedCounts.isMultiSpan && (
-                <p className="text-xs text-amber-800 bg-amber-50 p-2.5 rounded-xl border border-amber-200 mt-2 font-medium">
-                  💡 Bij meerdere aanhechtingen (bijv. wervelkolom): plaats minimaal de uiterste punten (hoogste en laagste).
-                </p>
-              )}
             </div>
 
             {/* DUIDELIJK ZICHTBARE TOGGLE: ORIGO / INSERTIE INTEKENEN (zonder overbodig label) */}
@@ -2462,7 +2517,7 @@ export const QuizView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setActiveQuizTool('origin')}
-                    className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 border transition-all ${
+                    className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 border transition-colors ${
                       activeQuizTool === 'origin'
                         ? 'bg-blue-600 text-white border-blue-600 shadow-xs ring-2 ring-blue-400'
                         : 'bg-blue-50/70 text-blue-800 border-blue-200 hover:bg-blue-100'
@@ -2475,9 +2530,11 @@ export const QuizView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setActiveQuizTool('insertion')}
-                    className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 border transition-all ${
+                    className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 border transition-colors ${
                       activeQuizTool === 'insertion'
                         ? 'bg-orange-600 text-white border-orange-600 shadow-xs ring-2 ring-orange-400'
+                        : hoppingButton === 'insertion'
+                        ? 'bg-orange-100 text-orange-950 border-orange-400 ring-4 ring-orange-300 ring-offset-1 animate-subtle-hop'
                         : 'bg-orange-50/70 text-orange-800 border-orange-200 hover:bg-orange-100'
                     } ${isScalingInsertion ? 'animate-subtle-scale' : ''}`}
                   >

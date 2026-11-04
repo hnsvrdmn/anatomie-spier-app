@@ -2913,3 +2913,34 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
        - **Mobiel:** bovenaan de uitschuiflade in `MobileStudyView.tsx`.
 - **Verificatie:**
   - `npm run build` foutloos uitgevoerd (`✓ built in 4.05s`).
+
+---
+
+## 94. Trapezius Lijnen per Pars, Coördinaten Sync, Multi-span Tip & Hop-Animatie (05-11-2026 00:01)
+- **Status:** Volledig geïmplementeerd, geverifieerd via `npm run build` en live getest.
+- **Aanleiding:** Gebruiker vroeg:
+  1. *"'Bij meerdere aanhechtingen (bijv. wervelkolom): plaats minimaal de uiterste punten (hoogste en laagste).' Plaats die bovenaan terug. Die in het detailblok mag weg."*
+  2. *"In de studie modus (en de andere tabs) moeten de lijnen van de verschillende pars goed lopen, net zoals ze moeten worden ingetekend, aanhechtingspunten verbinden per pars dus."*
+  3. *"Ik heb in de botstructuren bewerk deel de punten op de wervel iets aangepast. Wordt dit automatisch doorgevoerd naar de trapezium?"*
+  4. *"Nu heb je de vinkjes verwijdert, maar lijkt de hele animatie van de knop weer weg te zijn? Als ik het test zijn de..."*
+- **Aanpassingen:**
+  1. *Multi-span Hint Verplaatst ([QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx), [MobileQuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/MobileQuizView.tsx)):*
+     - De hint is verwijderd uit het rechter detailblok onder de vraag.
+     - De hint is als subtiele, niet-storende badge (`bg-amber-50/95`, afgeronde pil) bovenaan direct boven het skelet geplaatst op zowel Desktop als Mobiel (`top-2.5` op desktop, `top-12` op mobiel).
+  2. *Wervelcoördinaten Synchronisatie & Trapezius Lijnen ([muscles.json](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/muscles.json)):*
+     - Wervelaanpassingen in de botstructuren-editor werken in `boneStructures.ts` en worden niet automatisch overgenomen in `muscles.json`.
+     - De handmatig bijgewerkte coördinaten voor C7 (`y: 0.1703`) en Th12 (`y: 0.328`) zijn nu expliciet overgenomen in `muscles.json` voor zowel links als rechts.
+     - De aanhechtingen van de *m. trapezius* zijn exact gesplitst per pars:
+       - *Pars descendens:* 2 origo's (C1 en C6) -> insertie clavicula.
+       - *Pars transversa:* 2 origo's (C7 en Th3) -> insertie acromion.
+       - *Pars ascendens:* 2 origo's (Th3 en Th12) -> insertie spina scapulae.
+     - `musclePath: []` leeggemaakt zodat lijnen in studie- en quizmodus niet meer geforceerd krombuigen naar de scapula, maar zuiver en parallel per pars lopen.
+  3. *Reparatie Hop-Animaties & Knoppen Feedback:*
+     - Diagnose: eerdere refs (`completedPartesRef`) werden niet gereset bij het wissen van punten, waardoor de animatie na één keer testen geblokkeerd bleef; tevens interfered `transition-all` met `@keyframes subtle-hop`.
+     - `hasPartOrigins` toegevoegd: zodra de origo's voor de actieve pars correct zijn geplaatst, springt de **Insertie**-knop subtiel op met een oranje focusring (`hoppingButton === 'insertion'`).
+     - Zodra ook de insertie is geplaatst, springt de volgende pars-knop (of de Controleer-knop) op met een blauwe/groene focusring.
+     - Bij het wissen van punten (desktop en mobiel prullenbakknop) worden alle status-refs gereset, waardoor opnieuw proberen direct werkt.
+     - `transition-all` vervangen door `transition-colors` op de knoppen zodat de CSS-hop transformatie vlekkeloos en ongehinderd animeert.
+- **Verificatie:**
+  - `npm run build` foutloos uitgevoerd (`✓ built in 4.41s`).
+  - Lijnenstructuur in studiemodus getest: 6 lijnen, strikt 2-op-1 per pars zonder kriskras-overlapping.

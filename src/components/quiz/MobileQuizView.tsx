@@ -70,7 +70,7 @@ interface MobileQuizViewProps {
   evaluateAttempt: (origins: Point2D[], insertions: Point2D[]) => void;
   handleNextQuestion: () => void;
   canEvaluateManual: boolean;
-  expectedCounts?: { origins: number; insertions: number; total: number };
+  expectedCounts?: { origins: number; insertions: number; total: number; isMultiSpan?: boolean };
   practiceMode: 'joint' | 'free';
   setPracticeMode?: (m: 'joint' | 'free') => void;
   selectedJointId: string;
@@ -168,6 +168,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
   setRequireAllVertebrae,
   onUndoLastPoint,
   hoppingButton,
+  expectedCounts,
 }) => {
   const { quizOpenOptionsTrigger } = useMuscles();
 
@@ -289,6 +290,14 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
           <RotateCcw className="w-4 h-4 text-slate-700" />
         </button>
 
+        {/* Subtiele tip voor spieren met meerdere wervelaanhechtingen */}
+        {expectedCounts?.isMultiSpan && !isEvaluated && (
+          <div className="absolute top-12 left-2.5 z-20 pointer-events-none px-2.5 py-1 bg-amber-50/95 backdrop-blur-xs border border-amber-200/90 rounded-lg text-[10px] leading-tight font-semibold text-amber-900 shadow-xs flex items-center gap-1 max-w-[calc(100vw-5rem)]">
+            <span className="shrink-0">💡</span>
+            <span>Bij meerdere aanhechtingen: plaats uiterste punten (hoogste en laagste).</span>
+          </div>
+        )}
+
         {/* Compacte O (Origo, blauw) en I (Insertie, rood) knoppen + Trapezius partes over het skelet */}
         {isDrawingType && !isEvaluated && (
           <div className="absolute top-2.5 left-2.5 z-30 flex flex-wrap items-center gap-1.5 pointer-events-auto max-w-[calc(100vw-4.5rem)]">
@@ -298,7 +307,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                 onClick={() => setActiveQuizTool('origin')}
                 title="Plaats Origo (blauw)"
                 aria-label="Origo"
-                className={`w-7 h-7 rounded-lg text-xs font-black transition-all flex items-center justify-center ${
+                className={`w-7 h-7 rounded-lg text-xs font-black transition-colors flex items-center justify-center ${
                   activeQuizTool === 'origin'
                     ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-400'
                     : 'text-blue-400 hover:bg-slate-800'
@@ -311,9 +320,11 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                 onClick={() => setActiveQuizTool('insertion')}
                 title="Plaats Insertie (oranje)"
                 aria-label="Insertie"
-                className={`w-7 h-7 rounded-lg text-xs font-black transition-all flex items-center justify-center ${
+                className={`w-7 h-7 rounded-lg text-xs font-black transition-colors flex items-center justify-center ${
                   activeQuizTool === 'insertion'
                     ? 'bg-orange-600 text-white shadow-sm ring-2 ring-orange-400'
+                    : hoppingButton === 'insertion'
+                    ? 'bg-orange-500/40 text-white ring-4 ring-orange-400 ring-offset-1 animate-subtle-hop shadow-md'
                     : 'text-orange-400 hover:bg-slate-800'
                 }`}
               >
@@ -341,9 +352,11 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                         setActiveTrapeziusPart(partKey);
                         setActiveQuizTool('origin');
                       }}
-                      className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                      className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-colors ${
                         isActive
-                          ? 'bg-blue-600 text-white shadow-xs'
+                          ? isHopping
+                            ? 'bg-blue-600 text-white ring-4 ring-blue-300 ring-offset-1 animate-subtle-hop shadow-sm'
+                            : 'bg-blue-600 text-white shadow-xs'
                           : isHopping
                           ? 'bg-blue-600/40 text-white ring-2 ring-blue-400 shadow-md animate-subtle-hop'
                           : 'text-slate-300 hover:text-white hover:bg-slate-800'
