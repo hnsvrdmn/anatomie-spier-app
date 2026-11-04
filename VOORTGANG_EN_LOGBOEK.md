@@ -2786,3 +2786,18 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
      - `isTrapeziusPointAccurate` toleranties verder geoptimaliseerd voor touch en muis (midline marge 0.095, insertie afstandstolerantie tot 0.105), zodat legitieme aanhechtingspunten direct worden herkend.
 - **Verificatie & Deployment:**
   - `npm run build` foutloos uitgevoerd (`✓ built in 4.55s`).
+
+
+---
+
+## 89. M. Trapezius als Eerste Spier in Categorie Cingulum Pectorale (04-11-2026 22:23)
+- **Status:** Succesvol geïmplementeerd, geverifieerd via `npm run build` en live getest.
+- **Aanleiding & Gebruikerswensen:**
+  - Wanneer de gebruiker onder oefenmodus de categorie "Cingulum Pectorale" (schoudergordel) aanklikt, moet direct de `m. trapezius` als eerste spier (vraag 1 van 3) worden geselecteerd in plaats van de latissimus dorsi.
+- **Doorgevoerde Aanpassingen:**
+  1. *Volgorde Schoudergordelspieren ([jointCategories.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/jointCategories.ts)):*
+     - `muscleIds` binnen de categorie `cingulum` aangepast zodat `'trapezius'` vooraan staat (`['trapezius', 'latissimus_dorsi', 'rhomboidei']`).
+  2. *Shuffle-reset bij specifieke gewrichtskeuze ([QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx)):*
+     - Zowel in de desktop-selector als de mobiele selector wordt bij het kiezen van een specifiek gewricht (zoals cingulum) `isShuffled` direct op `false` gezet (indien men eerder 'all' had geselecteerd), zodat de vaste curriculumvolgorde altijd gerespecteerd wordt met trapezius als startspier.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos uitgevoerd (`✓ built in 4.83s`).

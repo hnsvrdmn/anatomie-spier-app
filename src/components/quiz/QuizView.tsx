@@ -1686,6 +1686,7 @@ export const QuizView: React.FC = () => {
         setSelectedJointId={(val) => {
           setSelectedJointId(val);
           if (val === 'all') setIsShuffled(true);
+          else setIsShuffled(false);
           setShuffleCounter(c => c + 1);
           setJointMuscleIndex(0);
           setJointSessionFinished(false);
@@ -1999,7 +2000,10 @@ export const QuizView: React.FC = () => {
               <select
                 value={selectedJointId}
                 onChange={(e) => {
-                  setSelectedJointId(e.target.value);
+                  const val = e.target.value;
+                  setSelectedJointId(val);
+                  if (val === 'all') setIsShuffled(true);
+                  else setIsShuffled(false);
                   setShuffleCounter((prev) => prev + 1);
                   setJointMuscleIndex(0);
                   setJointSessionFinished(false);

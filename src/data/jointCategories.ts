@@ -82,8 +82,8 @@ export const JOINT_CATEGORIES: JointCategory[] = [
     pageInfo: 'Schoudergordel',
     title: 'CINGULUM PECTORALE (Schoudergordel)',
     muscleIds: [
-      'latissimus_dorsi',
       'trapezius',
+      'latissimus_dorsi',
       'rhomboidei'
     ]
   },
