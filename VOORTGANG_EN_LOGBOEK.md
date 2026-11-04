@@ -2801,3 +2801,30 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
      - Zowel in de desktop-selector als de mobiele selector wordt bij het kiezen van een specifiek gewricht (zoals cingulum) `isShuffled` direct op `false` gezet (indien men eerder 'all' had geselecteerd), zodat de vaste curriculumvolgorde altijd gerespecteerd wordt met trapezius als startspier.
 - **Verificatie & Deployment:**
   - `npm run build` foutloos uitgevoerd (`✓ built in 4.83s`).
+
+---
+
+## 90. Wervelrij-Validatie (Eerste & Laatste Wervel Verplicht) & Gematigde Lijn-Desaturatie Trapezius (04-11-2026 22:45)
+- **Status:** Succesvol geïmplementeerd, geverifieerd via `npm run build` en live getest.
+- **Aanleiding & Gebruikerswensen:**
+  1. *Strikte validatie wervelrijen:* Bij spieren met een wervelrij (zoals de afzonderlijke partes van de m. trapezius) mocht het niet mogelijk zijn om willekeurige tussenliggende wervels (bijv. C6 en C7 bij pars descendens) aan te klikken en alsnog goedkeuring te krijgen. Er moeten **altijd minimaal de eerste én de laatste wervel** uit de reeks worden aangeklikt (meer mag, minder niet).
+  2. *Gematigde lijn-desaturatie in plaats van compleet grijs:* De verbindingslijnen en markers van niet-actieve partes moeten **een beetje** desatureren (zachte pastel blauwe en pastel oranje tinten met behoud van herkenbaarheid), en niet compleet grijs/slate worden.
+- **Doorgevoerde Aanpassingen:**
+  1. *SkeletonViewer.tsx ([SkeletonViewer.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/SkeletonViewer.tsx)):*
+     - Lijnkleuren van niet-geselecteerde partes gewijzigd van dof grijs (`#94a3b8` / `#cbd5e1`) naar zacht pastel blauw (`#6fa1cf`, origo) en zacht pastel oranje (`#df9570`, insertie).
+     - Lijn- en contour-opacity verhoogd naar `0.60` (was 0.35), zodat de lijnen subtiel en rustig ogen zonder flets of doodgrijs te worden.
+     - Puntvulling en buitencontour aangepast naar `#6fa1cf` / `#df9570` met opacity `0.70`.
+  2. *QuizView.tsx ([QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx)):*
+     - `isPartComplete` controleert nu strikt of de eerste én laatste wervel van de actieve pars aanwezig zijn:
+       - *Pars descendens:* `p.y <= 0.125` (C1 / schedelbasis) én `p.y >= 0.145` (C6/C7).
+       - *Pars transversa:* `p.y <= 0.180` (C7) én `p.y >= 0.195` (T3).
+       - *Pars ascendens:* `p.y <= 0.230` (T3) én `p.y >= 0.295` (T12).
+       - Bij actieve toggle `requireAllVertebrae`: minimaal respectievelijk 5, 3 en 8 wervels vereist.
+     - `evaluateAttempt` geeft nu `requireAllVertebrae` netjes door aan `evaluatePointSet` voor zowel origo als insertie.
+     - Bij falen van de wervelrij-conditie toont `QuizView` via `showToast(bestVertebraeTip, 'info')` direct duidelijke feedback aan de student.
+  3. *coordinates.ts ([coordinates.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/utils/coordinates.ts)):*
+     - In wervelrij-validatie worden gebruikerspunten gefilterd op de actieve parsnaam zodat punten van andere partes niet per ongeluk als begin- of eindpunt meetellen.
+     - Eindpunttolerantie `tolEnd` dynamisch afgestemd op de werkelijke spanwijdte: `Math.max(0.016, Math.min(0.022, span * 0.28))`. Hierdoor kan een tussenliggende wervel (zoals C6) nooit meer het beginpunt (C1) valideren.
+     - Bij het niet raken van de eerste of laatste wervel wordt de zone uit `satisfiedZones` verwijderd en slaagt de poging niet.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos uitgevoerd (`✓ built in 4.29s`). Tests bevestigen dat C6+C7 afgekeurd wordt en C1+C6 goedgekeurd wordt.

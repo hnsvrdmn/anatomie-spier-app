@@ -272,16 +272,44 @@ export const QuizView: React.FC = () => {
   const completedPartesRef = useRef<{ [k in 'descendens' | 'transversa' | 'ascendens']?: boolean }>({});
 
   const isPartComplete = useCallback((part: 'descendens' | 'transversa' | 'ascendens', origins: Point2D[], insertions: Point2D[]) => {
-    const oCount = origins.filter(p => 
+    const partOrigins = origins.filter(p => 
       p.name?.toLowerCase().includes(part) &&
       isTrapeziusPointAccurate(p, 'origin', part)
-    ).length;
+    );
     const iCount = insertions.filter(p => 
       p.name?.toLowerCase().includes(part) &&
       isTrapeziusPointAccurate(p, 'insertion', part)
     ).length;
-    return oCount >= 2 && iCount >= 1;
-  }, []);
+
+    if (iCount < 1) return false;
+
+    // Vertebrae validatie per pars: minimaal eerste én laatste wervel in het bereik (meer mag, minder niet)
+    let hasFirst = false;
+    let hasLast = false;
+    let minCount = 2;
+
+    if (part === 'descendens') {
+      // Eerste: dorsaal onderzijde schedel / C1 (y <= 0.125)
+      // Laatste: C6/C7 (y >= 0.145)
+      hasFirst = partOrigins.some(p => p.y <= 0.125);
+      hasLast = partOrigins.some(p => p.y >= 0.145);
+      minCount = requireAllVertebrae ? 5 : 2;
+    } else if (part === 'transversa') {
+      // Eerste: C7 (y <= 0.180)
+      // Laatste: T3 (y >= 0.195)
+      hasFirst = partOrigins.some(p => p.y <= 0.180);
+      hasLast = partOrigins.some(p => p.y >= 0.195);
+      minCount = requireAllVertebrae ? 3 : 2;
+    } else if (part === 'ascendens') {
+      // Eerste: T3 (y <= 0.230)
+      // Laatste: T12 (y >= 0.295)
+      hasFirst = partOrigins.some(p => p.y <= 0.230);
+      hasLast = partOrigins.some(p => p.y >= 0.295);
+      minCount = requireAllVertebrae ? 8 : 2;
+    }
+
+    return hasFirst && hasLast && partOrigins.length >= minCount;
+  }, [requireAllVertebrae]);
 
   useEffect(() => {
     if (currentQuestion?.muscle?.id !== 'trapezius' || isEvaluated) {
@@ -1098,6 +1126,7 @@ export const QuizView: React.FC = () => {
     let minDistanceSum = Infinity;
     let bestPassed = false;
     let bestRequired = 1;
+    let bestVertebraeTip: string | undefined;
 
     for (const testSide of sidesToTest) {
       const vis: MuscleVisualData = muscle.visuals[testSide] || { origins: [], insertions: [], musclePath: [], attachmentLines: [] };
@@ -1108,6 +1137,7 @@ export const QuizView: React.FC = () => {
       let sideRequired = 0;
       let sideCorrect = 0;
       let sidePassed = false;
+      let sideVertebraeTip: string | undefined;
 
       if (muscle.id === 'erector_spinae' && (currentQuestion.type === 'origins' || currentQuestion.type === 'insertions')) {
         // M. erector spinae: wervelkolomlijn evaluatie voor afzonderlijke origo/insertie vraag
@@ -1148,6 +1178,7 @@ export const QuizView: React.FC = () => {
         sideRequired = res.requiredCount;
         sideCorrect = res.correctCount;
         sidePassed = res.isPassed;
+        sideVertebraeTip = res.missingVertebraeTip;
       } else if (currentQuestion.type === 'insertions' || (currentQuestion.type === 'landmark' && currentQuestion.landmarkType === 'insertion')) {
         let targetPts = targetInsertions;
         let targetLines = vis.attachmentLines || [];
@@ -1167,6 +1198,7 @@ export const QuizView: React.FC = () => {
         sideRequired = res.requiredCount;
         sideCorrect = res.correctCount;
         sidePassed = res.isPassed;
+        sideVertebraeTip = res.missingVertebraeTip;
       } else if (muscle.id === 'erector_spinae') {
         // M. erector spinae (joint / full vraag):
         // De gehele lijn langs de wervelkolom bestaat uit aaneengeschakelde origo's en inserties.
@@ -1204,12 +1236,13 @@ export const QuizView: React.FC = () => {
         sidePassed = resOrig.isPassed && resIns.isPassed;
       } else {
         // 'full' of 'joint': match origo's en inserties afzonderlijk tegen hun doelen (inclusief aanhechtingslijnen/zones)
-        const resOrig = evaluatePointSet(validOrigins, targetOrigins, 'origin', toleranceValue, vis.attachmentLines || []);
-        const resIns = evaluatePointSet(validInsertions, targetInsertions, 'insertion', toleranceValue, vis.attachmentLines || []);
+        const resOrig = evaluatePointSet(validOrigins, targetOrigins, 'origin', toleranceValue, vis.attachmentLines || [], requireAllVertebrae);
+        const resIns = evaluatePointSet(validInsertions, targetInsertions, 'insertion', toleranceValue, vis.attachmentLines || [], requireAllVertebrae);
         sideMatches = [...resOrig.matches, ...resIns.matches];
         sideRequired = resOrig.requiredCount + resIns.requiredCount;
         sideCorrect = resOrig.correctCount + resIns.correctCount;
         sidePassed = resOrig.isPassed && resIns.isPassed;
+        sideVertebraeTip = resOrig.missingVertebraeTip || resIns.missingVertebraeTip;
       }
 
       // Voeg eventuele matches op het verkeerde aanzicht toe en blokkeer goedkeuring
@@ -1228,6 +1261,7 @@ export const QuizView: React.FC = () => {
         bestMatches = sideMatches;
         bestRequired = sideRequired;
         bestPassed = sidePassed;
+        bestVertebraeTip = sideVertebraeTip;
       }
     }
 
@@ -1246,6 +1280,9 @@ export const QuizView: React.FC = () => {
 
     if (!isSuccess && currentQuestion) {
       registerIncorrectQuestion(currentQuestion);
+      if (bestVertebraeTip) {
+        showToast(bestVertebraeTip, 'info');
+      }
     }
 
     if (isSuccess) {

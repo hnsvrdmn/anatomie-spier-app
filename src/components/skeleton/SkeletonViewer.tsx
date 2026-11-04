@@ -668,9 +668,9 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                   // Niet geëvalueerd: gradiënt van blauw (#1993f2, origo) naar oranje (#ea580c, insertie)
                   // Geëvalueerd: per punt groen (bij correct/close) of rood (bij incorrect), wat leidt tot:
                   // groen-groen, groen-rood, rood-groen of rood-rood
-                  // Niet-actieve trapezius pars: subtiel gedesatureerd grijs-blauw/oranje
-                  let origColor = isLineFromOtherPart && !isEval ? '#94a3b8' : '#1993f2';
-                  let insColor = isLineFromOtherPart && !isEval ? '#cbd5e1' : '#ea580c';
+                  // Niet-actieve trapezius pars: subtiel gedesatureerd (zacht pastel blauw en pastel oranje, niet compleet grijs)
+                  let origColor = isLineFromOtherPart && !isEval ? '#6fa1cf' : '#1993f2';
+                  let insColor = isLineFromOtherPart && !isEval ? '#df9570' : '#ea580c';
 
                   if (isEval) {
                     const originMatches = quizMatches?.filter(m => m.targetType === 'origin' || !m.targetType) || [];
@@ -728,7 +728,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                         stroke="#ffffff"
                         strokeWidth={Math.max(2.5, ((isEval ? 8 : 8.5) + 3) / zoom)}
                         strokeLinecap="round"
-                        opacity={isLineFromOtherPart && !isEval ? 0.35 : 0.95}
+                        opacity={isLineFromOtherPart && !isEval ? 0.60 : 0.95}
                       />
                       <line
                         x1={orig.x * SVG_WIDTH}
@@ -738,7 +738,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                         stroke={`url(#${gradId})`}
                         strokeWidth={Math.max(1, (isEval ? 8 : 8.5) / zoom)}
                         strokeLinecap="round"
-                        opacity={isEval ? "0.95" : isLineFromOtherPart ? "0.35" : "0.92"}
+                        opacity={isEval ? "0.95" : isLineFromOtherPart ? "0.60" : "0.92"}
                       />
                     </React.Fragment>
                   );
@@ -782,7 +782,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                   key={`user-orig-${idx}`}
                   className={canDragThisPoint ? "pointer-events-auto cursor-grab active:cursor-grabbing" : "pointer-events-none"}
                   style={{ touchAction: 'none' }}
-                  opacity={isFromOtherPart && !isEval ? 0.45 : 1}
+                  opacity={isFromOtherPart && !isEval ? 0.70 : 1}
                   onTouchStart={(e) => {
                     if (canDragThisPoint) {
                       e.stopPropagation();
@@ -825,14 +825,14 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                     cy={cy}
                     r={Math.max(2.5, 12.3 / zoom)}
                     fill="#ffffff"
-                    opacity={isFromOtherPart && !isEval ? 0.5 : 1}
+                    opacity={isFromOtherPart && !isEval ? 0.70 : 1}
                   />
                   {/* Hoofdpunt */}
                   <circle
                     cx={cx}
                     cy={cy}
                     r={Math.max(2, 10.5 / zoom)}
-                    fill={isEval ? badgeColor : (isFromOtherPart ? "#94a3b8" : "#1993f2")}
+                    fill={isEval ? badgeColor : (isFromOtherPart ? "#6fa1cf" : "#1993f2")}
                     stroke="none"
                   />
 
@@ -891,7 +891,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                   key={`user-ins-${idx}`}
                   className={canDragThisPoint ? "pointer-events-auto cursor-grab active:cursor-grabbing" : "pointer-events-none"}
                   style={{ touchAction: 'none' }}
-                  opacity={isFromOtherPart && !isEval ? 0.45 : 1}
+                  opacity={isFromOtherPart && !isEval ? 0.70 : 1}
                   onTouchStart={(e) => {
                     if (canDragThisPoint) {
                       e.stopPropagation();
@@ -934,14 +934,14 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                     cy={cy}
                     r={Math.max(2.5, 12.3 / zoom)}
                     fill="#ffffff"
-                    opacity={isFromOtherPart && !isEval ? 0.5 : 1}
+                    opacity={isFromOtherPart && !isEval ? 0.70 : 1}
                   />
                   {/* Hoofdpunt */}
                   <circle
                     cx={cx}
                     cy={cy}
                     r={Math.max(2, 10.5 / zoom)}
-                    fill={isEval ? badgeColor : (isFromOtherPart ? "#cbd5e1" : "#ea580c")}
+                    fill={isEval ? badgeColor : (isFromOtherPart ? "#df9570" : "#ea580c")}
                     stroke="none"
                   />
 

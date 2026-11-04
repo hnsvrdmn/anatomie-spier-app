@@ -678,7 +678,19 @@ export function evaluatePointSet(
       const span = lastPt.y - firstPt.y;
       if (span < 0.035) continue; // Geen doorlopende rij wervels, maar een enkele wervel
 
-      const matchedPts = userPoints.filter((up) => {
+      // Belangrijk: filter gebruikerspunten op de specifieke pars (indien van toepassing bij m. trapezius)
+      // zodat punten van pars transversa niet per ongeluk als first/last van pars descendens meetellen!
+      const targetNameLower = (t.name || l.name || '').toLowerCase();
+      let partKey: string | undefined;
+      if (targetNameLower.includes('descendens')) partKey = 'descendens';
+      else if (targetNameLower.includes('transversa')) partKey = 'transversa';
+      else if (targetNameLower.includes('ascendens')) partKey = 'ascendens';
+
+      const candidateUserPoints = partKey
+        ? userPoints.filter((up) => (up.name || '').toLowerCase().includes(partKey!))
+        : userPoints;
+
+      const matchedPts = candidateUserPoints.filter((up) => {
         const poly = distanceToPolyline(up, l.points);
         return poly.distance <= Math.max(l.tolerance || 0.030, ptTolClose * 1.3);
       });
@@ -687,15 +699,20 @@ export function evaluatePointSet(
         const expectedCount = Math.max(2, Math.round(span / 0.022));
         if (matchedPts.length < expectedCount) {
           vertebraeConditionMet = false;
+          satisfiedZones.delete(t.zoneId || t.key);
           missingVertebraeTip = `Optie 'Alle wervels vereisen' staat aan: plaats minimaal ${expectedCount} punten langs de wervelkolom (${t.name}).`;
         }
       } else {
-        const tolEnd = Math.max(0.034, (l.tolerance || 0.030) * 1.35);
+        // Zorg dat tolEnd realistisch is voor het wervelsegment:
+        // Nooit meer dan 28% van de span van de rij (en geklemd tussen 0.016 en 0.022).
+        // Hiermee kan een tussenliggende wervel (zoals C6) nooit zowel first als last dekken bij C1-C6!
+        const tolEnd = Math.max(0.016, Math.min(0.022, span * 0.28));
         const hasFirst = matchedPts.some((up) => Math.hypot((up.x - firstPt.x) * SKELETON_ASPECT_RATIO, up.y - firstPt.y) <= tolEnd);
         const hasLast = matchedPts.some((up) => Math.hypot((up.x - lastPt.x) * SKELETON_ASPECT_RATIO, up.y - lastPt.y) <= tolEnd);
 
         if (!hasFirst || !hasLast) {
           vertebraeConditionMet = false;
+          satisfiedZones.delete(t.zoneId || t.key);
           missingVertebraeTip = `Bij een wervelrij (${t.name}): klik minimaal de eerste én de laatste wervel aan (meer mag, minder niet).`;
         }
       }
