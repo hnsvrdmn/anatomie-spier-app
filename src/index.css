@@ -41,21 +41,24 @@
   animation: subtle-scale-once 0.65s ease-in-out;
 }
 
-/* Subtiele hint spring-animatie voor knoppen (Origo, Insertie, Partes) */
-@keyframes hint-bounce {
-  0%, 100% {
-    transform: translateY(0) scale(1);
+/* Subtiele eenmalige hop-animatie voor knoppen (recht omhoog en omlaag, geen glow of kleurverandering) */
+@keyframes subtle-hop {
+  0% {
+    transform: translateY(0);
   }
-  30% {
-    transform: translateY(-4px) scale(1.08);
+  35% {
+    transform: translateY(-4px);
   }
-  60% {
-    transform: translateY(0) scale(1.03);
+  75% {
+    transform: translateY(1px);
+  }
+  100% {
+    transform: translateY(0);
   }
 }
 
-.animate-hint-bounce {
-  animation: hint-bounce 1s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+.animate-subtle-hop {
+  animation: subtle-hop 0.45s ease-out 1;
 }
 
 /* Voorkom ongewenst horizontaal/verticaal scrollen bij slepen op mobiel/touch */

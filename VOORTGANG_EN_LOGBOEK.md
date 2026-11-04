@@ -2757,3 +2757,32 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
        - Zodra de laatste pars (ascendens) klaar is, springt de **Controleer** knop op.
 - **Verificatie & Deployment:**
   - `npm run build` foutloos uitgevoerd (`✓ built in 4.58s`).
+
+
+---
+
+## 88. Trapezius Partes Bevriezen & Desatureren, Subtiele Eenmalige Hop (Zonder Glow) & Rode Prullenbakknop PC (04-11-2026 22:20)
+- **Status:** Succesvol geïmplementeerd, geverifieerd via `npm run build` en live getest.
+- **Aanleiding & Gebruikerswensen:**
+  1. *Subtiel opspringen herzien:* Het opspringen was te aanwezig, loopte oneindig en bewoog diagonaal/glowde. Het moet **exact één keer** subtiel recht omhoog en neer bewegen (`translateY(-4px)` naar 0 in ~0.45s) zonder glow, ringen of kleurverandering.
+  2. *Trigger-moment van de hint:* Mag **uitsluitend** triggeren wanneer **zowel de juiste origo's (>= 2) ALS de juiste insertie (>= 1)** van de actieve pars zijn geplaatst! Niet tussentijds na alleen origo's.
+  3. *Fix Pars 2 (transversa) & overlappende punten:* Bij de 2e pars deed de hint niets doordat punten van eerdere partes op C7/Th3 de muis/touch onderschepten. Zodra een andere pars wordt geselecteerd moeten alle bijbehorende punten en verbindingslijnen van niet-geselecteerde partes **bevroren** (`pointer-events-none`) én visueel **gedesatureerd** worden (slate tinten en 35-45% opacity).
+  4. *Rode prullenbak-knop op PC & tekst onderin verwijderen:* Naast de undo-knop (`Undo2`) in de zwevende balk moet ook op PC een duidelijk rood prullenbak-icoontje (`Trash2`) staan. De tekstknop `"Wis geplaatste punten"` onderin het skeletvenster moet verdwijnen.
+- **Doorgevoerde Aanpassingen:**
+  1. *Subtiele Eenmalige Hop-animatie ([index.css](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/index.css), [QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx), [MobileQuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/MobileQuizView.tsx)):*
+     - `@keyframes subtle-hop` en `.animate-subtle-hop` geïmplementeerd (zuiver verticale verplaatsing van `translateY(-4px)` naar `translateY(0)` in 0.45s met 1 iteratie).
+     - Alle oneindige loops (`infinite`), ringen, glows en achtergrondkleur-veranderingen verwijderd van de knoppen.
+     - `hoppingButton` state getriggerd via `useEffect` uitsluitend op het transitie-moment dat de actieve pars compleet wordt (`isPartComplete(part)` met `>= 2` juiste origo's én `>= 1` juiste insertie).
+     - Descendens compleet -> `Transversa` knop hopt 1x. Transversa compleet -> `Ascendens` knop hopt 1x. Ascendens compleet -> `Controleer` knop hopt 1x.
+  2. *Bevriezen & Desatureren van Niet-Geselecteerde Partes ([SkeletonViewer.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/skeleton/SkeletonViewer.tsx)):*
+     - `activeTrapeziusPart` prop correct gekoppeld in `QuizView` (ventraal, dorsaal en enkel aanzicht) en in `MobileQuizView`.
+     - Punten en verbindingslijnen die behoren tot een niet-geselecteerde pars krijgen `pointer-events-none` (`canDragThisPoint = false`), waardoor klikken op C7 of Th3 ongehinderd doorklikken naar het skelet om een nieuw punt voor de actieve pars te plaatsen.
+     - Visuele desaturatie: verbindingslijnen van inactieve partes krijgen zachte slate gradiënten (`#94a3b8` naar `#cbd5e1`) met `opacity: 0.35`. Punten krijgen slate vullingen (`#94a3b8` / `#cbd5e1`) met verlaagde opacity (0.45 - 0.50). Na controle (`isEvaluated`) worden alle punten en lijnen direct weer 100% dekkend en tonen hun groene/rode evaluatiestatus.
+     - Puntversleping fix: bij het verslepen (`onUpdateUserPoint`) worden bestaande attributen (`name: 'Pars descendens'`, etc.) behouden via `{ ...existingPoint, ...normalized }`.
+  3. *PC Knoppen & Opschoning ([QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx)):*
+     - Prullenbakknop naast `Undo2` voorzien van duidelijke rode styling (`bg-rose-50 hover:bg-rose-100 text-rose-600 hover:text-rose-700 border-rose-200`).
+     - Tekstknop `"Wis geplaatste punten"` onderin het skeletframe compleet verwijderd.
+  4. *Toleranties Trapezius ([coordinates.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/utils/coordinates.ts)):*
+     - `isTrapeziusPointAccurate` toleranties verder geoptimaliseerd voor touch en muis (midline marge 0.095, insertie afstandstolerantie tot 0.105), zodat legitieme aanhechtingspunten direct worden herkend.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos uitgevoerd (`✓ built in 4.55s`).

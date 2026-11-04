@@ -502,13 +502,15 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
       (e.currentTarget as Element).setPointerCapture(e.pointerId);
     } catch {}
 
+    const existingPoint = (type === 'origin' ? effectiveOrigins : effectiveInsertions)[index];
+
     const handlePointerMove = (moveEv: PointerEvent) => {
       moveEv.preventDefault();
       moveEv.stopPropagation();
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       const normalized = clientToNormalized(moveEv.clientX, moveEv.clientY, rect);
-      onUpdateUserPoint(type, index, normalized);
+      onUpdateUserPoint(type, index, { ...existingPoint, ...normalized });
     };
 
     const handlePointerUp = (upEv: PointerEvent) => {
@@ -658,12 +660,17 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                 {getMuscleConnections(effectiveOrigins, effectiveInsertions).map(({ orig, ins, oIdx, iIdx }) => {
                   const isEval = showReferenceGhost || (!!quizMatches && quizMatches.length > 0);
 
+                  const isTrapezius = activeMuscle?.id === 'trapezius';
+                  const origPart = orig.name?.toLowerCase() || '';
+                  const isLineFromOtherPart = isTrapezius && Boolean(activeTrapeziusPart) && !origPart.includes((activeTrapeziusPart || '').toLowerCase());
+
                   // Bepaal de kleuren aan beide uiteinden van de verbindingslijn:
                   // Niet geëvalueerd: gradiënt van blauw (#1993f2, origo) naar oranje (#ea580c, insertie)
                   // Geëvalueerd: per punt groen (bij correct/close) of rood (bij incorrect), wat leidt tot:
                   // groen-groen, groen-rood, rood-groen of rood-rood
-                  let origColor = '#1993f2';
-                  let insColor = '#ea580c';
+                  // Niet-actieve trapezius pars: subtiel gedesatureerd grijs-blauw/oranje
+                  let origColor = isLineFromOtherPart && !isEval ? '#94a3b8' : '#1993f2';
+                  let insColor = isLineFromOtherPart && !isEval ? '#cbd5e1' : '#ea580c';
 
                   if (isEval) {
                     const originMatches = quizMatches?.filter(m => m.targetType === 'origin' || !m.targetType) || [];
@@ -721,7 +728,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                         stroke="#ffffff"
                         strokeWidth={Math.max(2.5, ((isEval ? 8 : 8.5) + 3) / zoom)}
                         strokeLinecap="round"
-                        opacity={0.95}
+                        opacity={isLineFromOtherPart && !isEval ? 0.35 : 0.95}
                       />
                       <line
                         x1={orig.x * SVG_WIDTH}
@@ -731,7 +738,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                         stroke={`url(#${gradId})`}
                         strokeWidth={Math.max(1, (isEval ? 8 : 8.5) / zoom)}
                         strokeLinecap="round"
-                        opacity={isEval ? "0.95" : "0.92"}
+                        opacity={isEval ? "0.95" : isLineFromOtherPart ? "0.35" : "0.92"}
                       />
                     </React.Fragment>
                   );
@@ -765,21 +772,17 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
               const badgeSymbol = acc === 'correct' ? '✓' : acc === 'close' ? '~' : '✗';
 
               const isTrapezius = activeMuscle?.id === 'trapezius';
-              // C7 is op y ≈ 0.160; Th3 is op y ≈ 0.210
-              const isNearC7 = Math.abs(pt.x - 0.50) < 0.06 && Math.abs(pt.y - 0.16) < 0.035;
-              const isNearTh3 = Math.abs(pt.x - 0.50) < 0.06 && Math.abs(pt.y - 0.21) < 0.035;
-              const isDoubleAttachmentPoint = isTrapezius && (isNearC7 || isNearTh3);
               const pointPart = pt.name?.toLowerCase() || '';
               const isFromOtherPart = isTrapezius && Boolean(activeTrapeziusPart) && !pointPart.includes((activeTrapeziusPart || '').toLowerCase());
-              // Alleen deze specifieke aanhechtingspunten niet meer verplaatsen indien ze al tot een andere pars behoren!
-              const isLockedPoint = isDoubleAttachmentPoint && isFromOtherPart;
-              const canDragThisPoint = canDragPoints && !isLockedPoint;
+              // Punten van een andere (niet-actieve) pars worden volledig bevroren: niet versleepbaar en doorklikbaar naar skelet
+              const canDragThisPoint = canDragPoints && (!isTrapezius || !isFromOtherPart);
 
               return (
                 <g 
                   key={`user-orig-${idx}`}
                   className={canDragThisPoint ? "pointer-events-auto cursor-grab active:cursor-grabbing" : "pointer-events-none"}
                   style={{ touchAction: 'none' }}
+                  opacity={isFromOtherPart && !isEval ? 0.45 : 1}
                   onTouchStart={(e) => {
                     if (canDragThisPoint) {
                       e.stopPropagation();
@@ -791,10 +794,10 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                   onContextMenu={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    if (onDeleteUserPoint) onDeleteUserPoint('origin', idx);
+                    if (canDragThisPoint && onDeleteUserPoint) onDeleteUserPoint('origin', idx);
                   }}
                 >
-                  {canDragPoints && (
+                  {canDragThisPoint && (
                     <circle
                       cx={cx}
                       cy={cy}
@@ -822,13 +825,14 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                     cy={cy}
                     r={Math.max(2.5, 12.3 / zoom)}
                     fill="#ffffff"
+                    opacity={isFromOtherPart && !isEval ? 0.5 : 1}
                   />
                   {/* Hoofdpunt */}
                   <circle
                     cx={cx}
                     cy={cy}
                     r={Math.max(2, 10.5 / zoom)}
-                    fill={isEval ? badgeColor : "#1993f2"}
+                    fill={isEval ? badgeColor : (isFromOtherPart ? "#94a3b8" : "#1993f2")}
                     stroke="none"
                   />
 
@@ -876,23 +880,30 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
               const badgeColor = acc === 'correct' ? '#16a34a' : acc === 'close' ? '#d97706' : '#dc2626';
               const badgeSymbol = acc === 'correct' ? '✓' : acc === 'close' ? '~' : '✗';
 
+              const isTrapezius = activeMuscle?.id === 'trapezius';
+              const pointPart = pt.name?.toLowerCase() || '';
+              const isFromOtherPart = isTrapezius && Boolean(activeTrapeziusPart) && !pointPart.includes((activeTrapeziusPart || '').toLowerCase());
+              // Punten van een andere (niet-actieve) pars worden volledig bevroren: niet versleepbaar en doorklikbaar naar skelet
+              const canDragThisPoint = canDragPoints && (!isTrapezius || !isFromOtherPart);
+
               return (
                 <g 
                   key={`user-ins-${idx}`}
-                  className={canDragPoints ? "pointer-events-auto cursor-grab active:cursor-grabbing" : "pointer-events-none"}
+                  className={canDragThisPoint ? "pointer-events-auto cursor-grab active:cursor-grabbing" : "pointer-events-none"}
                   style={{ touchAction: 'none' }}
+                  opacity={isFromOtherPart && !isEval ? 0.45 : 1}
                   onTouchStart={(e) => {
-                    if (canDragPoints) {
+                    if (canDragThisPoint) {
                       e.stopPropagation();
                       isDraggingPointRef.current = true;
                       touchStateRef.current.singleTouchStart = null;
                     }
                   }}
-                  onPointerDown={(e) => canDragPoints && handleStartDrag(e, 'insertion', idx)}
+                  onPointerDown={(e) => canDragThisPoint && handleStartDrag(e, 'insertion', idx)}
                   onContextMenu={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    if (onDeleteUserPoint) onDeleteUserPoint('insertion', idx);
+                    if (canDragThisPoint && onDeleteUserPoint) onDeleteUserPoint('insertion', idx);
                   }}
                 >
                   {canDragPoints && (
@@ -923,13 +934,14 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                     cy={cy}
                     r={Math.max(2.5, 12.3 / zoom)}
                     fill="#ffffff"
+                    opacity={isFromOtherPart && !isEval ? 0.5 : 1}
                   />
                   {/* Hoofdpunt */}
                   <circle
                     cx={cx}
                     cy={cy}
                     r={Math.max(2, 10.5 / zoom)}
-                    fill={isEval ? badgeColor : "#ea580c"}
+                    fill={isEval ? badgeColor : (isFromOtherPart ? "#cbd5e1" : "#ea580c")}
                     stroke="none"
                   />
 

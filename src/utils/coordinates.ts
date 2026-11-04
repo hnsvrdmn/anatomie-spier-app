@@ -1046,27 +1046,27 @@ export function isTrapeziusPointAccurate(
 ): boolean {
   if (type === 'origin') {
     // Origo's liggen dorsaal mediaal op de wervelkolom (x ≈ 0.50)
-    const isMidline = Math.abs(pt.x - 0.50) <= 0.085;
+    const isMidline = Math.abs(pt.x - 0.50) <= 0.095;
     if (!isMidline) return false;
-    if (part === 'descendens') return pt.y >= 0.06 && pt.y <= 0.19;
-    if (part === 'transversa') return pt.y >= 0.13 && pt.y <= 0.25;
-    if (part === 'ascendens') return pt.y >= 0.185 && pt.y <= 0.39;
+    if (part === 'descendens') return pt.y >= 0.06 && pt.y <= 0.195;
+    if (part === 'transversa') return pt.y >= 0.13 && pt.y <= 0.255;
+    if (part === 'ascendens') return pt.y >= 0.185 && pt.y <= 0.395;
     return false;
   } else {
     // Insertie ligt lateraal op clavicula, acromion of spina scapulae (links of rechts)
     if (part === 'descendens') {
-      const isLeft = Math.hypot((pt.x - 0.31) * SKELETON_ASPECT_RATIO, pt.y - 0.20) <= 0.09;
-      const isRight = Math.hypot((pt.x - 0.69) * SKELETON_ASPECT_RATIO, pt.y - 0.20) <= 0.09;
+      const isLeft = Math.hypot((pt.x - 0.31) * SKELETON_ASPECT_RATIO, pt.y - 0.20) <= 0.105;
+      const isRight = Math.hypot((pt.x - 0.69) * SKELETON_ASPECT_RATIO, pt.y - 0.20) <= 0.105;
       return isLeft || isRight;
     }
     if (part === 'transversa') {
-      const isLeft = Math.hypot((pt.x - 0.275) * SKELETON_ASPECT_RATIO, pt.y - 0.205) <= 0.09;
-      const isRight = Math.hypot((pt.x - 0.725) * SKELETON_ASPECT_RATIO, pt.y - 0.205) <= 0.09;
+      const isLeft = Math.hypot((pt.x - 0.275) * SKELETON_ASPECT_RATIO, pt.y - 0.205) <= 0.105;
+      const isRight = Math.hypot((pt.x - 0.725) * SKELETON_ASPECT_RATIO, pt.y - 0.205) <= 0.105;
       return isLeft || isRight;
     }
     if (part === 'ascendens') {
-      const isLeft = Math.hypot((pt.x - 0.36) * SKELETON_ASPECT_RATIO, pt.y - 0.21) <= 0.09;
-      const isRight = Math.hypot((pt.x - 0.64) * SKELETON_ASPECT_RATIO, pt.y - 0.21) <= 0.09;
+      const isLeft = Math.hypot((pt.x - 0.36) * SKELETON_ASPECT_RATIO, pt.y - 0.21) <= 0.105;
+      const isRight = Math.hypot((pt.x - 0.64) * SKELETON_ASPECT_RATIO, pt.y - 0.21) <= 0.105;
       return isLeft || isRight;
     }
     return false;

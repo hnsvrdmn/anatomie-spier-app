@@ -11,7 +11,6 @@ import {
 } from '../../types/anatomy';
 import { JOINT_CATEGORIES } from '../../data/jointCategories';
 import { getJointLocation } from '../../data/jointQuestions';
-import { isTrapeziusPointAccurate } from '../../utils/coordinates';
 import { MovementIcon } from '../common/MovementIcon';
 import { AnswerValidationResult } from '../../utils/answerMatching';
 import { 
@@ -107,6 +106,7 @@ interface MobileQuizViewProps {
   requireAllVertebrae?: boolean;
   setRequireAllVertebrae?: (val: boolean) => void;
   onUndoLastPoint?: () => void;
+  hoppingButton?: string | null;
 }
 
 export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
@@ -167,42 +167,9 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
   requireAllVertebrae = false,
   setRequireAllVertebrae,
   onUndoLastPoint,
+  hoppingButton,
 }) => {
   const { quizOpenOptionsTrigger } = useMuscles();
-
-  // Subtiele highlight voor trapezius gereedheid op mobiel (alleen bij JUISTE punten)
-  const isTrapezius = muscle?.id === 'trapezius';
-  const trapeziusPartOriginsCount = isTrapezius 
-    ? userOrigins.filter(p => 
-        p.name?.toLowerCase().includes(activeTrapeziusPart) &&
-        isTrapeziusPointAccurate(p, 'origin', activeTrapeziusPart)
-      ).length 
-    : 0;
-
-  const trapeziusPartInsertionsCount = isTrapezius 
-    ? userInsertions.filter(p => 
-        p.name?.toLowerCase().includes(activeTrapeziusPart) &&
-        isTrapeziusPointAccurate(p, 'insertion', activeTrapeziusPart)
-      ).length 
-    : 0;
-
-  const shouldSubtlyHighlightInsertion = 
-    isTrapezius && 
-    activeQuizTool === 'origin' && 
-    trapeziusPartOriginsCount >= 2 && 
-    trapeziusPartInsertionsCount === 0;
-
-  const shouldSubtlyHighlightNextPart = 
-    isTrapezius && 
-    trapeziusPartOriginsCount >= 2 && 
-    trapeziusPartInsertionsCount >= 1;
-
-  const shouldSubtlyHighlightOrigin = 
-    isTrapezius && 
-    activeQuizTool === 'insertion' && 
-    trapeziusPartOriginsCount >= 2 && 
-    trapeziusPartInsertionsCount >= 1 &&
-    activeTrapeziusPart !== 'ascendens';
 
   // Stand van het frame:
   // - false (minimale stand): toont altijd de vraag, origo & insertie, en antwoordknoppen.
@@ -328,20 +295,12 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
             <div className="flex items-center gap-1 bg-slate-950/80 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 shadow-lg">
               <button
                 type="button"
-                onClick={() => {
-                  if (shouldSubtlyHighlightOrigin) {
-                    if (activeTrapeziusPart === 'descendens' && setActiveTrapeziusPart) setActiveTrapeziusPart('transversa');
-                    else if (activeTrapeziusPart === 'transversa' && setActiveTrapeziusPart) setActiveTrapeziusPart('ascendens');
-                  }
-                  setActiveQuizTool('origin');
-                }}
+                onClick={() => setActiveQuizTool('origin')}
                 title="Plaats Origo (blauw)"
                 aria-label="Origo"
                 className={`w-7 h-7 rounded-lg text-xs font-black transition-all flex items-center justify-center ${
                   activeQuizTool === 'origin'
                     ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-400'
-                    : shouldSubtlyHighlightOrigin
-                    ? 'bg-blue-500 text-white ring-4 ring-blue-400 shadow-lg animate-hint-bounce'
                     : 'text-blue-400 hover:bg-slate-800'
                 }`}
               >
@@ -355,8 +314,6 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                 className={`w-7 h-7 rounded-lg text-xs font-black transition-all flex items-center justify-center ${
                   activeQuizTool === 'insertion'
                     ? 'bg-orange-600 text-white shadow-sm ring-2 ring-orange-400'
-                    : shouldSubtlyHighlightInsertion
-                    ? 'bg-orange-500 text-white ring-4 ring-orange-400 shadow-lg animate-hint-bounce'
                     : 'text-orange-400 hover:bg-slate-800'
                 }`}
               >
@@ -374,9 +331,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                       ? 'Transv.'
                       : 'Ascend.';
                   const isActive = activeTrapeziusPart === partKey;
-                  const isNextSuggested =
-                    (activeTrapeziusPart === 'descendens' && partKey === 'transversa' && shouldSubtlyHighlightNextPart) ||
-                    (activeTrapeziusPart === 'transversa' && partKey === 'ascendens' && shouldSubtlyHighlightNextPart);
+                  const isHopping = hoppingButton === partKey;
 
                   return (
                     <button
@@ -389,10 +344,8 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                       className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all ${
                         isActive
                           ? 'bg-blue-600 text-white shadow-xs'
-                          : isNextSuggested
-                          ? 'bg-blue-500 text-white ring-4 ring-blue-400 shadow-lg animate-hint-bounce font-black'
                           : 'text-slate-300 hover:text-white hover:bg-slate-800'
-                      }`}
+                      } ${isHopping ? 'animate-subtle-hop' : ''}`}
                     >
                       {label}
                     </button>
@@ -458,6 +411,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
               isMobile={true}
               autoCenterMuscle={autoZoom && (shouldShowMuscle || !!jointFocusPoint || type === 'bone')}
               hideMuscleMarkers={!isEvaluated && isDrawingType}
+              activeTrapeziusPart={activeTrapeziusPart}
             />
           );
         })()}
@@ -839,7 +793,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
               <button
                 type="button"
                 onClick={() => evaluateAttempt(userOrigins, userInsertions)}
-                className="w-full h-10 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold shadow-md transition flex items-center justify-center gap-2"
+                className={`w-full h-10 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold shadow-md transition flex items-center justify-center gap-2 ${hoppingButton === 'check' ? 'animate-subtle-hop' : ''}`}
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Controleer antwoord</span>

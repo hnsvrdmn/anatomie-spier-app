@@ -245,6 +245,8 @@ export const QuizView: React.FC = () => {
     setUserOrigins([]);
     setUserInsertions([]);
     pointHistoryRef.current = [];
+    completedPartesRef.current = {};
+    setHoppingButton(null);
     setActiveTrapeziusPart('descendens');
     setActiveQuizTool(currentQuestion?.landmarkType === 'insertion' ? 'insertion' : 'origin');
   }, [currentQuestion?.landmarkType]);
@@ -265,40 +267,50 @@ export const QuizView: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleUndoLastPoint]);
 
-  // Subtiele highlights voor trapezius gereedheid (alleen oplichten bij JUISTE punten)
-  const trapeziusPartOriginsCount = useMemo(() => {
-    if (currentQuestion?.muscle?.id !== 'trapezius') return 0;
-    return userOrigins.filter(p => 
-      p.name?.toLowerCase().includes(activeTrapeziusPart) &&
-      isTrapeziusPointAccurate(p, 'origin', activeTrapeziusPart)
+  // Subtiele eenmalige hop-animatie voor Trapezius knoppen bij volledige afronding van een pars (origo >= 2 EN insertie >= 1)
+  const [hoppingButton, setHoppingButton] = useState<string | null>(null);
+  const completedPartesRef = useRef<{ [k in 'descendens' | 'transversa' | 'ascendens']?: boolean }>({});
+
+  const isPartComplete = useCallback((part: 'descendens' | 'transversa' | 'ascendens', origins: Point2D[], insertions: Point2D[]) => {
+    const oCount = origins.filter(p => 
+      p.name?.toLowerCase().includes(part) &&
+      isTrapeziusPointAccurate(p, 'origin', part)
     ).length;
-  }, [currentQuestion?.muscle?.id, userOrigins, activeTrapeziusPart]);
-
-  const trapeziusPartInsertionsCount = useMemo(() => {
-    if (currentQuestion?.muscle?.id !== 'trapezius') return 0;
-    return userInsertions.filter(p => 
-      p.name?.toLowerCase().includes(activeTrapeziusPart) &&
-      isTrapeziusPointAccurate(p, 'insertion', activeTrapeziusPart)
+    const iCount = insertions.filter(p => 
+      p.name?.toLowerCase().includes(part) &&
+      isTrapeziusPointAccurate(p, 'insertion', part)
     ).length;
-  }, [currentQuestion?.muscle?.id, userInsertions, activeTrapeziusPart]);
+    return oCount >= 2 && iCount >= 1;
+  }, []);
 
-  const shouldSubtlyHighlightInsertion = 
-    currentQuestion?.muscle?.id === 'trapezius' && 
-    activeQuizTool === 'origin' && 
-    trapeziusPartOriginsCount >= 2 && 
-    trapeziusPartInsertionsCount === 0;
+  useEffect(() => {
+    if (currentQuestion?.muscle?.id !== 'trapezius' || isEvaluated) {
+      setHoppingButton(null);
+      return;
+    }
 
-  const shouldSubtlyHighlightNextPart = 
-    currentQuestion?.muscle?.id === 'trapezius' && 
-    trapeziusPartOriginsCount >= 2 && 
-    trapeziusPartInsertionsCount >= 1;
+    const isCompleteNow = isPartComplete(activeTrapeziusPart, userOrigins, userInsertions);
+    const wasComplete = completedPartesRef.current[activeTrapeziusPart];
 
-  const shouldSubtlyHighlightOrigin = 
-    currentQuestion?.muscle?.id === 'trapezius' && 
-    activeQuizTool === 'insertion' && 
-    trapeziusPartOriginsCount >= 2 && 
-    trapeziusPartInsertionsCount >= 1 &&
-    activeTrapeziusPart !== 'ascendens';
+    if (!wasComplete && isCompleteNow) {
+      completedPartesRef.current[activeTrapeziusPart] = true;
+      let nextTarget: string | null = null;
+      if (activeTrapeziusPart === 'descendens') nextTarget = 'transversa';
+      else if (activeTrapeziusPart === 'transversa') nextTarget = 'ascendens';
+      else if (activeTrapeziusPart === 'ascendens') nextTarget = 'check';
+
+      if (nextTarget) {
+        setHoppingButton(nextTarget);
+        const timer = setTimeout(() => {
+          setHoppingButton(null);
+        }, 550);
+        return () => clearTimeout(timer);
+      }
+    } else if (wasComplete && !isCompleteNow) {
+      completedPartesRef.current[activeTrapeziusPart] = false;
+      setHoppingButton(null);
+    }
+  }, [currentQuestion?.muscle?.id, isEvaluated, activeTrapeziusPart, userOrigins, userInsertions, isPartComplete]);
 
   // Desktop weergavemodus: 'both' is verplicht de standaard op desktop!
   const [viewLayout, setViewLayout] = useState<ViewLayoutMode>('both');
@@ -455,6 +467,9 @@ export const QuizView: React.FC = () => {
     setCurrentQuestion(freshQuestion);
     setUserOrigins([]);
     setUserInsertions([]);
+    pointHistoryRef.current = [];
+    completedPartesRef.current = {};
+    setHoppingButton(null);
     setActiveTrapeziusPart('descendens');
     setUserOpenAnswer('');
     setOpenAnswerFeedback(null);
@@ -1388,13 +1403,13 @@ export const QuizView: React.FC = () => {
     if (pointType === 'origin') {
       setUserOrigins(prev => {
         const next = [...prev];
-        next[index] = newPoint;
+        next[index] = { ...prev[index], ...newPoint };
         return next;
       });
     } else {
       setUserInsertions(prev => {
         const next = [...prev];
-        next[index] = newPoint;
+        next[index] = { ...prev[index], ...newPoint };
         return next;
       });
     }
@@ -1630,6 +1645,7 @@ export const QuizView: React.FC = () => {
         currentQuestion={currentQuestion}
         activeTrapeziusPart={activeTrapeziusPart}
         setActiveTrapeziusPart={setActiveTrapeziusPart}
+        hoppingButton={hoppingButton}
         requireAllVertebrae={requireAllVertebrae}
         setRequireAllVertebrae={setRequireAllVertebrae}
         onUndoLastPoint={handleUndoLastPoint}
@@ -1737,18 +1753,10 @@ export const QuizView: React.FC = () => {
               <div className="flex items-center gap-1.5">
                 <button
                   type="button"
-                  onClick={() => {
-                    if (shouldSubtlyHighlightOrigin) {
-                      if (activeTrapeziusPart === 'descendens') setActiveTrapeziusPart('transversa');
-                      else if (activeTrapeziusPart === 'transversa') setActiveTrapeziusPart('ascendens');
-                    }
-                    setActiveQuizTool('origin');
-                  }}
+                  onClick={() => setActiveQuizTool('origin')}
                   className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-all ${
                     activeQuizTool === 'origin'
                       ? 'bg-blue-600 text-white border-blue-600 shadow-xs ring-2 ring-blue-400'
-                      : shouldSubtlyHighlightOrigin
-                      ? 'bg-blue-100 text-blue-950 border-2 border-blue-500 ring-4 ring-blue-400/80 shadow-md animate-hint-bounce'
                       : 'bg-white text-blue-800 border-blue-200 hover:bg-blue-50'
                   }`}
                 >
@@ -1762,8 +1770,6 @@ export const QuizView: React.FC = () => {
                   className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-all ${
                     activeQuizTool === 'insertion'
                       ? 'bg-orange-600 text-white border-orange-600 shadow-xs ring-2 ring-orange-400'
-                      : shouldSubtlyHighlightInsertion
-                      ? 'bg-orange-100 text-orange-950 border-2 border-orange-500 ring-4 ring-orange-400/80 shadow-md animate-hint-bounce'
                       : 'bg-white text-orange-800 border-orange-200 hover:bg-orange-50'
                   } ${isScalingInsertion ? 'animate-subtle-scale' : ''}`}
                 >
@@ -1785,7 +1791,7 @@ export const QuizView: React.FC = () => {
                       type="button"
                       onClick={handleClearAllPoints}
                       title="Alle geplaatste punten wissen"
-                      className="p-1.5 bg-white hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200 rounded-xl shadow-xs transition flex items-center justify-center"
+                      className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 hover:text-rose-700 border border-rose-200 rounded-xl shadow-xs transition flex items-center justify-center"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -1803,9 +1809,7 @@ export const QuizView: React.FC = () => {
                         ? 'Transversa'
                         : 'Ascendens';
                     const isActive = activeTrapeziusPart === partKey;
-                    const isNextSuggested =
-                      (activeTrapeziusPart === 'descendens' && partKey === 'transversa' && shouldSubtlyHighlightNextPart) ||
-                      (activeTrapeziusPart === 'transversa' && partKey === 'ascendens' && shouldSubtlyHighlightNextPart);
+                    const isHopping = hoppingButton === partKey;
 
                     return (
                       <button
@@ -1818,10 +1822,8 @@ export const QuizView: React.FC = () => {
                         className={`py-1 px-2.5 rounded-lg text-xs font-bold transition-all ${
                           isActive
                             ? 'bg-blue-600 text-white shadow-xs'
-                            : isNextSuggested
-                            ? 'bg-blue-100 text-blue-950 border-2 border-blue-500 ring-4 ring-blue-400/80 shadow-md animate-hint-bounce'
                             : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                        }`}
+                        } ${isHopping ? 'animate-subtle-hop' : ''}`}
                       >
                         {label}
                       </button>
@@ -1866,6 +1868,7 @@ export const QuizView: React.FC = () => {
                     targetFocusPoint={jointFocusPoint?.view === 'ventral' ? jointFocusPoint : null}
                     autoCenterMuscle={autoZoom && (shouldShowMuscle || (jointFocusPoint?.view === 'ventral') || type === 'bone')}
                     hideMuscleMarkers={hideMuscleMarkers}
+                    activeTrapeziusPart={activeTrapeziusPart}
                   />
                 </div>
 
@@ -1891,6 +1894,7 @@ export const QuizView: React.FC = () => {
                     targetFocusPoint={jointFocusPoint?.view === 'dorsal' ? jointFocusPoint : null}
                     autoCenterMuscle={autoZoom && (shouldShowMuscle || (jointFocusPoint?.view === 'dorsal') || type === 'bone')}
                     hideMuscleMarkers={hideMuscleMarkers}
+                    activeTrapeziusPart={activeTrapeziusPart}
                   />
                 </div>
               </div>
@@ -1911,6 +1915,7 @@ export const QuizView: React.FC = () => {
                 targetFocusPoint={jointFocusPoint}
                 autoCenterMuscle={autoZoom && (shouldShowMuscle || !!jointFocusPoint || type === 'bone')}
                 hideMuscleMarkers={hideMuscleMarkers}
+                activeTrapeziusPart={activeTrapeziusPart}
               />
             );
           })()}
@@ -1919,20 +1924,6 @@ export const QuizView: React.FC = () => {
         {/* Onderbalk met status & instructies (vaste h-8) */}
         <div className="w-full h-8 shrink-0 flex items-center justify-between pt-2 border-t border-clinical-100 text-xs text-clinical-600 gap-2">
           <div className="flex-1 min-w-0" />
-          {!isEvaluated && (userOrigins.length > 0 || userInsertions.length > 0) && (
-            <button
-              type="button"
-              onClick={() => {
-                setUserOrigins([]);
-    setUserInsertions([]);
-    setActiveTrapeziusPart('descendens');
-                setActiveQuizTool(currentQuestion?.landmarkType === 'insertion' ? 'insertion' : 'origin');
-              }}
-              className="text-xs text-rose-600 hover:text-rose-800 font-semibold underline"
-            >
-              Wis geplaatste punten
-            </button>
-          )}
         </div>
       </div>
 
@@ -2398,7 +2389,7 @@ export const QuizView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => evaluateAttempt(userOrigins, userInsertions)}
-                className={`w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition flex items-center justify-center gap-2 ${currentQuestion?.muscle?.id === 'trapezius' && activeTrapeziusPart === 'ascendens' && shouldSubtlyHighlightNextPart ? 'ring-4 ring-emerald-400 shadow-lg animate-hint-bounce font-black' : ''}`}
+                className={`w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition flex items-center justify-center gap-2 ${hoppingButton === 'check' ? 'animate-subtle-hop' : ''}`}
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Controleer antwoord</span>
