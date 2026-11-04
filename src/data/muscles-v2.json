@@ -2418,14 +2418,36 @@
       "left": {
         "origins": [
           {
-            "x": 0.53,
-            "y": 0.4
+            "x": 0.6168,
+            "y": 0.4051,
+            "name": "crista iliaca"
+          },
+          {
+            "x": 0.6575,
+            "y": 0.419,
+            "name": "SIAS"
           }
         ],
         "insertions": [
           {
-            "x": 0.515,
-            "y": 0.3
+            "x": 0.6325,
+            "y": 0.3679,
+            "name": "kraakbeen v.d. laatste 3 costae"
+          },
+          {
+            "x": 0.5019,
+            "y": 0.3559,
+            "name": "linea alba"
+          },
+          {
+            "x": 0.5011,
+            "y": 0.3116,
+            "name": "linea alba"
+          },
+          {
+            "x": 0.5682,
+            "y": 0.3002,
+            "name": "kraakbeen v.d. laatste 3 costae"
           }
         ],
         "musclePath": [
@@ -2446,14 +2468,36 @@
       "right": {
         "origins": [
           {
-            "x": 0.47,
-            "y": 0.4
+            "x": 0.3832,
+            "y": 0.4051,
+            "name": "crista iliaca"
+          },
+          {
+            "x": 0.3425,
+            "y": 0.419,
+            "name": "SIAS"
           }
         ],
         "insertions": [
           {
-            "x": 0.485,
-            "y": 0.3
+            "x": 0.3675,
+            "y": 0.3679,
+            "name": "kraakbeen v.d. laatste 3 costae"
+          },
+          {
+            "x": 0.4981,
+            "y": 0.3559,
+            "name": "linea alba"
+          },
+          {
+            "x": 0.4989,
+            "y": 0.3116,
+            "name": "linea alba"
+          },
+          {
+            "x": 0.4318,
+            "y": 0.3002,
+            "name": "kraakbeen v.d. laatste 3 costae"
           }
         ],
         "musclePath": [

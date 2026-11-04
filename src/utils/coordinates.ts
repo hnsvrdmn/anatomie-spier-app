@@ -801,6 +801,99 @@ export function getMuscleConnections(origins: Point2D[], insertions: Point2D[]):
     return [];
   }
 
+  // Als er punten zijn met een specifieke pars (zoals bij de m. trapezius),
+  // koppel dan uitsluitend origo's en inserties binnen dezelfde pars!
+  const hasAnyPart = origins.some(o => getPartPrefix(o.name)) || insertions.some(i => getPartPrefix(i.name));
+
+  if (hasAnyPart) {
+    const connections: MuscleConnection[] = [];
+    const partes = ['descendens', 'transversa', 'ascendens'] as const;
+
+    for (const part of partes) {
+      const partOrigins: Array<{ orig: Point2D; oIdx: number }> = [];
+      origins.forEach((orig, oIdx) => {
+        if (getPartPrefix(orig.name) === part) {
+          partOrigins.push({ orig, oIdx });
+        }
+      });
+
+      const partInsertions: Array<{ ins: Point2D; iIdx: number }> = [];
+      insertions.forEach((ins, iIdx) => {
+        if (getPartPrefix(ins.name) === part) {
+          partInsertions.push({ ins, iIdx });
+        }
+      });
+
+      if (partOrigins.length === 0 || partInsertions.length === 0) {
+        continue;
+      }
+
+      if (partInsertions.length === 1) {
+        partOrigins.forEach(({ orig, oIdx }) => {
+          connections.push({
+            orig,
+            ins: partInsertions[0].ins,
+            oIdx,
+            iIdx: partInsertions[0].iIdx,
+          });
+        });
+      } else if (partOrigins.length === 1) {
+        partInsertions.forEach(({ ins, iIdx }) => {
+          connections.push({
+            orig: partOrigins[0].orig,
+            ins,
+            oIdx: partOrigins[0].oIdx,
+            iIdx,
+          });
+        });
+      } else {
+        partOrigins.forEach(({ orig, oIdx }) => {
+          let closestIns = partInsertions[0];
+          let minDist = calcEuclideanDist(orig, closestIns.ins);
+          for (let k = 1; k < partInsertions.length; k++) {
+            const d = calcEuclideanDist(orig, partInsertions[k].ins);
+            if (d < minDist) {
+              minDist = d;
+              closestIns = partInsertions[k];
+            }
+          }
+          connections.push({
+            orig,
+            ins: closestIns.ins,
+            oIdx,
+            iIdx: closestIns.iIdx,
+          });
+        });
+      }
+    }
+
+    const unpartedOrigins: Array<{ orig: Point2D; oIdx: number }> = [];
+    origins.forEach((orig, oIdx) => {
+      if (!getPartPrefix(orig.name)) unpartedOrigins.push({ orig, oIdx });
+    });
+    const unpartedInsertions: Array<{ ins: Point2D; iIdx: number }> = [];
+    insertions.forEach((ins, iIdx) => {
+      if (!getPartPrefix(ins.name)) unpartedInsertions.push({ ins, iIdx });
+    });
+
+    if (unpartedOrigins.length > 0 && unpartedInsertions.length > 0) {
+      const subConn = getMuscleConnections(
+        unpartedOrigins.map(x => x.orig),
+        unpartedInsertions.map(x => x.ins)
+      );
+      subConn.forEach(c => {
+        connections.push({
+          orig: c.orig,
+          ins: c.ins,
+          oIdx: unpartedOrigins[c.oIdx].oIdx,
+          iIdx: unpartedInsertions[c.iIdx].iIdx,
+        });
+      });
+    }
+
+    return connections;
+  }
+
   // Eenvoudige spieren met 1 origo of 1 insertie
   if (origins.length === 1) {
     return insertions.map((ins, iIdx) => ({ orig: origins[0], ins, oIdx: 0, iIdx }));

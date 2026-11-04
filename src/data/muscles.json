@@ -1672,7 +1672,7 @@
       "left": {
         "origins": [
           {
-            "x": 0.3832,
+            "x": 0.6168,
             "y": 0.4051,
             "name": "crista iliaca"
           },
@@ -1699,7 +1699,7 @@
             "name": "linea alba"
           },
           {
-            "x": 0.4318,
+            "x": 0.5682,
             "y": 0.3002,
             "name": "kraakbeen v.d. laatste 3 costae"
           }
@@ -1782,7 +1782,7 @@
       "right": {
         "origins": [
           {
-            "x": 0.6168,
+            "x": 0.3832,
             "y": 0.4051,
             "name": "crista iliaca"
           },
@@ -1809,7 +1809,7 @@
             "name": "linea alba"
           },
           {
-            "x": 0.5682,
+            "x": 0.4318,
             "y": 0.3002,
             "name": "kraakbeen v.d. laatste 3 costae"
           }
@@ -1935,7 +1935,7 @@
         ],
         "insertions": [
           {
-            "x": 0.6168,
+            "x": 0.3832,
             "y": 0.4051,
             "name": "crista iliaca"
           },
@@ -2090,7 +2090,7 @@
         ],
         "insertions": [
           {
-            "x": 0.3832,
+            "x": 0.6168,
             "y": 0.4051,
             "name": "crista iliaca"
           },

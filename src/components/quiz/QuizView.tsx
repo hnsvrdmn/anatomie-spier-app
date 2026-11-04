@@ -22,7 +22,7 @@ import { evaluatePointSet, distanceToSegment, projectToSegment, getAccuracy, get
 import { validateAnatomicalAnswer, AnswerValidationResult } from '../../utils/answerMatching';
 import { isForbiddenMuscle } from '../../utils/export';
 import { MovementIcon } from '../common/MovementIcon';
-import { RefreshCw, Check, Award, CheckCircle2, Shuffle, Square, CheckSquare, GraduationCap, ListChecks } from 'lucide-react';
+import { RefreshCw, Check, Award, CheckCircle2, Shuffle, Square, CheckSquare, GraduationCap, ListChecks, Undo2, Trash2 } from 'lucide-react';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { MobileQuizView } from './MobileQuizView';
 
@@ -217,6 +217,75 @@ export const QuizView: React.FC = () => {
   const unaskedMuscleIdsRef = useRef<string[]>([]);
   const unaskedBoneMarkerKeysRef = useRef<string[]>([]);
   const unaskedJointIdsRef = useRef<string[]>([]);
+
+  // Geschiedenis van geplaatste punten voor ongedaan maken (Undo)
+  const pointHistoryRef = useRef<Array<'origin' | 'insertion'>>([]);
+
+  const handleUndoLastPoint = useCallback(() => {
+    if (pointHistoryRef.current.length === 0) {
+      if (userInsertions.length > 0) {
+        setUserInsertions((prev) => prev.slice(0, -1));
+        return;
+      }
+      if (userOrigins.length > 0) {
+        setUserOrigins((prev) => prev.slice(0, -1));
+        return;
+      }
+      return;
+    }
+    const lastType = pointHistoryRef.current.pop();
+    if (lastType === 'origin') {
+      setUserOrigins((prev) => prev.slice(0, -1));
+    } else {
+      setUserInsertions((prev) => prev.slice(0, -1));
+    }
+  }, [userOrigins.length, userInsertions.length]);
+
+  const handleClearAllPoints = useCallback(() => {
+    setUserOrigins([]);
+    setUserInsertions([]);
+    pointHistoryRef.current = [];
+    setActiveTrapeziusPart('descendens');
+    setActiveQuizTool(currentQuestion?.landmarkType === 'insertion' ? 'insertion' : 'origin');
+  }, [currentQuestion?.landmarkType]);
+
+  // Luister naar Ctrl+Z / Cmd+Z voor ongedaan maken
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z')) {
+        e.preventDefault();
+        handleUndoLastPoint();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleUndoLastPoint]);
+
+  // Subtiele highlights voor trapezius gereedheid
+  const trapeziusPartOriginsCount = useMemo(() => {
+    if (currentQuestion?.muscle?.id !== 'trapezius') return 0;
+    return userOrigins.filter(p => p.name?.toLowerCase().includes(activeTrapeziusPart)).length;
+  }, [currentQuestion?.muscle?.id, userOrigins, activeTrapeziusPart]);
+
+  const trapeziusPartInsertionsCount = useMemo(() => {
+    if (currentQuestion?.muscle?.id !== 'trapezius') return 0;
+    return userInsertions.filter(p => p.name?.toLowerCase().includes(activeTrapeziusPart)).length;
+  }, [currentQuestion?.muscle?.id, userInsertions, activeTrapeziusPart]);
+
+  const shouldSubtlyHighlightInsertion = 
+    currentQuestion?.muscle?.id === 'trapezius' && 
+    activeQuizTool === 'origin' && 
+    trapeziusPartOriginsCount >= 2 && 
+    trapeziusPartInsertionsCount === 0;
+
+  const shouldSubtlyHighlightOrigin = 
+    currentQuestion?.muscle?.id === 'trapezius' && 
+    activeQuizTool === 'insertion' && 
+    trapeziusPartInsertionsCount >= 1;
 
   // Desktop weergavemodus: 'both' is verplicht de standaard op desktop!
   const [viewLayout, setViewLayout] = useState<ViewLayoutMode>('both');
@@ -1235,6 +1304,7 @@ export const QuizView: React.FC = () => {
     if (toolToUse === 'origin') {
       nextOrigins = [...userOrigins, pointWithPart];
       setUserOrigins(nextOrigins);
+      pointHistoryRef.current.push('origin');
     } else {
       const isTrapeziusIns = currentQuestion?.muscle?.id === 'trapezius';
       const insWithPart: Point2D = isTrapeziusIns
@@ -1250,6 +1320,7 @@ export const QuizView: React.FC = () => {
         : point;
       nextInsertions = [...userInsertions, insWithPart];
       setUserInsertions(nextInsertions);
+      pointHistoryRef.current.push('insertion');
     }
 
     // Spieren met meer dan 2 punten (zoals wervelkolom): student mag zelf bepalen en klikt op "Controleer antwoord"
@@ -1276,6 +1347,7 @@ export const QuizView: React.FC = () => {
           evaluateAttempt(nextOrigins, nextInsertions);
         } else if (
           autoSwitchPointType &&
+          !isTrapezius &&
           toolToUse === 'origin' &&
           nextOrigins.length === expectedCounts.origins &&
           nextInsertions.length < expectedCounts.insertions
@@ -1285,6 +1357,7 @@ export const QuizView: React.FC = () => {
       }
     } else if (
       autoSwitchPointType &&
+      !isTrapezius &&
       toolToUse === 'origin' &&
       expectedCounts.insertions > 0 &&
       nextOrigins.length === expectedCounts.origins &&
@@ -1546,6 +1619,7 @@ export const QuizView: React.FC = () => {
         setActiveTrapeziusPart={setActiveTrapeziusPart}
         requireAllVertebrae={requireAllVertebrae}
         setRequireAllVertebrae={setRequireAllVertebrae}
+        onUndoLastPoint={handleUndoLastPoint}
         muscle={muscle}
         type={type}
         currentView={currentView}
@@ -1665,6 +1739,8 @@ export const QuizView: React.FC = () => {
                   className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-all ${
                     activeQuizTool === 'origin'
                       ? 'bg-blue-600 text-white border-blue-600 shadow-xs ring-2 ring-blue-400'
+                      : shouldSubtlyHighlightOrigin
+                      ? 'bg-blue-50 text-blue-900 border-blue-400 ring-2 ring-blue-400/80 shadow-xs'
                       : 'bg-white text-blue-800 border-blue-200 hover:bg-blue-50'
                   }`}
                 >
@@ -1678,12 +1754,35 @@ export const QuizView: React.FC = () => {
                   className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-all ${
                     activeQuizTool === 'insertion'
                       ? 'bg-orange-600 text-white border-orange-600 shadow-xs ring-2 ring-orange-400'
+                      : shouldSubtlyHighlightInsertion
+                      ? 'bg-orange-50 text-orange-900 border-orange-400 ring-2 ring-orange-400/80 shadow-xs'
                       : 'bg-white text-orange-800 border-orange-200 hover:bg-orange-50'
                   } ${isScalingInsertion ? 'animate-subtle-scale' : ''}`}
                 >
                   <span className={`w-2 h-2 rounded-full shrink-0 ${activeQuizTool === 'insertion' ? 'bg-white' : 'bg-orange-600'}`} />
                   <span>Insertie</span>
                 </button>
+
+                {(userOrigins.length > 0 || userInsertions.length > 0) && (
+                  <div className="flex items-center gap-1 ml-1 pl-1 border-l border-slate-200">
+                    <button
+                      type="button"
+                      onClick={handleUndoLastPoint}
+                      title="Vorige punt ongedaan maken"
+                      className="p-1.5 bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200 rounded-xl shadow-xs transition flex items-center justify-center"
+                    >
+                      <Undo2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleClearAllPoints}
+                      title="Alle geplaatste punten wissen"
+                      className="p-1.5 bg-white hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200 rounded-xl shadow-xs transition flex items-center justify-center"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
               </div>
 
               {muscle?.id === 'trapezius' && !isEvaluated && (
@@ -1691,10 +1790,10 @@ export const QuizView: React.FC = () => {
                   {(['descendens', 'transversa', 'ascendens'] as const).map((partKey) => {
                     const label =
                       partKey === 'descendens'
-                        ? '1. Descendens'
+                        ? 'Descendens'
                         : partKey === 'transversa'
-                        ? '2. Transversa'
-                        : '3. Ascendens';
+                        ? 'Transversa'
+                        : 'Ascendens';
                     const isActive = activeTrapeziusPart === partKey;
                     return (
                       <button
@@ -1990,7 +2089,7 @@ export const QuizView: React.FC = () => {
               }`}
               title="Alle wervels vereisen. Standaard uit: minimaal eerste en laatste wervel (meer mag)"
             >
-              <span className="font-semibold text-[10px] leading-tight">Wervels</span>
+              <span className="font-semibold text-[10px] leading-tight text-center">Alle<br />wervels</span>
               <span className={`mt-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded ${
                 requireAllVertebrae ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
               }`}>
@@ -2142,6 +2241,11 @@ export const QuizView: React.FC = () => {
                   <h3 className="text-xl sm:text-2xl font-black text-blue-950 tracking-tight">
                     {cleanMuscleName(muscle?.name || '')}
                   </h3>
+                  {muscle?.id === 'trapezius' && (
+                    <p className="text-xs text-slate-500 font-medium mt-1">
+                      Teken de verschillende partes (descendens, transversa, ascendens) los na elkaar in met de knoppen boven het skelet.
+                    </p>
+                  )}
                 </div>
               ) : type === 'joints' ? (
                 <div>

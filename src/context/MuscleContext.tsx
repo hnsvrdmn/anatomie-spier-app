@@ -332,19 +332,6 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }, [muscles, selectedMuscleId, appMode, setFocusedMuscleId]);
 
-  // Helper om te controleren of twee landmarknamen letterlijk hetzelfde anatomische punt betreffen
-  const isSameLandmark = (nameA?: string, nameB?: string): boolean => {
-    if (!nameA || !nameB) return false;
-    const a = nameA.trim().toLowerCase().replace(/^[-–—•\s]+/, '');
-    const b = nameB.trim().toLowerCase().replace(/^[-–—•\s]+/, '');
-    if (!a || !b) return false;
-    // Sluit generieke placeholders uit (zoals "Origo 1", "Insertie 2", "Punt 1")
-    if (/^(origo|insertie|curve|punt|curve-punt)\s*\d*$/i.test(a) || /^(origo|insertie|curve|punt|curve-punt)\s*\d*$/i.test(b)) {
-      return false;
-    }
-    return a === b;
-  };
-
   // Helper om aanhechtingslijnen (zones) te spiegelen naar de tegenoverliggende lichaamszijde
   const mirrorAttachmentLines = useCallback((lines?: any[]): any[] => {
     if (!lines || lines.length === 0) return [];
@@ -382,48 +369,6 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const currentMuscle = prev.find(m => m.id === muscleId);
       if (!currentMuscle) return prev;
 
-      const oldVisuals = currentMuscle.visuals[side];
-      let movedOldPoint: Point2D | null = null;
-      let movedNewPoint: Point2D | null = null;
-      let renamedOldName: string | null = null;
-      let renamedNewName: string | null = null;
-
-      // Detecteer welk punt gewijzigd/verplaatst of hernoemd is
-      if (oldVisuals) {
-        if (oldVisuals.origins.length === newVisuals.origins.length) {
-          for (let i = 0; i < newVisuals.origins.length; i++) {
-            const op = oldVisuals.origins[i];
-            const np = newVisuals.origins[i];
-            if (op.x !== np.x || op.y !== np.y) {
-              movedOldPoint = op;
-              movedNewPoint = np;
-              break;
-            }
-            if (op.name && np.name && op.name !== np.name && !isSameLandmark(op.name, np.name)) {
-              renamedOldName = op.name;
-              renamedNewName = np.name;
-            }
-          }
-        }
-        if (!movedOldPoint && oldVisuals.insertions.length === newVisuals.insertions.length) {
-          for (let i = 0; i < newVisuals.insertions.length; i++) {
-            const op = oldVisuals.insertions[i];
-            const np = newVisuals.insertions[i];
-            if (op.x !== np.x || op.y !== np.y) {
-              movedOldPoint = op;
-              movedNewPoint = np;
-              break;
-            }
-            if (op.name && np.name && op.name !== np.name && !isSameLandmark(op.name, np.name)) {
-              renamedOldName = op.name;
-              renamedNewName = np.name;
-            }
-          }
-        }
-      }
-
-      let synchronizedCount = 0;
-
       const updated = prev.map(m => {
         if (m.id === muscleId) {
           const otherSide = side === 'left' ? 'right' : side === 'right' ? 'left' : null;
@@ -446,76 +391,6 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           };
         }
 
-        // Synchroniseer alleen met andere spieren indien letterlijk dezelfde anatomische naam
-        if (m.visuals[side]) {
-          const targetVisuals = m.visuals[side]!;
-          let changed = false;
-
-          let updatedOrigins = targetVisuals.origins;
-          let updatedInsertions = targetVisuals.insertions;
-
-          if (movedOldPoint?.name && movedNewPoint) {
-            updatedOrigins = updatedOrigins.map(pt => {
-              if (isSameLandmark(pt.name, movedOldPoint!.name)) {
-                changed = true;
-                return { ...pt, x: movedNewPoint!.x, y: movedNewPoint!.y };
-              }
-              return pt;
-            });
-            updatedInsertions = updatedInsertions.map(pt => {
-              if (isSameLandmark(pt.name, movedOldPoint!.name)) {
-                changed = true;
-                return { ...pt, x: movedNewPoint!.x, y: movedNewPoint!.y };
-              }
-              return pt;
-            });
-          }
-
-          if (renamedOldName && renamedNewName) {
-            updatedOrigins = updatedOrigins.map(pt => {
-              if (isSameLandmark(pt.name, renamedOldName)) {
-                changed = true;
-                return { ...pt, name: renamedNewName! };
-              }
-              return pt;
-            });
-            updatedInsertions = updatedInsertions.map(pt => {
-              if (isSameLandmark(pt.name, renamedOldName)) {
-                changed = true;
-                return { ...pt, name: renamedNewName! };
-              }
-              return pt;
-            });
-          }
-
-          if (changed) {
-            synchronizedCount++;
-            const newTargetVisuals: MuscleVisualData = {
-              ...targetVisuals,
-              origins: updatedOrigins,
-              insertions: updatedInsertions,
-            };
-            const otherSide = side === 'left' ? 'right' : side === 'right' ? 'left' : null;
-            const isBilateral = m.symmetryType === 'bilateral';
-
-            return {
-              ...m,
-              visuals: {
-                ...m.visuals,
-                [side]: newTargetVisuals,
-                ...(isBilateral && otherSide ? {
-                  [otherSide]: {
-                    origins: mirrorPoints(newTargetVisuals.origins),
-                    insertions: mirrorPoints(newTargetVisuals.insertions),
-                    musclePath: mirrorPoints(newTargetVisuals.musclePath || []),
-                    attachmentLines: mirrorAttachmentLines(newTargetVisuals.attachmentLines),
-                  }
-                } : {})
-              }
-            };
-          }
-        }
-
         return m;
       });
 
@@ -523,7 +398,7 @@ export const MuscleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       debouncedSaveToDisk(updated);
       return updated;
     });
-  }, [setFocusedMuscleId, debouncedSaveToDisk]);
+  }, [setFocusedMuscleId, mirrorAttachmentLines, debouncedSaveToDisk]);
 
   // Update overige spiergegevens (zoals aanzicht, functies, extra info)
   const updateMuscleDetails = useCallback((muscleId: string, updates: Partial<Muscle>) => {

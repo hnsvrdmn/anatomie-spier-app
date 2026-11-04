@@ -19,6 +19,7 @@ import {
   RefreshCw, 
   ChevronRight,
   Trash2, 
+  Undo2,
   CheckSquare, 
   Square, 
   Shuffle, 
@@ -104,6 +105,7 @@ interface MobileQuizViewProps {
   setActiveTrapeziusPart?: (val: 'descendens' | 'transversa' | 'ascendens') => void;
   requireAllVertebrae?: boolean;
   setRequireAllVertebrae?: (val: boolean) => void;
+  onUndoLastPoint?: () => void;
 }
 
 export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
@@ -163,8 +165,25 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
   setActiveTrapeziusPart,
   requireAllVertebrae = false,
   setRequireAllVertebrae,
+  onUndoLastPoint,
 }) => {
   const { quizOpenOptionsTrigger } = useMuscles();
+
+  // Subtiele highlight voor trapezius gereedheid op mobiel
+  const trapeziusPartOriginsCount = userOrigins.filter(p => p.name?.toLowerCase().includes(activeTrapeziusPart)).length;
+  const trapeziusPartInsertionsCount = userInsertions.filter(p => p.name?.toLowerCase().includes(activeTrapeziusPart)).length;
+  const isTrapezius = muscle?.id === 'trapezius';
+
+  const shouldSubtlyHighlightInsertion = 
+    isTrapezius && 
+    activeQuizTool === 'origin' && 
+    trapeziusPartOriginsCount >= 2 && 
+    trapeziusPartInsertionsCount === 0;
+
+  const shouldSubtlyHighlightOrigin = 
+    isTrapezius && 
+    activeQuizTool === 'insertion' && 
+    trapeziusPartInsertionsCount >= 1;
 
   // Stand van het frame:
   // - false (minimale stand): toont altijd de vraag, origo & insertie, en antwoordknoppen.
@@ -296,6 +315,8 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                 className={`w-7 h-7 rounded-lg text-xs font-black transition-all flex items-center justify-center ${
                   activeQuizTool === 'origin'
                     ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-400'
+                    : shouldSubtlyHighlightOrigin
+                    ? 'bg-blue-950/90 text-blue-300 ring-2 ring-blue-400/90 shadow-sm'
                     : 'text-blue-400 hover:bg-slate-800'
                 }`}
               >
@@ -309,6 +330,8 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                 className={`w-7 h-7 rounded-lg text-xs font-black transition-all flex items-center justify-center ${
                   activeQuizTool === 'insertion'
                     ? 'bg-orange-600 text-white shadow-sm ring-2 ring-orange-400'
+                    : shouldSubtlyHighlightInsertion
+                    ? 'bg-orange-950/90 text-orange-300 ring-2 ring-orange-400/90 shadow-sm'
                     : 'text-orange-400 hover:bg-slate-800'
                 }`}
               >
@@ -321,10 +344,10 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                 {(['descendens', 'transversa', 'ascendens'] as const).map((partKey) => {
                   const label =
                     partKey === 'descendens'
-                      ? '1. Desc.'
+                      ? 'Desc.'
                       : partKey === 'transversa'
-                      ? '2. Transv.'
-                      : '3. Ascend.';
+                      ? 'Transv.'
+                      : 'Ascend.';
                   const isActive = activeTrapeziusPart === partKey;
                   return (
                     <button
@@ -345,18 +368,31 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
             )}
 
             {hasPlacedPoints && (
-              <button
-                type="button"
-                onClick={() => {
-                  if (setUserOrigins) setUserOrigins([]);
-                  if (setUserInsertions) setUserInsertions([]);
-                  setActiveQuizTool(currentQuestion.landmarkType === 'insertion' ? 'insertion' : 'origin');
-                }}
-                className="h-7 w-7 bg-rose-950/90 backdrop-blur-md border border-rose-800/80 text-rose-300 hover:bg-rose-900 rounded-lg shadow-lg flex items-center justify-center transition active:scale-95"
-                title="Wis geplaatste punten"
-              >
-                <Trash2 className="w-3.5 h-3.5 text-rose-300" />
-              </button>
+              <div className="flex items-center gap-1">
+                {onUndoLastPoint && (
+                  <button
+                    type="button"
+                    onClick={onUndoLastPoint}
+                    className="h-7 w-7 bg-slate-950/90 backdrop-blur-md border border-slate-700/80 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg shadow-lg flex items-center justify-center transition active:scale-95"
+                    title="Vorige punt ongedaan maken"
+                  >
+                    <Undo2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (setUserOrigins) setUserOrigins([]);
+                    if (setUserInsertions) setUserInsertions([]);
+                    if (setActiveTrapeziusPart) setActiveTrapeziusPart('descendens');
+                    setActiveQuizTool(currentQuestion.landmarkType === 'insertion' ? 'insertion' : 'origin');
+                  }}
+                  className="h-7 w-7 bg-rose-950/90 backdrop-blur-md border border-rose-800/80 text-rose-300 hover:bg-rose-900 rounded-lg shadow-lg flex items-center justify-center transition active:scale-95"
+                  title="Wis geplaatste punten"
+                >
+                  <Trash2 className="w-3.5 h-3.5 text-rose-300" />
+                </button>
+              </div>
             )}
           </div>
         )}
@@ -620,7 +656,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                     }`}
                     title="Alle wervels vereisen. Standaard uit: minimaal eerste en laatste wervel (meer mag)"
                   >
-                    <span className="font-medium text-[10px] leading-tight">Wervels</span>
+                    <span className="font-medium text-[10px] leading-tight text-center">Alle<br />wervels</span>
                     <span className={`mt-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded ${
                       requireAllVertebrae ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
                     }`}>
@@ -728,9 +764,16 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                     </h2>
                   </div>
                 ) : (
-                  <h2 className="text-xs sm:text-sm font-black text-slate-900 leading-snug">
-                    Plaats origo & insertie: {cleanMuscleName(muscle?.name)}
-                  </h2>
+                  <div>
+                    <h2 className="text-xs sm:text-sm font-black text-slate-900 leading-snug">
+                      Plaats origo & insertie: {cleanMuscleName(muscle?.name)}
+                    </h2>
+                    {muscle?.id === 'trapezius' && (
+                      <p className="text-[11px] text-slate-500 font-medium mt-0.5">
+                        Teken de verschillende partes (descendens, transversa, ascendens) los na elkaar in.
+                      </p>
+                    )}
+                  </div>
                 )}
               </div>
             </div>

@@ -2651,3 +2651,42 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
        6. *Bewerken (PC):* Handleiding voor het visueel kalibreren van spieren, botten, en de nieuwe wervels & ribben editor.
 - **Verificatie & Deployment:**
   - `npm run build` foutloos uitgevoerd (`✓ built in 4.32s`).
+
+
+---
+
+## 85. Werveltoggle Label, Verspringende Crista Iliaca Fix, Trapezius Partes Lijnen & Subtiele Indicatie, PC Undo/Wis Knoppen (04-11-2026 21:40)
+- **Status:** Succesvol geïmplementeerd, geverifieerd via `npm run build` en live getest.
+- **Aanleiding & Gebruikerswensen:**
+  1. *Knopje wervels hernoemen:* De toggle voor wervels moet `alle <enter> wervels` heten (tweeregels gecentreerd).
+  2. *Verspringende insertie 4 & Crista Iliaca (Gluteus maximus en Obliquus):* Insertie 4 van `m. obliquus internus abdominis` versprong steeds. Bij `m. gluteus maximus` en de obliques versprong het `crista iliaca` punt steeds (door cross-muscle overschrijving tussen links/rechts/ventraal/dorsaal). Dit moest definitief voorkomen worden.
+  3. *Trapezius knoppen pars zonder cijfers:* De cijfers (`1.`, `2.`, `3.`) moesten weg; uitsluitend de namen tonen (`Descendens`, `Transversa`, `Ascendens`; mobiel: `Desc.`, `Transv.`, `Ascend.`).
+  4. *Verwijder dubbele controleer-knop bovenin:* Bovenin de navigatiebalk stond een overbodige tweede 'Controleer' knop.
+  5. *Trapezius verbindingslijnen fix:* Als een gebruiker eerst origo's, dan inserties en weer origo's plaatst, moeten de getekende spierlijnen uitsluitend origo's en inserties binnen dezelfde pars verbinden (nooit over partes heen).
+  6. *Subtiele highlight i.p.v. auto-switch bij Trapezius:* Omdat de student bij Trapezius wellicht nog wervels wil toevoegen, mag er niet automatisch geswitcht worden. Wel moet subtiel (zonder kermis) de relevante knop oplichten zodra minimaal 2 origo's en 1 insertie geplaatst zijn.
+  7. *Rustige toelichting bij Trapezius:* Rustige mededeling onder *"Plaats de origo en insertie van: m. trapezius"* dat de partes los na elkaar moeten worden ingetekend.
+  8. *PC Undo & Wis knoppen voor alle spieren:* Een zwevende knop voor alle spieren om het laatste punt ongedaan te maken (inclusief `Ctrl+Z` / `Cmd+Z`) en een prullenbakknop om alles te wissen, minimalistisch zonder tekst.
+- **Doorgevoerde Aanpassingen:**
+  1. *Label Wervels-toggle ([QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx), [MobileQuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/MobileQuizView.tsx)):*
+     - Aangepast naar twee regels gecentreerd: `Alle<br />wervels`.
+  2. *Fix Crista Iliaca & Obliquus Internus ([MuscleContext.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/context/MuscleContext.tsx), [muscles.json](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/muscles.json), [muscles-v2.json](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/data/muscles-v2.json), [export.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/utils/export.ts)):*
+     - Oorzaak achterhaald: `MuscleContext.tsx` synchroniseerde landmarks met identieke namen over álle andere spieren in de database zonder rekening te houden met ventraal/dorsaal of links/rechts, waardoor `0.6168` en `0.3832` werden geswapt.
+     - Cross-muscle synchronisatie in `MuscleContext.tsx` uitgeschakeld; elke spier behoudt nu 100% zijn eigen onafhankelijke coördinaten.
+     - Coördinaten van `obliquus_internus_abdominis` en `obliquus_externus_abdominis` gespiegeld en symmetrisch gecorrigeerd in de JSON-datasets.
+     - Dataset storage key verhoogd naar `pmt_anatomie_muscles_dataset_v19` zodat alle browsers direct de gecorrigeerde coördinaten laden.
+  3. *Verwijdering cijfers Trapezius-knoppen ([QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx), [MobileQuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/MobileQuizView.tsx)):*
+     - Cijfers `1.`, `2.`, `3.` verwijderd. Knoppen tonen nu `Descendens`, `Transversa`, `Ascendens` (en compact op mobiel: `Desc.`, `Transv.`, `Ascend.`).
+  4. *Verwijdering dubbele Controleer-knop ([QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx)):*
+     - Overbodige knop in de bovenbalk naast de ViewToggle verwijderd en vervangen door een lege flex-spacer zodat de aanzicht-schakelaar gecentreerd blijft.
+  5. *Trapezius verbindingslijnen per Pars ([coordinates.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/utils/coordinates.ts)):*
+     - `getMuscleConnections` herschreven: wanneer punten een pars-label hebben (`descendens`, `transversa`, `ascendens`), worden origo's en inserties strikt per pars gegroepeerd en uitsluitend binnen dezelfde pars met elkaar verbonden. Kruislingse lijnen tussen verschillende partes zijn hiermee verleden tijd.
+  6. *Subtiele highlight & Geen auto-switch Trapezius ([QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx), [MobileQuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/MobileQuizView.tsx)):*
+     - Auto-switch geblokkeerd voor `trapezius` zodat studenten rustig alle gewenste wervels kunnen selecteren.
+     - Subtiele highlight (rustige ring en zachte tint) geactiveerd op de `Insertie` knop zodra minimaal 2 origo's geplaatst zijn en nog 0 inserties voor de actieve pars.
+  7. *Duidelijke, rustige toelichting Trapezius:*
+     - Onder de spiernaam rustig vermeld: *"Teken de verschillende partes (descendens, transversa, ascendens) los na elkaar in met de knoppen boven het skelet."*
+  8. *PC Undo & Wis Knoppen voor alle spieren ([QuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/QuizView.tsx), [MobileQuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/MobileQuizView.tsx)):*
+     - Zwevende minimalistische knoppenbalk met `Undo2` en `Trash2` icoonknoppen naast Origo/Insertie over het skelet.
+     - `Ctrl+Z` / `Cmd+Z` sneltoetsondersteuning op PC om het laatst geplaatste punt ongedaan te maken.
+- **Verificatie & Deployment:**
+  - `npm run build` foutloos uitgevoerd (`✓ built in 4.08s`).
