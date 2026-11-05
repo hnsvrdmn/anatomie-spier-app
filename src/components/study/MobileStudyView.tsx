@@ -486,7 +486,7 @@ export const MobileStudyView: React.FC = () => {
             <div className="w-full bg-amber-50 border border-amber-200/90 rounded-xl px-3 py-2 flex items-start gap-2 text-amber-900 text-xs font-medium shadow-2xs">
               <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
               <span className="leading-snug">
-                <strong>Let op:</strong> De inconsequenties tussen het moduleboek, antwoord-PDF's en PowerPoint zitten er nog in.
+                <strong>Let op:</strong> De inconsistenties tussen het moduleboek, antwoord-PDF's en PowerPoint zitten er nog in.
               </span>
             </div>
             <MuscleDetail />

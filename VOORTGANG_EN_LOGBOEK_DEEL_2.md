@@ -58,3 +58,15 @@ De code is live getest in een echte browser via Puppeteer (Microsoft Edge headle
 - **Git Push Beleid:** Er wordt **niet** meer automatisch naar GitHub gepusht. Wijzigingen blijven lokaal gecommit.
 - **Nieuw Logboek:** Alle nieuwe denkstappen, analyses en updates worden exclusief in dit document bijgehouden (`VOORTGANG_EN_LOGBOEK_DEEL_2.md`).
 
+
+
+---
+
+## 4. Terminologie-aanpassing Waarschuwingsbanner (05-11-2026 23:31)
+- **Aanpassing:** In de waarschuwingsbanner op de Spieren/Studeertab is het woord *"inconsequenties"* vervangen door *"inconsistenties"*:
+  - Oude tekst: `<strong>Let op:</strong> De inconsequenties tussen het moduleboek, antwoord-PDF's en PowerPoint zitten er nog in.`
+  - Nieuwe tekst: `<strong>Let op:</strong> De inconsistenties tussen het moduleboek, antwoord-PDF's en PowerPoint zitten er nog in.`
+- **Bestanden:**
+  - [StudyView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/study/StudyView.tsx) (desktop weergave)
+  - [MobileStudyView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/study/MobileStudyView.tsx) (mobiele drawer)
+- **Verificatie:** `npm run build` foutloos uitgevoerd (`✓ built in 4.49s`).
