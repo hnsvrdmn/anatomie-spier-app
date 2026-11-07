@@ -101,6 +101,8 @@ interface MobileQuizViewProps {
   onToggleAutoZoom?: () => void;
   isFreeDrawMode?: boolean;
   onToggleFreeDrawMode?: () => void;
+  autoSwitchPointType?: boolean;
+  onToggleAutoSwitch?: () => void;
   onClearAllPoints?: () => void;
   activeTrapeziusPart?: 'descendens' | 'transversa' | 'ascendens';
   setActiveTrapeziusPart?: (val: 'descendens' | 'transversa' | 'ascendens') => void;
@@ -163,6 +165,8 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
   onToggleAutoZoom,
   isFreeDrawMode = true,
   onToggleFreeDrawMode,
+  autoSwitchPointType = true,
+  onToggleAutoSwitch,
   onClearAllPoints,
   activeTrapeziusPart = 'descendens',
   setActiveTrapeziusPart,
@@ -640,14 +644,21 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                     className={`flex flex-col items-center justify-center p-1.5 rounded-lg border transition ${
                       isFreeDrawMode
                         ? 'bg-blue-50 border-blue-200 text-blue-800'
-                        : 'bg-slate-50 border-slate-200 text-slate-500'
+                        : 'bg-indigo-50 border-indigo-200 text-indigo-800'
                     }`}
+                    title={
+                      isFreeDrawMode
+                        ? 'Vrij intekenen: klik om over te schakelen naar I/O intekenen'
+                        : 'I/O intekenen: klik om over te schakelen naar Vrij intekenen'
+                    }
                   >
-                    <span className="font-medium text-[10px] leading-tight text-center">Vrij<br />intekenen</span>
+                    <span className="font-medium text-[10px] leading-tight text-center">
+                      {isFreeDrawMode ? <>Vrij<br />intekenen</> : <>I/O<br />intekenen</>}
+                    </span>
                     <span className={`mt-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded ${
-                      isFreeDrawMode ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
+                      isFreeDrawMode ? 'bg-blue-600 text-white' : 'bg-indigo-600 text-white'
                     }`}>
-                      {isFreeDrawMode ? 'Aan' : 'Uit'}
+                      {isFreeDrawMode ? 'Vrij' : 'I / O'}
                     </span>
                   </button>
                 )}
@@ -670,6 +681,21 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                       {requireAllVertebrae ? 'Aan' : 'Uit'}
                     </span>
                   </button>
+                )}
+
+                {/* In I/O intekenmodus: checkbox om automatische switch naar insertie te activeren of deactiveren */}
+                {!isFreeDrawMode && onToggleAutoSwitch && (
+                  <div className="pt-2 col-span-4 flex items-center px-1">
+                    <label className="flex items-center gap-2 cursor-pointer select-none text-slate-700 hover:text-slate-900">
+                      <input
+                        type="checkbox"
+                        checked={autoSwitchPointType}
+                        onChange={onToggleAutoSwitch}
+                        className="w-4 h-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500 cursor-pointer"
+                      />
+                      <span className="font-semibold text-xs text-slate-700">Autoswitch I/O</span>
+                    </label>
+                  </div>
                 )}
               </div>
             </div>

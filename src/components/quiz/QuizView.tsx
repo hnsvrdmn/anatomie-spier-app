@@ -192,6 +192,20 @@ export const QuizView: React.FC = () => {
     });
   }, [userOrigins, userInsertions]);
 
+  // Automatisch wisselen van intekentool (origo -> insertie) in I/O modus zodra alle origo's zijn geplaatst
+  const [autoSwitchPointType, setAutoSwitchPointType] = useState<boolean>(() => {
+    const saved = localStorage.getItem('pmt_auto_switch_point_type');
+    return saved !== null ? saved === 'true' : true;
+  });
+
+  const handleToggleAutoSwitch = useCallback(() => {
+    setAutoSwitchPointType((prev) => {
+      const next = !prev;
+      localStorage.setItem('pmt_auto_switch_point_type', String(next));
+      return next;
+    });
+  }, []);
+
   // Actief intekentool: 'origin' of 'insertion'
   const [activeQuizTool, setActiveQuizTool] = useState<'origin' | 'insertion'>('origin');
   const [activeTrapeziusPart, setActiveTrapeziusPart] = useState<'descendens' | 'transversa' | 'ascendens'>('descendens');
@@ -1590,7 +1604,17 @@ export const QuizView: React.FC = () => {
       pointHistoryRef.current.push('insertion');
     }
 
-    // In handmatige modus: nooit ongevraagd de tool omgooien; student klikt zélf op [I] of op "Controleer antwoord"
+    // In I/O modus: automatisch doorschakelen van origo naar insertie indien 'Autoswitch I/O' aan staat
+    if (
+      autoSwitchPointType &&
+      !isTrapezius &&
+      toolToUse === 'origin' &&
+      expectedCounts.insertions > 0 &&
+      nextOrigins.length >= expectedCounts.origins &&
+      nextInsertions.length < expectedCounts.insertions
+    ) {
+      setActiveQuizTool('insertion');
+    }
   };
 
   // Verslepen van geplaatste punten indien net verkeerd neergezet
@@ -1885,6 +1909,8 @@ export const QuizView: React.FC = () => {
         onToggleAutoZoom={handleToggleAutoZoom}
         isFreeDrawMode={isFreeDrawMode}
         onToggleFreeDrawMode={handleToggleFreeDrawMode}
+        autoSwitchPointType={autoSwitchPointType}
+        onToggleAutoSwitch={handleToggleAutoSwitch}
         evaluatedSide={evaluatedSide}
         isEvaluated={isEvaluated}
         isPlacementSuccess={isPlacementSuccess}
@@ -2319,15 +2345,21 @@ export const QuizView: React.FC = () => {
               className={`flex flex-col items-center justify-center p-1.5 rounded-lg border transition ${
                 isFreeDrawMode
                   ? 'bg-blue-50 border-blue-200 text-blue-800'
-                  : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
+                  : 'bg-indigo-50 border-indigo-200 text-indigo-800 hover:bg-indigo-100'
               }`}
-              title="Vrij intekenen: teken alle aanhechtingen rustig in met één kleur zonder tussen O en I te hoeven wisselen"
+              title={
+                isFreeDrawMode
+                  ? 'Vrij intekenen: klik om over te schakelen naar I/O intekenen'
+                  : 'I/O intekenen: klik om over te schakelen naar Vrij intekenen'
+              }
             >
-              <span className="font-semibold text-[10px] leading-tight text-center">Vrij<br />intekenen</span>
+              <span className="font-semibold text-[10px] leading-tight text-center">
+                {isFreeDrawMode ? <>Vrij<br />intekenen</> : <>I/O<br />intekenen</>}
+              </span>
               <span className={`mt-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded ${
-                isFreeDrawMode ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
+                isFreeDrawMode ? 'bg-blue-600 text-white' : 'bg-indigo-600 text-white'
               }`}>
-                {isFreeDrawMode ? 'Aan' : 'Uit'}
+                {isFreeDrawMode ? 'Vrij' : 'I / O'}
               </span>
             </button>
             <button
@@ -2348,6 +2380,21 @@ export const QuizView: React.FC = () => {
               </span>
             </button>
           </div>
+
+          {/* In I/O intekenmodus: checkbox om automatische switch naar insertie te activeren of deactiveren */}
+          {!isFreeDrawMode && (
+            <div className="pt-2 flex items-center px-1">
+              <label className="flex items-center gap-2 cursor-pointer select-none text-slate-700 hover:text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={autoSwitchPointType}
+                  onChange={handleToggleAutoSwitch}
+                  className="w-3.5 h-3.5 rounded text-blue-600 border-slate-300 focus:ring-blue-500 cursor-pointer"
+                />
+                <span className="font-semibold text-[11px] text-slate-700">Autoswitch I/O</span>
+              </label>
+            </div>
+          )}
 
           {/* Voortgangsbalk bij joint of full_all */}
           {practiceMode === 'joint' && (
