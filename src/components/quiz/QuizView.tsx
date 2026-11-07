@@ -181,6 +181,21 @@ export const QuizView: React.FC = () => {
   const [userOrigins, setUserOrigins] = useState<Point2D[]>([]);
   const [userInsertions, setUserInsertions] = useState<Point2D[]>([]);
 
+  // Refs voor actuele punten en actieve sleepacties (voorkomt closure staleness bij muisbewegingen)
+  const userFreePointsRef = useRef<Point2D[]>([]);
+  userFreePointsRef.current = userFreePoints;
+  const userOriginsRef = useRef<Point2D[]>([]);
+  userOriginsRef.current = userOrigins;
+  const userInsertionsRef = useRef<Point2D[]>([]);
+  userInsertionsRef.current = userInsertions;
+
+  const activeDragTargetRef = useRef<{
+    pointType: 'origin' | 'insertion';
+    index: number;
+    freeIndex: number;
+  } | null>(null);
+  const dragDebounceTimerRef = useRef<any>(null);
+
   const handleToggleFreeDrawMode = useCallback(() => {
     setIsFreeDrawMode((prev) => {
       const next = !prev;
@@ -1620,43 +1635,78 @@ export const QuizView: React.FC = () => {
   // Verslepen van geplaatste punten indien net verkeerd neergezet
   const handleUpdateUserPoint = (pointType: 'origin' | 'insertion', index: number, newPoint: Point2D) => {
     if (isEvaluated) return;
+
+    // 1. Direct updaten van de visuele array voor ultra-responsief 120 FPS verslepen
+    if (pointType === 'origin') {
+      setUserOrigins((prev) => {
+        if (!prev[index]) return prev;
+        const next = [...prev];
+        next[index] = { ...next[index], ...newPoint };
+        return next;
+      });
+    } else {
+      setUserInsertions((prev) => {
+        if (!prev[index]) return prev;
+        const next = [...prev];
+        next[index] = { ...next[index], ...newPoint };
+        return next;
+      });
+    }
+
+    // 2. In vrije intekenmodus: houd tevens de onderliggende userFreePoints array synchroon
     if (isFreeDrawMode) {
-      const oldPt = pointType === 'origin' ? userOrigins[index] : userInsertions[index];
-      setUserFreePoints((prev) => {
-        const next = prev.map((p) => {
-          if (oldPt && p.x === oldPt.x && p.y === oldPt.y) {
-            return { ...p, ...newPoint };
-          }
-          return p;
+      if (
+        !activeDragTargetRef.current ||
+        activeDragTargetRef.current.pointType !== pointType ||
+        activeDragTargetRef.current.index !== index
+      ) {
+        // Start van een nieuwe sleepactie: zoek de corresponderende index in userFreePoints
+        const currentTargetPt = pointType === 'origin'
+          ? userOriginsRef.current[index]
+          : userInsertionsRef.current[index];
+
+        let matchedFreeIdx = -1;
+        if (currentTargetPt && userFreePointsRef.current.length > 0) {
+          let minDist = Infinity;
+          userFreePointsRef.current.forEach((fp, fIdx) => {
+            const d = Math.hypot(fp.x - currentTargetPt.x, fp.y - currentTargetPt.y);
+            if (d < minDist) {
+              minDist = d;
+              matchedFreeIdx = fIdx;
+            }
+          });
+        }
+        activeDragTargetRef.current = { pointType, index, freeIndex: matchedFreeIdx };
+      }
+
+      const freeIdx = activeDragTargetRef.current.freeIndex;
+      if (freeIdx >= 0) {
+        setUserFreePoints((prev) => {
+          if (!prev[freeIdx]) return prev;
+          const next = [...prev];
+          next[freeIdx] = { ...next[freeIdx], ...newPoint };
+          return next;
         });
+      }
+
+      // Reset activeDragTarget na 200ms inactiviteit / loslaten van de muis
+      clearTimeout(dragDebounceTimerRef.current);
+      dragDebounceTimerRef.current = setTimeout(() => {
+        activeDragTargetRef.current = null;
+        // Na afronden van het slepen: eenmalig definitief herpartitioneren
         const vis = currentQuestion?.muscle?.visuals[evaluatedSide] ||
                     currentQuestion?.muscle?.visuals.left ||
                     currentQuestion?.muscle?.visuals.right ||
                     { origins: [], insertions: [], attachmentLines: [] };
         const { assignedOrigins, assignedInsertions } = partitionFreePoints(
-          next,
+          userFreePointsRef.current,
           vis.origins || [],
           vis.insertions || [],
           vis.attachmentLines || []
         );
         setUserOrigins(assignedOrigins);
         setUserInsertions(assignedInsertions);
-        return next;
-      });
-      return;
-    }
-    if (pointType === 'origin') {
-      setUserOrigins(prev => {
-        const next = [...prev];
-        next[index] = { ...prev[index], ...newPoint };
-        return next;
-      });
-    } else {
-      setUserInsertions(prev => {
-        const next = [...prev];
-        next[index] = { ...prev[index], ...newPoint };
-        return next;
-      });
+      }, 200);
     }
   };
 

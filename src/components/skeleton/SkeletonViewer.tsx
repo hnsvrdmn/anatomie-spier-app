@@ -85,6 +85,8 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
   const containerRef = innerRef || localContainerRef;
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
   const isDraggingPointRef = useRef(false);
+  const onUpdateUserPointRef = useRef(onUpdateUserPoint);
+  onUpdateUserPointRef.current = onUpdateUserPoint;
   const isSpaceDownRef = useRef(false);
   const hasMovedRef = useRef(false);
   const lastTouchHandledTimeRef = useRef<number>(0);
@@ -500,8 +502,11 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
     touchStateRef.current.singleTouchStart = null;
     touchStateRef.current.hasMoved = true;
 
+    const isMouse = e.pointerType === 'mouse';
     try {
-      (e.currentTarget as Element).setPointerCapture(e.pointerId);
+      if (!isMouse) {
+        (e.currentTarget as Element).setPointerCapture(e.pointerId);
+      }
     } catch {}
 
     const existingPoint = (type === 'origin' ? effectiveOrigins : effectiveInsertions)[index];
@@ -512,15 +517,18 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       const normalized = clientToNormalized(moveEv.clientX, moveEv.clientY, rect);
-      onUpdateUserPoint(type, index, { ...existingPoint, ...normalized });
+      onUpdateUserPointRef.current?.(type, index, { ...existingPoint, ...normalized });
     };
 
     const handlePointerUp = (upEv: PointerEvent) => {
       try {
-        (e.currentTarget as Element).releasePointerCapture(upEv.pointerId);
+        if (!isMouse) {
+          (e.currentTarget as Element).releasePointerCapture(upEv.pointerId);
+        }
       } catch {}
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointercancel', handlePointerUp);
       setTimeout(() => {
         isDraggingPointRef.current = false;
         touchStateRef.current.singleTouchStart = null;
@@ -529,6 +537,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
 
     window.addEventListener('pointermove', handlePointerMove, { passive: false });
     window.addEventListener('pointerup', handlePointerUp, { passive: false });
+    window.addEventListener('pointercancel', handlePointerUp, { passive: false });
   };
 
   // Normaliseer actieve spieren: toon alle geselecteerde spieren (ook van het andere aanzicht via doorschijning!)

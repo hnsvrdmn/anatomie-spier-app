@@ -235,10 +235,16 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                 </div>
                 <ul className="text-xs text-slate-700 space-y-1.5 list-disc pl-5">
                   <li>
-                    <strong>Linkermuisknop:</strong> plaatst het actieve type punt (blauw voor origo of oranje voor insertie).
+                    <strong>Linkermuisknop:</strong> plaatst een nieuw aanhechtingspunt op het skelet.
                   </li>
                   <li>
-                    <strong>Rechtermuisknop op skelet:</strong> snelle insertie-sneltoets! Plaatst direct een oranje insertie zonder eerst op de knop 'Insertie' te hoeven klikken.
+                    <strong>Punten verslepen (verplaatsen):</strong> klik met de linkermuisknop op een reeds geplaatst punt en sleep het soepel naar de gewenste plek op het bot om de positie te corrigeren.
+                  </li>
+                  <li>
+                    <strong>Rechtermuisknop op geplaatst punt:</strong> verwijdert het punt direct.
+                  </li>
+                  <li>
+                    <strong>Rechtermuisknop op leeg skelet:</strong> in I/O modus snelle sneltoets voor insertie (plaatst direct een oranje insertie).
                   </li>
                   <li>
                     <strong>Muiswiel:</strong> in- en uitzoomen op de positie van je cursor.
@@ -249,8 +255,8 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                   <li>
                     <strong>Sneltoetsen:</strong>
                     <span className="block mt-1 pl-2 text-slate-600 font-mono text-[11px]">
-                      • 1 / O = Schakel naar Origo intekenen<br />
-                      • 2 / I = Schakel naar Insertie intekenen<br />
+                      • 1 / O = Schakel naar Origo (in I/O modus)<br />
+                      • 2 / I = Schakel naar Insertie (in I/O modus)<br />
                       • Ctrl+Z = Laatste punt ongedaan maken<br />
                       • Enter / Spatie = Controleer antwoord of volgende vraag
                     </span>
@@ -273,33 +279,39 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                 </p>
                 <div className="grid gap-2 text-xs">
                   <div className="p-2.5 bg-white rounded-xl border border-indigo-200/70">
-                    <span className="font-bold text-indigo-900 block mb-0.5">1. Origo & Insertie intekenen</span>
+                    <span className="font-bold text-indigo-900 block mb-0.5">1. Vrij intekenen (Potloodmodus – Standaard)</span>
                     <span className="text-slate-600">
-                      Plaats de aanhechtingspunten direct op het skelet. Zodra je het verwachte aantal punten hebt geplaatst, klik je op <strong>Controleer</strong>.
+                      Teken alle aanhechtingspunten rustig in met één medische blauwe kleur, net als op een papieren anatomietoets met potlood. De volgorde waarin je de punten zet maakt niet uit! De app herkent op de achtergrond automatisch welke punten bij de origo en welke bij de insertie horen.
                     </span>
                   </div>
                   <div className="p-2.5 bg-white rounded-xl border border-indigo-200/70">
-                    <span className="font-bold text-indigo-900 block mb-0.5">2. Spieren met een brede wervelrij (Nieuw)</span>
+                    <span className="font-bold text-indigo-900 block mb-0.5">2. I/O intekenen & Autoswitch I/O</span>
                     <span className="text-slate-600">
-                      Bij spieren die langs een wervelrij lopen hoef je standaard <strong>alleen de eerste en de laatste wervel</strong> uit de rij aan te klikken (meer mag altijd). Met de toggle <em>Alle wervels</em> kun je instellen dat je verplicht alle tussenliggende wervels moet aankruisen.
+                      In deze handmatige modus wissel je zelf tussen Origo (blauw) en Insertie (oranje). Met de checkbox <strong>Autoswitch I/O</strong> kun je instellen of de app automatisch naar Insertie springt zodra alle origo's compleet zijn.
                     </span>
                   </div>
                   <div className="p-2.5 bg-white rounded-xl border border-indigo-200/70">
-                    <span className="font-bold text-indigo-900 block mb-0.5">3. M. Trapezius (Partes los intekenen)</span>
+                    <span className="font-bold text-indigo-900 block mb-0.5">3. Punten verslepen & corrigeren</span>
                     <span className="text-slate-600">
-                      De <em>m. trapezius</em> teken je in één vraag in per pars: gebruik de knoppen boven het skelet om te schakelen tussen <em>Descendens</em>, <em>Transversa</em> en <em>Ascendens</em>. Zodra de minimale juiste punten zijn geplaatst, licht de volgende knop subtiel op.
+                      Ieder geplaatst punt kan direct met de linkermuisknop (of je vinger op mobiel) worden opgepakt en versleept naar de juiste anatomische locatie. Verkeerd geplaatste punten kun je ook wissen met de prullenbak of rechtermuisknop.
                     </span>
                   </div>
                   <div className="p-2.5 bg-white rounded-xl border border-indigo-200/70">
-                    <span className="font-bold text-indigo-900 block mb-0.5">4. Botten benoemen & Meerkeuze</span>
+                    <span className="font-bold text-indigo-900 block mb-0.5">4. Spieren met een brede wervelrij</span>
                     <span className="text-slate-600">
-                      Typ de naam van het met een gele stip gemarkeerde bot, of beantwoord meerkeuzevragen over origo, insertie, functies en gewrichten.
+                      Bij spieren die langs een wervelrij lopen (zoals m. latissimus dorsi of mm. rhomboidei) hoef je standaard <strong>alleen de eerste en de laatste wervel</strong> uit de rij aan te stippen (meer mag altijd). Met de switch <em>Alle wervels</em> kun je instellen dat je verplicht alle wervels moet aankruisen.
                     </span>
                   </div>
                   <div className="p-2.5 bg-white rounded-xl border border-indigo-200/70">
-                    <span className="font-bold text-indigo-900 block mb-0.5">5. Bewegingen & Gewrichten</span>
+                    <span className="font-bold text-indigo-900 block mb-0.5">5. M. Trapezius (Partes los intekenen)</span>
                     <span className="text-slate-600">
-                      Selecteer welke bewegingen mogelijk zijn in een specifiek gewricht of welke spieren deze beweging uitvoeren.
+                      De <em>m. trapezius</em> teken je in één vraag in per pars: gebruik de knoppen boven het skelet om te schakelen tussen <em>Descendens</em>, <em>Transversa</em> en <em>Ascendens</em>.
+                    </span>
+                  </div>
+                  <div className="p-2.5 bg-white rounded-xl border border-indigo-200/70">
+                    <span className="font-bold text-indigo-900 block mb-0.5">6. Botten, Meerkeuze, Bewegingen & Gewrichten</span>
+                    <span className="text-slate-600">
+                      Benoem botten met gele landmarks, beantwoord theorie- en meerkeuzevragen, of test welke spieren specifieke gewrichtsbewegingen uitvoeren.
                     </span>
                   </div>
                 </div>
@@ -321,8 +333,8 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                     <span className="text-slate-500 text-[11px]">Zoomt automatisch in op de regio van de te testen spier.</span>
                   </div>
                   <div className="p-2 bg-white rounded-xl border border-slate-200">
-                    <span className="font-bold text-slate-900 block">Switch (Aan/Uit)</span>
-                    <span className="text-slate-500 text-[11px]">Schakelt automatisch van origo naar insertie zodra de origo compleet is.</span>
+                    <span className="font-bold text-slate-900 block">Vrij intekenen / I/O intekenen</span>
+                    <span className="text-slate-500 text-[11px]">Schakelt tussen de ontspannen potloodmodus (één kleur) en handmatig O/I plaatsen (met Autoswitch checkbox).</span>
                   </div>
                   <div className="p-2 bg-white rounded-xl border border-slate-200">
                     <span className="font-bold text-slate-900 block">Alle wervels (Aan/Uit)</span>
