@@ -99,8 +99,9 @@ interface MobileQuizViewProps {
   onToggleAutoRotate?: () => void;
   autoZoom?: boolean;
   onToggleAutoZoom?: () => void;
-  autoSwitchPointType?: boolean;
-  onToggleAutoSwitch?: () => void;
+  isFreeDrawMode?: boolean;
+  onToggleFreeDrawMode?: () => void;
+  onClearAllPoints?: () => void;
   activeTrapeziusPart?: 'descendens' | 'transversa' | 'ascendens';
   setActiveTrapeziusPart?: (val: 'descendens' | 'transversa' | 'ascendens') => void;
   requireAllVertebrae?: boolean;
@@ -160,8 +161,9 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
   onToggleAutoRotate,
   autoZoom = true,
   onToggleAutoZoom,
-  autoSwitchPointType = true,
-  onToggleAutoSwitch,
+  isFreeDrawMode = true,
+  onToggleFreeDrawMode,
+  onClearAllPoints,
   activeTrapeziusPart = 'descendens',
   setActiveTrapeziusPart,
   requireAllVertebrae = false,
@@ -292,38 +294,45 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
         {/* Compacte O (Origo, blauw) en I (Insertie, rood) knoppen + Trapezius partes over het skelet */}
         {isDrawingType && !isEvaluated && (
           <div className="absolute top-2.5 left-2.5 z-30 flex flex-col items-start gap-1.5 pointer-events-auto">
-            {/* Rij 1: O / I gereedschap + Undo & Wis knoppen */}
+            {/* Rij 1: Gereedschap (Aanhechting pill in vrije modus of O/I) + Undo & Wis knoppen */}
             <div className="flex items-center gap-1.5">
-              <div className="flex items-center gap-1 bg-slate-950/80 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 shadow-lg">
-                <button
-                  type="button"
-                  onClick={() => setActiveQuizTool('origin')}
-                  title="Plaats Origo (blauw)"
-                  aria-label="Origo"
-                  className={`w-7 h-7 rounded-lg text-xs font-black transition-colors flex items-center justify-center ${
-                    activeQuizTool === 'origin'
-                      ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-400'
-                      : 'text-blue-400 hover:bg-slate-800'
-                  }`}
-                >
-                  O
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveQuizTool('insertion')}
-                  title="Plaats Insertie (oranje)"
-                  aria-label="Insertie"
-                  className={`w-7 h-7 rounded-lg text-xs font-black transition-colors flex items-center justify-center ${
-                    activeQuizTool === 'insertion'
-                      ? 'bg-orange-600 text-white shadow-sm ring-2 ring-orange-400'
-                      : hoppingButton === 'insertion'
-                      ? 'bg-orange-500/40 text-white ring-4 ring-orange-400 ring-offset-1 animate-subtle-hop shadow-md'
-                      : 'text-orange-400 hover:bg-slate-800'
-                  }`}
-                >
-                  I
-                </button>
-              </div>
+              {isFreeDrawMode ? (
+                <div className="flex items-center gap-1.5 px-2.5 h-7 rounded-lg bg-slate-950/90 backdrop-blur-md border border-slate-700/80 text-blue-400 font-bold text-xs shadow-lg">
+                  <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
+                  <span>Aanhechting</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1 bg-slate-950/80 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 shadow-lg">
+                  <button
+                    type="button"
+                    onClick={() => setActiveQuizTool('origin')}
+                    title="Plaats Origo (blauw)"
+                    aria-label="Origo"
+                    className={`w-7 h-7 rounded-lg text-xs font-black transition-colors flex items-center justify-center ${
+                      activeQuizTool === 'origin'
+                        ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-400'
+                        : 'text-blue-400 hover:bg-slate-800'
+                    }`}
+                  >
+                    O
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveQuizTool('insertion')}
+                    title="Plaats Insertie (oranje)"
+                    aria-label="Insertie"
+                    className={`w-7 h-7 rounded-lg text-xs font-black transition-colors flex items-center justify-center ${
+                      activeQuizTool === 'insertion'
+                        ? 'bg-orange-600 text-white shadow-sm ring-2 ring-orange-400'
+                        : hoppingButton === 'insertion'
+                        ? 'bg-orange-500/40 text-white ring-4 ring-orange-400 ring-offset-1 animate-subtle-hop shadow-md'
+                        : 'text-orange-400 hover:bg-slate-800'
+                    }`}
+                  >
+                    I
+                  </button>
+                </div>
+              )}
 
               {hasPlacedPoints && (
                 <div className="flex items-center gap-1">
@@ -340,10 +349,14 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                   <button
                     type="button"
                     onClick={() => {
-                      if (setUserOrigins) setUserOrigins([]);
-                      if (setUserInsertions) setUserInsertions([]);
-                      if (setActiveTrapeziusPart) setActiveTrapeziusPart('descendens');
-                      setActiveQuizTool(currentQuestion.landmarkType === 'insertion' ? 'insertion' : 'origin');
+                      if (onClearAllPoints) {
+                        onClearAllPoints();
+                      } else {
+                        if (setUserOrigins) setUserOrigins([]);
+                        if (setUserInsertions) setUserInsertions([]);
+                        if (setActiveTrapeziusPart) setActiveTrapeziusPart('descendens');
+                        setActiveQuizTool(currentQuestion.landmarkType === 'insertion' ? 'insertion' : 'origin');
+                      }
                     }}
                     className="h-7 w-7 bg-rose-950/90 backdrop-blur-md border border-rose-800/80 text-rose-300 hover:bg-rose-900 rounded-lg shadow-lg flex items-center justify-center transition active:scale-95"
                     title="Wis geplaatste punten"
@@ -421,6 +434,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
               isMobile={true}
               autoCenterMuscle={autoZoom && (shouldShowMuscle || !!jointFocusPoint || type === 'bone')}
               hideMuscleMarkers={!isEvaluated && isDrawingType}
+              isFreeDrawMode={isFreeDrawMode}
               activeTrapeziusPart={activeTrapeziusPart}
             />
           );
@@ -624,21 +638,21 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                   </button>
                 )}
 
-                {onToggleAutoSwitch && (
+                {onToggleFreeDrawMode && (
                   <button
                     type="button"
-                    onClick={onToggleAutoSwitch}
+                    onClick={onToggleFreeDrawMode}
                     className={`flex flex-col items-center justify-center p-1.5 rounded-lg border transition ${
-                      autoSwitchPointType
+                      isFreeDrawMode
                         ? 'bg-blue-50 border-blue-200 text-blue-800'
                         : 'bg-slate-50 border-slate-200 text-slate-500'
                     }`}
                   >
-                    <span className="font-medium text-[10px] leading-tight">Switch</span>
+                    <span className="font-medium text-[10px] leading-tight text-center">Vrij<br />intekenen</span>
                     <span className={`mt-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded ${
-                      autoSwitchPointType ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
+                      isFreeDrawMode ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
                     }`}>
-                      {autoSwitchPointType ? 'Aan' : 'Uit'}
+                      {isFreeDrawMode ? 'Aan' : 'Uit'}
                     </span>
                   </button>
                 )}

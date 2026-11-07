@@ -18,7 +18,7 @@ import { JOINT_CATEGORIES, getJointCategory } from '../../data/jointCategories';
 import { getMovementQuestionOptions, MUSCLE_MOVEMENTS } from '../../data/muscleMovements';
 import { READER_BONES } from '../../data/bonesData';
 import { getRandomJointQuestion, getJointMCOptions, JointQuizItem, getJointLocation, JOINT_QUIZ_ITEMS } from '../../data/jointQuestions';
-import { evaluatePointSet, distanceToSegment, projectToSegment, getAccuracy, getDistinctTargetCount, isTrapeziusPointAccurate } from '../../utils/coordinates';
+import { evaluatePointSet, distanceToSegment, projectToSegment, getAccuracy, getDistinctTargetCount, isTrapeziusPointAccurate, partitionFreePoints } from '../../utils/coordinates';
 import { validateAnatomicalAnswer, AnswerValidationResult } from '../../utils/answerMatching';
 import { isForbiddenMuscle } from '../../utils/export';
 import { MovementIcon } from '../common/MovementIcon';
@@ -162,18 +162,22 @@ export const QuizView: React.FC = () => {
   }, []);
 
   // Automatisch wisselen van intekentool (origo -> insertie) zodra alle origo's zijn geplaatst
-  const [autoSwitchPointType, setAutoSwitchPointType] = useState<boolean>(() => {
-    const saved = localStorage.getItem('pmt_auto_switch_point_type');
+  // Vrij intekenen modus (Potloodmodus): teken alle punten met één rustige kleur zonder O/I schakeling
+  const [isFreeDrawMode, setIsFreeDrawMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem('pmt_quiz_free_draw_mode');
     return saved !== null ? saved === 'true' : true;
   });
 
-  const handleToggleAutoSwitch = useCallback(() => {
-    setAutoSwitchPointType((prev) => {
+  const handleToggleFreeDrawMode = useCallback(() => {
+    setIsFreeDrawMode((prev) => {
       const next = !prev;
-      localStorage.setItem('pmt_auto_switch_point_type', String(next));
+      localStorage.setItem('pmt_quiz_free_draw_mode', String(next));
       return next;
     });
   }, []);
+
+  // Chronologische lijst van alle geplaatste punten in Vrije Intekenmodus
+  const [userFreePoints, setUserFreePoints] = useState<Point2D[]>([]);
 
   // Voor 'free' modus: welk quiztype? 'mixed' (Gemengde toets) is de standaard!
   const [freeQuizType, setFreeQuizType] = useState<QuizType | 'all'>('mixed');
@@ -222,6 +226,30 @@ export const QuizView: React.FC = () => {
   const pointHistoryRef = useRef<Array<'origin' | 'insertion'>>([]);
 
   const handleUndoLastPoint = useCallback(() => {
+    if (isFreeDrawMode) {
+      setUserFreePoints((prev) => {
+        if (prev.length === 0) {
+          setUserOrigins([]);
+          setUserInsertions([]);
+          return [];
+        }
+        const next = prev.slice(0, -1);
+        const vis = currentQuestion?.muscle?.visuals[evaluatedSide] ||
+                    currentQuestion?.muscle?.visuals.left ||
+                    currentQuestion?.muscle?.visuals.right ||
+                    { origins: [], insertions: [], attachmentLines: [] };
+        const { assignedOrigins, assignedInsertions } = partitionFreePoints(
+          next,
+          vis.origins || [],
+          vis.insertions || [],
+          vis.attachmentLines || []
+        );
+        setUserOrigins(assignedOrigins);
+        setUserInsertions(assignedInsertions);
+        return next;
+      });
+      return;
+    }
     if (pointHistoryRef.current.length === 0) {
       if (userInsertions.length > 0) {
         setUserInsertions((prev) => prev.slice(0, -1));
@@ -239,9 +267,10 @@ export const QuizView: React.FC = () => {
     } else {
       setUserInsertions((prev) => prev.slice(0, -1));
     }
-  }, [userOrigins.length, userInsertions.length]);
+  }, [isFreeDrawMode, currentQuestion, evaluatedSide, userOrigins.length, userInsertions.length]);
 
   const handleClearAllPoints = useCallback(() => {
+    setUserFreePoints([]);
     setUserOrigins([]);
     setUserInsertions([]);
     pointHistoryRef.current = [];
@@ -546,6 +575,7 @@ export const QuizView: React.FC = () => {
     };
 
     setCurrentQuestion(freshQuestion);
+    setUserFreePoints([]);
     setUserOrigins([]);
     setUserInsertions([]);
     pointHistoryRef.current = [];
@@ -1107,6 +1137,26 @@ export const QuizView: React.FC = () => {
   // Verwijder geplaatst gebruikerspunt (bijv. met rechtermuisknop op bolletje)
   const handleDeleteUserPoint = (pointType: 'origin' | 'insertion', index: number) => {
     if (isEvaluated) return;
+    if (isFreeDrawMode) {
+      setUserFreePoints((prev) => {
+        const ptToDelete = pointType === 'origin' ? userOrigins[index] : userInsertions[index];
+        const next = ptToDelete ? prev.filter((p) => p !== ptToDelete && (p.x !== ptToDelete.x || p.y !== ptToDelete.y)) : prev;
+        const vis = currentQuestion?.muscle?.visuals[evaluatedSide] ||
+                    currentQuestion?.muscle?.visuals.left ||
+                    currentQuestion?.muscle?.visuals.right ||
+                    { origins: [], insertions: [], attachmentLines: [] };
+        const { assignedOrigins, assignedInsertions } = partitionFreePoints(
+          next,
+          vis.origins || [],
+          vis.insertions || [],
+          vis.attachmentLines || []
+        );
+        setUserOrigins(assignedOrigins);
+        setUserInsertions(assignedInsertions);
+        return next;
+      });
+      return;
+    }
     if (pointType === 'origin') {
       setUserOrigins(prev => prev.filter((_, i) => i !== index));
     } else {
@@ -1435,7 +1485,42 @@ export const QuizView: React.FC = () => {
       return;
     }
 
-    // Rechtermuisknop zet het tegenovergestelde punt van de actieve selectie
+    // In Vrije Intekenmodus (standaard potloodmodus): plaats punten met één rustige kleur en verdeel automatisch op de achtergrond
+    if (isFreeDrawMode) {
+      const isTrapezius = currentQuestion?.muscle?.id === 'trapezius';
+      const pointWithPart: Point2D = isTrapezius
+        ? {
+            ...point,
+            name:
+              activeTrapeziusPart === 'descendens'
+                ? 'Pars descendens'
+                : activeTrapeziusPart === 'transversa'
+                ? 'Pars transversa'
+                : 'Pars ascendens',
+          }
+        : point;
+
+      const nextFree = [...userFreePoints, pointWithPart];
+      setUserFreePoints(nextFree);
+
+      const vis = currentQuestion.muscle?.visuals[evaluatedSide] ||
+                  currentQuestion.muscle?.visuals.left ||
+                  currentQuestion.muscle?.visuals.right ||
+                  { origins: [], insertions: [], attachmentLines: [] };
+
+      const { assignedOrigins, assignedInsertions } = partitionFreePoints(
+        nextFree,
+        vis.origins || [],
+        vis.insertions || [],
+        vis.attachmentLines || []
+      );
+
+      setUserOrigins(assignedOrigins);
+      setUserInsertions(assignedInsertions);
+      return;
+    }
+
+    // Handmatige O/I modus:
     const toolToUse = isRightClick
       ? (activeQuizTool === 'origin' ? 'insertion' : 'origin')
       : activeQuizTool;
@@ -1478,55 +1563,37 @@ export const QuizView: React.FC = () => {
       pointHistoryRef.current.push('insertion');
     }
 
-    // Spieren met meer dan 2 punten (zoals wervelkolom): student mag zelf bepalen en klikt op "Controleer antwoord"
-    const isMultiPoint = expectedCounts.isMultiSpan || expectedCounts.total > 2 || expectedCounts.rawOrigins > 2 || expectedCounts.rawInsertions > 2;
-
-    if (!isMultiPoint) {
-      if (currentQuestion.type === 'landmark') {
-        if (currentQuestion.landmarkType === 'origin' && nextOrigins.length >= expectedCounts.origins) {
-          evaluateAttempt(nextOrigins, nextInsertions);
-        } else if (currentQuestion.landmarkType === 'insertion' && nextInsertions.length >= expectedCounts.insertions) {
-          evaluateAttempt(nextOrigins, nextInsertions);
-        }
-      } else if (currentQuestion.type === 'origins') {
-        if (nextOrigins.length >= expectedCounts.origins) {
-          evaluateAttempt(nextOrigins, nextInsertions);
-        }
-      } else if (currentQuestion.type === 'insertions') {
-        if (nextInsertions.length >= expectedCounts.insertions) {
-          evaluateAttempt(nextOrigins, nextInsertions);
-        }
-      } else {
-        // 'joint' / 'full'
-        if (nextOrigins.length >= expectedCounts.origins && nextInsertions.length >= expectedCounts.insertions) {
-          evaluateAttempt(nextOrigins, nextInsertions);
-        } else if (
-          autoSwitchPointType &&
-          !isTrapezius &&
-          toolToUse === 'origin' &&
-          nextOrigins.length === expectedCounts.origins &&
-          nextInsertions.length < expectedCounts.insertions
-        ) {
-          setActiveQuizTool('insertion');
-        }
-      }
-    } else if (
-      autoSwitchPointType &&
-      !isTrapezius &&
-      toolToUse === 'origin' &&
-      expectedCounts.insertions > 0 &&
-      nextOrigins.length === expectedCounts.origins &&
-      nextInsertions.length < expectedCounts.insertions
-    ) {
-      // Wissel bij alle spieren (inclusief multi-point zoals serratus anterior, iliopsoas) pas naar insertie
-      // zodra EXACT het verwachte aantal origo's is geplaatst
-      setActiveQuizTool('insertion');
-    }
+    // In handmatige modus: nooit ongevraagd de tool omgooien; student klikt zélf op [I] of op "Controleer antwoord"
   };
 
   // Verslepen van geplaatste punten indien net verkeerd neergezet
   const handleUpdateUserPoint = (pointType: 'origin' | 'insertion', index: number, newPoint: Point2D) => {
     if (isEvaluated) return;
+    if (isFreeDrawMode) {
+      const oldPt = pointType === 'origin' ? userOrigins[index] : userInsertions[index];
+      setUserFreePoints((prev) => {
+        const next = prev.map((p) => {
+          if (oldPt && p.x === oldPt.x && p.y === oldPt.y) {
+            return { ...p, ...newPoint };
+          }
+          return p;
+        });
+        const vis = currentQuestion?.muscle?.visuals[evaluatedSide] ||
+                    currentQuestion?.muscle?.visuals.left ||
+                    currentQuestion?.muscle?.visuals.right ||
+                    { origins: [], insertions: [], attachmentLines: [] };
+        const { assignedOrigins, assignedInsertions } = partitionFreePoints(
+          next,
+          vis.origins || [],
+          vis.insertions || [],
+          vis.attachmentLines || []
+        );
+        setUserOrigins(assignedOrigins);
+        setUserInsertions(assignedInsertions);
+        return next;
+      });
+      return;
+    }
     if (pointType === 'origin') {
       setUserOrigins(prev => {
         const next = [...prev];
@@ -1762,6 +1829,8 @@ export const QuizView: React.FC = () => {
       ? userInsertions.length > 0
       : type === 'landmark'
       ? (currentQuestion.landmarkType === 'origin' ? userOrigins.length > 0 : userInsertions.length > 0)
+      : isFreeDrawMode
+      ? (userFreePoints.length > 0 || userOrigins.length > 0 || userInsertions.length > 0)
       : userOrigins.length > 0 && userInsertions.length > 0
   );
 
@@ -1776,6 +1845,7 @@ export const QuizView: React.FC = () => {
         requireAllVertebrae={requireAllVertebrae}
         setRequireAllVertebrae={setRequireAllVertebrae}
         onUndoLastPoint={handleUndoLastPoint}
+        onClearAllPoints={handleClearAllPoints}
         muscle={muscle}
         type={type}
         currentView={currentView}
@@ -1786,8 +1856,8 @@ export const QuizView: React.FC = () => {
         onToggleAutoRotate={handleToggleAutoRotate}
         autoZoom={autoZoom}
         onToggleAutoZoom={handleToggleAutoZoom}
-        autoSwitchPointType={autoSwitchPointType}
-        onToggleAutoSwitch={handleToggleAutoSwitch}
+        isFreeDrawMode={isFreeDrawMode}
+        onToggleFreeDrawMode={handleToggleFreeDrawMode}
         evaluatedSide={evaluatedSide}
         isEvaluated={isEvaluated}
         isPlacementSuccess={isPlacementSuccess}
@@ -1878,35 +1948,44 @@ export const QuizView: React.FC = () => {
           {/* Origo & Insertie knoppen links naast het skelet */}
           {!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'landmark' && type !== 'open_question' && type !== 'bone' && (
             <div className="absolute left-3 sm:left-5 top-3 sm:top-5 z-20 flex flex-col gap-2">
-              {/* Regel 1: Origo en Insertie */}
+              {/* Regel 1: Origo en Insertie OF Aanhechtingen pill in vrije modus */}
               <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => setActiveQuizTool('origin')}
-                  className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-colors ${
-                    activeQuizTool === 'origin'
-                      ? 'bg-blue-600 text-white border-blue-600 shadow-xs ring-2 ring-blue-400'
-                      : 'bg-white text-blue-800 border-blue-200 hover:bg-blue-50'
-                  }`}
-                >
-                  <span className={`w-2 h-2 rounded-full shrink-0 ${activeQuizTool === 'origin' ? 'bg-white' : 'bg-blue-600'}`} />
-                  <span>Origo</span>
-                </button>
+                {isFreeDrawMode ? (
+                  <div className="py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border border-blue-200 bg-blue-50/95 text-blue-800 shadow-xs">
+                    <span className="w-2 h-2 rounded-full shrink-0 bg-blue-600" />
+                    <span>Aanhechtingen</span>
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setActiveQuizTool('origin')}
+                      className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-colors ${
+                        activeQuizTool === 'origin'
+                          ? 'bg-blue-600 text-white border-blue-600 shadow-xs ring-2 ring-blue-400'
+                          : 'bg-white text-blue-800 border-blue-200 hover:bg-blue-50'
+                      }`}
+                    >
+                      <span className={`w-2 h-2 rounded-full shrink-0 ${activeQuizTool === 'origin' ? 'bg-white' : 'bg-blue-600'}`} />
+                      <span>Origo</span>
+                    </button>
 
-                <button
-                  type="button"
-                  onClick={() => setActiveQuizTool('insertion')}
-                  className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-colors ${
-                    activeQuizTool === 'insertion'
-                      ? 'bg-orange-600 text-white border-orange-600 shadow-xs ring-2 ring-orange-400'
-                      : hoppingButton === 'insertion'
-                      ? 'bg-orange-100 text-orange-950 border-orange-400 ring-4 ring-orange-300 ring-offset-1 animate-subtle-hop'
-                      : 'bg-white text-orange-800 border-orange-200 hover:bg-orange-50'
-                  } ${isScalingInsertion ? 'animate-subtle-scale' : ''}`}
-                >
-                  <span className={`w-2 h-2 rounded-full shrink-0 ${activeQuizTool === 'insertion' ? 'bg-white' : 'bg-orange-600'}`} />
-                  <span>Insertie</span>
-                </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveQuizTool('insertion')}
+                      className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-colors ${
+                        activeQuizTool === 'insertion'
+                          ? 'bg-orange-600 text-white border-orange-600 shadow-xs ring-2 ring-orange-400'
+                          : hoppingButton === 'insertion'
+                          ? 'bg-orange-100 text-orange-950 border-orange-400 ring-4 ring-orange-300 ring-offset-1 animate-subtle-hop'
+                          : 'bg-white text-orange-800 border-orange-200 hover:bg-orange-50'
+                      } ${isScalingInsertion ? 'animate-subtle-scale' : ''}`}
+                    >
+                      <span className={`w-2 h-2 rounded-full shrink-0 ${activeQuizTool === 'insertion' ? 'bg-white' : 'bg-orange-600'}`} />
+                      <span>Insertie</span>
+                    </button>
+                  </>
+                )}
               </div>
 
               {/* Regel 2: Terug en Verwijder knoppen, met bij de trapezius de pars tabs direct hiernaast */}
@@ -2006,6 +2085,7 @@ export const QuizView: React.FC = () => {
                     targetFocusPoint={jointFocusPoint?.view === 'ventral' ? jointFocusPoint : null}
                     autoCenterMuscle={autoZoom && (shouldShowMuscle || (jointFocusPoint?.view === 'ventral') || type === 'bone')}
                     hideMuscleMarkers={hideMuscleMarkers}
+                    isFreeDrawMode={isFreeDrawMode}
                     activeTrapeziusPart={activeTrapeziusPart}
                   />
                 </div>
@@ -2032,6 +2112,7 @@ export const QuizView: React.FC = () => {
                     targetFocusPoint={jointFocusPoint?.view === 'dorsal' ? jointFocusPoint : null}
                     autoCenterMuscle={autoZoom && (shouldShowMuscle || (jointFocusPoint?.view === 'dorsal') || type === 'bone')}
                     hideMuscleMarkers={hideMuscleMarkers}
+                    isFreeDrawMode={isFreeDrawMode}
                     activeTrapeziusPart={activeTrapeziusPart}
                   />
                 </div>
@@ -2053,6 +2134,7 @@ export const QuizView: React.FC = () => {
                 targetFocusPoint={jointFocusPoint}
                 autoCenterMuscle={autoZoom && (shouldShowMuscle || !!jointFocusPoint || type === 'bone')}
                 hideMuscleMarkers={hideMuscleMarkers}
+                isFreeDrawMode={isFreeDrawMode}
                 activeTrapeziusPart={activeTrapeziusPart}
               />
             );
@@ -2213,19 +2295,19 @@ export const QuizView: React.FC = () => {
             </button>
             <button
               type="button"
-              onClick={handleToggleAutoSwitch}
+              onClick={handleToggleFreeDrawMode}
               className={`flex flex-col items-center justify-center p-1.5 rounded-lg border transition ${
-                autoSwitchPointType
+                isFreeDrawMode
                   ? 'bg-blue-50 border-blue-200 text-blue-800'
                   : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
               }`}
-              title="Automatisch wisselen naar insertie zodra alle origo's geplaatst zijn"
+              title="Vrij intekenen: teken alle aanhechtingen rustig in met één kleur zonder tussen O en I te hoeven wisselen"
             >
-              <span className="font-semibold text-[10px] leading-tight">Switch</span>
+              <span className="font-semibold text-[10px] leading-tight text-center">Vrij<br />intekenen</span>
               <span className={`mt-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded ${
-                autoSwitchPointType ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
+                isFreeDrawMode ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'
               }`}>
-                {autoSwitchPointType ? 'Aan' : 'Uit'}
+                {isFreeDrawMode ? 'Aan' : 'Uit'}
               </span>
             </button>
             <button

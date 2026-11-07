@@ -47,6 +47,7 @@ interface SkeletonViewerProps {
   resetOnMuscleChange?: boolean;
   hideMuscleMarkers?: boolean;
   uniformColor?: string;
+  isFreeDrawMode?: boolean;
   activeTrapeziusPart?: 'descendens' | 'transversa' | 'ascendens';
 }
 
@@ -77,6 +78,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
   resetOnMuscleChange = false,
   hideMuscleMarkers = false,
   uniformColor,
+  isFreeDrawMode = false,
   activeTrapeziusPart,
 }) => {
   const localContainerRef = useRef<HTMLDivElement>(null);
@@ -670,7 +672,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                   // groen-groen, groen-rood, rood-groen of rood-rood
                   // Niet-actieve trapezius pars: subtiel gedesatureerd (zacht pastel blauw en pastel oranje, niet compleet grijs)
                   let origColor = isLineFromOtherPart && !isEval ? '#6fa1cf' : '#1993f2';
-                  let insColor = isLineFromOtherPart && !isEval ? '#df9570' : '#ea580c';
+                  let insColor = isLineFromOtherPart && !isEval ? '#df9570' : isFreeDrawMode ? '#1993f2' : '#ea580c';
 
                   if (isEval) {
                     const originMatches = quizMatches?.filter(m => m.targetType === 'origin' || !m.targetType) || [];
@@ -945,7 +947,7 @@ export const SkeletonViewer: React.FC<SkeletonViewerProps> = ({
                     cx={cx}
                     cy={cy}
                     r={Math.max(2, 10.5 / zoom)}
-                    fill={isEval ? badgeColor : (isFromOtherPart ? "#df9570" : "#ea580c")}
+                    fill={isEval ? badgeColor : (isFromOtherPart ? "#df9570" : isFreeDrawMode ? "#1993f2" : "#ea580c")}
                     stroke="none"
                   />
 

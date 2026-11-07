@@ -1057,3 +1057,57 @@ export function isTrapeziusPointAccurate(
     return false;
   }
 }
+
+/**
+ * Verdeelt geplaatste gebruikerspunten in Vrije Intekenmodus over origo en insertie
+ * op basis van minimale afstand tot de dichtstbijzijnde doelstructuur (punten en aanhechtingslijnen).
+ */
+export function partitionFreePoints(
+  userPoints: Point2D[],
+  targetOrigins: Point2D[] = [],
+  targetInsertions: Point2D[] = [],
+  attachmentLines: AttachmentLine[] = []
+): { assignedOrigins: Point2D[]; assignedInsertions: Point2D[] } {
+  if (targetOrigins.length === 0) {
+    return { assignedOrigins: [], assignedInsertions: [...userPoints] };
+  }
+  if (targetInsertions.length === 0) {
+    return { assignedOrigins: [...userPoints], assignedInsertions: [] };
+  }
+
+  const origLines = (attachmentLines || []).filter(
+    (l) => l.type === 'origin' && l.points && l.points.length >= 2
+  );
+  const insLines = (attachmentLines || []).filter(
+    (l) => l.type === 'insertion' && l.points && l.points.length >= 2
+  );
+
+  const getMinDistToTargets = (pt: Point2D, targets: Point2D[], lines: AttachmentLine[]): number => {
+    let minD = Infinity;
+    for (const t of targets) {
+      const d = calculateDistance(pt, t);
+      if (d < minD) minD = d;
+    }
+    for (const l of lines) {
+      const poly = distanceToPolyline(pt, l.points!);
+      if (poly.distance < minD) minD = poly.distance;
+    }
+    return minD;
+  };
+
+  const assignedOrigins: Point2D[] = [];
+  const assignedInsertions: Point2D[] = [];
+
+  for (const pt of userPoints) {
+    const distOrig = getMinDistToTargets(pt, targetOrigins, origLines);
+    const distIns = getMinDistToTargets(pt, targetInsertions, insLines);
+
+    if (distOrig <= distIns) {
+      assignedOrigins.push(pt);
+    } else {
+      assignedInsertions.push(pt);
+    }
+  }
+
+  return { assignedOrigins, assignedInsertions };
+}
