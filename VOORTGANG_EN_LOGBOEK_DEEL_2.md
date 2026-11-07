@@ -86,3 +86,14 @@ De code is live getest in een echte browser via Puppeteer (Microsoft Edge headle
   - **Status:** De gebruiker heeft dit in de editor hersteld naar $x = 0.3898$ (links) en $x = 0.6102$ (rechts) op $y = 0.4051$. Dit is wiskundig exact symmetrisch ($0.3898 + 0.6102 = 1.0000$).
   - **Preventie:** Dataset in [export.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/utils/export.ts) verhoogd naar `v22` (`pmt_anatomie_muscles_dataset_v22`) zodat verouderde browser-cache direct wordt gewist en de gecorrigeerde punten definitief actief blijven.
 - **Verificatie:** `npm run build` foutloos uitgevoerd (`✓ built in 4.09s`).
+
+---
+
+## 6. Mobiel: Trapezius Pars-knoppen Vrijmaken van Navigator / Zoom-reset (07-11-2026 19:57)
+- **Probleem:** Op mobiel stonden de partes-knoppen (`Desc.`, `Transv.`, `Ascend.`) op dezelfde horizontale regel als de `O` & `I`-knoppen. Hierdoor liep de knoppenbalk naar rechts door en viel hij deels onder de zwevende navigator (`144% Reset` en draaiknop).
+- **Directe oplossing in [MobileQuizView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/quiz/MobileQuizView.tsx):**
+  - Knoppencontainer linksboven omgezet naar een verticale kolom (`flex flex-col items-start gap-1.5`):
+    - **Regel 1:** `[O | I]` gereedschap + (indien punten geplaatst) `[Undo | Trash]`. Breedte is slechts ~136px, waardoor er rechts ruim 200px vrij blijft voor de navigator/zoomknop.
+    - **Regel 2:** `[Desc. | Transv. | Ascend.]` partes-knoppen van de m. trapezius. Deze staan nu altijd netjes op een eigen regel eronder (vanaf `top: 52px`), fysiek onder de navigator/zoomknop.
+- **Resultaat:** 0% overlap op alle schermformaten; alle knoppen zijn direct zichtbaar en aan te tikken.
+- **Build-controle:** `npm run build` geslaagd (`✓ built in 4.11s`).

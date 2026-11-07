@@ -2944,3 +2944,10 @@ Alle 18 botten in [src/data/boneAttachments.ts](file:///c:/Users/TOMMY/Documents
 - **Verificatie:**
   - `npm run build` foutloos uitgevoerd (`✓ built in 4.41s`).
   - Lijnenstructuur in studiemodus getest: 6 lijnen, strikt 2-op-1 per pars zonder kriskras-overlapping.
+
+---
+
+## ⚠️ Vervolg in Nieuw Logboek: VOORTGANG_EN_LOGBOEK_DEEL_2.md
+Om de leesbaarheid te waarborgen en overhead te voorkomen, worden alle nieuwe updates, live-notities en acties vanaf 05-11-2026 bijgehouden in:
+👉 **[VOORTGANG_EN_LOGBOEK_DEEL_2.md](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/VOORTGANG_EN_LOGBOEK_DEEL_2.md)**
+*(Zie aldaar voor actuele acties, live status en de knoppen-layout fix voor mobiel).*

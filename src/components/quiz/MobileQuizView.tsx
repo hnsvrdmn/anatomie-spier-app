@@ -291,38 +291,70 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
 
         {/* Compacte O (Origo, blauw) en I (Insertie, rood) knoppen + Trapezius partes over het skelet */}
         {isDrawingType && !isEvaluated && (
-          <div className="absolute top-2.5 left-2.5 z-30 flex flex-wrap items-center gap-1.5 pointer-events-auto max-w-[calc(100vw-4.5rem)]">
-            <div className="flex items-center gap-1 bg-slate-950/80 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 shadow-lg">
-              <button
-                type="button"
-                onClick={() => setActiveQuizTool('origin')}
-                title="Plaats Origo (blauw)"
-                aria-label="Origo"
-                className={`w-7 h-7 rounded-lg text-xs font-black transition-colors flex items-center justify-center ${
-                  activeQuizTool === 'origin'
-                    ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-400'
-                    : 'text-blue-400 hover:bg-slate-800'
-                }`}
-              >
-                O
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveQuizTool('insertion')}
-                title="Plaats Insertie (oranje)"
-                aria-label="Insertie"
-                className={`w-7 h-7 rounded-lg text-xs font-black transition-colors flex items-center justify-center ${
-                  activeQuizTool === 'insertion'
-                    ? 'bg-orange-600 text-white shadow-sm ring-2 ring-orange-400'
-                    : hoppingButton === 'insertion'
-                    ? 'bg-orange-500/40 text-white ring-4 ring-orange-400 ring-offset-1 animate-subtle-hop shadow-md'
-                    : 'text-orange-400 hover:bg-slate-800'
-                }`}
-              >
-                I
-              </button>
+          <div className="absolute top-2.5 left-2.5 z-30 flex flex-col items-start gap-1.5 pointer-events-auto">
+            {/* Rij 1: O / I gereedschap + Undo & Wis knoppen */}
+            <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1 bg-slate-950/80 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 shadow-lg">
+                <button
+                  type="button"
+                  onClick={() => setActiveQuizTool('origin')}
+                  title="Plaats Origo (blauw)"
+                  aria-label="Origo"
+                  className={`w-7 h-7 rounded-lg text-xs font-black transition-colors flex items-center justify-center ${
+                    activeQuizTool === 'origin'
+                      ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-400'
+                      : 'text-blue-400 hover:bg-slate-800'
+                  }`}
+                >
+                  O
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveQuizTool('insertion')}
+                  title="Plaats Insertie (oranje)"
+                  aria-label="Insertie"
+                  className={`w-7 h-7 rounded-lg text-xs font-black transition-colors flex items-center justify-center ${
+                    activeQuizTool === 'insertion'
+                      ? 'bg-orange-600 text-white shadow-sm ring-2 ring-orange-400'
+                      : hoppingButton === 'insertion'
+                      ? 'bg-orange-500/40 text-white ring-4 ring-orange-400 ring-offset-1 animate-subtle-hop shadow-md'
+                      : 'text-orange-400 hover:bg-slate-800'
+                  }`}
+                >
+                  I
+                </button>
+              </div>
+
+              {hasPlacedPoints && (
+                <div className="flex items-center gap-1">
+                  {onUndoLastPoint && (
+                    <button
+                      type="button"
+                      onClick={onUndoLastPoint}
+                      className="h-7 w-7 bg-slate-950/90 backdrop-blur-md border border-slate-700/80 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg shadow-lg flex items-center justify-center transition active:scale-95"
+                      title="Vorige punt ongedaan maken"
+                    >
+                      <Undo2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (setUserOrigins) setUserOrigins([]);
+                      if (setUserInsertions) setUserInsertions([]);
+                      if (setActiveTrapeziusPart) setActiveTrapeziusPart('descendens');
+                      setActiveQuizTool(currentQuestion.landmarkType === 'insertion' ? 'insertion' : 'origin');
+                    }}
+                    className="h-7 w-7 bg-rose-950/90 backdrop-blur-md border border-rose-800/80 text-rose-300 hover:bg-rose-900 rounded-lg shadow-lg flex items-center justify-center transition active:scale-95"
+                    title="Wis geplaatste punten"
+                  >
+                    <Trash2 className="w-3.5 h-3.5 text-rose-300" />
+                  </button>
+                </div>
+              )}
             </div>
 
+            {/* Rij 2: Partes knoppen voor Trapezius (altijd op een eigen rij, nooit overlap met navigator/zoom) */}
             {muscle?.id === 'trapezius' && setActiveTrapeziusPart && (
               <div className="flex items-center gap-1 bg-slate-950/80 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 shadow-lg">
                 {(['descendens', 'transversa', 'ascendens'] as const).map((partKey) => {
@@ -357,34 +389,6 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                     </button>
                   );
                 })}
-              </div>
-            )}
-
-            {hasPlacedPoints && (
-              <div className="flex items-center gap-1">
-                {onUndoLastPoint && (
-                  <button
-                    type="button"
-                    onClick={onUndoLastPoint}
-                    className="h-7 w-7 bg-slate-950/90 backdrop-blur-md border border-slate-700/80 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg shadow-lg flex items-center justify-center transition active:scale-95"
-                    title="Vorige punt ongedaan maken"
-                  >
-                    <Undo2 className="w-3.5 h-3.5" />
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (setUserOrigins) setUserOrigins([]);
-                    if (setUserInsertions) setUserInsertions([]);
-                    if (setActiveTrapeziusPart) setActiveTrapeziusPart('descendens');
-                    setActiveQuizTool(currentQuestion.landmarkType === 'insertion' ? 'insertion' : 'origin');
-                  }}
-                  className="h-7 w-7 bg-rose-950/90 backdrop-blur-md border border-rose-800/80 text-rose-300 hover:bg-rose-900 rounded-lg shadow-lg flex items-center justify-center transition active:scale-95"
-                  title="Wis geplaatste punten"
-                >
-                  <Trash2 className="w-3.5 h-3.5 text-rose-300" />
-                </button>
               </div>
             )}
           </div>
