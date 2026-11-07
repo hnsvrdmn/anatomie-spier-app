@@ -168,14 +168,6 @@ export const QuizView: React.FC = () => {
     return saved !== null ? saved === 'true' : true;
   });
 
-  const handleToggleFreeDrawMode = useCallback(() => {
-    setIsFreeDrawMode((prev) => {
-      const next = !prev;
-      localStorage.setItem('pmt_quiz_free_draw_mode', String(next));
-      return next;
-    });
-  }, []);
-
   // Chronologische lijst van alle geplaatste punten in Vrije Intekenmodus
   const [userFreePoints, setUserFreePoints] = useState<Point2D[]>([]);
 
@@ -188,6 +180,17 @@ export const QuizView: React.FC = () => {
   // Gebruikersinvoer: gescheiden origo's en inserties
   const [userOrigins, setUserOrigins] = useState<Point2D[]>([]);
   const [userInsertions, setUserInsertions] = useState<Point2D[]>([]);
+
+  const handleToggleFreeDrawMode = useCallback(() => {
+    setIsFreeDrawMode((prev) => {
+      const next = !prev;
+      localStorage.setItem('pmt_quiz_free_draw_mode', String(next));
+      if (next) {
+        setUserFreePoints([...userOrigins, ...userInsertions]);
+      }
+      return next;
+    });
+  }, [userOrigins, userInsertions]);
 
   // Actief intekentool: 'origin' of 'insertion'
   const [activeQuizTool, setActiveQuizTool] = useState<'origin' | 'insertion'>('origin');
@@ -651,8 +654,12 @@ export const QuizView: React.FC = () => {
       jointTotal: jointMuscles.length,
     });
 
+    setUserFreePoints([]);
     setUserOrigins([]);
     setUserInsertions([]);
+    pointHistoryRef.current = [];
+    completedPartesRef.current = {};
+    setHoppingButton(null);
     setActiveTrapeziusPart('descendens');
     setActiveQuizTool('origin');
     setSelectedMultipleChoiceId(null);
@@ -795,8 +802,12 @@ export const QuizView: React.FC = () => {
         options: [],
       });
 
-      setUserOrigins([]);
+      setUserFreePoints([]);
+    setUserOrigins([]);
     setUserInsertions([]);
+    pointHistoryRef.current = [];
+    completedPartesRef.current = {};
+    setHoppingButton(null);
     setActiveTrapeziusPart('descendens');
       setUserOpenAnswer('');
       setOpenAnswerFeedback(null);
@@ -836,8 +847,12 @@ export const QuizView: React.FC = () => {
         options: [],
       });
 
-      setUserOrigins([]);
+      setUserFreePoints([]);
+    setUserOrigins([]);
     setUserInsertions([]);
+    pointHistoryRef.current = [];
+    completedPartesRef.current = {};
+    setHoppingButton(null);
     setActiveTrapeziusPart('descendens');
       setUserOpenAnswer('');
       setOpenAnswerFeedback(null);
@@ -1044,8 +1059,12 @@ export const QuizView: React.FC = () => {
       targetFocusPoint: jointLoc || undefined,
     });
 
+    setUserFreePoints([]);
     setUserOrigins([]);
     setUserInsertions([]);
+    pointHistoryRef.current = [];
+    completedPartesRef.current = {};
+    setHoppingButton(null);
     setActiveTrapeziusPart('descendens');
     setUserOpenAnswer('');
     setOpenAnswerFeedback(null);
@@ -1090,6 +1109,14 @@ export const QuizView: React.FC = () => {
   const handleNextQuestion = () => {
     questionCounterRef.current += 1;
     const currentCount = questionCounterRef.current;
+
+    // Reset gebruikerspunten direct bij doorklikken
+    setUserFreePoints([]);
+    setUserOrigins([]);
+    setUserInsertions([]);
+    pointHistoryRef.current = [];
+    completedPartesRef.current = {};
+    setHoppingButton(null);
 
     // 1. Controleer of er een herhalingsvraag klaarstaat (in zowel joint als free modus)
     const dueIndex = retryQueue.findIndex((item) => {
@@ -1948,45 +1975,38 @@ export const QuizView: React.FC = () => {
           {/* Origo & Insertie knoppen links naast het skelet */}
           {!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'landmark' && type !== 'open_question' && type !== 'bone' && (
             <div className="absolute left-3 sm:left-5 top-3 sm:top-5 z-20 flex flex-col gap-2">
-              {/* Regel 1: Origo en Insertie OF Aanhechtingen pill in vrije modus */}
-              <div className="flex items-center gap-1.5">
-                {isFreeDrawMode ? (
-                  <div className="py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border border-blue-200 bg-blue-50/95 text-blue-800 shadow-xs">
-                    <span className="w-2 h-2 rounded-full shrink-0 bg-blue-600" />
-                    <span>Aanhechtingen</span>
-                  </div>
-                ) : (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => setActiveQuizTool('origin')}
-                      className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-colors ${
-                        activeQuizTool === 'origin'
-                          ? 'bg-blue-600 text-white border-blue-600 shadow-xs ring-2 ring-blue-400'
-                          : 'bg-white text-blue-800 border-blue-200 hover:bg-blue-50'
-                      }`}
-                    >
-                      <span className={`w-2 h-2 rounded-full shrink-0 ${activeQuizTool === 'origin' ? 'bg-white' : 'bg-blue-600'}`} />
-                      <span>Origo</span>
-                    </button>
+              {/* Regel 1: Origo en Insertie (alleen in klassieke O/I modus) */}
+              {!isFreeDrawMode && (
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setActiveQuizTool('origin')}
+                    className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-colors ${
+                      activeQuizTool === 'origin'
+                        ? 'bg-blue-600 text-white border-blue-600 shadow-xs ring-2 ring-blue-400'
+                        : 'bg-white text-blue-800 border-blue-200 hover:bg-blue-50'
+                    }`}
+                  >
+                    <span className={`w-2 h-2 rounded-full shrink-0 ${activeQuizTool === 'origin' ? 'bg-white' : 'bg-blue-600'}`} />
+                    <span>Origo</span>
+                  </button>
 
-                    <button
-                      type="button"
-                      onClick={() => setActiveQuizTool('insertion')}
-                      className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-colors ${
-                        activeQuizTool === 'insertion'
-                          ? 'bg-orange-600 text-white border-orange-600 shadow-xs ring-2 ring-orange-400'
-                          : hoppingButton === 'insertion'
-                          ? 'bg-orange-100 text-orange-950 border-orange-400 ring-4 ring-orange-300 ring-offset-1 animate-subtle-hop'
-                          : 'bg-white text-orange-800 border-orange-200 hover:bg-orange-50'
-                      } ${isScalingInsertion ? 'animate-subtle-scale' : ''}`}
-                    >
-                      <span className={`w-2 h-2 rounded-full shrink-0 ${activeQuizTool === 'insertion' ? 'bg-white' : 'bg-orange-600'}`} />
-                      <span>Insertie</span>
-                    </button>
-                  </>
-                )}
-              </div>
+                  <button
+                    type="button"
+                    onClick={() => setActiveQuizTool('insertion')}
+                    className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-xs transition-colors ${
+                      activeQuizTool === 'insertion'
+                        ? 'bg-orange-600 text-white border-orange-600 shadow-xs ring-2 ring-orange-400'
+                        : hoppingButton === 'insertion'
+                        ? 'bg-orange-100 text-orange-950 border-orange-400 ring-4 ring-orange-300 ring-offset-1 animate-subtle-hop'
+                        : 'bg-white text-orange-800 border-orange-200 hover:bg-orange-50'
+                    } ${isScalingInsertion ? 'animate-subtle-scale' : ''}`}
+                  >
+                    <span className={`w-2 h-2 rounded-full shrink-0 ${activeQuizTool === 'insertion' ? 'bg-white' : 'bg-orange-600'}`} />
+                    <span>Insertie</span>
+                  </button>
+                </div>
+              )}
 
               {/* Regel 2: Terug en Verwijder knoppen, met bij de trapezius de pars tabs direct hiernaast */}
               <div className="flex items-center gap-2">

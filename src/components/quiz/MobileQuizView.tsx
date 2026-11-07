@@ -294,14 +294,9 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
         {/* Compacte O (Origo, blauw) en I (Insertie, rood) knoppen + Trapezius partes over het skelet */}
         {isDrawingType && !isEvaluated && (
           <div className="absolute top-2.5 left-2.5 z-30 flex flex-col items-start gap-1.5 pointer-events-auto">
-            {/* Rij 1: Gereedschap (Aanhechting pill in vrije modus of O/I) + Undo & Wis knoppen */}
+            {/* Rij 1: Gereedschap (alleen in klassieke O/I modus) + Undo & Wis knoppen */}
             <div className="flex items-center gap-1.5">
-              {isFreeDrawMode ? (
-                <div className="flex items-center gap-1.5 px-2.5 h-7 rounded-lg bg-slate-950/90 backdrop-blur-md border border-slate-700/80 text-blue-400 font-bold text-xs shadow-lg">
-                  <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
-                  <span>Aanhechting</span>
-                </div>
-              ) : (
+              {!isFreeDrawMode && (
                 <div className="flex items-center gap-1 bg-slate-950/80 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 shadow-lg">
                   <button
                     type="button"
