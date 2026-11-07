@@ -55,8 +55,10 @@ De code is live getest in een echte browser via Puppeteer (Microsoft Edge headle
 ---
 
 ## 3. Afspraken & Werkwijze
-- **Git Push Beleid:** Er wordt **niet** meer automatisch naar GitHub gepusht. Wijzigingen blijven lokaal gecommit.
+- **Git Push Beleid:** Er wordt **niet** meer automatisch naar GitHub gepusht. Wijzigingen blijven lokaal gecommit tot expliciet push-commando.
 - **Nieuw Logboek:** Alle nieuwe denkstappen, analyses en updates worden exclusief in dit document bijgehouden (`VOORTGANG_EN_LOGBOEK_DEEL_2.md`).
+- **Vooraf Melden in Logboek:** Vóór elke actie schrijf ik een korte bullet in het logboek met wat ik ga doen.
+- **Transparantie bij Zelf Testen:** Zodra een codefix af is en ik een visuele test / screenshot start, noteer ik dat direct als: `[Status: Fix voltooid | Nu bezig met: Geautomatiseerde screenshot-test]`. Zo weet je direct dat de code al veilig staat en je het proces gerust kunt onderbreken als je direct door wilt.
 
 
 
