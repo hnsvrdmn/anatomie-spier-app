@@ -60,22 +60,43 @@
 
 ---
 
-## 4. UI & Mobiele Richtlijnen
+## 4. 'Less is More' & Minimalistische UI-filosofie
 
-1. **Geen botsingen met de navigator:**
+1. **'Less is more' grondhouding:**
+   - Er wordt te allen tijde gewerkt vanuit een **minimalistische designfilosofie**.
+   - Zo min mogelijk extra's toevoegen. Extra uitleg, hints, banners, popups en dialoogvensters worden **uitsluitend** toegevoegd als de gebruiker hier expliciet om vraagt.
+
+2. **Geen ongevraagde emoticons:**
+   - Geen emoticons toevoegen aan knoppen, labels of feedbackteksten tenzij expliciet gevraagd.
+
+3. **Voorkom dubbele vermeldingen:**
+   - Dezelfde informatie (zoals disclaimers, instructies of spiernamen) mag **nooit dubbel** op één pagina of scherm terugkomen.
+
+4. **In één oogopslag duidelijk (focus op mobiel):**
+   - De interface moet in één oogopslag helder en begrijpelijk zijn.
+   - Dit geldt in het bijzonder voor mobiel: het kleine schermformaat vereist uiterste rust, eenvoud en efficiënt ruimtegebruik.
+
+5. **Rustige, consistente vormgeving:**
+   - Geen luide/schreeuwerige knoppen, afwijkende styling of drukke nieuwe animaties toevoegen.
+   - Alles blijft strikt in dezelfde bestaande, rustige en klinische ontwerplijn.
+
+6. **Kort en bondig formuleren:**
+   - Lappen tekst leiden af van het anatomisch leren. Schrijf met zo min mogelijk woorden.
+
+7. **Geen botsingen met de navigator:**
    - Zwevende interactieknoppen mogen **nooit** overlappen met de navigator rechtsboven (de `Reset`-zoomknop en de `Draaiknop`).
 
-2. **Knoppencontainer linksboven op mobiel:**
+8. **Knoppencontainer linksboven op mobiel:**
    - **Regel 1:** Gereedschap `[ O | I ]` en (indien punten geplaatst) `[ Undo | Trash ]` (totale breedte max ~135px).
    - **Regel 2:** Eventuele partes-knoppen (`Desc.`, `Transv.`, `Ascend.`) direct daaronder (vanaf `top: ~50px`).
    - Dit garandeert dat de navigator rechtsboven altijd 100% vrij en bereikbaar blijft.
 
-3. **Geen vinkjes, wel focus-animatie:**
+9. **Geen vinkjes, wel focus-animatie:**
    - Geen statische vinkjes (`✓`) op de knoppen van afgeronde partes.
    - De subtiele hop-animatie (`animate-subtle-hop` met focusring) begeleidt de gebruiker naar de eerstvolgende vereiste knop.
 
-4. **Tekenvrijheid & Zichtbaarheid:**
-   - Het skelet en het anatomische werkgebied moeten op zowel PC als mobiel maximaal zichtbaar blijven. Geen storende tekstvakken of disclaimers over het canvas heen plaatsen.
+10. **Tekenvrijheid & Zichtbaarheid:**
+    - Het skelet en het anatomische werkgebied moeten op zowel PC als mobiel maximaal zichtbaar blijven. Geen storende tekstvakken of disclaimers over het canvas heen plaatsen.
 
 ---
 
@@ -85,3 +106,4 @@
    - Vóór elke afronding van een taak moet `npm run build` foutloos draaien (`tsc && vite build`).
 2. **Line-endings:**
    - Let op CRLF/LF consistentie bij het bewerken van bronbestanden op Windows.
+

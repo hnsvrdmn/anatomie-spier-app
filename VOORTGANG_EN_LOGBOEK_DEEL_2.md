@@ -107,3 +107,9 @@ De code is live getest in een echte browser via Puppeteer (Microsoft Edge headle
 - **Status:** Voltooid.
 - **Resultaat:** Het document [ONTWIKKELREGELS_EN_AFSPRAKEN.md](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/ONTWIKKELREGELS_EN_AFSPRAKEN.md) is aangemaakt en bevat alle regels voor communicatie/logboek, Git push-beleid, anatomische data/cache integriteit, UI- en mobiele standaarden, en buildkwaliteit.
 - **Build-controle:** `npm run build` geslaagd (`✓ built in 3.92s`).
+
+---
+
+## 8. 'Less is more' Minimalistische Ontwerpfilosofie Toegevoegd (07-11-2026 20:10)
+- **Status:** Voltooid.
+- **Inhoud:** Expliciete toevoeging van de 'Less is more' filosofie in [ONTWIKKELREGELS_EN_AFSPRAKEN.md](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/ONTWIKKELREGELS_EN_AFSPRAKEN.md): rustig en minimalistisch design, geen ongevraagde popups/extra's/uitleg/emoticons, niets dubbel vermelden, beknopte teksten en een consistente, kalme uitstraling (cruciaal voor mobiel).
