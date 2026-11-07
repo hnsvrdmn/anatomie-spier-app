@@ -580,32 +580,9 @@ export const QuizView: React.FC = () => {
     }
   }, [autoRotateView, setCurrentView]);
 
-  // Registreer een fout beantwoorde vraag
-  // In 'free' (toets) modus: vraag pas achteraan de wachtrij zetten nadat ALLE andere vragen geweest zijn!
-  // In 'joint' (oefen) modus: spaced repetition binnen het gewricht.
+  // Registreer een fout beantwoorde vraag in de spaced repetition herhalingswachtrij (na ~4-6 vragen)
   const registerIncorrectQuestion = useCallback((q: QuizQuestion) => {
-    if (practiceMode === 'free') {
-      if (q.muscle?.id) {
-        if (!unaskedMuscleIdsRef.current.includes(q.muscle.id)) {
-          unaskedMuscleIdsRef.current.push(q.muscle.id);
-        }
-      } else if (q.bone && q.boneMarker) {
-        const markerIdx = q.bone.markers.findIndex((m: any) => m === q.boneMarker);
-        if (markerIdx >= 0) {
-          const key = `${q.bone.id}:${markerIdx}`;
-          if (!unaskedBoneMarkerKeysRef.current.includes(key)) {
-            unaskedBoneMarkerKeysRef.current.push(key);
-          }
-        }
-      } else if (q.jointQuizItem?.id) {
-        if (!unaskedJointIdsRef.current.includes(q.jointQuizItem.id)) {
-          unaskedJointIdsRef.current.push(q.jointQuizItem.id);
-        }
-      }
-      return;
-    }
-
-    // In 'joint' oefenmodus: 4 tot 6 vragen later binnen dit gewricht
+    // 4 tot 6 vragen later herhalen
     const offset = 4 + Math.floor(Math.random() * 3);
     const dueAtCount = questionCounterRef.current + offset;
 
@@ -626,7 +603,7 @@ export const QuizView: React.FC = () => {
       if (isAlreadyQueued) return prev;
       return [...prev, { question: { ...q }, dueAtCount }];
     });
-  }, [practiceMode]);
+  }, []);
 
   // Genereer vraag voor het geselecteerde gewricht op positie index (puur Origo & Insertie)
   const loadJointQuestion = useCallback((mIndex: number) => {
@@ -1079,25 +1056,32 @@ export const QuizView: React.FC = () => {
     }
   }, [practiceMode, selectedJointId, jointPracticeType, jointMuscleIndex, loadJointQuestion, freeQuizType]);
 
-  // Volgende vraag handler
+  // Volgende vraag handler met spaced repetition voor foute antwoorden
   const handleNextQuestion = () => {
     questionCounterRef.current += 1;
     const currentCount = questionCounterRef.current;
 
-    // In 'joint' (oefen) modus: herhalingsvragen binnen het actieve gewricht
-    if (practiceMode === 'joint') {
-      const dueIndex = retryQueue.findIndex((item) => {
-        if (item.dueAtCount > currentCount) return false;
+    // 1. Controleer of er een herhalingsvraag klaarstaat (in zowel joint als free modus)
+    const dueIndex = retryQueue.findIndex((item) => {
+      if (item.dueAtCount > currentCount) return false;
+      if (practiceMode === 'joint') {
         return item.question.jointId === selectedJointId;
-      });
-
-      if (dueIndex >= 0) {
-        const dueItem = retryQueue[dueIndex];
-        setRetryQueue((prev) => prev.filter((_, idx) => idx !== dueIndex));
-        loadQuestion(dueItem.question);
-        return;
       }
+      if (freeQuizType === 'all' || freeQuizType === 'mixed') {
+        return true;
+      }
+      return item.question.type === freeQuizType;
+    });
 
+    if (dueIndex >= 0) {
+      const dueItem = retryQueue[dueIndex];
+      setRetryQueue((prev) => prev.filter((_, idx) => idx !== dueIndex));
+      loadQuestion(dueItem.question);
+      return;
+    }
+
+    // 2. Geen herhalingsvraag klaar: normale doorloop
+    if (practiceMode === 'joint') {
       const nextIdx = jointMuscleIndex + 1;
       if (nextIdx < jointMuscles.length) {
         setJointMuscleIndex(nextIdx);
