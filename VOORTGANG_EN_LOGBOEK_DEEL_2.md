@@ -113,3 +113,11 @@ De code is live getest in een echte browser via Puppeteer (Microsoft Edge headle
 ## 8. 'Less is more' Minimalistische Ontwerpfilosofie Toegevoegd (07-11-2026 20:10)
 - **Status:** Voltooid.
 - **Inhoud:** Expliciete toevoeging van de 'Less is more' filosofie in [ONTWIKKELREGELS_EN_AFSPRAKEN.md](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/ONTWIKKELREGELS_EN_AFSPRAKEN.md): rustig en minimalistisch design, geen ongevraagde popups/extra's/uitleg/emoticons, niets dubbel vermelden, beknopte teksten en een consistente, kalme uitstraling (cruciaal voor mobiel).
+
+---
+
+## 9. Analyse & Oplossing GitHub Actions Deployment Error (07-11-2026 20:17)
+- **Melding:** GitHub Actions fout `Failed to create deployment (status: 400) ... due to in progress deployment`.
+- **Oorzaak:** In `.github/workflows/deploy.yml` stond `concurrency: cancel-in-progress: true`. Wanneer commits elkaar snel opvolgen, breekt GitHub Actions de vorige workflow halverwege af, maar de deployment lock op GitHub Pages blijft daardoor hangen in de status 'in progress'. De nieuwe run botst vervolgens direct op die lock.
+- **Oplossing:** `cancel-in-progress: false` ingesteld in `.github/workflows/deploy.yml` conform de officiële GitHub Pages standaard. Hierdoor worden opvolgende deployments netjes in een wachtrij geplaatst in plaats van af te breken met een HTTP 400 lock fout.
+- **Status:** Lokaal gecommit. Zodra we pushen (of via de GitHub Actions knop 'Re-run jobs') deployt Pages direct door.
