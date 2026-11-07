@@ -233,21 +233,23 @@ export function resolveZoneKey(name: string = '', lineName?: string, explicitZon
   if (text.includes('pars transversa')) return 'zone_trapezius_transversa';
   if (text.includes('pars ascendens')) return 'zone_trapezius_ascendens';
 
-  // Wervels & wervelkolom onderverdeeld in cervicale, thoracale en lumbale zones
-  if (text.includes('cervica')) {
-    return 'zone_vertebrae_cervicales';
-  }
-  if (text.includes('thoraca') || text.includes('t1-') || text.includes('t3-') || text.includes('t12') || text.includes('th1') || text.includes('th7')) {
-    return 'zone_vertebrae_thoracicae';
-  }
-  if (text.includes('lumba') || text.includes('l1-') || text.includes('l5')) {
-    return 'zone_vertebrae_lumbales';
-  }
+  // Wervels & wervelkolom (cervicaal, thoracaal, lumbaal, wervels, proc. spinosus, proc. transversus)
   if (
     text.includes('wervel') ||
     text.includes('vertebra') ||
     text.includes('spinosus') ||
-    text.includes('transversus van')
+    text.includes('transversus van') ||
+    text.includes('cervica') ||
+    text.includes('thoraca') ||
+    text.includes('lumba') ||
+    text.includes('t1-') ||
+    text.includes('t3-') ||
+    text.includes('t7') ||
+    text.includes('t12') ||
+    text.includes('th1') ||
+    text.includes('th7') ||
+    text.includes('l1-') ||
+    text.includes('l5')
   ) {
     return 'zone_vertebrae';
   }
@@ -668,51 +670,55 @@ export function evaluatePointSet(
     if (!isVertebral) continue;
 
     const lines = (t.lines && t.lines.length > 0) ? t.lines : (t.line ? [t.line] : []);
-    for (const l of lines) {
-      if (!l.points || l.points.length < 2) continue;
-      const sortedPts = [...l.points].sort((a, b) => a.y - b.y);
-      const firstPt = sortedPts[0];
-      const lastPt = sortedPts[sortedPts.length - 1];
-      const span = lastPt.y - firstPt.y;
-      if (span < 0.035) continue; // Geen doorlopende rij wervels, maar een enkele wervel
+    const validLines = lines.filter((l) => l.points && l.points.length >= 2);
+    if (validLines.length === 0) continue;
 
-      // Belangrijk: filter gebruikerspunten op de specifieke pars (indien van toepassing bij m. trapezius)
-      // zodat punten van pars transversa niet per ongeluk als first/last van pars descendens meetellen!
-      const targetNameLower = (t.name || l.name || '').toLowerCase();
-      let partKey: string | undefined;
-      if (targetNameLower.includes('descendens')) partKey = 'descendens';
-      else if (targetNameLower.includes('transversa')) partKey = 'transversa';
-      else if (targetNameLower.includes('ascendens')) partKey = 'ascendens';
+    // Verzamel alle punten van alle doorlopende lijnen in dit wervelsegment om het totale bereik te bepalen
+    const allLinePts = validLines.flatMap((l) => l.points || []);
+    const sortedPts = [...allLinePts].sort((a, b) => a.y - b.y);
+    const firstPt = sortedPts[0];
+    const lastPt = sortedPts[sortedPts.length - 1];
+    const span = lastPt.y - firstPt.y;
+    if (span < 0.035) continue; // Geen doorlopende rij wervels, maar een enkele wervel
 
-      const candidateUserPoints = partKey
-        ? userPoints.filter((up) => (up.name || '').toLowerCase().includes(partKey!))
-        : userPoints;
+    // Belangrijk: filter gebruikerspunten op de specifieke pars (indien van toepassing bij m. trapezius)
+    // zodat punten van pars transversa niet per ongeluk als first/last van pars descendens meetellen!
+    const targetNameLower = (t.name || '').toLowerCase();
+    let partKey: string | undefined;
+    if (targetNameLower.includes('descendens')) partKey = 'descendens';
+    else if (targetNameLower.includes('transversa')) partKey = 'transversa';
+    else if (targetNameLower.includes('ascendens')) partKey = 'ascendens';
 
-      const matchedPts = candidateUserPoints.filter((up) => {
-        const poly = distanceToPolyline(up, l.points);
+    const candidateUserPoints = partKey
+      ? userPoints.filter((up) => (up.name || '').toLowerCase().includes(partKey!))
+      : userPoints;
+
+    // Punten die vallen op één van de geldige wervellijnen
+    const matchedPts = candidateUserPoints.filter((up) => {
+      return validLines.some((l) => {
+        const poly = distanceToPolyline(up, l.points!);
         return poly.distance <= Math.max(l.tolerance || 0.030, ptTolClose * 1.3);
       });
+    });
 
-      if (requireAllVertebrae) {
-        const expectedCount = Math.max(2, Math.round(span / 0.022));
-        if (matchedPts.length < expectedCount) {
-          vertebraeConditionMet = false;
-          satisfiedZones.delete(t.zoneId || t.key);
-          missingVertebraeTip = `Optie 'Alle wervels vereisen' staat aan: plaats minimaal ${expectedCount} punten langs de wervelkolom (${t.name}).`;
-        }
-      } else {
-        // Zorg dat tolEnd realistisch is voor het wervelsegment:
-        // Nooit meer dan 28% van de span van de rij (en geklemd tussen 0.016 en 0.022).
-        // Hiermee kan een tussenliggende wervel (zoals C6) nooit zowel first als last dekken bij C1-C6!
-        const tolEnd = Math.max(0.016, Math.min(0.022, span * 0.28));
-        const hasFirst = matchedPts.some((up) => Math.hypot((up.x - firstPt.x) * SKELETON_ASPECT_RATIO, up.y - firstPt.y) <= tolEnd);
-        const hasLast = matchedPts.some((up) => Math.hypot((up.x - lastPt.x) * SKELETON_ASPECT_RATIO, up.y - lastPt.y) <= tolEnd);
+    if (requireAllVertebrae) {
+      const expectedCount = Math.max(2, Math.round(span / 0.022));
+      if (matchedPts.length < expectedCount) {
+        vertebraeConditionMet = false;
+        satisfiedZones.delete(t.zoneId || t.key);
+        missingVertebraeTip = `Optie 'Alle wervels vereisen' staat aan: plaats minimaal ${expectedCount} punten langs de wervelkolom (${t.name}).`;
+      }
+    } else {
+      // Zorg dat tolEnd realistisch is voor het wervelsegment:
+      // Nooit meer dan 28% van de span van de rij (en geklemd tussen 0.016 en 0.022).
+      const tolEnd = Math.max(0.016, Math.min(0.022, span * 0.28));
+      const hasFirst = matchedPts.some((up) => Math.hypot((up.x - firstPt.x) * SKELETON_ASPECT_RATIO, up.y - firstPt.y) <= tolEnd);
+      const hasLast = matchedPts.some((up) => Math.hypot((up.x - lastPt.x) * SKELETON_ASPECT_RATIO, up.y - lastPt.y) <= tolEnd);
 
-        if (!hasFirst || !hasLast) {
-          vertebraeConditionMet = false;
-          satisfiedZones.delete(t.zoneId || t.key);
-          missingVertebraeTip = `Bij een wervelrij (${t.name}): klik minimaal de eerste én de laatste wervel aan (meer mag, minder niet).`;
-        }
+      if (!hasFirst || !hasLast) {
+        vertebraeConditionMet = false;
+        satisfiedZones.delete(t.zoneId || t.key);
+        missingVertebraeTip = `Bij een wervelrij (${t.name}): klik minimaal de eerste én de laatste wervel aan (meer mag, minder niet).`;
       }
     }
   }
