@@ -99,3 +99,4 @@ De code is live getest in een echte browser via Puppeteer (Microsoft Edge headle
     - **Regel 2:** `[Desc. | Transv. | Ascend.]` partes-knoppen van de m. trapezius. Deze staan nu altijd netjes op een eigen regel eronder (vanaf `top: 52px`), fysiek onder de navigator/zoomknop.
 - **Resultaat:** 0% overlap op alle schermformaten; alle knoppen zijn direct zichtbaar en aan te tikken.
 - **Build-controle:** `npm run build` geslaagd (`✓ built in 4.11s`).
+- **Git Push:** Succesvol gepusht naar `origin main` (commits `cdaaf09` en `6b96646`) op verzoek van gebruiker.
