@@ -100,3 +100,10 @@ De code is live getest in een echte browser via Puppeteer (Microsoft Edge headle
 - **Resultaat:** 0% overlap op alle schermformaten; alle knoppen zijn direct zichtbaar en aan te tikken.
 - **Build-controle:** `npm run build` geslaagd (`✓ built in 4.11s`).
 - **Git Push:** Succesvol gepusht naar `origin main` (commits `cdaaf09` en `6b96646`) op verzoek van gebruiker.
+
+---
+
+## 7. Overzichtsdocument Ontwikkelregels & Afspraken (07-11-2026 20:03)
+- **Status:** Voltooid.
+- **Resultaat:** Het document [ONTWIKKELREGELS_EN_AFSPRAKEN.md](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/ONTWIKKELREGELS_EN_AFSPRAKEN.md) is aangemaakt en bevat alle regels voor communicatie/logboek, Git push-beleid, anatomische data/cache integriteit, UI- en mobiele standaarden, en buildkwaliteit.
+- **Build-controle:** `npm run build` geslaagd (`✓ built in 3.92s`).
