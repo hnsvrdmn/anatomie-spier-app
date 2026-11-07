@@ -70,3 +70,19 @@ De code is live getest in een echte browser via Puppeteer (Microsoft Edge headle
   - [StudyView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/study/StudyView.tsx) (desktop weergave)
   - [MobileStudyView.tsx](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/components/study/MobileStudyView.tsx) (mobiele drawer)
 - **Verificatie:** `npm run build` foutloos uitgevoerd (`✓ built in 4.49s`).
+
+---
+
+## 5. Herstel Spierlijnen Biceps, Triceps, Deltoideus & Analyse Crista Iliaca (07-11-2026 19:40)
+- **Probleem 1: Lijnen bij m. biceps brachii, m. triceps brachii en m. deltoideus waren verdwenen:**
+  - **Oorzaak:** In [coordinates.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/utils/coordinates.ts) werd in `getMuscleConnections` gezocht naar `getPartPrefix`, die ook zocht naar termen als `caput longum`, `caput breve`, `caput mediale`, `caput laterale` en `clavicularis`. Hierdoor werd `hasAnyPart` ten onrechte `true` voor deze meerkoppige spieren. Omdat zij echter geen `descendens`, `transversa` of `ascendens` partes hebben en de inserties niet als pars gelabeld zijn, genereerde de pars-loop 0 verbindingen en sloot de fallback-filter ze uit. Resultaat: 0 lijnen gerenderd.
+  - **Oplossing:** `getPartPrefix` vervangen door `getTrapeziusPart`. Het uitsplitsen per pars gebeurt nu strikt en uitsluitend wanneer ZOWEL origo's als inserties matching pars hebben (`descendens`, `transversa`, `ascendens`, uniek voor m. trapezius). Alle overige spieren (biceps, triceps, deltoideus, pectoralis major) verbinden nu weer direct alle koppen met hun insertie.
+  - **Verificatie:** Puppeteer end-to-end test bevestigt:
+    - `biceps_brachii`: 2 gekleurde lijnen (caput breve + longum $\rightarrow$ tuberositas radii) + outlines.
+    - `triceps_brachii`: 3 gekleurde lijnen (caput longum + laterale + mediale $\rightarrow$ olecranon) + outlines.
+    - `deltoideus`: 3 gekleurde lijnen (pars clavicularis + acromialis + spinalis $\rightarrow$ corpus humeri) + outlines.
+- **Probleem 2: Verspringen crista iliaca punt bij m. gluteus maximus:**
+  - **Oorzaak:** In commit `08d74b6` waren de X-coördinaten van de crista iliaca per abuis links/rechts omgewisseld (`x: 0.6136` op links en `x: 0.3864` op rechts). Aangezien bij een dorsaal aanzicht links $x < 0.5$ is (waar ook SIPS $0.4485$, sacrum $0.4955$ en coccyx $0.494$ liggen), stond de crista iliaca aan de verkeerde kant van het lichaam.
+  - **Status:** De gebruiker heeft dit in de editor hersteld naar $x = 0.3898$ (links) en $x = 0.6102$ (rechts) op $y = 0.4051$. Dit is wiskundig exact symmetrisch ($0.3898 + 0.6102 = 1.0000$).
+  - **Preventie:** Dataset in [export.ts](file:///c:/Users/TOMMY/Documents/anatomie-spier-app/src/utils/export.ts) verhoogd naar `v22` (`pmt_anatomie_muscles_dataset_v22`) zodat verouderde browser-cache direct wordt gewist en de gecorrigeerde punten definitief actief blijven.
+- **Verificatie:** `npm run build` foutloos uitgevoerd (`✓ built in 4.09s`).

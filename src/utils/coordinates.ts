@@ -777,26 +777,12 @@ export interface MuscleConnection {
   iIdx: number;
 }
 
-function getPartPrefix(name?: string): string | null {
+function getTrapeziusPart(name?: string): 'descendens' | 'transversa' | 'ascendens' | null {
   if (!name) return null;
   const nameLower = name.toLowerCase();
-  const prefixes = [
-    'descendens',
-    'transversa',
-    'ascendens',
-    'clavicularis',
-    'sternocostalis',
-    'abdominalis',
-    'caput longum',
-    'caput breve',
-    'caput mediale',
-    'caput laterale',
-  ];
-  for (const p of prefixes) {
-    if (nameLower.includes(p)) {
-      return p;
-    }
-  }
+  if (nameLower.includes('descendens')) return 'descendens';
+  if (nameLower.includes('transversa')) return 'transversa';
+  if (nameLower.includes('ascendens')) return 'ascendens';
   return null;
 }
 
@@ -819,25 +805,27 @@ export function getMuscleConnections(origins: Point2D[], insertions: Point2D[]):
     return [];
   }
 
-  // Als er punten zijn met een specifieke pars (zoals bij de m. trapezius),
-  // koppel dan uitsluitend origo's en inserties binnen dezelfde pars!
-  const hasAnyPart = origins.some(o => getPartPrefix(o.name)) || insertions.some(i => getPartPrefix(i.name));
+  // Als er sprake is van m. trapezius waarbij ZOWEL origo's als inserties zijn gelabeld per pars
+  // (descendens, transversa, ascendens), koppel dan uitsluitend binnen dezelfde pars!
+  const hasMatchingTrapeziusParts =
+    origins.some(o => getTrapeziusPart(o.name)) &&
+    insertions.some(i => getTrapeziusPart(i.name));
 
-  if (hasAnyPart) {
+  if (hasMatchingTrapeziusParts) {
     const connections: MuscleConnection[] = [];
     const partes = ['descendens', 'transversa', 'ascendens'] as const;
 
     for (const part of partes) {
       const partOrigins: Array<{ orig: Point2D; oIdx: number }> = [];
       origins.forEach((orig, oIdx) => {
-        if (getPartPrefix(orig.name) === part) {
+        if (getTrapeziusPart(orig.name) === part) {
           partOrigins.push({ orig, oIdx });
         }
       });
 
       const partInsertions: Array<{ ins: Point2D; iIdx: number }> = [];
       insertions.forEach((ins, iIdx) => {
-        if (getPartPrefix(ins.name) === part) {
+        if (getTrapeziusPart(ins.name) === part) {
           partInsertions.push({ ins, iIdx });
         }
       });
@@ -885,30 +873,6 @@ export function getMuscleConnections(origins: Point2D[], insertions: Point2D[]):
       }
     }
 
-    const unpartedOrigins: Array<{ orig: Point2D; oIdx: number }> = [];
-    origins.forEach((orig, oIdx) => {
-      if (!getPartPrefix(orig.name)) unpartedOrigins.push({ orig, oIdx });
-    });
-    const unpartedInsertions: Array<{ ins: Point2D; iIdx: number }> = [];
-    insertions.forEach((ins, iIdx) => {
-      if (!getPartPrefix(ins.name)) unpartedInsertions.push({ ins, iIdx });
-    });
-
-    if (unpartedOrigins.length > 0 && unpartedInsertions.length > 0) {
-      const subConn = getMuscleConnections(
-        unpartedOrigins.map(x => x.orig),
-        unpartedInsertions.map(x => x.ins)
-      );
-      subConn.forEach(c => {
-        connections.push({
-          orig: c.orig,
-          ins: c.ins,
-          oIdx: unpartedOrigins[c.oIdx].oIdx,
-          iIdx: unpartedInsertions[c.iIdx].iIdx,
-        });
-      });
-    }
-
     return connections;
   }
 
@@ -926,11 +890,11 @@ export function getMuscleConnections(origins: Point2D[], insertions: Point2D[]):
 
   // 1. Anatomische part matching (bijv. Pars descendens -> Pars descendens)
   for (let o = 0; o < origins.length; o++) {
-    const oPref = getPartPrefix(origins[o].name);
+    const oPref = getTrapeziusPart(origins[o].name);
     if (!oPref) continue;
     for (let i = 0; i < insertions.length; i++) {
       if (matchedI.has(i)) continue;
-      const iPref = getPartPrefix(insertions[i].name);
+      const iPref = getTrapeziusPart(insertions[i].name);
       if (oPref === iPref) {
         matchedO.add(o);
         matchedI.add(i);

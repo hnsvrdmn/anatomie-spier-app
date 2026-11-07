@@ -3010,8 +3010,8 @@
       "left": {
         "origins": [
           {
-            "x": 0.6136,
-            "y": 0.3922,
+            "x": 0.3898,
+            "y": 0.4051,
             "name": "crista iliaca"
           },
           {
@@ -3100,8 +3100,8 @@
       "right": {
         "origins": [
           {
-            "x": 0.3864,
-            "y": 0.3922,
+            "x": 0.6102,
+            "y": 0.4051,
             "name": "crista iliaca"
           },
           {
@@ -3790,13 +3790,13 @@
       "right": {
         "origins": [
           {
-            "x": 0.6335,
-            "y": 0.7118,
+            "x": 0.6353,
+            "y": 0.7087,
             "name": "Condylus lateralis femoris"
           },
           {
-            "x": 0.5563,
-            "y": 0.7099,
+            "x": 0.5611,
+            "y": 0.7087,
             "name": "Condylus medialis femoris"
           }
         ],
@@ -3813,18 +3813,19 @@
             "y": 0.7243,
             "name": "via achillespees"
           }
-        ]
+        ],
+        "attachmentLines": []
       },
       "left": {
         "origins": [
           {
-            "x": 0.3665,
-            "y": 0.7118,
+            "x": 0.3647,
+            "y": 0.7087,
             "name": "Condylus lateralis femoris"
           },
           {
-            "x": 0.4437,
-            "y": 0.7099,
+            "x": 0.4389,
+            "y": 0.7087,
             "name": "Condylus medialis femoris"
           }
         ],
