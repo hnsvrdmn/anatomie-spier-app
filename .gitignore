@@ -38,3 +38,4 @@ extracted_pdf_muscles.json
 # Privé logboeken en ontwikkelregels (uitsluitend lokaal)
 VOORTGANG_EN_LOGBOEK*.md
 ONTWIKKELREGELS*.md
+ANATOMIE_APP_AUDIT*.md
