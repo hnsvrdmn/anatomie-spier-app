@@ -34,3 +34,7 @@ pdf_diffs.json
 pdf_exact_tables.json
 pdf_muscles_clean_text.json
 extracted_pdf_muscles.json
+
+# Privé logboeken en ontwikkelregels (uitsluitend lokaal)
+VOORTGANG_EN_LOGBOEK*.md
+ONTWIKKELREGELS*.md
