@@ -282,6 +282,90 @@ const SPECIFIC_OPEN_INSERTION_LANDMARKS: Record<string, { display: string; accep
   },
 };
 
+const BUGFIX_TEST_SCENARIOS: Array<{
+  label: string;
+  muscleId: string;
+  type: QuizType;
+  landmarkType?: 'origin' | 'insertion';
+  landmarkText?: string;
+  targetLandmarkIndex?: number;
+  openKind?: 'origin' | 'insertion';
+}> = [
+  {
+    label: '1. m. latissimus dorsi — Origo & Insertie (Th7-L5 + crista iliaca + humerus)',
+    muscleId: 'latissimus_dorsi',
+    type: 'full',
+  },
+  {
+    label: '2. mm. rhomboidei — Origo & Insertie (C7-Th5 + margo medialis scapula)',
+    muscleId: 'rhomboidei',
+    type: 'full',
+  },
+  {
+    label: '3. m. erector spinae — Landmark insertie: "alle wervels en os sacrum"',
+    muscleId: 'erector_spinae',
+    type: 'landmark',
+    landmarkType: 'insertion',
+    landmarkText: 'alle wervels en os sacrum',
+    targetLandmarkIndex: 0,
+  },
+  {
+    label: '4. m. erector spinae — Origo & Insertie (gehele wervelkolom + sacrum)',
+    muscleId: 'erector_spinae',
+    type: 'full',
+  },
+  {
+    label: '5. m. trapezius — Origo & Insertie (3 partes: Descendens, Transversa, Ascendens)',
+    muscleId: 'trapezius',
+    type: 'full',
+  },
+  {
+    label: '6. mm. rhomboidei — Landmark origo: "processus spinosus 7e cervicale vertebra" (enkele wervel C7)',
+    muscleId: 'rhomboidei',
+    type: 'landmark',
+    landmarkType: 'origin',
+    landmarkText: 'processus spinosus 7e cervicale vertebra',
+    targetLandmarkIndex: 0,
+  },
+  {
+    label: '7. m. iliopsoas — Landmark origo: "1e-5e vertebrae lumbales" (wervelrij L1-L5)',
+    muscleId: 'iliopsoas',
+    type: 'landmark',
+    landmarkType: 'origin',
+    landmarkText: '1e-5e vertebrae lumbales',
+    targetLandmarkIndex: 1,
+  },
+  {
+    label: '8. m. iliopsoas — Landmark origo: "12e vertebra thoracalis" (enkele wervel Th12)',
+    muscleId: 'iliopsoas',
+    type: 'landmark',
+    landmarkType: 'origin',
+    landmarkText: '12e vertebra thoracalis',
+    targetLandmarkIndex: 0,
+  },
+  {
+    label: '9. m. obliquus externus abdominis — Origo & Insertie (costae + linea alba + crista iliaca)',
+    muscleId: 'obliquus_externus_abdominis',
+    type: 'full',
+  },
+  {
+    label: '10. m. pectoralis major — Origo & Insertie (clavicula + sternum/costae + tuberculum majus)',
+    muscleId: 'pectoralis_major',
+    type: 'full',
+  },
+  {
+    label: '11. m. tibialis anterior — Bewegingen aanvinken (dorsaalflexie + inversie)',
+    muscleId: 'tibialis_anterior',
+    type: 'movements',
+  },
+  {
+    label: '12. m. rectus femoris — Open vraag specifiek aanhechtingspunt (insertie: Tuberositas tibiae)',
+    muscleId: 'rectus_femoris',
+    type: 'open_question',
+    openKind: 'insertion',
+  },
+];
+
 const initialStats = (): QuizStatsData => ({
   totalQuestions: 0,
   correctAnswers: 0,
@@ -373,8 +457,19 @@ export const QuizView: React.FC = () => {
   // Chronologische lijst van alle geplaatste punten in Vrije Intekenmodus
   const [userFreePoints, setUserFreePoints] = useState<Point2D[]>([]);
 
-  // Voor 'free' modus: welk quiztype? 'mixed' (Gemengde toets) is de standaard!
-  const [freeQuizType, setFreeQuizType] = useState<QuizType | 'all'>('mixed');
+  // Voor 'free' modus: welk quiztype? 'mixed' (Gemengde toets) is de standaard, tenzij ?test of #test in de URL staat!
+  const [freeQuizType, setFreeQuizType] = useState<QuizType | 'all'>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('test') || window.location.hash === '#test') {
+        return 'bugfixes';
+      }
+    }
+    return 'mixed';
+  });
+
+  // Volgnummer voor de specifieke testpagina (12 gerichte probleemvragen)
+  const [bugfixQuestionIndex, setBugfixQuestionIndex] = useState<number>(0);
 
   // Actieve vraag
   const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
@@ -687,6 +782,7 @@ export const QuizView: React.FC = () => {
     bone: initialStats(),
     joints: initialStats(),
     function: initialStats(),
+    bugfixes: initialStats(),
     all: initialStats(),
   });
 
@@ -963,9 +1059,90 @@ export const QuizView: React.FC = () => {
     return JOINT_QUIZ_ITEMS.find((item) => item.id === nextId) || JOINT_QUIZ_ITEMS[0];
   }, []);
 
+  // Laad een specifiek scenario uit de 12 gefixte probleemvragen
+  const loadBugfixScenario = useCallback((scenarioIdx: number) => {
+    if (cleanMuscles.length === 0) return;
+    const clampedIdx = ((scenarioIdx % BUGFIX_TEST_SCENARIOS.length) + BUGFIX_TEST_SCENARIOS.length) % BUGFIX_TEST_SCENARIOS.length;
+    setBugfixQuestionIndex(clampedIdx);
+    const scenario = BUGFIX_TEST_SCENARIOS[clampedIdx];
+    const targetMuscle = cleanMuscles.find((m) => m.id === scenario.muscleId) || cleanMuscles[0];
+
+    let movementOptions: string[] | undefined;
+    let correctMovements: string[] | undefined;
+    if (scenario.type === 'movements') {
+      const movData = getMovementQuestionOptions(targetMuscle.id, 8);
+      movementOptions = movData.options;
+      correctMovements = movData.correctMovements;
+    }
+
+    let correctOpenAnswer: string | undefined;
+    let acceptableAnswers: string[] | undefined;
+    if (scenario.type === 'open_question') {
+      if (scenario.openKind === 'origin') {
+        const spec = SPECIFIC_OPEN_ORIGIN_LANDMARKS[targetMuscle.id];
+        correctOpenAnswer = spec ? spec.display : targetMuscle.originText;
+        acceptableAnswers = spec ? [...spec.acceptable, targetMuscle.originText] : [targetMuscle.originText];
+      } else if (scenario.openKind === 'insertion') {
+        const spec = SPECIFIC_OPEN_INSERTION_LANDMARKS[targetMuscle.id];
+        correctOpenAnswer = spec ? spec.display : targetMuscle.insertionText;
+        acceptableAnswers = spec ? [...spec.acceptable, targetMuscle.insertionText] : [targetMuscle.insertionText];
+      } else {
+        correctOpenAnswer = targetMuscle.name;
+        acceptableAnswers = [targetMuscle.name, targetMuscle.name.replace(/^m\.\s*/i, '')];
+      }
+    }
+
+    setCurrentQuestion({
+      id: `bugfix-${clampedIdx}-${targetMuscle.id}-${Date.now()}`,
+      muscle: targetMuscle,
+      type: scenario.type,
+      side: 'left',
+      options: [],
+      landmarkText: scenario.landmarkText,
+      landmarkType: scenario.landmarkType,
+      targetLandmarkIndex: scenario.targetLandmarkIndex,
+      movementOptions,
+      correctMovements,
+      openKind: scenario.openKind,
+      correctOpenAnswer,
+      acceptableAnswers,
+    });
+
+    setUserFreePoints([]);
+    setUserOrigins([]);
+    setUserInsertions([]);
+    pointHistoryRef.current = [];
+    completedPartesRef.current = {};
+    setHoppingButton(null);
+    setActiveTrapeziusPart('descendens');
+    setUserOpenAnswer('');
+    setOpenAnswerFeedback(null);
+    setActiveQuizTool(scenario.landmarkType === 'insertion' ? 'insertion' : 'origin');
+    setSelectedMultipleChoiceId(null);
+    setSelectedMovements([]);
+    setIsMultipleChoiceSuccess(false);
+    setIsMovementSuccess(false);
+    setIsEvaluated(false);
+    setIsPlacementSuccess(false);
+    setMatchResults([]);
+    setShowReferenceGhost(false);
+    setEvaluatedSide('left');
+    setHasScaledForOrigins(false);
+    setIsScalingInsertion(false);
+
+    if (autoRotateView) {
+      setCurrentView(targetMuscle.view);
+    }
+  }, [cleanMuscles, autoRotateView, setCurrentView]);
+
   // Genereer een nieuwe willekeurige vraag voor de 'free' modus
   const generateNewFreeQuestion = useCallback((typeOverride?: QuizType | 'all') => {
     const targetType = typeOverride !== undefined ? typeOverride : freeQuizType;
+
+    if (targetType === 'bugfixes') {
+      loadBugfixScenario(bugfixQuestionIndex);
+      return;
+    }
 
     // Speciaal type: Bot identificatie (open vraag met stip op skelet zonder tekst)
     if (targetType === 'bone') {
@@ -1335,13 +1512,15 @@ export const QuizView: React.FC = () => {
         setCurrentView(randMuscle.view);
       }
     }
-  }, [cleanMuscles, freeQuizType, getMuscleFunctionDescription, setCurrentView, autoRotateView]);
+  }, [cleanMuscles, freeQuizType, getMuscleFunctionDescription, setCurrentView, autoRotateView, bugfixQuestionIndex, loadBugfixScenario]);
 
   // Initialisatie effect
   useEffect(() => {
     if (practiceMode === 'joint') {
       setJointSessionFinished(false);
       loadJointQuestion(jointMuscleIndex);
+    } else if (freeQuizType === 'bugfixes') {
+      loadBugfixScenario(bugfixQuestionIndex);
     } else {
       generateNewFreeQuestion(freeQuizType);
     }
@@ -1359,6 +1538,12 @@ export const QuizView: React.FC = () => {
     pointHistoryRef.current = [];
     completedPartesRef.current = {};
     setHoppingButton(null);
+
+    if (practiceMode === 'free' && freeQuizType === 'bugfixes') {
+      const nextIdx = (bugfixQuestionIndex + 1) % BUGFIX_TEST_SCENARIOS.length;
+      loadBugfixScenario(nextIdx);
+      return;
+    }
 
     // 1. Controleer of er een herhalingsvraag klaarstaat (in zowel joint als free modus)
     const dueIndex = retryQueue.findIndex((item) => {
@@ -2182,8 +2367,15 @@ export const QuizView: React.FC = () => {
         freeQuizType={freeQuizType}
         setFreeQuizType={(nextType) => {
           setFreeQuizType(nextType);
-          generateNewFreeQuestion(nextType);
+          if (nextType === 'bugfixes') {
+            loadBugfixScenario(0);
+          } else {
+            generateNewFreeQuestion(nextType);
+          }
         }}
+        bugfixQuestionIndex={bugfixQuestionIndex}
+        bugfixScenarios={BUGFIX_TEST_SCENARIOS}
+        onSelectBugfixScenario={loadBugfixScenario}
         jointMuscleIndex={jointMuscleIndex}
         jointMusclesCount={jointMuscles.length}
         jointCategoryName={activeJointCategory.name}
@@ -2514,24 +2706,51 @@ export const QuizView: React.FC = () => {
               </select>
             </div>
           ) : (
-            <select
-              value={freeQuizType}
-              onChange={(e) => {
-                const nextType = e.target.value as QuizType | 'all';
-                setFreeQuizType(nextType);
-                generateNewFreeQuestion(nextType);
-              }}
-              className="w-full px-3 py-2 bg-clinical-50 border border-clinical-200 rounded-xl text-xs sm:text-sm font-semibold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-            >
-              <option value="mixed">Gemengde toets</option>
-              <option value="bone">Bot benoemen</option>
-              <option value="full">Origo en insertie plaatsen</option>
-              <option value="landmark">Vind aanhechtingspunt</option>
-              <option value="multiple_choice">Meerkeuze test</option>
-              <option value="open_question">Open invultest</option>
-              <option value="movements">Bewegingen per spier</option>
-              <option value="joints">Gewrichten</option>
-            </select>
+            <div className="space-y-2">
+              <select
+                value={freeQuizType}
+                onChange={(e) => {
+                  const nextType = e.target.value as QuizType | 'all';
+                  setFreeQuizType(nextType);
+                  if (nextType === 'bugfixes') {
+                    loadBugfixScenario(0);
+                  } else {
+                    generateNewFreeQuestion(nextType);
+                  }
+                }}
+                className="w-full px-3 py-2 bg-clinical-50 border border-clinical-200 rounded-xl text-xs sm:text-sm font-semibold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+              >
+                <option value="bugfixes">🔧 Testpagina: Gefixte probleemvragen (12)</option>
+                <option value="mixed">Gemengde toets</option>
+                <option value="bone">Bot benoemen</option>
+                <option value="full">Origo en insertie plaatsen</option>
+                <option value="landmark">Vind aanhechtingspunt</option>
+                <option value="multiple_choice">Meerkeuze test</option>
+                <option value="open_question">Open invultest</option>
+                <option value="movements">Bewegingen per spier</option>
+                <option value="joints">Gewrichten</option>
+              </select>
+
+              {freeQuizType === 'bugfixes' && (
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-[11px] font-bold text-blue-700 px-0.5">
+                    <span>Kies direct een probleemvraag:</span>
+                    <span>{bugfixQuestionIndex + 1} / {BUGFIX_TEST_SCENARIOS.length}</span>
+                  </div>
+                  <select
+                    value={bugfixQuestionIndex}
+                    onChange={(e) => loadBugfixScenario(Number(e.target.value))}
+                    className="w-full px-2.5 py-1.5 bg-blue-50/70 border border-blue-200 rounded-xl text-xs font-semibold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                  >
+                    {BUGFIX_TEST_SCENARIOS.map((sc, idx) => (
+                      <option key={idx} value={idx}>
+                        {sc.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
           )}
 
           {/* Compacte balk met switches voor automatisch roteren, inzoomen, type-switch en alle wervels vereisen */}

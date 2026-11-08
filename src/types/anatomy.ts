@@ -85,7 +85,8 @@ export type QuizType =
   | 'joints'          // Gewrichten test: typen, deelgewrichten, assen en bewegingen
   | 'function'        // (voor backwards compatibiliteit)
   | 'movements'       // Bewegingen per spier (selecteer alle bijbehorende bewegingen via checkboxes)
-  | 'mixed';          // Gemengde toets: wisselt willekeurig af tussen alle verschillende testtypen
+  | 'mixed'           // Gemengde toets: wisselt willekeurig af tussen alle verschillende testtypen
+  | 'bugfixes';       // Specifieke testpagina met puur de 12 gefixte probleemvragen
 
 export type MatchAccuracy = 'correct' | 'close' | 'incorrect';
 

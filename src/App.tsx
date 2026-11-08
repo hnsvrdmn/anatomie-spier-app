@@ -22,22 +22,35 @@ function checkIsSecretGame(): boolean {
   return params.has('game') || window.location.hash === '#game';
 }
 
+function checkIsBugfixTestUrl(): boolean {
+  if (typeof window === 'undefined') return false;
+  const params = new URLSearchParams(window.location.search);
+  return params.has('test') || window.location.hash === '#test';
+}
+
 const AppContent: React.FC = () => {
-  const { appMode } = useMuscles();
+  const { appMode, setAppMode, setQuizPracticeMode } = useMuscles();
   const [isGame, setIsGame] = useState<boolean>(checkIsSecretGame);
   const [activeGameTab, setActiveGameTab] = useState<
     'skeleton' | 'connections' | 'queens' | 'guess'
   >('skeleton');
 
   useEffect(() => {
-    const onUrlChange = () => setIsGame(checkIsSecretGame());
-    window.addEventListener('hashchange', onUrlChange);
-    window.addEventListener('popstate', onUrlChange);
-    return () => {
-      window.removeEventListener('hashchange', onUrlChange);
-      window.removeEventListener('popstate', onUrlChange);
+    const syncUrlMode = () => {
+      setIsGame(checkIsSecretGame());
+      if (checkIsBugfixTestUrl()) {
+        setAppMode('quiz');
+        setQuizPracticeMode('free');
+      }
     };
-  }, []);
+    syncUrlMode();
+    window.addEventListener('hashchange', syncUrlMode);
+    window.addEventListener('popstate', syncUrlMode);
+    return () => {
+      window.removeEventListener('hashchange', syncUrlMode);
+      window.removeEventListener('popstate', syncUrlMode);
+    };
+  }, [setAppMode, setQuizPracticeMode]);
 
   if (isGame) {
     const handleExitGame = () => {

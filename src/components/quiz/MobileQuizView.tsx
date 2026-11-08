@@ -110,6 +110,9 @@ interface MobileQuizViewProps {
   setRequireAllVertebrae?: (val: boolean) => void;
   onUndoLastPoint?: () => void;
   hoppingButton?: string | null;
+  bugfixQuestionIndex?: number;
+  bugfixScenarios?: Array<{ label: string }>;
+  onSelectBugfixScenario?: (idx: number) => void;
 }
 
 export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
@@ -174,6 +177,9 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
   setRequireAllVertebrae,
   onUndoLastPoint,
   hoppingButton,
+  bugfixQuestionIndex = 0,
+  bugfixScenarios = [],
+  onSelectBugfixScenario,
 }) => {
   const { quizOpenOptionsTrigger } = useMuscles();
 
@@ -551,23 +557,46 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                   </div>
                 </>
               ) : (
-                <select
-                  value={freeQuizType}
-                  onChange={(e) => {
-                    setFreeQuizType(e.target.value as QuizType);
-                    setIsExpanded(false);
-                  }}
-                  className="w-full px-3 py-2 bg-slate-100 border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:bg-white cursor-pointer"
-                >
-                  <option value="mixed">Gemengde toets</option>
-                  <option value="bone">Bot benoemen</option>
-                  <option value="full">Origo en insertie plaatsen</option>
-                  <option value="landmark">Vind aanhechtingspunt</option>
-                  <option value="multiple_choice">Meerkeuze test</option>
-                  <option value="open_question">Open invultest</option>
-                  <option value="movements">Bewegingen per spier</option>
-                  <option value="joints">Gewrichten</option>
-                </select>
+                <div className="space-y-1.5">
+                  <select
+                    value={freeQuizType}
+                    onChange={(e) => {
+                      const val = e.target.value as QuizType;
+                      setFreeQuizType(val);
+                      if (val !== 'bugfixes') {
+                        setIsExpanded(false);
+                      }
+                    }}
+                    className="w-full px-3 py-2 bg-slate-100 border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:bg-white cursor-pointer"
+                  >
+                    <option value="bugfixes">🔧 Testpagina: Gefixte probleemvragen (12)</option>
+                    <option value="mixed">Gemengde toets</option>
+                    <option value="bone">Bot benoemen</option>
+                    <option value="full">Origo en insertie plaatsen</option>
+                    <option value="landmark">Vind aanhechtingspunt</option>
+                    <option value="multiple_choice">Meerkeuze test</option>
+                    <option value="open_question">Open invultest</option>
+                    <option value="movements">Bewegingen per spier</option>
+                    <option value="joints">Gewrichten</option>
+                  </select>
+
+                  {freeQuizType === 'bugfixes' && bugfixScenarios.length > 0 && (
+                    <select
+                      value={bugfixQuestionIndex}
+                      onChange={(e) => {
+                        onSelectBugfixScenario?.(Number(e.target.value));
+                        setIsExpanded(false);
+                      }}
+                      className="w-full px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-xl text-xs font-bold text-blue-950 focus:bg-white cursor-pointer"
+                    >
+                      {bugfixScenarios.map((sc, idx) => (
+                        <option key={idx} value={idx}>
+                          {sc.label}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
               )}
 
               {/* Minimale tolerantie / nauwkeurigheid kiezer - alleen relevant bij tekenvragen */}
