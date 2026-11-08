@@ -2727,7 +2727,9 @@ export const QuizView: React.FC = () => {
                 }}
                 className="w-full px-3 py-2 bg-clinical-50 border border-clinical-200 rounded-xl text-xs sm:text-sm font-semibold text-clinical-900 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
               >
-                <option value="bugfixes">🔧 Testpagina: Gefixte probleemvragen (12)</option>
+                {freeQuizType === 'bugfixes' && (
+                  <option value="bugfixes">🔧 Testpagina: Gefixte probleemvragen (12)</option>
+                )}
                 <option value="mixed">Gemengde toets</option>
                 <option value="bone">Bot benoemen</option>
                 <option value="full">Origo en insertie plaatsen</option>

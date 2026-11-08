@@ -569,7 +569,9 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
                     }}
                     className="w-full px-3 py-2 bg-slate-100 border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:bg-white cursor-pointer"
                   >
-                    <option value="bugfixes">🔧 Testpagina: Gefixte probleemvragen (12)</option>
+                    {freeQuizType === 'bugfixes' && (
+                      <option value="bugfixes">🔧 Testpagina: Gefixte probleemvragen (12)</option>
+                    )}
                     <option value="mixed">Gemengde toets</option>
                     <option value="bone">Bot benoemen</option>
                     <option value="full">Origo en insertie plaatsen</option>
