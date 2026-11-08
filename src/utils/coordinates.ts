@@ -360,22 +360,33 @@ export function getDistinctTargets(
 
   targetPoints.forEach((pt) => {
     const rawName = (pt.name || '').trim();
-    const matchedLine = rawName
-      ? matchingLines.find((l) => (l.name || '').trim().toLowerCase() === rawName.toLowerCase())
-      : undefined;
+    const basePtName = getBaseAttachmentName(rawName);
+    const matchedLinesForPt = rawName
+      ? matchingLines.filter((l) => {
+          const lName = (l.name || '').trim().toLowerCase();
+          const baseLName = getBaseAttachmentName(l.name);
+          return (
+            lName === rawName.toLowerCase() ||
+            (basePtName.length > 0 && baseLName === basePtName)
+          );
+        })
+      : [];
+    const matchedLine = matchedLinesForPt[0];
     const groupingKey = getAttachmentGroupingKey(pt, matchedLine?.name);
     const zoneId = resolveZoneKey(rawName, matchedLine?.name, pt.zone);
-    const isZone = !!matchedLine || !!pt.zone || zoneId.startsWith('zone_');
+    const isZone = matchedLinesForPt.length > 0 || !!pt.zone || zoneId.startsWith('zone_');
 
     if (targetMap.has(groupingKey)) {
       const existing = targetMap.get(groupingKey)!;
       existing.points.push(pt);
-      if (matchedLine) {
+      if (matchedLinesForPt.length > 0) {
         if (!existing.lines) existing.lines = existing.line ? [existing.line] : [];
-        if (!existing.lines.some((l) => l.id === matchedLine.id)) {
-          existing.lines.push(matchedLine);
+        for (const ml of matchedLinesForPt) {
+          if (!existing.lines.some((l) => l.id === ml.id)) {
+            existing.lines.push(ml);
+          }
         }
-        if (!existing.line) existing.line = matchedLine;
+        if (!existing.line) existing.line = matchedLinesForPt[0];
         existing.isZone = true;
       }
     } else {
@@ -384,7 +395,7 @@ export function getDistinctTargets(
         name: rawName,
         points: [pt],
         line: matchedLine,
-        lines: matchedLine ? [matchedLine] : [],
+        lines: [...matchedLinesForPt],
         zoneId,
         isZone,
       });
@@ -396,9 +407,33 @@ export function getDistinctTargets(
   // Indien er slechts 1 uniek doelpunt is en 1 lijn van hetzelfde type zonder exacte naammatch, koppel ze
   if (targets.length === 1 && !targets[0].line && matchingLines.length === 1) {
     targets[0].line = matchingLines[0];
+    targets[0].lines = [matchingLines[0]];
     targets[0].isZone = true;
     targets[0].zoneId = resolveZoneKey(targets[0].name, matchingLines[0].name, targets[0].points[0]?.zone);
   }
+
+  // Voor werveldoelen met >= 2 discrete punten maar zonder gekoppelde lijn (zoals m. trapezius partes):
+  // genereer automatisch een doorlopende wervellijn tussen de wervelpunten zodat ook tussenliggende wervels geldig zijn.
+  targets.forEach((t) => {
+    const hasValidLine = (t.lines && t.lines.some((l) => l.points && l.points.length >= 2)) || (t.line && t.line.points && t.line.points.length >= 2);
+    const isVert =
+      t.zoneId === 'zone_vertebrae' ||
+      t.zoneId.startsWith('zone_trapezius_') ||
+      (t.name && (t.name.toLowerCase().includes('wervel') || t.name.toLowerCase().includes('spinosus') || t.name.toLowerCase().includes('vertebra')));
+    if (isVert && !hasValidLine && t.points.length >= 2 && (targetType === 'origin' || targetType === 'insertion')) {
+      const sortedPts = [...t.points].sort((a, b) => a.y - b.y);
+      const virtualLine: AttachmentLine = {
+        id: `virtual-spine-${t.key}`,
+        name: t.name,
+        type: targetType,
+        points: sortedPts,
+        tolerance: 0.026,
+      };
+      t.line = virtualLine;
+      t.lines = [virtualLine];
+      t.isZone = true;
+    }
+  });
 
   // Indien er geen discrete punten zijn maar wel lijnen
   if (targets.length === 0 && matchingLines.length > 0) {
@@ -411,6 +446,7 @@ export function getDistinctTargets(
         name: rawName,
         points: [],
         line,
+        lines: [line],
         zoneId,
         isZone: true,
       });
@@ -665,57 +701,102 @@ export function evaluatePointSet(
   let vertebraeConditionMet = true;
 
   for (const t of distinctTargets) {
-    const isVertebral = (t.zoneId && t.zoneId.startsWith('zone_vertebrae')) ||
-      (t.name && (t.name.toLowerCase().includes('wervel') || t.name.toLowerCase().includes('spinosus') || t.name.toLowerCase().includes('vertebra')));
+    const allNamesLower = [t.name, ...t.points.map((p) => p.name || '')].join(' ').toLowerCase();
+    const isVertebral =
+      (t.zoneId && (t.zoneId.startsWith('zone_vertebrae') || t.zoneId.startsWith('zone_trapezius_'))) ||
+      allNamesLower.includes('wervel') ||
+      allNamesLower.includes('spinosus') ||
+      allNamesLower.includes('vertebra');
     if (!isVertebral) continue;
+
+    // Controleer of dit daadwerkelijk een reeks/meervoud van wervels is, en NIET één losse wervel
+    // (zoals bij een landmark-vraag voor enkel 'processus spinosus 7e cervicale vertebra' of '12e vertebra thoracalis')
+    const isMultiVertebraSeries =
+      t.points.length >= 2 ||
+      allNamesLower.includes('wervels') ||
+      allNamesLower.includes('vertebrae') ||
+      allNamesLower.includes('alle') ||
+      /\d+\s*e?\s*[-–tot]+\s*\d+/.test(allNamesLower);
+    if (!isMultiVertebraSeries) continue;
 
     const lines = (t.lines && t.lines.length > 0) ? t.lines : (t.line ? [t.line] : []);
     const validLines = lines.filter((l) => l.points && l.points.length >= 2);
     if (validLines.length === 0) continue;
 
-    // Verzamel alle punten van alle doorlopende lijnen in dit wervelsegment om het totale bereik te bepalen
+    // Verzamel alle punten van zowel de doorlopende lijnen als de discrete doelpunten in dit wervelsegment
     const allLinePts = validLines.flatMap((l) => l.points || []);
-    const sortedPts = [...allLinePts].sort((a, b) => a.y - b.y);
-    const firstPt = sortedPts[0];
-    const lastPt = sortedPts[sortedPts.length - 1];
-    const span = lastPt.y - firstPt.y;
+    const sortedLinePts = [...allLinePts].sort((a, b) => a.y - b.y);
+    const firstLinePt = sortedLinePts[0];
+    const lastLinePt = sortedLinePts[sortedLinePts.length - 1];
+
+    const sortedTargetPts = [...t.points].sort((a, b) => a.y - b.y);
+    const firstTargetPt = sortedTargetPts[0] || firstLinePt;
+    const lastTargetPt = sortedTargetPts[sortedTargetPts.length - 1] || lastLinePt;
+
+    const minY = Math.min(firstLinePt.y, firstTargetPt.y);
+    const maxY = Math.max(lastLinePt.y, lastTargetPt.y);
+    const span = maxY - minY;
     if (span < 0.035) continue; // Geen doorlopende rij wervels, maar een enkele wervel
 
     // Belangrijk: filter gebruikerspunten op de specifieke pars (indien van toepassing bij m. trapezius)
     // zodat punten van pars transversa niet per ongeluk als first/last van pars descendens meetellen!
-    const targetNameLower = (t.name || '').toLowerCase();
     let partKey: string | undefined;
-    if (targetNameLower.includes('descendens')) partKey = 'descendens';
-    else if (targetNameLower.includes('transversa')) partKey = 'transversa';
-    else if (targetNameLower.includes('ascendens')) partKey = 'ascendens';
+    if (allNamesLower.includes('descendens')) partKey = 'descendens';
+    else if (allNamesLower.includes('transversa')) partKey = 'transversa';
+    else if (allNamesLower.includes('ascendens')) partKey = 'ascendens';
 
     const candidateUserPoints = partKey
       ? userPoints.filter((up) => (up.name || '').toLowerCase().includes(partKey!))
       : userPoints;
 
-    // Punten die vallen op één van de geldige wervellijnen
+    // Punten die vallen op één van de geldige wervellijnen of discrete werveldoelpunten
     const matchedPts = candidateUserPoints.filter((up) => {
-      return validLines.some((l) => {
+      const onLine = validLines.some((l) => {
         const poly = distanceToPolyline(up, l.points!);
         return poly.distance <= Math.max(l.tolerance || 0.030, ptTolClose * 1.3);
       });
+      const onTargetPt = t.points.some((tp) => calculateDistance(up, tp) <= ptTolClose * 1.2);
+      return onLine || onTargetPt;
     });
 
     if (requireAllVertebrae) {
-      const expectedCount = Math.max(2, Math.round(span / 0.022));
+      const expectedCount = partKey === 'descendens'
+        ? 5
+        : partKey === 'transversa'
+        ? 3
+        : partKey === 'ascendens'
+        ? 7
+        : Math.max(2, Math.round(span / 0.024));
       if (matchedPts.length < expectedCount) {
         vertebraeConditionMet = false;
         satisfiedZones.delete(t.zoneId || t.key);
         missingVertebraeTip = `Optie 'Alle wervels vereisen' staat aan: plaats minimaal ${expectedCount} punten langs de wervelkolom (${t.name}).`;
       }
     } else {
-      // Zorg dat tolEnd realistisch is voor het wervelsegment:
-      // Nooit meer dan 28% van de span van de rij (en geklemd tussen 0.016 en 0.022).
-      const tolEnd = Math.max(0.016, Math.min(0.022, span * 0.28));
-      const hasFirst = matchedPts.some((up) => Math.hypot((up.x - firstPt.x) * SKELETON_ASPECT_RATIO, up.y - firstPt.y) <= tolEnd);
-      const hasLast = matchedPts.some((up) => Math.hypot((up.x - lastPt.x) * SKELETON_ASPECT_RATIO, up.y - lastPt.y) <= tolEnd);
+      // Zorg dat zowel het lijnuiteinde (firstLinePt/lastLinePt) als het discrete doelpunt (firstTargetPt/lastTargetPt)
+      // voor de eerste en laatste wervel als geldig eindpunt wordt geaccepteerd!
+      const tolEnd = Math.max(0.020, Math.min(0.026, span * 0.30));
+      const hasMultipleTargetPts = sortedTargetPts.length >= 2;
+      const topLimitY = (hasMultipleTargetPts ? Math.max(firstLinePt.y, firstTargetPt.y) : firstLinePt.y) + tolEnd;
+      const bottomLimitY = (hasMultipleTargetPts ? Math.min(lastLinePt.y, lastTargetPt.y) : lastLinePt.y) - tolEnd;
 
-      if (!hasFirst || !hasLast) {
+      const hasFirst = matchedPts.some((up) =>
+        calculateDistance(up, firstLinePt) <= tolEnd ||
+        (hasMultipleTargetPts && calculateDistance(up, firstTargetPt) <= tolEnd) ||
+        (up.y >= minY - tolEnd && up.y <= topLimitY)
+      );
+      const hasLast = matchedPts.some((up) =>
+        calculateDistance(up, lastLinePt) <= tolEnd ||
+        (hasMultipleTargetPts && calculateDistance(up, lastTargetPt) <= tolEnd) ||
+        (up.y >= bottomLimitY && up.y <= maxY + tolEnd)
+      );
+
+      // Vereis daarnaast minimaal 2 geplaatste punten op de wervelrij met een reële onderlinge spreiding
+      const ys = matchedPts.map((p) => p.y);
+      const userSpan = ys.length >= 2 ? Math.max(...ys) - Math.min(...ys) : 0;
+      const minRequiredSpan = partKey === 'transversa' ? 0.016 : partKey === 'descendens' ? 0.022 : Math.min(0.030, span * 0.35);
+
+      if (!hasFirst || !hasLast || matchedPts.length < 2 || userSpan < minRequiredSpan) {
         vertebraeConditionMet = false;
         satisfiedZones.delete(t.zoneId || t.key);
         missingVertebraeTip = `Bij een wervelrij (${t.name}): klik minimaal de eerste én de laatste wervel aan (meer mag, minder niet).`;
@@ -1033,9 +1114,9 @@ export function isTrapeziusPointAccurate(
     // Origo's liggen dorsaal mediaal op de wervelkolom (x ≈ 0.50)
     const isMidline = Math.abs(pt.x - 0.50) <= 0.095;
     if (!isMidline) return false;
-    if (part === 'descendens') return pt.y >= 0.07 && pt.y <= 0.175;
-    if (part === 'transversa') return pt.y >= 0.150 && pt.y <= 0.225;
-    if (part === 'ascendens') return pt.y >= 0.200 && pt.y <= 0.355;
+    if (part === 'descendens') return pt.y >= 0.07 && pt.y <= 0.195;
+    if (part === 'transversa') return pt.y >= 0.150 && pt.y <= 0.235;
+    if (part === 'ascendens') return pt.y >= 0.200 && pt.y <= 0.365;
     return false;
   } else {
     // Insertie ligt lateraal op clavicula, acromion of spina scapulae (links of rechts)
@@ -1056,6 +1137,22 @@ export function isTrapeziusPointAccurate(
     }
     return false;
   }
+}
+
+/**
+ * Spiegelt een lijst van AttachmentLines horizontaal naar de andere lichaamszijde (x -> 1.0 - x).
+ */
+export function mirrorAttachmentLines(lines?: AttachmentLine[]): AttachmentLine[] {
+  if (!lines || lines.length === 0) return [];
+  return lines.map((l) => ({
+    ...l,
+    id: l.id.includes('-right')
+      ? l.id.replace('-right', '-left')
+      : l.id.includes('-left')
+      ? l.id.replace('-left', '-right')
+      : `${l.id}-mirrored`,
+    points: mirrorPoints(l.points || []),
+  }));
 }
 
 /**

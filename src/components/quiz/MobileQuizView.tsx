@@ -442,7 +442,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
 
       {/* 2. VASTE ONDERKAART: COMPACT (MINIMAAL) OF GROOT (INSTELLINGEN) */}
       <div 
-        className={`fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-8px_30px_rgba(0,0,0,0.2)] rounded-t-3xl transition-all duration-300 pointer-events-auto flex flex-col ${
+        className={`fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-8px_30px_rgba(0,0,0,0.2)] rounded-t-3xl transition-all duration-300 pointer-events-auto flex flex-col overflow-y-auto custom-scrollbar ${
           isExpanded
             ? 'px-3.5 pt-2 pb-3 max-h-[85vh]'
             : isEvaluated

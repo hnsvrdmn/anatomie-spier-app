@@ -18,7 +18,7 @@ import { JOINT_CATEGORIES, getJointCategory } from '../../data/jointCategories';
 import { getMovementQuestionOptions, MUSCLE_MOVEMENTS } from '../../data/muscleMovements';
 import { READER_BONES } from '../../data/bonesData';
 import { getRandomJointQuestion, getJointMCOptions, JointQuizItem, getJointLocation, JOINT_QUIZ_ITEMS } from '../../data/jointQuestions';
-import { evaluatePointSet, distanceToSegment, projectToSegment, getAccuracy, getDistinctTargetCount, isTrapeziusPointAccurate, partitionFreePoints } from '../../utils/coordinates';
+import { evaluatePointSet, getDistinctTargetCount, isTrapeziusPointAccurate, partitionFreePoints, mirrorAttachmentLines } from '../../utils/coordinates';
 import { validateAnatomicalAnswer, AnswerValidationResult } from '../../utils/answerMatching';
 import { isForbiddenMuscle } from '../../utils/export';
 import { MovementIcon } from '../common/MovementIcon';
@@ -78,6 +78,208 @@ const getRelatedDistractorMuscles = (target: Muscle, pool: Muscle[], count = 3):
   );
   const shuffledOthers = [...otherMuscles].sort(() => 0.5 - Math.random());
   return [...shuffledSameJoint, ...shuffledOthers].slice(0, count);
+};
+
+// Haal visuele data op voor een zijde en spiegel attachmentLines automatisch indien die op één zijde ontbreken
+const getEffectiveSideVisuals = (muscle: Muscle | undefined, side: 'left' | 'right' | 'midline'): MuscleVisualData => {
+  if (!muscle) return { origins: [], insertions: [], musclePath: [], attachmentLines: [] };
+  const vis = muscle.visuals[side] || { origins: [], insertions: [], musclePath: [], attachmentLines: [] };
+  if (muscle.symmetryType === 'bilateral' && (!vis.attachmentLines || vis.attachmentLines.length === 0)) {
+    const oppSide = side === 'left' ? 'right' : 'left';
+    const oppLines = muscle.visuals[oppSide]?.attachmentLines || [];
+    if (oppLines.length > 0) {
+      return {
+        ...vis,
+        attachmentLines: mirrorAttachmentLines(oppLines),
+      };
+    }
+  }
+  return vis;
+};
+
+// Verdeel vrije punten rekening houdend met het vraagtype en tweezijdige (links + rechts) doelen
+const partitionPointsForQuestion = (
+  points: Point2D[],
+  question: QuizQuestion | null
+): { assignedOrigins: Point2D[]; assignedInsertions: Point2D[] } => {
+  if (!question || !question.muscle) {
+    return { assignedOrigins: [...points], assignedInsertions: [] };
+  }
+  if (question.type === 'origins' || (question.type === 'landmark' && question.landmarkType === 'origin')) {
+    return { assignedOrigins: [...points], assignedInsertions: [] };
+  }
+  if (question.type === 'insertions' || (question.type === 'landmark' && question.landmarkType === 'insertion')) {
+    return { assignedOrigins: [], assignedInsertions: [...points] };
+  }
+  const m = question.muscle;
+  if (m.symmetryType === 'midline') {
+    const vis = getEffectiveSideVisuals(m, 'midline');
+    return partitionFreePoints(points, vis.origins || [], vis.insertions || [], vis.attachmentLines || []);
+  }
+  const visL = getEffectiveSideVisuals(m, 'left');
+  const visR = getEffectiveSideVisuals(m, 'right');
+  return partitionFreePoints(
+    points,
+    [...(visL.origins || []), ...(visR.origins || [])],
+    [...(visL.insertions || []), ...(visR.insertions || [])],
+    [...(visL.attachmentLines || []), ...(visR.attachmentLines || [])]
+  );
+};
+
+// Specifieke anatomische landmarks voor open origo/insertie invulvragen (vage omschrijvingen zoals 'proximaal deel' of 'laterale zijde' weggelaten)
+const SPECIFIC_OPEN_ORIGIN_LANDMARKS: Record<string, { display: string; acceptable: string[] }> = {
+  teres_major: {
+    display: 'Angulus inferior scapula',
+    acceptable: ['angulus inferior scapula', 'angulus inferior scapulae', 'angulus inferior'],
+  },
+  teres_minor: {
+    display: 'Margo lateralis scapula',
+    acceptable: ['margo lateralis scapula', 'margo lateralis scapulae', 'margo lateralis'],
+  },
+  rectus_femoris: {
+    display: 'Spina iliaca anterior inferior (SIAI)',
+    acceptable: ['siai', 'spina iliaca anterior inferior', 'spina iliaca anterior inferior (siai)'],
+  },
+  sartorius: {
+    display: 'Spina iliaca anterior superior (SIAS)',
+    acceptable: ['sias', 'spina iliaca anterior superior', 'spina iliaca anterior superior (sias)'],
+  },
+  tensor_fasciae_latae: {
+    display: 'Spina iliaca anterior superior (SIAS)',
+    acceptable: ['sias', 'spina iliaca anterior superior', 'spina iliaca anterior superior (sias)'],
+  },
+  gracilis: {
+    display: 'Os pubis',
+    acceptable: ['os pubis', 'schaambeen', 'onderste tak van het os pubis', 'ramus inferior ossis pubis'],
+  },
+  semimembranosus: {
+    display: 'Tuber ischiadicum',
+    acceptable: ['tuber ischiadicum', 'zitbeenknobbel'],
+  },
+  semitendinosus: {
+    display: 'Tuber ischiadicum',
+    acceptable: ['tuber ischiadicum', 'zitbeenknobbel'],
+  },
+  gastrocnemius: {
+    display: 'Condylus medialis en lateralis femoris',
+    acceptable: [
+      'condylus medialis en lateralis femoris',
+      'condylus medialis femoris en condylus lateralis femoris',
+      'condyli femoris',
+      'epicondylus medialis en lateralis femoris',
+    ],
+  },
+};
+
+const SPECIFIC_OPEN_INSERTION_LANDMARKS: Record<string, { display: string; acceptable: string[] }> = {
+  deltoideus: {
+    display: 'Tuberositas deltoidea',
+    acceptable: ['tuberositas deltoidea', 'tuberositas deltoidea humeri'],
+  },
+  pectoralis_major: {
+    display: 'Crista tuberculi majoris (tuberculum majus)',
+    acceptable: ['tuberculum majus', 'crista tuberculi majoris', 'tuberculum majus humeri'],
+  },
+  teres_minor: {
+    display: 'Tuberculum majus',
+    acceptable: ['tuberculum majus', 'tuberculum majus humeri'],
+  },
+  subscapularis: {
+    display: 'Tuberculum minus',
+    acceptable: ['tuberculum minus', 'tuberculum minus humeri'],
+  },
+  supraspinatus: {
+    display: 'Tuberculum majus',
+    acceptable: ['tuberculum majus', 'tuberculum majus humeri'],
+  },
+  infraspinatus: {
+    display: 'Tuberculum majus',
+    acceptable: ['tuberculum majus', 'tuberculum majus humeri'],
+  },
+  rhomboidei: {
+    display: 'Margo medialis scapula',
+    acceptable: ['margo medialis scapula', 'margo medialis scapulae', 'margo medialis'],
+  },
+  serratus_anterior: {
+    display: 'Margo medialis scapula',
+    acceptable: ['margo medialis scapula', 'margo medialis scapulae', 'margo medialis'],
+  },
+  biceps_brachii: {
+    display: 'Tuberositas radii',
+    acceptable: ['tuberositas radii'],
+  },
+  brachialis: {
+    display: 'Tuberositas ulnae',
+    acceptable: ['tuberositas ulnae', 'tuberositas ulna'],
+  },
+  triceps_brachii: {
+    display: 'Olecranon',
+    acceptable: ['olecranon', 'olecranon ulnae'],
+  },
+  rectus_abdominis: {
+    display: 'Os pubis (symphysis pubica)',
+    acceptable: ['os pubis', 'symphysis pubica', 'crista pubica', 'schaambeen'],
+  },
+  iliopsoas: {
+    display: 'Trochanter minor',
+    acceptable: ['trochanter minor', 'trochanter minor femoris'],
+  },
+  gluteus_medius: {
+    display: 'Trochanter major',
+    acceptable: ['trochanter major', 'trochanter major femoris'],
+  },
+  gluteus_minimus: {
+    display: 'Trochanter major',
+    acceptable: ['trochanter major', 'trochanter major femoris'],
+  },
+  piriformis: {
+    display: 'Trochanter major',
+    acceptable: ['trochanter major', 'trochanter major femoris'],
+  },
+  rectus_femoris: {
+    display: 'Tuberositas tibiae',
+    acceptable: ['tuberositas tibiae', 'via patellapees aan tuberositas tibiae', 'ligamentum patellae'],
+  },
+  vastus_lateralis: {
+    display: 'Tuberositas tibiae',
+    acceptable: ['tuberositas tibiae', 'via patellapees aan tuberositas tibiae'],
+  },
+  vastus_intermedius: {
+    display: 'Tuberositas tibiae',
+    acceptable: ['tuberositas tibiae', 'via patellapees aan tuberositas tibiae'],
+  },
+  vastus_medialis: {
+    display: 'Tuberositas tibiae',
+    acceptable: ['tuberositas tibiae', 'via patellapees aan tuberositas tibiae'],
+  },
+  biceps_femoris: {
+    display: 'Caput fibulae',
+    acceptable: ['caput fibulae', 'fibulakopje'],
+  },
+  semimembranosus: {
+    display: 'Condylus medialis tibiae',
+    acceptable: ['condylus medialis tibiae', 'mediale tibiacondyl'],
+  },
+  semitendinosus: {
+    display: 'Condylus medialis tibiae (pes anserinus)',
+    acceptable: ['condylus medialis tibiae', 'pes anserinus', 'tuberositas tibiae'],
+  },
+  sartorius: {
+    display: 'Condylus medialis tibiae (pes anserinus)',
+    acceptable: ['condylus medialis tibiae', 'pes anserinus', 'mediale zijde tuberositas tibiae'],
+  },
+  gracilis: {
+    display: 'Condylus medialis tibiae (pes anserinus)',
+    acceptable: ['condylus medialis tibiae', 'pes anserinus', 'mediale zijde tuberositas tibiae'],
+  },
+  gastrocnemius: {
+    display: 'Tuber calcanei (via achillespees)',
+    acceptable: ['tuber calcanei', 'via achillespees aan tuber calcanei', 'calcaneus', 'achillespees'],
+  },
+  soleus: {
+    display: 'Tuber calcanei (via achillespees)',
+    acceptable: ['tuber calcanei', 'via achillespees aan tuber calcanei', 'calcaneus', 'achillespees'],
+  },
 };
 
 const initialStats = (): QuizStatsData => ({
@@ -266,16 +468,7 @@ export const QuizView: React.FC = () => {
           return [];
         }
         const next = prev.slice(0, -1);
-        const vis = currentQuestion?.muscle?.visuals[evaluatedSide] ||
-                    currentQuestion?.muscle?.visuals.left ||
-                    currentQuestion?.muscle?.visuals.right ||
-                    { origins: [], insertions: [], attachmentLines: [] };
-        const { assignedOrigins, assignedInsertions } = partitionFreePoints(
-          next,
-          vis.origins || [],
-          vis.insertions || [],
-          vis.attachmentLines || []
-        );
+        const { assignedOrigins, assignedInsertions } = partitionPointsForQuestion(next, currentQuestion);
         setUserOrigins(assignedOrigins);
         setUserInsertions(assignedInsertions);
         return next;
@@ -540,7 +733,7 @@ export const QuizView: React.FC = () => {
   // Aantal verwachte punten per zijde (gebaseerd op unieke anatomische structuren/zones)
   const getExpectedCounts = useCallback((side: 'left' | 'right' | 'midline') => {
     if (!currentQuestion || !currentQuestion.muscle) return { origins: 1, insertions: 1, rawOrigins: 1, rawInsertions: 1, total: 2, isMultiSpan: false };
-    const vis = currentQuestion.muscle.visuals[side] || { origins: [], insertions: [], attachmentLines: [] };
+    const vis = getEffectiveSideVisuals(currentQuestion.muscle, side);
     const rawOrigins = getDistinctTargetCount(vis.origins, (vis as any).attachmentLines, 'origin');
     const rawInsertions = getDistinctTargetCount(vis.insertions, (vis as any).attachmentLines, 'insertion');
     const origins = Math.max(1, rawOrigins);
@@ -1010,6 +1203,24 @@ export const QuizView: React.FC = () => {
       const openKinds: ('muscle' | 'origin' | 'insertion' | 'joint')[] = ['muscle', 'origin', 'insertion', 'joint'];
       openKind = openKinds[Math.floor(Math.random() * openKinds.length)];
 
+      // Open vragen over origo of insertie alleen stellen bij specifieke anatomische landmarks
+      // (bijv. tuberositas, condylus, tuberculum, trochanter, olecranon, etc.; vage omschrijvingen zoals 'proximaal deel' weglaten)
+      if (openKind === 'origin' && !SPECIFIC_OPEN_ORIGIN_LANDMARKS[randMuscle.id]) {
+        const originCandidates = cleanMuscles.filter((m) => Boolean(SPECIFIC_OPEN_ORIGIN_LANDMARKS[m.id]));
+        if (originCandidates.length > 0) {
+          randMuscle = originCandidates[Math.floor(Math.random() * originCandidates.length)];
+        } else {
+          openKind = 'muscle';
+        }
+      } else if (openKind === 'insertion' && !SPECIFIC_OPEN_INSERTION_LANDMARKS[randMuscle.id]) {
+        const insertionCandidates = cleanMuscles.filter((m) => Boolean(SPECIFIC_OPEN_INSERTION_LANDMARKS[m.id]));
+        if (insertionCandidates.length > 0) {
+          randMuscle = insertionCandidates[Math.floor(Math.random() * insertionCandidates.length)];
+        } else {
+          openKind = 'muscle';
+        }
+      }
+
       if (openKind === 'muscle') {
         correctOpenAnswer = randMuscle.name;
         acceptableAnswers = [
@@ -1018,11 +1229,13 @@ export const QuizView: React.FC = () => {
           randMuscle.name.replace(/^musculus\s*/i, ''),
         ];
       } else if (openKind === 'origin') {
-        correctOpenAnswer = randMuscle.originText;
-        acceptableAnswers = [randMuscle.originText];
+        const spec = SPECIFIC_OPEN_ORIGIN_LANDMARKS[randMuscle.id];
+        correctOpenAnswer = spec ? spec.display : randMuscle.originText;
+        acceptableAnswers = spec ? [...spec.acceptable, randMuscle.originText] : [randMuscle.originText];
       } else if (openKind === 'insertion') {
-        correctOpenAnswer = randMuscle.insertionText;
-        acceptableAnswers = [randMuscle.insertionText];
+        const spec = SPECIFIC_OPEN_INSERTION_LANDMARKS[randMuscle.id];
+        correctOpenAnswer = spec ? spec.display : randMuscle.insertionText;
+        acceptableAnswers = spec ? [...spec.acceptable, randMuscle.insertionText] : [randMuscle.insertionText];
       } else {
         // 'joint' vraag: stel een vraag over typen, assen, deelgewrichten of bewegingen
         jointQuizItem = getRandomJointQuestion();
@@ -1197,16 +1410,7 @@ export const QuizView: React.FC = () => {
       setUserFreePoints((prev) => {
         const ptToDelete = pointType === 'origin' ? userOrigins[index] : userInsertions[index];
         const next = ptToDelete ? prev.filter((p) => p !== ptToDelete && (p.x !== ptToDelete.x || p.y !== ptToDelete.y)) : prev;
-        const vis = currentQuestion?.muscle?.visuals[evaluatedSide] ||
-                    currentQuestion?.muscle?.visuals.left ||
-                    currentQuestion?.muscle?.visuals.right ||
-                    { origins: [], insertions: [], attachmentLines: [] };
-        const { assignedOrigins, assignedInsertions } = partitionFreePoints(
-          next,
-          vis.origins || [],
-          vis.insertions || [],
-          vis.attachmentLines || []
-        );
+        const { assignedOrigins, assignedInsertions } = partitionPointsForQuestion(next, currentQuestion);
         setUserOrigins(assignedOrigins);
         setUserInsertions(assignedInsertions);
         return next;
@@ -1233,8 +1437,9 @@ export const QuizView: React.FC = () => {
     const wrongViewOrigins = originsToEval.filter((p) => p.view && p.view !== muscle.view);
     const wrongViewInsertions = insertionsToEval.filter((p) => p.view && p.view !== muscle.view);
 
-    const validOrigins = originsToEval.filter((p) => !p.view || p.view === muscle.view);
-    const validInsertions = insertionsToEval.filter((p) => !p.view || p.view === muscle.view);
+    const baseValidOrigins = originsToEval.filter((p) => !p.view || p.view === muscle.view);
+    const baseValidInsertions = insertionsToEval.filter((p) => !p.view || p.view === muscle.view);
+    const allValidPlacedPoints = [...baseValidOrigins, ...baseValidInsertions];
 
     const wrongViewMatches: MatchResult[] = [
       ...wrongViewOrigins.map((p) => ({
@@ -1272,9 +1477,33 @@ export const QuizView: React.FC = () => {
     let bestVertebraeTip: string | undefined;
 
     for (const testSide of sidesToTest) {
-      const vis: MuscleVisualData = muscle.visuals[testSide] || { origins: [], insertions: [], musclePath: [], attachmentLines: [] };
+      const vis: MuscleVisualData = getEffectiveSideVisuals(muscle, testSide);
       const targetOrigins = vis.origins || [];
       const targetInsertions = vis.insertions || [];
+
+      // In Vrije Intekenmodus: herpartitioneer alle geplaatste punten specifiek tegen de doelen van testSide!
+      // Zo slaagt zowel links als rechts intekenen voor elke tweezijdige spier.
+      let validOrigins = baseValidOrigins;
+      let validInsertions = baseValidInsertions;
+
+      if (isFreeDrawMode && allValidPlacedPoints.length > 0) {
+        if (currentQuestion.type === 'origins' || (currentQuestion.type === 'landmark' && currentQuestion.landmarkType === 'origin')) {
+          validOrigins = allValidPlacedPoints;
+          validInsertions = [];
+        } else if (currentQuestion.type === 'insertions' || (currentQuestion.type === 'landmark' && currentQuestion.landmarkType === 'insertion')) {
+          validOrigins = [];
+          validInsertions = allValidPlacedPoints;
+        } else {
+          const partitioned = partitionFreePoints(
+            allValidPlacedPoints,
+            targetOrigins,
+            targetInsertions,
+            vis.attachmentLines || []
+          );
+          validOrigins = partitioned.assignedOrigins;
+          validInsertions = partitioned.assignedInsertions;
+        }
+      }
 
       let sideMatches: MatchResult[] = [];
       let sideRequired = 0;
@@ -1282,26 +1511,27 @@ export const QuizView: React.FC = () => {
       let sidePassed = false;
       let sideVertebraeTip: string | undefined;
 
-      if (muscle.id === 'erector_spinae' && (currentQuestion.type === 'origins' || currentQuestion.type === 'insertions')) {
-        // M. erector spinae: wervelkolomlijn evaluatie voor afzonderlijke origo/insertie vraag
-        const spineTop = targetInsertions[0] || { x: testSide === 'right' ? 0.48 : 0.52, y: 0.18 };
-        const spineBottom = targetOrigins[0] || { x: testSide === 'right' ? 0.485 : 0.515, y: 0.45 };
-        const pts = currentQuestion.type === 'origins' ? validOrigins : validInsertions;
-        const targetType = currentQuestion.type === 'origins' ? 'origin' : 'insertion';
-        const matches: MatchResult[] = pts.map((p) => {
-          const dist = distanceToSegment(p, spineTop, spineBottom);
-          return {
-            userPoint: p,
-            targetPoint: projectToSegment(p, spineTop, spineBottom),
-            distance: dist,
-            accuracy: getAccuracy(dist, toleranceValue),
-            targetType,
-          };
-        });
-        sideMatches = matches;
-        sideCorrect = matches.filter((m) => m.accuracy === 'correct').length;
-        sideRequired = 1;
-        sidePassed = sideCorrect >= 1;
+      if (muscle.id === 'erector_spinae') {
+        // M. erector spinae: origo en insertie beslaan dezelfde wervelkolomlijn (alle wervels en os sacrum).
+        const res = evaluatePointSet(
+          allValidPlacedPoints,
+          targetOrigins.length > 0 ? targetOrigins : targetInsertions,
+          currentQuestion.landmarkType === 'insertion' || currentQuestion.type === 'insertions' ? 'insertion' : 'origin',
+          toleranceValue,
+          vis.attachmentLines || [],
+          requireAllVertebrae
+        );
+        sideMatches = res.matches;
+        sideRequired = res.requiredCount;
+        sideCorrect = res.correctCount;
+        const hasBothTypesWhenManualFull =
+          isFreeDrawMode ||
+          currentQuestion.type === 'origins' ||
+          currentQuestion.type === 'insertions' ||
+          currentQuestion.type === 'landmark' ||
+          (baseValidOrigins.length > 0 && baseValidInsertions.length > 0);
+        sidePassed = res.isPassed && hasBothTypesWhenManualFull;
+        sideVertebraeTip = res.missingVertebraeTip;
       } else if (currentQuestion.type === 'origins' || (currentQuestion.type === 'landmark' && currentQuestion.landmarkType === 'origin')) {
         let targetPts = targetOrigins;
         let targetLines = vis.attachmentLines || [];
@@ -1342,41 +1572,6 @@ export const QuizView: React.FC = () => {
         sideCorrect = res.correctCount;
         sidePassed = res.isPassed;
         sideVertebraeTip = res.missingVertebraeTip;
-      } else if (muscle.id === 'erector_spinae') {
-        // M. erector spinae (joint / full vraag):
-        // De gehele lijn langs de wervelkolom bestaat uit aaneengeschakelde origo's en inserties.
-        // Elk punt over dit gehele traject wordt goedgekeurd.
-        const spineTop = targetInsertions[0] || { x: testSide === 'right' ? 0.48 : 0.52, y: 0.18 };
-        const spineBottom = targetOrigins[0] || { x: testSide === 'right' ? 0.485 : 0.515, y: 0.45 };
-
-        const evalPointOnSpine = (pts: Point2D[], type: 'origin' | 'insertion') => {
-          const matches: MatchResult[] = pts.map((p) => {
-            const dist = distanceToSegment(p, spineTop, spineBottom);
-            return {
-              userPoint: p,
-              targetPoint: projectToSegment(p, spineTop, spineBottom),
-              distance: dist,
-              accuracy: getAccuracy(dist, toleranceValue),
-              targetType: type,
-            };
-          });
-          const correctCount = matches.filter((m) => m.accuracy === 'correct').length;
-          const closeCount = matches.filter((m) => m.accuracy === 'close').length;
-          return {
-            matches,
-            requiredCount: 1,
-            correctCount,
-            closeCount,
-            isPassed: correctCount >= 1,
-          };
-        };
-
-        const resOrig = evalPointOnSpine(validOrigins, 'origin');
-        const resIns = evalPointOnSpine(validInsertions, 'insertion');
-        sideMatches = [...resOrig.matches, ...resIns.matches];
-        sideRequired = 2;
-        sideCorrect = resOrig.correctCount + resIns.correctCount;
-        sidePassed = resOrig.isPassed && resIns.isPassed;
       } else if (muscle.id === 'trapezius') {
         // M. trapezius: evalueer elke pars (descendens, transversa, ascendens) AFZONDERLIJK tegen haar eigen doelen en lijnen!
         // Hierdoor kan een punt dat voor pars descendens is geplaatst (bijv. op T7) NOOIT gematcht worden
@@ -1559,17 +1754,7 @@ export const QuizView: React.FC = () => {
       const nextFree = [...userFreePoints, pointWithPart];
       setUserFreePoints(nextFree);
 
-      const vis = currentQuestion.muscle?.visuals[evaluatedSide] ||
-                  currentQuestion.muscle?.visuals.left ||
-                  currentQuestion.muscle?.visuals.right ||
-                  { origins: [], insertions: [], attachmentLines: [] };
-
-      const { assignedOrigins, assignedInsertions } = partitionFreePoints(
-        nextFree,
-        vis.origins || [],
-        vis.insertions || [],
-        vis.attachmentLines || []
-      );
+      const { assignedOrigins, assignedInsertions } = partitionPointsForQuestion(nextFree, currentQuestion);
 
       setUserOrigins(assignedOrigins);
       setUserInsertions(assignedInsertions);
@@ -1577,7 +1762,9 @@ export const QuizView: React.FC = () => {
     }
 
     // Handmatige O/I modus:
-    const toolToUse = isRightClick
+    const toolToUse = currentQuestion.type === 'landmark'
+      ? (currentQuestion.landmarkType || activeQuizTool)
+      : isRightClick
       ? (activeQuizTool === 'origin' ? 'insertion' : 'origin')
       : activeQuizTool;
 
@@ -1694,15 +1881,9 @@ export const QuizView: React.FC = () => {
       dragDebounceTimerRef.current = setTimeout(() => {
         activeDragTargetRef.current = null;
         // Na afronden van het slepen: eenmalig definitief herpartitioneren
-        const vis = currentQuestion?.muscle?.visuals[evaluatedSide] ||
-                    currentQuestion?.muscle?.visuals.left ||
-                    currentQuestion?.muscle?.visuals.right ||
-                    { origins: [], insertions: [], attachmentLines: [] };
-        const { assignedOrigins, assignedInsertions } = partitionFreePoints(
+        const { assignedOrigins, assignedInsertions } = partitionPointsForQuestion(
           userFreePointsRef.current,
-          vis.origins || [],
-          vis.insertions || [],
-          vis.attachmentLines || []
+          currentQuestion
         );
         setUserOrigins(assignedOrigins);
         setUserInsertions(assignedInsertions);
@@ -1929,7 +2110,7 @@ export const QuizView: React.FC = () => {
       : type === 'insertions'
       ? userInsertions.length > 0
       : type === 'landmark'
-      ? (currentQuestion.landmarkType === 'origin' ? userOrigins.length > 0 : userInsertions.length > 0)
+      ? (userFreePoints.length > 0 || userOrigins.length > 0 || userInsertions.length > 0)
       : isFreeDrawMode
       ? (userFreePoints.length > 0 || userOrigins.length > 0 || userInsertions.length > 0)
       : userOrigins.length > 0 && userInsertions.length > 0
@@ -2049,10 +2230,10 @@ export const QuizView: React.FC = () => {
         {/* Skelet Container met SVG Overlay (vaste stabiele hoogte, beweegt NOOIT naar beneden) */}
         <div className="flex-1 min-h-0 w-full h-full flex items-center justify-center py-1 overflow-hidden relative">
           {/* Origo & Insertie knoppen links naast het skelet */}
-          {!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'landmark' && type !== 'open_question' && type !== 'bone' && (
+          {!isEvaluated && type !== 'multiple_choice' && type !== 'movements' && type !== 'function' && type !== 'open_question' && type !== 'bone' && (
             <div className="absolute left-3 sm:left-5 top-3 sm:top-5 z-20 flex flex-col gap-2">
-              {/* Regel 1: Origo en Insertie (alleen in klassieke O/I modus) */}
-              {!isFreeDrawMode && (
+              {/* Regel 1: Origo en Insertie (alleen in klassieke O/I modus en niet bij landmark vragen) */}
+              {!isFreeDrawMode && type !== 'landmark' && (
                 <div className="flex items-center gap-1.5">
                   <button
                     type="button"
