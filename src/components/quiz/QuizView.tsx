@@ -2457,9 +2457,9 @@ export const QuizView: React.FC = () => {
                 </div>
               )}
 
-              {/* Regel 2: Terug en Verwijder knoppen, met bij de trapezius de pars tabs direct hiernaast */}
-              <div className="flex items-center gap-2">
-                {(userOrigins.length > 0 || userInsertions.length > 0) && (
+              {/* Regel 2: Terug en Verwijder knoppen */}
+              {(userOrigins.length > 0 || userInsertions.length > 0) && (
+                <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1 bg-white/90 backdrop-blur-xs p-0.5 rounded-xl border border-slate-200 shadow-xs">
                     <button
                       type="button"
@@ -2478,45 +2478,52 @@ export const QuizView: React.FC = () => {
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
-                )}
+                </div>
+              )}
 
-                {muscle?.id === 'trapezius' && !isEvaluated && (
-                  <div className="flex items-center gap-1 bg-white/95 backdrop-blur-xs p-1 rounded-xl border border-slate-200 shadow-md">
-                    {(['descendens', 'transversa', 'ascendens'] as const).map((partKey) => {
-                      const label =
-                        partKey === 'descendens'
-                          ? 'Descendens'
-                          : partKey === 'transversa'
-                          ? 'Transversa'
-                          : 'Ascendens';
-                      const isActive = activeTrapeziusPart === partKey;
-                      const isHopping = hoppingButton === partKey;
+              {/* Regel 3: Bij de m. trapezius de pars tabs op een eigen regel eronder zodat ze nooit overlappen met de zoom-navigator */}
+              {muscle?.id === 'trapezius' && !isEvaluated && (
+                <div
+                  className={`flex items-center gap-1 bg-white/95 backdrop-blur-xs p-1 rounded-xl border border-slate-200 shadow-md w-fit ${
+                    (isFreeDrawMode || type === 'landmark') && userOrigins.length === 0 && userInsertions.length === 0
+                      ? 'mt-10'
+                      : ''
+                  }`}
+                >
+                  {(['descendens', 'transversa', 'ascendens'] as const).map((partKey) => {
+                    const label =
+                      partKey === 'descendens'
+                        ? 'Descendens'
+                        : partKey === 'transversa'
+                        ? 'Transversa'
+                        : 'Ascendens';
+                    const isActive = activeTrapeziusPart === partKey;
+                    const isHopping = hoppingButton === partKey;
 
-                      return (
-                        <button
-                          key={partKey}
-                          type="button"
-                          onClick={() => {
-                            setActiveTrapeziusPart(partKey);
-                            setActiveQuizTool('origin');
-                          }}
-                          className={`py-1 px-2.5 rounded-lg text-xs font-bold transition-colors ${
-                            isActive
-                              ? isHopping
-                                ? 'bg-blue-600 text-white ring-4 ring-blue-300 ring-offset-1 animate-subtle-hop'
-                                : 'bg-blue-600 text-white shadow-xs'
-                              : isHopping
-                              ? 'bg-blue-100 text-blue-900 ring-2 ring-blue-500 shadow-sm animate-subtle-hop'
-                              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                          }`}
-                        >
-                          {label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+                    return (
+                      <button
+                        key={partKey}
+                        type="button"
+                        onClick={() => {
+                          setActiveTrapeziusPart(partKey);
+                          setActiveQuizTool('origin');
+                        }}
+                        className={`py-1 px-2.5 rounded-lg text-xs font-bold transition-colors ${
+                          isActive
+                            ? isHopping
+                              ? 'bg-blue-600 text-white ring-4 ring-blue-300 ring-offset-1 animate-subtle-hop'
+                              : 'bg-blue-600 text-white shadow-xs'
+                            : isHopping
+                            ? 'bg-blue-100 text-blue-900 ring-2 ring-blue-500 shadow-sm animate-subtle-hop'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
