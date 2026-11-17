@@ -1,4 +1,11 @@
-export type LigamentCategoryId = 'genus' | 'pedis' | 'synovial_opbouw' | 'synovial_typen' | 'vertebrae';
+export type LigamentCategoryId =
+  | 'genus'
+  | 'pedis'
+  | 'synovial_opbouw'
+  | 'synovial_typen'
+  | 'vertebrae'
+  | 'richtingen'
+  | 'assen_vlakken';
 
 export interface LigamentStructureItem {
   number?: number;
@@ -372,6 +379,112 @@ export const LIGAMENT_SECTIONS: LigamentSection[] = [
         altName: 'Doornuitsteeksel',
         location: 'Dorsaal midden op de wervelboog',
         functionText: 'Achterwaarts gericht uitsteeksel (voelbaar op de rug; aanhechting van o.a. m. trapezius, m. latissimus dorsi en mm. rhomboidei).',
+      },
+    ],
+  },
+  {
+    id: 'richtingen',
+    title: 'Richtingen & Aanzichten',
+    shortTitle: 'Richtingen',
+    subtitle: 'Anatomische houding, richtingsbegrippen & bot-aanzichten (Moduulboek p. 26–27)',
+    generalInfo:
+      'Alle richtingen worden benoemd vanuit de anatomische houding (rechtopstaand, voeten naast elkaar, armen langs het lichaam met de handpalmen naar voren gericht).',
+    images: [
+      {
+        imageUrl: '/images/flashcards/richtingen_aanzichten.png',
+        caption: 'Aanzichten herkennen: Knie (ventraal: patella) · Scapula (dorsaal: spina scapulae) · Humerus (links ventraal, rechts dorsaal: fossa olecrani)',
+      },
+      {
+        imageUrl: '/images/flashcards/richtingen_os_coxae.png',
+        caption: 'Os coxae: links = mediaal (facies auricularis), rechts = lateraal (acetabulum) · a=SIAS, b=SIAI, c=SIPS, d=SIPI',
+      },
+    ],
+    items: [
+      {
+        name: 'Mediaal vs. Lateraal',
+        location: 'Ten opzichte van het midden',
+        functionText: 'Mediaal = richting het midden (mediaanlijn) van het lichaam (bijv. pink ligt mediaal van duim). Lateraal = van het midden vandaan, naar de zijkant (bijv. kleine teen ligt lateraal van grote teen).',
+      },
+      {
+        name: 'Ventraal vs. Dorsaal',
+        location: 'Voor- en achterzijde lichaam',
+        functionText: 'Ventraal = aan de voorzijde (buikzijde) van het lichaam. Dorsaal = aan de achterzijde (rugzijde) van het lichaam.',
+      },
+      {
+        name: 'Anterior vs. Posterior',
+        location: 'Binnen een botstuk',
+        functionText: 'Anterior = aan de voorzijde gelegen (bijv. SIAS, SIAI). Posterior = aan de achterzijde gelegen (bijv. SIPS, SIPI).',
+      },
+      {
+        name: 'Superior vs. Inferior',
+        location: 'Boven en onder',
+        functionText: 'Superior = bovengelegen / naar boven gericht (bijv. angulus superior). Inferior = ondergelegen / naar beneden gericht (bijv. angulus inferior).',
+      },
+      {
+        name: 'Proximaal vs. Distaal',
+        location: 'Bij extremiteiten (armen & benen)',
+        functionText: 'Proximaal = dichter bij de aanhechting van de extremiteit / de romp (knie ligt proximaal van enkel). Distaal = verder van de romp verwijderd (pols ligt distaal van elleboog).',
+      },
+      {
+        name: 'Aanzichten herkennen',
+        location: 'Knie, Scapula, Humerus & Os coxae',
+        functionText: 'Knie ventraal = patella zichtbaar · Scapula dorsaal = spina scapulae · Humerus dorsaal = fossa olecrani · Os coxae lateraal = acetabulum, mediaal = facies auricularis.',
+      },
+    ],
+  },
+  {
+    id: 'assen_vlakken',
+    title: 'Assen, Vlakken & Bewegingen',
+    shortTitle: 'Assen & Vlakken',
+    subtitle: 'De 3 vlakken, 3 assen en specifieke bewegingen per gewricht (Moduulboek p. 16–23)',
+    generalInfo:
+      'Elke beweging vindt plaats in een vlak en draait loodrecht om een as. Onthoud de vaste combinaties: Sagittaal vlak ↔ Transversale as · Frontaal vlak ↔ Sagittale as · Transversaal vlak ↔ Longitudinale as.',
+    images: [
+      {
+        imageUrl: '/images/flashcards/assen_vlakken_3vlakken.png',
+        caption: 'De drie vlakken (v.l.n.r.): Frontaal vlak · Sagittaal vlak · Transversaal vlak',
+      },
+      {
+        imageUrl: '/images/flashcards/assen_vlakken_3assen.png',
+        caption: 'De drie assen: F = Longitudinale as · S = Sagittale as · H = Transversale as',
+      },
+      {
+        imageUrl: '/images/flashcards/bewegingen_cingulum.png',
+        caption: 'Bewegingen van de schoudergordel (cingulum pectorale): elevatie/depressie, pro-/retractie, latero-/mediorotatie',
+      },
+      {
+        imageUrl: '/images/flashcards/bewegingen_romp.png',
+        caption: 'Bewegingen van de romp: flexie/extensie (S/T), lateroflexie (F/S), rotatie (T/L; dextra = rechts, sinistra = links)',
+      },
+    ],
+    items: [
+      {
+        number: 1,
+        name: 'Sagittaal vlak & Transversale as',
+        location: 'Flexie / Extensie',
+        functionText: 'Het sagittaal vlak verdeelt het lichaam in links en rechts; de transversale as staat hier loodrecht op. Bewegingen: flexie/extensie, anteflexie/retroflexie, plantair-/dorsaalflexie.',
+      },
+      {
+        number: 2,
+        name: 'Frontaal vlak & Sagittale as',
+        location: 'Abductie / Adductie / Lateroflexie',
+        functionText: 'Het frontaal vlak verdeelt het lichaam in voor en achter; de sagittale as staat hier loodrecht op. Bewegingen: abductie/adductie en lateroflexie van de romp.',
+      },
+      {
+        number: 3,
+        name: 'Transversaal vlak & Longitudinale as',
+        location: 'Rotaties',
+        functionText: 'Het transversaal vlak verdeelt het lichaam in boven en onder; de longitudinale as staat hier loodrecht op. Bewegingen: endorotatie/exorotatie, pronatie/supinatie, rotatie van de romp.',
+      },
+      {
+        name: 'Bewegingen zonder vaste hoofd-as/vlak',
+        location: 'Cingulum pectorale, OSG & Horizontaal',
+        functionText: 'Cingulum pectorale: elevatie/depressie (detractie), protractie/retractie, laterorotatie/mediorotatie · OSG: inversie/eversie · Art. humeri: horizontale abductie/adductie.',
+      },
+      {
+        name: 'Dextra vs. Sinistra (Romp)',
+        location: 'Richting bij lateroflexie & rotatie',
+        functionText: 'Dextra = naar rechts · Sinistra = naar links (bijv. rotatio dextra = draaien naar rechts).',
       },
     ],
   },
@@ -1202,5 +1315,267 @@ export const LIGAMENT_SYNOVIAL_QUESTIONS: LigamentSynovialQuestion[] = [
       '8 cervicales, 12 thoracales en 5 lumbales',
     ],
     explanation: 'Van boven naar beneden: 7 vertebrae cervicales (nr. 2), 12 vertebrae thoracales (nr. 3) en 5 vertebrae lumbales (nr. 4), gevolgd door os sacrum (nr. 5) en os coccygis (nr. 6).',
+  },
+
+  // ======================== RICHTINGEN & AANZICHTEN (9 vragen) ========================
+  {
+    id: 'lig-rich-1',
+    category: 'richtingen',
+    question: 'Ligt de pink in de anatomische houding mediaal of lateraal ten opzichte van de wijsvinger?',
+    correctAnswer: 'Mediaal',
+    acceptableAnswers: ['Mediaal', 'medialis'],
+    options: ['Mediaal', 'Lateraal', 'Proximaal', 'Distaal'],
+    explanation: 'In de anatomische houding (handpalmen naar voren) wijst de pink richting de mediaanlijn: de pink ligt dus mediaal van de wijsvinger.',
+  },
+  {
+    id: 'lig-rich-2',
+    category: 'richtingen',
+    question: 'Ligt de kleine teen mediaal of lateraal ten opzichte van de grote teen?',
+    correctAnswer: 'Lateraal',
+    acceptableAnswers: ['Lateraal', 'lateralis'],
+    options: ['Lateraal', 'Mediaal', 'Ventraal', 'Proximaal'],
+    explanation: 'De kleine teen ligt aan de buitenzijde van de voet (van de mediaanlijn af) en dus lateraal ten opzichte van de grote teen.',
+  },
+  {
+    id: 'lig-rich-3',
+    category: 'richtingen',
+    question: 'Ligt de pols proximaal of distaal van de elleboog?',
+    correctAnswer: 'Distaal',
+    acceptableAnswers: ['Distaal', 'distalis'],
+    options: ['Distaal', 'Proximaal', 'Superior', 'Mediaal'],
+    explanation: 'De pols ligt verder van de romp/aanhechting van de arm vandaan en is dus distaal van de elleboog.',
+  },
+  {
+    id: 'lig-rich-4',
+    category: 'richtingen',
+    question: 'Ligt de knie proximaal of distaal van de enkel?',
+    correctAnswer: 'Proximaal',
+    acceptableAnswers: ['Proximaal', 'proximalis'],
+    options: ['Proximaal', 'Distaal', 'Inferior', 'Lateraal'],
+    explanation: 'De knie ligt dichter bij de romp dan de enkel en is dus proximaal van de enkel.',
+  },
+  {
+    id: 'lig-rich-5',
+    category: 'richtingen',
+    question: 'Wat betekenen ventraal en dorsaal?',
+    correctAnswer: 'Ventraal = voorzijde (buikzijde); dorsaal = achterzijde (rugzijde)',
+    acceptableAnswers: [
+      'Ventraal = voorzijde (buikzijde); dorsaal = achterzijde (rugzijde)',
+      'voorzijde en achterzijde',
+      'buikzijde en rugzijde',
+    ],
+    options: [
+      'Ventraal = voorzijde (buikzijde); dorsaal = achterzijde (rugzijde)',
+      'Ventraal = bovenzijde; dorsaal = onderzijde',
+      'Ventraal = dichtbij romp; dorsaal = ver van romp',
+      'Ventraal = achterzijde (rugzijde); dorsaal = voorzijde (buikzijde)',
+    ],
+    explanation: 'Ventraal betekent aan de voorzijde (buikzijde) en dorsaal aan de achterzijde (rugzijde).',
+  },
+  {
+    id: 'lig-rich-6',
+    category: 'richtingen',
+    question: 'Welk aanzicht (ventraal of dorsaal) zie je bij het linker bot (de knie) en waaraan herken je dat?',
+    imageUrl: '/images/flashcards/richtingen_aanzichten.png',
+    correctAnswer: 'Ventraal aanzicht — te zien aan de patella',
+    acceptableAnswers: ['Ventraal', 'Ventraal aanzicht', 'Ventraal aanzicht — te zien aan de patella'],
+    options: [
+      'Ventraal aanzicht — te zien aan de patella',
+      'Dorsaal aanzicht — te zien aan de fossa olecrani',
+      'Dorsaal aanzicht — te zien aan de spina scapulae',
+      'Lateraal aanzicht — te zien aan het acetabulum',
+    ],
+    explanation: 'De patella (knieschijf) ligt aan de voorzijde: dit is een ventraal aanzicht.',
+  },
+  {
+    id: 'lig-rich-7',
+    category: 'richtingen',
+    question: 'Welk aanzicht zie je bij de middelste afbeelding (scapula) en waaraan zie je dat?',
+    imageUrl: '/images/flashcards/richtingen_aanzichten.png',
+    correctAnswer: 'Dorsaal aanzicht — te zien aan de spina scapulae',
+    acceptableAnswers: ['Dorsaal', 'Dorsaal aanzicht', 'Dorsaal aanzicht — te zien aan de spina scapulae'],
+    options: [
+      'Dorsaal aanzicht — te zien aan de spina scapulae',
+      'Ventraal aanzicht — te zien aan de processus coracoideus',
+      'Mediaal aanzicht — te zien aan de facies auricularis',
+      'Ventraal aanzicht — te zien aan de fossa subscapularis',
+    ],
+    explanation: 'De schouderbladkam (spina scapulae) ligt aan de rugzijde: dit is een dorsaal aanzicht.',
+  },
+  {
+    id: 'lig-rich-8',
+    category: 'richtingen',
+    question: 'Welk aanzicht heeft het rechter os coxae in deze afbeelding en waaraan herken je dat?',
+    imageUrl: '/images/flashcards/richtingen_os_coxae.png',
+    correctAnswer: 'Lateraal aanzicht — te zien aan het acetabulum (heupkom)',
+    acceptableAnswers: ['Lateraal', 'Lateraal aanzicht', 'Lateraal aanzicht — te zien aan het acetabulum (heupkom)'],
+    options: [
+      'Lateraal aanzicht — te zien aan het acetabulum (heupkom)',
+      'Mediaal aanzicht — te zien aan de facies auricularis',
+      'Ventraal aanzicht — te zien aan het os pubis',
+      'Dorsaal aanzicht — te zien aan de SIPS',
+    ],
+    explanation: 'Rechts kijk je tegen de buitenzijde (lateraal aanzicht) met de heupkom (acetabulum); links kijk je tegen de binnenzijde (mediaal).',
+  },
+  {
+    id: 'lig-rich-9',
+    category: 'richtingen',
+    question: 'Welke twee spina-punten liggen aan de voorzijde (a en b) en welke aan de achterzijde (c en d) van het os coxae?',
+    imageUrl: '/images/flashcards/richtingen_os_coxae.png',
+    correctAnswer: 'Anterior: SIAS (a) & SIAI (b); Posterior: SIPS (c) & SIPI (d)',
+    acceptableAnswers: ['SIAS en SIAI voor, SIPS en SIPI achter', 'Anterior: SIAS (a) & SIAI (b); Posterior: SIPS (c) & SIPI (d)'],
+    options: [
+      'Anterior: SIAS (a) & SIAI (b); Posterior: SIPS (c) & SIPI (d)',
+      'Anterior: SIPS (a) & SIPI (b); Posterior: SIAS (c) & SIAI (d)',
+      'Superior: SIAS & SIPS; Inferior: crista iliaca & tuber ischiadicum',
+      'Mediaal: SIAS & SIAI; Lateraal: SIPS & SIPI',
+    ],
+    explanation: 'Anterior = voorzijde (SIAS & SIAI); Posterior = achterzijde (SIPS & SIPI).',
+  },
+
+  // ======================== ASSEN, VLAKKEN & BEWEGINGEN (9 vragen) ========================
+  {
+    id: 'lig-avb-1',
+    category: 'assen_vlakken',
+    question: 'Welke drie vlakken zijn hier van links naar rechts afgebeeld?',
+    imageUrl: '/images/flashcards/assen_vlakken_3vlakken.png',
+    correctAnswer: 'Frontaal vlak · Sagittaal vlak · Transversaal vlak',
+    acceptableAnswers: [
+      'Frontaal, sagittaal, transversaal',
+      'Frontaal vlak, sagittaal vlak, transversaal vlak',
+      'Frontaal vlak · Sagittaal vlak · Transversaal vlak',
+    ],
+    options: [
+      'Frontaal vlak · Sagittaal vlak · Transversaal vlak',
+      'Sagittaal vlak · Frontaal vlak · Transversaal vlak',
+      'Transversaal vlak · Frontaal vlak · Sagittaal vlak',
+      'Sagittaal vlak · Transversaal vlak · Frontaal vlak',
+    ],
+    explanation: 'Links = Frontaal vlak (voor/achter), Midden = Sagittaal vlak (links/rechts), Rechts = Transversaal vlak (boven/onder).',
+  },
+  {
+    id: 'lig-avb-2',
+    category: 'assen_vlakken',
+    question: 'Welke as wordt aangeduid met letter F (bovenste as) in deze figuur?',
+    imageUrl: '/images/flashcards/assen_vlakken_3assen.png',
+    correctAnswer: 'Longitudinale as',
+    acceptableAnswers: ['Longitudinale as', 'longitudinaal'],
+    options: ['Longitudinale as', 'Sagittale as', 'Transversale as', 'Frontale as'],
+    explanation: 'F = Longitudinale as (verticaal van hoofd naar voeten), S = Sagittale as, H = Transversale as.',
+  },
+  {
+    id: 'lig-avb-3',
+    category: 'assen_vlakken',
+    question: 'Welke as hoort bij letter S en welke bij letter H in deze figuur?',
+    imageUrl: '/images/flashcards/assen_vlakken_3assen.png',
+    correctAnswer: 'S = Sagittale as · H = Transversale as',
+    acceptableAnswers: ['Sagittale as en transversale as', 'S = Sagittale as · H = Transversale as'],
+    options: [
+      'S = Sagittale as · H = Transversale as',
+      'S = Transversale as · H = Sagittale as',
+      'S = Longitudinale as · H = Sagittale as',
+      'S = Sagittale as · H = Longitudinale as',
+    ],
+    explanation: 'S (van voor naar achter) = Sagittale as; H (van links naar rechts / horizontaal) = Transversale as.',
+  },
+  {
+    id: 'lig-avb-4',
+    category: 'assen_vlakken',
+    question: 'Welk vlak staat loodrecht op de transversale as en welke bewegingen vinden daarin plaats?',
+    correctAnswer: 'Sagittaal vlak — flexie en extensie (anteflexie/retroflexie)',
+    acceptableAnswers: [
+      'Sagittaal vlak',
+      'Sagittaal vlak — flexie en extensie',
+      'Sagittaal vlak — flexie en extensie (anteflexie/retroflexie)',
+    ],
+    options: [
+      'Sagittaal vlak — flexie en extensie (anteflexie/retroflexie)',
+      'Frontaal vlak — abductie en adductie',
+      'Transversaal vlak — endorotatie en exorotatie',
+      'Frontaal vlak — flexie en extensie',
+    ],
+    explanation: 'Om de transversale as beweeg je in het sagittale vlak: flexie, extensie, anteflexie, retroflexie, plantair- en dorsaalflexie.',
+  },
+  {
+    id: 'lig-avb-5',
+    category: 'assen_vlakken',
+    question: 'Welk vlak staat loodrecht op de sagittale as en welke bewegingen vinden daarin plaats?',
+    correctAnswer: 'Frontaal vlak — abductie, adductie en lateroflexie',
+    acceptableAnswers: [
+      'Frontaal vlak',
+      'Frontaal vlak — abductie en adductie',
+      'Frontaal vlak — abductie, adductie en lateroflexie',
+    ],
+    options: [
+      'Frontaal vlak — abductie, adductie en lateroflexie',
+      'Sagittaal vlak — flexie en extensie',
+      'Transversaal vlak — pronatie en supinatie',
+      'Transversaal vlak — abductie en adductie',
+    ],
+    explanation: 'Om de sagittale as beweeg je in het frontale vlak: abductie, adductie en lateroflexie van de romp.',
+  },
+  {
+    id: 'lig-avb-6',
+    category: 'assen_vlakken',
+    question: 'In welk vlak en om welke as vinden endorotatie, exorotatie, pronatie en supinatie plaats?',
+    correctAnswer: 'Transversaal vlak — Longitudinale as',
+    acceptableAnswers: ['Transversaal vlak, longitudinale as', 'Transversaal vlak — Longitudinale as'],
+    options: [
+      'Transversaal vlak — Longitudinale as',
+      'Sagittaal vlak — Transversale as',
+      'Frontaal vlak — Sagittale as',
+      'Frontaal vlak — Longitudinale as',
+    ],
+    explanation: 'Alle draaiende (rotatie-)bewegingen vinden plaats in het transversale vlak om de longitudinale as.',
+  },
+  {
+    id: 'lig-avb-7',
+    category: 'assen_vlakken',
+    question: 'Welke drie bewegingsparen zijn mogelijk in de schoudergordel (cingulum pectorale)?',
+    imageUrl: '/images/flashcards/bewegingen_cingulum.png',
+    correctAnswer: 'Elevatie/depressie, protractie/retractie en latero-/mediorotatie',
+    acceptableAnswers: [
+      'Elevatie, depressie, protractie, retractie, laterorotatie, mediorotatie',
+      'Elevatie/depressie, protractie/retractie en latero-/mediorotatie',
+    ],
+    options: [
+      'Elevatie/depressie, protractie/retractie en latero-/mediorotatie',
+      'Anteflexie/retroflexie, abductie/adductie en endo-/exorotatie',
+      'Plantair-/dorsaalflexie, inversie/eversie en pronatie/supinatie',
+      'Flexie/extensie, lateroflexie en rotatie',
+    ],
+    explanation: 'De schoudergordel beweegt via elevatie/depressie (detractie), protractie/retractie en latero-/mediorotatie.',
+  },
+  {
+    id: 'lig-avb-8',
+    category: 'assen_vlakken',
+    question: 'Wat betekenen dextra en sinistra bij lateroflexie en rotatie van de romp?',
+    imageUrl: '/images/flashcards/bewegingen_romp.png',
+    correctAnswer: 'Dextra = rechts; Sinistra = links',
+    acceptableAnswers: ['Dextra = rechts, sinistra = links', 'rechts en links', 'Dextra = rechts; Sinistra = links'],
+    options: [
+      'Dextra = rechts; Sinistra = links',
+      'Dextra = links; Sinistra = rechts',
+      'Dextra = voorover; Sinistra = achterover',
+      'Dextra = naar binnen; Sinistra = naar buiten',
+    ],
+    explanation: 'Dextra betekent rechts en sinistra betekent links (bijv. lateroflexio dextra = zijwaarts buigen naar rechts).',
+  },
+  {
+    id: 'lig-avb-9',
+    category: 'assen_vlakken',
+    question: 'In welk spronggewricht vinden plantair-/dorsaalflexie plaats en in welk spronggewricht inversie/eversie?',
+    correctAnswer: 'Plantair-/dorsaalflexie: BSG (art. talocruralis); Inversie/eversie: OSG',
+    acceptableAnswers: [
+      'BSG en OSG',
+      'Plantair-/dorsaalflexie: BSG (art. talocruralis); Inversie/eversie: OSG',
+    ],
+    options: [
+      'Plantair-/dorsaalflexie: BSG (art. talocruralis); Inversie/eversie: OSG',
+      'Plantair-/dorsaalflexie: OSG; Inversie/eversie: BSG',
+      'Beide bewegingen vinden plaats in art. talocruralis (BSG)',
+      'Beide bewegingen vinden plaats om de longitudinale as',
+    ],
+    explanation: 'Plantair- en dorsaalflexie gebeuren in het bovenste spronggewricht (BSG, sagittaal vlak / transversale as); inversie en eversie in het onderste spronggewricht (OSG).',
   },
 ];
