@@ -642,7 +642,7 @@ export const LigamentsSynovialView: React.FC = () => {
                       value={openInput}
                       onChange={(e) => setOpenInput(e.target.value)}
                       disabled={isEvaluated}
-                      placeholder="Typ de Latijnse of Nederlandse benaming..."
+                      placeholder="Typ je antwoord..."
                       className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-semibold text-slate-900"
                     />
                     {!isEvaluated && (
