@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   X, 
   HelpCircle, 
@@ -15,11 +15,32 @@ import { useIsMobile } from '../../hooks/useIsMobile';
 interface HelpModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSecretUnlock?: () => void;
 }
 
-export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
+export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose, onSecretUnlock }) => {
   const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState<'navigation' | 'controls' | 'quiz' | 'flashcards' | 'editor'>('navigation');
+  const iconTapCountRef = useRef(0);
+  const iconTapTimerRef = useRef<number | null>(null);
+
+  const handleSecretIconClick = () => {
+    if (!onSecretUnlock) return;
+    iconTapCountRef.current += 1;
+    if (iconTapTimerRef.current) {
+      window.clearTimeout(iconTapTimerRef.current);
+      iconTapTimerRef.current = null;
+    }
+    if (iconTapCountRef.current >= 3) {
+      iconTapCountRef.current = 0;
+      onSecretUnlock();
+      return;
+    }
+    iconTapTimerRef.current = window.setTimeout(() => {
+      iconTapCountRef.current = 0;
+      iconTapTimerRef.current = null;
+    }, 450);
+  };
 
   if (!isOpen) return null;
 
@@ -32,9 +53,14 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
         {/* Header van het hulpvenster */}
         <div className="px-5 py-3.5 bg-clinical-900 text-white border-b border-clinical-800 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 bg-blue-600 rounded-xl shadow-xs">
+            <button
+              type="button"
+              onClick={handleSecretIconClick}
+              className="p-1.5 bg-blue-600 rounded-xl shadow-xs cursor-default focus:outline-none"
+              aria-label="Hulp"
+            >
               <HelpCircle className="w-5 h-5 text-white" />
-            </div>
+            </button>
             <div>
               <h2 className="text-base sm:text-lg font-black tracking-tight leading-tight">
                 Hulp & Uitleg

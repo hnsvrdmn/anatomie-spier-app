@@ -9,6 +9,7 @@ import { QuizView } from './components/quiz/QuizView';
 import { BonesView } from './components/bones/BonesView';
 import { EditorView } from './components/editor/EditorView';
 import { FlashcardsView } from './components/flashcards/FlashcardsView';
+import { LigamentsSynovialView } from './components/ligaments/LigamentsSynovialView';
 import { BoneProvider } from './context/BoneContext';
 import { FlashcardProvider } from './context/FlashcardContext';
 import { SkeletonPuzzleGame } from './components/game/SkeletonPuzzleGame';
@@ -117,6 +118,7 @@ const AppContent: React.FC = () => {
         {appMode === 'quiz' && <QuizView />}
         {appMode === 'flashcards' && <FlashcardsView />}
         {appMode === 'editor' && <EditorView />}
+        {appMode === 'ligaments' && <LigamentsSynovialView />}
       </main>
 
       {/* Educatieve feedback & Notificaties */}

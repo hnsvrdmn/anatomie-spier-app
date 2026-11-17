@@ -1,0 +1,978 @@
+export type LigamentCategoryId = 'genus' | 'pedis' | 'synovial_opbouw' | 'synovial_typen';
+
+export interface LigamentStructureItem {
+  number?: number;
+  name: string;
+  altName?: string;
+  location?: string;
+  functionText: string;
+}
+
+export interface LigamentFigureImage {
+  imageUrl: string;
+  caption: string;
+  numbersRange?: string;
+}
+
+export interface LigamentSection {
+  id: LigamentCategoryId;
+  title: string;
+  shortTitle: string;
+  subtitle: string;
+  generalInfo?: string;
+  images: LigamentFigureImage[];
+  items: LigamentStructureItem[];
+}
+
+export interface LigamentSynovialQuestion {
+  id: string;
+  category: LigamentCategoryId;
+  question: string;
+  imageUrl?: string;
+  imageCaption?: string;
+  highlightNumber?: number;
+  correctAnswer: string;
+  acceptableAnswers: string[];
+  options: string[];
+  explanation: string;
+}
+
+export const LIGAMENT_SECTIONS: LigamentSection[] = [
+  {
+    id: 'genus',
+    title: 'Art. genus — Ligamenten & Menisci',
+    shortTitle: 'Art. genus',
+    subtitle: 'Kniegewricht (Moduulboek p. 11 & 36–37, Art.genus ANTWOORDEN)',
+    generalInfo:
+      'Ligamenten zijn buigzame, zeer sterke bindweefselbanden die nauwelijks rekken. Ze drukken botstukken stevig tegen elkaar, begeleiden bewegingen en remmen te grote bewegingen of bewegingen in een verkeerde richting.',
+    images: [
+      {
+        imageUrl: '/images/flashcards/genus_ligamenten_1_7.png',
+        caption: 'Art. genus — Ligamenten & menisci (nr. 1 t/m 7)',
+        numbersRange: '1–7',
+      },
+    ],
+    items: [
+      {
+        number: 1,
+        name: 'Lig. cruciatum anterius',
+        altName: 'Lig. cruciatum anterior (voorste kruisband)',
+        location: 'Centraal in art. genus',
+        functionText:
+          'Voorkomt naar voren schuiven van het os tibia t.o.v. het femur. Voorkomt samen met lig. cruciatum posterius rotatie.',
+      },
+      {
+        number: 2,
+        name: 'Tuberositas tibiae',
+        location: 'Ventraal proximaal op de tibia',
+        functionText: 'Aanhechting van de patellapees (en m. quadriceps femoris).',
+      },
+      {
+        number: 3,
+        name: 'Meniscus medialis',
+        location: 'Mediale zijde art. genus',
+        functionText: 'Begeleidt flexie en extensie en zorgt voor schokdemping.',
+      },
+      {
+        number: 4,
+        name: 'Meniscus lateralis',
+        location: 'Laterale zijde art. genus',
+        functionText: 'Begeleidt flexie en extensie en zorgt voor schokdemping.',
+      },
+      {
+        number: 5,
+        name: 'Lig. cruciatum posterius',
+        altName: 'Lig. cruciatum posterior (achterste kruisband)',
+        location: 'Centraal / dorsaal in art. genus',
+        functionText:
+          'Voorkomt naar achteren schuiven van het os tibia t.o.v. het femur. Voorkomt samen met lig. cruciatum anterius rotatie.',
+      },
+      {
+        number: 6,
+        name: 'Lig. collaterale mediale',
+        altName: 'Lig. collaterale medialis',
+        location: 'Mediale zijde art. genus',
+        functionText:
+          'Behoudt contact tussen femur en tibia; voorkomt X-benen (valgusstand).',
+      },
+      {
+        number: 7,
+        name: 'Lig. collaterale laterale',
+        altName: 'Lig. collaterale lateralis',
+        location: 'Laterale zijde art. genus',
+        functionText:
+          'Behoudt contact tussen femur en tibia; voorkomt O-benen (varusstand).',
+      },
+    ],
+  },
+  {
+    id: 'pedis',
+    title: 'Art. pedis — Ligamenten & Spronggewrichten',
+    shortTitle: 'Art. pedis',
+    subtitle: 'Enkel en voet (Moduulboek p. 11 & 43, Art. pedis ANTWOORDEN)',
+    generalInfo:
+      'Rondom de enkel stabiliseren sterke ligamenten het bovenste spronggewricht (art. talocruralis) en onderste spronggewricht (OSG: art. subtalaris en art. talo-calcaneo-navicularis).',
+    images: [
+      {
+        imageUrl: '/images/flashcards/pedis_ligamenten_1_4.png',
+        caption: 'Art. pedis — Mediaal (links) & Lateraal (rechts) (nr. 1 t/m 4)',
+        numbersRange: '1–4',
+      },
+      {
+        imageUrl: '/images/flashcards/pedis_gewrichten_1_5.png',
+        caption: 'Enkel — Botstructuren & Spronggewrichten (nr. 1 t/m 5)',
+        numbersRange: '1–5',
+      },
+    ],
+    items: [
+      {
+        number: 1,
+        name: 'Lig. deltoideum',
+        location: 'Enkel mediaal (linker afbeelding)',
+        functionText: 'Remt extreme pronatiestand (eversie).',
+      },
+      {
+        number: 2,
+        name: 'Lig. calcaneofibulare',
+        location: 'Enkel lateraal (rechter afbeelding)',
+        functionText: 'Remt extreme supinatiestand (inversie).',
+      },
+      {
+        number: 3,
+        name: 'Lig. talofibulare posterius',
+        altName: 'Lig. talofibulare posterior',
+        location: 'Enkel lateraal — achterzijde (rechter afbeelding)',
+        functionText: 'Ondersteunt het lig. calcaneofibulare (remt inversie / supinatie).',
+      },
+      {
+        number: 4,
+        name: 'Lig. talofibulare anterius',
+        altName: 'Lig. talofibulare anterior',
+        location: 'Enkel lateraal — voorzijde (rechter afbeelding)',
+        functionText: 'Ondersteunt het lig. calcaneofibulare (remt inversie / supinatie).',
+      },
+      {
+        name: 'Tweede afbeelding — nr. 1 t/m 5 (Enkelgewrichten & malleoli)',
+        location: 'Afbeelding rechtsboven / gewrichten (1–5)',
+        functionText:
+          '1 = Malleolus lateralis (fibula) · 2 = Malleolus medialis (tibia) · 3 = Tuber calcanei · 4 = Art. talocruralis (BSG: plantair-/dorsaalflexie) · 5 = Art. talo-calcaneo-navicularis (voorste deel OSG; samen met art. subtalaris verantwoordelijk voor inversie en eversie).',
+      },
+    ],
+  },
+  {
+    id: 'synovial_opbouw',
+    title: 'Synoviaal Gewricht — Opbouw (1–12)',
+    shortTitle: 'Opbouw (1–12)',
+    subtitle: 'Typisch synoviaal gewricht (Moduulboek p. 29, ANTWOORDEN synoviaal p. 2)',
+    generalInfo:
+      'Alle grote gewrichten in het lichaam zijn synoviale (echte) gewrichten, herkenbaar aan een gewrichtsholte met gewrichtsvloeistof (synovia), hyalien gewrichtskraakbeen en een fibreus kapsel.',
+    images: [
+      {
+        imageUrl: '/images/flashcards/synoviaal_opbouw_1_12.png',
+        caption: 'Doorsnede van een typisch synoviaal gewricht (nr. 1 t/m 12)',
+        numbersRange: '1–12',
+      },
+    ],
+    items: [
+      {
+        number: 1,
+        name: 'Kom van het gewricht',
+        functionText: 'Een van de botstructuren die samen het gewricht vormen.',
+      },
+      {
+        number: 2,
+        name: 'Kop van het gewricht',
+        functionText: 'Een van de botstructuren die samen het gewricht vormen.',
+      },
+      {
+        number: 3,
+        name: 'Omliggend botstuk',
+        functionText: 'Beperkt in dit geval de bewegingsruimte (zie ook bursa).',
+      },
+      {
+        number: 4,
+        name: 'Ligament',
+        functionText: 'Verbindt botstukken met elkaar en geeft stevigheid aan het gewricht.',
+      },
+      {
+        number: 5,
+        name: 'Pees',
+        functionText: 'Verbindt de spierbuik met een botstuk.',
+      },
+      {
+        number: 6,
+        name: 'Gewrichtsruimte met synovia',
+        functionText: 'Bevat synovia (gewrichtsvloeistof) en laat bewegingen soepel verlopen.',
+      },
+      {
+        number: 7,
+        name: 'Peesschede',
+        functionText: 'Voorkomt beschadiging aan de pees als gevolg van wrijving.',
+      },
+      {
+        number: 8,
+        name: 'Gewrichtskapsel',
+        functionText: 'Fibreus bindweefsel dat het gewricht omsluit en stevigheid geeft.',
+      },
+      {
+        number: 9,
+        name: 'Ligament',
+        functionText: 'Verbindt botstukken met elkaar en geeft stevigheid aan het gewricht.',
+      },
+      {
+        number: 10,
+        name: 'Gewrichtskraakbeen (hyalien)',
+        functionText: 'Bedekt kop en kom en voorkomt wrijving tussen botstukken.',
+      },
+      {
+        number: 11,
+        name: 'Synoviaal membraan',
+        functionText: 'Binnenbekleding van het kapsel; produceert synovia.',
+      },
+      {
+        number: 12,
+        name: 'Bursa (slijmbeurs)',
+        functionText: 'Voorkomt drukbelasting en wrijving tussen botstuk en pees in het gewricht.',
+      },
+    ],
+  },
+  {
+    id: 'synovial_typen',
+    title: 'Synoviale Gewrichtstypen (naar vorm)',
+    shortTitle: 'Gewrichtstypen',
+    subtitle: 'De 6 typen, assen en voorbeelden (Moduulboek p. 28, ANTWOORDEN synoviaal p. 1)',
+    generalInfo:
+      'Synoviale gewrichten worden naar vorm en aantal bewegingsassen (vrijheidsgraden) ingedeeld. Samengestelde gewrichten zoals art. genus en art. cubiti combineren bewegingen als art. trocho-ginglymus (2 assen).',
+    images: [
+      {
+        imageUrl: '/images/flashcards/synoviaal_typen_boven.png',
+        caption: 'Bovenste rij (v.l.n.r.): 1. Art. ginglymus · 2. Art. trochoidea · 3. Art. sellaris',
+      },
+      {
+        imageUrl: '/images/flashcards/synoviaal_typen_onder.png',
+        caption: 'Onderste rij (v.l.n.r.): 1. Art. ellipsoidea · 2. Art. spheroidea · 3. Art. plana',
+      },
+    ],
+    items: [
+      {
+        number: 1,
+        name: 'Art. ginglymus',
+        altName: 'Scharniergewricht (boven links)',
+        location: 'Bijv. art. humero-ulnaris, art. talocruralis (BSG), vingerkootjes',
+        functionText: '1 as (1 vrijheidsgraad) — flexie en extensie (en plantair-/dorsaalflexie).',
+      },
+      {
+        number: 2,
+        name: 'Art. trochoidea',
+        altName: 'Rolgewricht (boven midden)',
+        location: 'Bijv. art. radio-ulnaris proximalis & distalis',
+        functionText: '1 as (1 vrijheidsgraad) — rotaties (pronatie / supinatie).',
+      },
+      {
+        number: 3,
+        name: 'Art. sellaris',
+        altName: 'Zadelgewricht (boven rechts)',
+        location: 'Bijv. art. sterno-clavicularis (SC-gewricht)',
+        functionText: '2 assen — flexie/extensie en abductie/adductie.',
+      },
+      {
+        number: 4,
+        name: 'Art. ellipsoidea',
+        altName: 'Ellipsvormig gewricht (onder links)',
+        location: 'Ovale kop in ovale kom',
+        functionText: 'Reader-antwoorden: 1 as (vaak flexie en extensie) / vormindeling: 2 assen.',
+      },
+      {
+        number: 5,
+        name: 'Art. spheroidea',
+        altName: 'Bolgewricht / Kogelgewricht (onder midden)',
+        location: 'Bijv. art. coxae, art. humeri, art. humero-radialis (naar vorm)',
+        functionText: '3 assen (3 vrijheidsgraden) — flexie/extensie, abductie/adductie en rotaties.',
+      },
+      {
+        number: 6,
+        name: 'Art. plana',
+        altName: 'Vlak gewricht (onder rechts)',
+        location: 'Bijv. art. acromio-clavicularis (AC-gewricht), art. intervertebrales',
+        functionText: '1 as — rotaties / geringe glijbewegingen (translatie).',
+      },
+    ],
+  },
+];
+
+export const LIGAMENT_SYNOVIAL_QUESTIONS: LigamentSynovialQuestion[] = [
+  // ======================== ART. GENUS (12 vragen) ========================
+  {
+    id: 'lig-gen-1',
+    category: 'genus',
+    question: 'Welke structuur is nummer 1 in deze afbeelding van art. genus?',
+    imageUrl: '/images/flashcards/genus_ligamenten_1_7.png',
+    highlightNumber: 1,
+    correctAnswer: 'Lig. cruciatum anterius',
+    acceptableAnswers: [
+      'Lig. cruciatum anterius',
+      'Lig. cruciatum anterior',
+      'ligamentum cruciatum anterius',
+      'ligamentum cruciatum anterior',
+      'voorste kruisband',
+    ],
+    options: [
+      'Lig. cruciatum anterius',
+      'Lig. cruciatum posterius',
+      'Lig. collaterale mediale',
+      'Lig. collaterale laterale',
+    ],
+    explanation: 'Nummer 1 is het lig. cruciatum anterius (voorste kruisband).',
+  },
+  {
+    id: 'lig-gen-2',
+    category: 'genus',
+    question: 'Welke botstructuur is nummer 2 op het ventrale aanzicht van de knie?',
+    imageUrl: '/images/flashcards/genus_ligamenten_1_7.png',
+    highlightNumber: 2,
+    correctAnswer: 'Tuberositas tibiae',
+    acceptableAnswers: [
+      'Tuberositas tibiae',
+      'tuberositas tibia',
+      'aanhechting patellapees',
+    ],
+    options: [
+      'Tuberositas tibiae',
+      'Caput fibulae',
+      'Condylus medialis tibiae',
+      'Condylus lateralis tibiae',
+    ],
+    explanation: 'Nummer 2 is de tuberositas tibiae (aanhechtingsplaats van de patellapees).',
+  },
+  {
+    id: 'lig-gen-3',
+    category: 'genus',
+    question: 'Welke structuur is nummer 3 in deze afbeelding van art. genus?',
+    imageUrl: '/images/flashcards/genus_ligamenten_1_7.png',
+    highlightNumber: 3,
+    correctAnswer: 'Meniscus medialis',
+    acceptableAnswers: ['Meniscus medialis', 'mediale meniscus'],
+    options: [
+      'Meniscus medialis',
+      'Meniscus lateralis',
+      'Lig. collaterale mediale',
+      'Lig. cruciatum anterius',
+    ],
+    explanation: 'Nummer 3 is de meniscus medialis aan de binnenzijde van het kniegewricht.',
+  },
+  {
+    id: 'lig-gen-4',
+    category: 'genus',
+    question: 'Welke structuur is nummer 4 in deze afbeelding van art. genus?',
+    imageUrl: '/images/flashcards/genus_ligamenten_1_7.png',
+    highlightNumber: 4,
+    correctAnswer: 'Meniscus lateralis',
+    acceptableAnswers: ['Meniscus lateralis', 'laterale meniscus'],
+    options: [
+      'Meniscus lateralis',
+      'Meniscus medialis',
+      'Lig. collaterale laterale',
+      'Lig. cruciatum posterius',
+    ],
+    explanation: 'Nummer 4 is de meniscus lateralis aan de buitenzijde van het kniegewricht.',
+  },
+  {
+    id: 'lig-gen-5',
+    category: 'genus',
+    question: 'Welke structuur is nummer 5 in deze afbeelding van art. genus?',
+    imageUrl: '/images/flashcards/genus_ligamenten_1_7.png',
+    highlightNumber: 5,
+    correctAnswer: 'Lig. cruciatum posterius',
+    acceptableAnswers: [
+      'Lig. cruciatum posterius',
+      'Lig. cruciatum posterior',
+      'ligamentum cruciatum posterius',
+      'ligamentum cruciatum posterior',
+      'achterste kruisband',
+    ],
+    options: [
+      'Lig. cruciatum posterius',
+      'Lig. cruciatum anterius',
+      'Lig. collaterale laterale',
+      'Meniscus lateralis',
+    ],
+    explanation: 'Nummer 5 is het lig. cruciatum posterius (achterste kruisband).',
+  },
+  {
+    id: 'lig-gen-6',
+    category: 'genus',
+    question: 'Welke structuur is nummer 6 in deze afbeelding van art. genus?',
+    imageUrl: '/images/flashcards/genus_ligamenten_1_7.png',
+    highlightNumber: 6,
+    correctAnswer: 'Lig. collaterale mediale',
+    acceptableAnswers: [
+      'Lig. collaterale mediale',
+      'Lig. collaterale medialis',
+      'ligamentum collaterale mediale',
+      'ligamentum collaterale medialis',
+      'mediale collaterale band',
+    ],
+    options: [
+      'Lig. collaterale mediale',
+      'Lig. collaterale laterale',
+      'Lig. cruciatum posterius',
+      'Meniscus medialis',
+    ],
+    explanation: 'Nummer 6 is het lig. collaterale mediale (voorkomt X-benen / valgusstand).',
+  },
+  {
+    id: 'lig-gen-7',
+    category: 'genus',
+    question: 'Welke structuur is nummer 7 in deze afbeelding van art. genus?',
+    imageUrl: '/images/flashcards/genus_ligamenten_1_7.png',
+    highlightNumber: 7,
+    correctAnswer: 'Lig. collaterale laterale',
+    acceptableAnswers: [
+      'Lig. collaterale laterale',
+      'Lig. collaterale lateralis',
+      'ligamentum collaterale laterale',
+      'ligamentum collaterale lateralis',
+      'laterale collaterale band',
+    ],
+    options: [
+      'Lig. collaterale laterale',
+      'Lig. collaterale mediale',
+      'Lig. cruciatum anterius',
+      'Meniscus lateralis',
+    ],
+    explanation: 'Nummer 7 is het lig. collaterale laterale (voorkomt O-benen / varusstand).',
+  },
+  {
+    id: 'lig-gen-fn-1',
+    category: 'genus',
+    question: 'Welk ligament in de knie voorkomt het naar voren schuiven van de tibia t.o.v. het femur?',
+    imageUrl: '/images/flashcards/genus_ligamenten_1_7.png',
+    correctAnswer: 'Lig. cruciatum anterius',
+    acceptableAnswers: [
+      'Lig. cruciatum anterius',
+      'Lig. cruciatum anterior',
+      'ligamentum cruciatum anterius',
+      'voorste kruisband',
+    ],
+    options: [
+      'Lig. cruciatum anterius',
+      'Lig. cruciatum posterius',
+      'Lig. collaterale mediale',
+      'Lig. collaterale laterale',
+    ],
+    explanation: 'Het lig. cruciatum anterius (nr. 1) voorkomt naar voren schuiven van het os tibia (en remt samen met posterior rotatie).',
+  },
+  {
+    id: 'lig-gen-fn-2',
+    category: 'genus',
+    question: 'Welk ligament in de knie voorkomt het naar achteren schuiven van de tibia t.o.v. het femur?',
+    imageUrl: '/images/flashcards/genus_ligamenten_1_7.png',
+    correctAnswer: 'Lig. cruciatum posterius',
+    acceptableAnswers: [
+      'Lig. cruciatum posterius',
+      'Lig. cruciatum posterior',
+      'ligamentum cruciatum posterius',
+      'achterste kruisband',
+    ],
+    options: [
+      'Lig. cruciatum posterius',
+      'Lig. cruciatum anterius',
+      'Lig. collaterale mediale',
+      'Lig. collaterale laterale',
+    ],
+    explanation: 'Het lig. cruciatum posterius (nr. 5) voorkomt naar achteren schuiven van het os tibia.',
+  },
+  {
+    id: 'lig-gen-fn-3',
+    category: 'genus',
+    question: 'Welk knieligament voorkomt een valgusstand (X-benen)?',
+    imageUrl: '/images/flashcards/genus_ligamenten_1_7.png',
+    correctAnswer: 'Lig. collaterale mediale',
+    acceptableAnswers: [
+      'Lig. collaterale mediale',
+      'Lig. collaterale medialis',
+      'ligamentum collaterale mediale',
+    ],
+    options: [
+      'Lig. collaterale mediale',
+      'Lig. collaterale laterale',
+      'Lig. cruciatum anterius',
+      'Lig. cruciatum posterius',
+    ],
+    explanation: 'Het lig. collaterale mediale (nr. 6) behoudt het mediale contact tussen femur en tibia en voorkomt X-benen (valgus).',
+  },
+  {
+    id: 'lig-gen-fn-4',
+    category: 'genus',
+    question: 'Welk knieligament voorkomt een varusstand (O-benen)?',
+    imageUrl: '/images/flashcards/genus_ligamenten_1_7.png',
+    correctAnswer: 'Lig. collaterale laterale',
+    acceptableAnswers: [
+      'Lig. collaterale laterale',
+      'Lig. collaterale lateralis',
+      'ligamentum collaterale laterale',
+    ],
+    options: [
+      'Lig. collaterale laterale',
+      'Lig. collaterale mediale',
+      'Lig. cruciatum posterius',
+      'Meniscus lateralis',
+    ],
+    explanation: 'Het lig. collaterale laterale (nr. 7) behoudt het laterale contact tussen femur en tibia en voorkomt O-benen (varus).',
+  },
+  {
+    id: 'lig-gen-fn-5',
+    category: 'genus',
+    question: 'Wat is de functie van de meniscus medialis en meniscus lateralis (nr. 3 & 4)?',
+    imageUrl: '/images/flashcards/genus_ligamenten_1_7.png',
+    correctAnswer: 'Begeleiden flexie en extensie en zorgen voor demping',
+    acceptableAnswers: [
+      'Begeleiden flexie en extensie en zorgen voor demping',
+      'begeleidt flexie en extensie, zorgt voor demping',
+      'demping en begeleiden flexie extensie',
+      'schokdemping',
+      'demping',
+    ],
+    options: [
+      'Begeleiden flexie en extensie en zorgen voor demping',
+      'Voorkomen naar voren en achteren schuiven van het os tibia',
+      'Produceren synovia (gewrichtssmeer) in de gewrichtsholte',
+      'Verbinden de spierbuik rechtstreeks met het os fibula',
+    ],
+    explanation: 'De menisci (nr. 3 & 4) begeleiden flexie en extensie in de knie en zorgen voor schokdemping.',
+  },
+
+  // ======================== ART. PEDIS (10 vragen) ========================
+  {
+    id: 'lig-ped-1',
+    category: 'pedis',
+    question: 'Welk enkelband-ligament is nummer 1 (aan de mediale zijde van de enkel)?',
+    imageUrl: '/images/flashcards/pedis_ligamenten_1_4.png',
+    highlightNumber: 1,
+    correctAnswer: 'Lig. deltoideum',
+    acceptableAnswers: ['Lig. deltoideum', 'ligamentum deltoideum', 'deltoideum'],
+    options: [
+      'Lig. deltoideum',
+      'Lig. calcaneofibulare',
+      'Lig. talofibulare anterius',
+      'Lig. talofibulare posterius',
+    ],
+    explanation: 'Nummer 1 is het lig. deltoideum aan de mediale zijde van de enkel.',
+  },
+  {
+    id: 'lig-ped-2',
+    category: 'pedis',
+    question: 'Welk ligament is nummer 2 aan de laterale zijde van de enkel?',
+    imageUrl: '/images/flashcards/pedis_ligamenten_1_4.png',
+    highlightNumber: 2,
+    correctAnswer: 'Lig. calcaneofibulare',
+    acceptableAnswers: ['Lig. calcaneofibulare', 'ligamentum calcaneofibulare', 'calcaneofibulare'],
+    options: [
+      'Lig. calcaneofibulare',
+      'Lig. deltoideum',
+      'Lig. talofibulare anterius',
+      'Lig. talofibulare posterius',
+    ],
+    explanation: 'Nummer 2 is het lig. calcaneofibulare (tussen fibula en calcaneus).',
+  },
+  {
+    id: 'lig-ped-3',
+    category: 'pedis',
+    question: 'Welk ligament is nummer 3 (lateraal achter) in de enkel?',
+    imageUrl: '/images/flashcards/pedis_ligamenten_1_4.png',
+    highlightNumber: 3,
+    correctAnswer: 'Lig. talofibulare posterius',
+    acceptableAnswers: [
+      'Lig. talofibulare posterius',
+      'Lig. talofibulare posterior',
+      'ligamentum talofibulare posterius',
+      'talofibulare posterius',
+      'talofibulare posterior',
+    ],
+    options: [
+      'Lig. talofibulare posterius',
+      'Lig. talofibulare anterius',
+      'Lig. calcaneofibulare',
+      'Lig. deltoideum',
+    ],
+    explanation: 'Nummer 3 is het lig. talofibulare posterius (achterzijde laterale enkel).',
+  },
+  {
+    id: 'lig-ped-4',
+    category: 'pedis',
+    question: 'Welk ligament is nummer 4 (lateraal voor) in de enkel?',
+    imageUrl: '/images/flashcards/pedis_ligamenten_1_4.png',
+    highlightNumber: 4,
+    correctAnswer: 'Lig. talofibulare anterius',
+    acceptableAnswers: [
+      'Lig. talofibulare anterius',
+      'Lig. talofibulare anterior',
+      'ligamentum talofibulare anterius',
+      'talofibulare anterius',
+      'talofibulare anterior',
+    ],
+    options: [
+      'Lig. talofibulare anterius',
+      'Lig. talofibulare posterius',
+      'Lig. calcaneofibulare',
+      'Lig. deltoideum',
+    ],
+    explanation: 'Nummer 4 is het lig. talofibulare anterius (voorzijde laterale enkel).',
+  },
+  {
+    id: 'lig-ped-fn-1',
+    category: 'pedis',
+    question: 'Welke beweging / stand wordt geremd door het mediale lig. deltoideum (nr. 1)?',
+    imageUrl: '/images/flashcards/pedis_ligamenten_1_4.png',
+    correctAnswer: 'Extreme pronatiestand (eversie)',
+    acceptableAnswers: [
+      'Extreme pronatiestand',
+      'pronatie',
+      'eversie',
+      'extreme eversie',
+      'pronatiestand',
+    ],
+    options: [
+      'Extreme pronatiestand (eversie)',
+      'Extreme supinatiestand (inversie)',
+      'Dorsaalflexie in art. talocruralis',
+      'Plantairflexie in art. talocruralis',
+    ],
+    explanation: 'Het mediale lig. deltoideum wordt op rek gebracht bij eversie/pronatie en remt dus de extreme pronatiestand.',
+  },
+  {
+    id: 'lig-ped-fn-2',
+    category: 'pedis',
+    question: 'Welke beweging / stand wordt geremd door het laterale lig. calcaneofibulare (en talofibulare ant./post.)?',
+    imageUrl: '/images/flashcards/pedis_ligamenten_1_4.png',
+    correctAnswer: 'Extreme supinatiestand (inversie)',
+    acceptableAnswers: [
+      'Extreme supinatiestand',
+      'supinatie',
+      'inversie',
+      'extreme inversie',
+      'supinatiestand',
+    ],
+    options: [
+      'Extreme supinatiestand (inversie)',
+      'Extreme pronatiestand (eversie)',
+      'Abductie van de hallux',
+      'Extensie in art. genus',
+    ],
+    explanation: 'Het lig. calcaneofibulare (ondersteund door lig. talofibulare ant. & post.) remt de extreme supinatiestand (inversie / "verzwikken naar binnen").',
+  },
+  {
+    id: 'lig-ped-gew-4',
+    category: 'pedis',
+    question: 'Welk gewricht wordt met rode lijn nummer 4 aangeduid (bovenste spronggewricht)?',
+    imageUrl: '/images/flashcards/pedis_gewrichten_1_5.png',
+    highlightNumber: 4,
+    correctAnswer: 'Art. talocruralis',
+    acceptableAnswers: ['Art. talocruralis', 'talocruralis', 'bovenste spronggewricht', 'bsg'],
+    options: [
+      'Art. talocruralis',
+      'Art. subtalaris',
+      'Art. talo-calcaneo-navicularis',
+      'Art. genus',
+    ],
+    explanation: 'Nummer 4 is het art. talocruralis (bovenste spronggewricht / BSG) voor dorsaal- en plantairflexie.',
+  },
+  {
+    id: 'lig-ped-gew-5',
+    category: 'pedis',
+    question: 'Welk gewricht wordt met rode lijn nummer 5 aangeduid (voorste deel van het OSG)?',
+    imageUrl: '/images/flashcards/pedis_gewrichten_1_5.png',
+    highlightNumber: 5,
+    correctAnswer: 'Art. talo-calcaneo-navicularis',
+    acceptableAnswers: [
+      'Art. talo-calcaneo-navicularis',
+      'Art. talocalcaneonavicularis',
+      'talo-calcaneo-navicularis',
+      'talocalcaneonavicularis',
+    ],
+    options: [
+      'Art. talo-calcaneo-navicularis',
+      'Art. talocruralis',
+      'Art. subtalaris',
+      'Art. radio-ulnaris distalis',
+    ],
+    explanation: 'Nummer 5 is het art. talo-calcaneo-navicularis (voorste deel van het onderste spronggewricht).',
+  },
+
+  // ======================== SYNOVIAAL OPBOUW 1–12 (12 vragen) ========================
+  {
+    id: 'lig-syn-1',
+    category: 'synovial_opbouw',
+    question: 'Welke structuur is nummer 1 in de doorsnede van het synoviaal gewricht?',
+    imageUrl: '/images/flashcards/synoviaal_opbouw_1_12.png',
+    highlightNumber: 1,
+    correctAnswer: 'Kom van het gewricht',
+    acceptableAnswers: ['Kom van het gewricht', 'Kom', 'Gewrichtskom'],
+    options: ['Kom van het gewricht', 'Kop van het gewricht', 'Omliggend botstuk', 'Gewrichtskraakbeen'],
+    explanation: 'Nummer 1 is de kom van het gewricht.',
+  },
+  {
+    id: 'lig-syn-2',
+    category: 'synovial_opbouw',
+    question: 'Welke structuur is nummer 2 in de doorsnede van het synoviaal gewricht?',
+    imageUrl: '/images/flashcards/synoviaal_opbouw_1_12.png',
+    highlightNumber: 2,
+    correctAnswer: 'Kop van het gewricht',
+    acceptableAnswers: ['Kop van het gewricht', 'Kop', 'Gewrichtskop'],
+    options: ['Kop van het gewricht', 'Kom van het gewricht', 'Omliggend botstuk', 'Gewrichtskapsel'],
+    explanation: 'Nummer 2 is de kop van het gewricht.',
+  },
+  {
+    id: 'lig-syn-3',
+    category: 'synovial_opbouw',
+    question: 'Welke structuur is nummer 3 (beperkt de bewegingsruimte) in dit synoviaal gewricht?',
+    imageUrl: '/images/flashcards/synoviaal_opbouw_1_12.png',
+    highlightNumber: 3,
+    correctAnswer: 'Omliggend botstuk',
+    acceptableAnswers: ['Omliggend botstuk', 'botstuk'],
+    options: ['Omliggend botstuk', 'Bursa', 'Ligament', 'Gewrichtskapsel'],
+    explanation: 'Nummer 3 is een omliggend botstuk dat de bewegingsruimte beperkt.',
+  },
+  {
+    id: 'lig-syn-4',
+    category: 'synovial_opbouw',
+    question: 'Welke structuur wordt aangeduid met nummer 4 (en nummer 9)?',
+    imageUrl: '/images/flashcards/synoviaal_opbouw_1_12.png',
+    highlightNumber: 4,
+    correctAnswer: 'Ligament',
+    acceptableAnswers: ['Ligament', 'Ligamentum', 'Gewrichtsband'],
+    options: ['Ligament', 'Pees', 'Peesschede', 'Gewrichtskapsel'],
+    explanation: 'Nummers 4 en 9 zijn ligamenten: bindweefselbanden die botstukken verbinden en stevigheid geven.',
+  },
+  {
+    id: 'lig-syn-5',
+    category: 'synovial_opbouw',
+    question: 'Welke structuur is nummer 5 (verbindt spierbuik met botstuk)?',
+    imageUrl: '/images/flashcards/synoviaal_opbouw_1_12.png',
+    highlightNumber: 5,
+    correctAnswer: 'Pees',
+    acceptableAnswers: ['Pees', 'Tendo'],
+    options: ['Pees', 'Peesschede', 'Ligament', 'Synoviaal membraan'],
+    explanation: 'Nummer 5 is de pees, die de spierbuik met het botstuk verbindt.',
+  },
+  {
+    id: 'lig-syn-6',
+    category: 'synovial_opbouw',
+    question: 'Welke ruimte / structuur is nummer 6 in het synoviaal gewricht?',
+    imageUrl: '/images/flashcards/synoviaal_opbouw_1_12.png',
+    highlightNumber: 6,
+    correctAnswer: 'Gewrichtsruimte met synovia',
+    acceptableAnswers: ['Gewrichtsruimte met synovia', 'Gewrichtsruimte', 'Gewrichtsholte', 'Synovia'],
+    options: ['Gewrichtsruimte met synovia', 'Synoviaal membraan', 'Gewrichtskraakbeen', 'Bursa'],
+    explanation: 'Nummer 6 is de gewrichtsruimte gevuld met synovia (gewrichtssmeer) voor soepel bewegen.',
+  },
+  {
+    id: 'lig-syn-7',
+    category: 'synovial_opbouw',
+    question: 'Welke structuur is nummer 7 (voorkomt beschadiging aan de pees door wrijving)?',
+    imageUrl: '/images/flashcards/synoviaal_opbouw_1_12.png',
+    highlightNumber: 7,
+    correctAnswer: 'Peesschede',
+    acceptableAnswers: ['Peesschede', 'Vagina tendinis'],
+    options: ['Peesschede', 'Pees', 'Bursa', 'Gewrichtskapsel'],
+    explanation: 'Nummer 7 is de peesschede (groene koker om de pees heen) die wrijving op de pees voorkomt.',
+  },
+  {
+    id: 'lig-syn-8',
+    category: 'synovial_opbouw',
+    question: 'Welke structuur is nummer 8 (fibreus bindweefsel rondom het gewricht)?',
+    imageUrl: '/images/flashcards/synoviaal_opbouw_1_12.png',
+    highlightNumber: 8,
+    correctAnswer: 'Gewrichtskapsel',
+    acceptableAnswers: ['Gewrichtskapsel', 'Kapsel', 'Capsula articularis'],
+    options: ['Gewrichtskapsel', 'Synoviaal membraan', 'Ligament', 'Peesschede'],
+    explanation: 'Nummer 8 is het fibreuze gewrichtskapsel dat stevigheid geeft aan het gewricht.',
+  },
+  {
+    id: 'lig-syn-10',
+    category: 'synovial_opbouw',
+    question: 'Welke structuur is nummer 10 (blauw laagje op kop en kom)?',
+    imageUrl: '/images/flashcards/synoviaal_opbouw_1_12.png',
+    highlightNumber: 10,
+    correctAnswer: 'Gewrichtskraakbeen (hyalien)',
+    acceptableAnswers: ['Gewrichtskraakbeen (hyalien)', 'Gewrichtskraakbeen', 'Hyalien kraakbeen', 'Kraakbeen'],
+    options: ['Gewrichtskraakbeen (hyalien)', 'Synoviaal membraan', 'Gewrichtsruimte met synovia', 'Gewrichtskapsel'],
+    explanation: 'Nummer 10 is het hyaliene gewrichtskraakbeen; het voorkomt directe bot-op-bot wrijving.',
+  },
+  {
+    id: 'lig-syn-11',
+    category: 'synovial_opbouw',
+    question: 'Welke structuur is nummer 11 en wat is haar functie?',
+    imageUrl: '/images/flashcards/synoviaal_opbouw_1_12.png',
+    highlightNumber: 11,
+    correctAnswer: 'Synoviaal membraan — produceert synovia',
+    acceptableAnswers: ['Synoviaal membraan', 'Synoviaal membraan — produceert synovia', 'Synoviale membraan'],
+    options: [
+      'Synoviaal membraan — produceert synovia',
+      'Gewrichtskapsel — fibreus bindweefsel voor stevigheid',
+      'Gewrichtskraakbeen — voorkomt wrijving',
+      'Bursa — voorkomt drukbelasting',
+    ],
+    explanation: 'Nummer 11 is het synoviaal membraan aan de binnenzijde van het kapsel; dit produceert synovia.',
+  },
+  {
+    id: 'lig-syn-12',
+    category: 'synovial_opbouw',
+    question: 'Welke structuur is nummer 12 en wat is de functie ervan?',
+    imageUrl: '/images/flashcards/synoviaal_opbouw_1_12.png',
+    highlightNumber: 12,
+    correctAnswer: 'Bursa (slijmbeurs) — voorkomt drukbelasting',
+    acceptableAnswers: ['Bursa', 'Bursa (slijmbeurs)', 'Slijmbeurs', 'Bursa (slijmbeurs) — voorkomt drukbelasting'],
+    options: [
+      'Bursa (slijmbeurs) — voorkomt drukbelasting',
+      'Peesschede — beschermt de pees tegen wrijving',
+      'Ligament — verbindt botstukken',
+      'Gewrichtsruimte met synovia — laat beweging soepel verlopen',
+    ],
+    explanation: 'Nummer 12 is een bursa (slijmbeurs) die drukbelasting in het gewricht voorkomt.',
+  },
+  {
+    id: 'lig-syn-diff',
+    category: 'synovial_opbouw',
+    question: 'Wat is het verschil tussen een pees (nr. 5) en een ligament (nr. 4 & 9)?',
+    imageUrl: '/images/flashcards/synoviaal_opbouw_1_12.png',
+    correctAnswer: 'Een pees verbindt spier met bot; een ligament verbindt bot met bot',
+    acceptableAnswers: [
+      'Een pees verbindt spier met bot; een ligament verbindt bot met bot',
+      'pees verbindt spier met bot, ligament verbindt bot met bot',
+    ],
+    options: [
+      'Een pees verbindt spier met bot; een ligament verbindt bot met bot',
+      'Een ligament verbindt spier met bot; een pees verbindt bot met bot',
+      'Een pees produceert synovia; een ligament voorkomt drukbelasting',
+      'Er is geen functioneel verschil; beide verbinden alleen botstukken',
+    ],
+    explanation: 'Een pees (nr. 5) verbindt een spierbuik met een botstuk; een ligament (nr. 4 & 9) verbindt botstukken onderling.',
+  },
+
+  // ======================== SYNOVIALE GEWRICHTSTYPEN (10 vragen) ========================
+  {
+    id: 'lig-typ-1',
+    category: 'synovial_typen',
+    question: 'Welk type synoviaal gewricht staat helemaal links op de bovenste rij (1 as; flexie/extensie)?',
+    imageUrl: '/images/flashcards/synoviaal_typen_boven.png',
+    correctAnswer: 'Art. ginglymus (scharniergewricht)',
+    acceptableAnswers: ['Art. ginglymus', 'ginglymus', 'scharniergewricht', 'Art. ginglymus (scharniergewricht)'],
+    options: [
+      'Art. ginglymus (scharniergewricht)',
+      'Art. trochoidea (rolgewricht)',
+      'Art. sellaris (zadelgewricht)',
+      'Art. ellipsoidea (ellipsvormig gewricht)',
+    ],
+    explanation: 'Links boven staat het scharniergewricht (art. ginglymus): 1 as, bewegingen flexie en extensie.',
+  },
+  {
+    id: 'lig-typ-2',
+    category: 'synovial_typen',
+    question: 'Welk type synoviaal gewricht staat in het midden op de bovenste rij (1 as; rotaties)?',
+    imageUrl: '/images/flashcards/synoviaal_typen_boven.png',
+    correctAnswer: 'Art. trochoidea (rolgewricht)',
+    acceptableAnswers: ['Art. trochoidea', 'trochoidea', 'rolgewricht', 'draaigewricht', 'Art. trochoidea (rolgewricht)'],
+    options: [
+      'Art. trochoidea (rolgewricht)',
+      'Art. ginglymus (scharniergewricht)',
+      'Art. sellaris (zadelgewricht)',
+      'Art. plana (vlakgewricht)',
+    ],
+    explanation: 'Midden boven staat het rolgewricht (art. trochoidea): 1 as, rotaties (bijv. art. radio-ulnaris proximalis/distalis).',
+  },
+  {
+    id: 'lig-typ-3',
+    category: 'synovial_typen',
+    question: 'Welk type synoviaal gewricht staat rechts op de bovenste rij (2 assen; bijv. SC-gewricht)?',
+    imageUrl: '/images/flashcards/synoviaal_typen_boven.png',
+    correctAnswer: 'Art. sellaris (zadelgewricht)',
+    acceptableAnswers: ['Art. sellaris', 'sellaris', 'zadelgewricht', 'Art. sellaris (zadelgewricht)'],
+    options: [
+      'Art. sellaris (zadelgewricht)',
+      'Art. spheroidea (bolgewricht)',
+      'Art. trochoidea (rolgewricht)',
+      'Art. plana (vlakgewricht)',
+    ],
+    explanation: 'Rechts boven staat het zadelgewricht (art. sellaris): 2 assen, flexie/extensie en abductie/adductie.',
+  },
+  {
+    id: 'lig-typ-4',
+    category: 'synovial_typen',
+    question: 'Welk type synoviaal gewricht staat links op de onderste rij (ovale kop in ovale kom)?',
+    imageUrl: '/images/flashcards/synoviaal_typen_onder.png',
+    correctAnswer: 'Art. ellipsoidea (ellipsvormig gewricht)',
+    acceptableAnswers: ['Art. ellipsoidea', 'ellipsoidea', 'ellipsvormig gewricht', 'ellipsoid gewricht', 'Art. ellipsoidea (ellipsvormig gewricht)'],
+    options: [
+      'Art. ellipsoidea (ellipsvormig gewricht)',
+      'Art. spheroidea (bolgewricht)',
+      'Art. plana (vlakgewricht)',
+      'Art. sellaris (zadelgewricht)',
+    ],
+    explanation: 'Links onder staat het ellipsvormig gewricht (art. ellipsoidea).',
+  },
+  {
+    id: 'lig-typ-5',
+    category: 'synovial_typen',
+    question: 'Welk type synoviaal gewricht staat in het midden op de onderste rij (3 assen; alle richtingen)?',
+    imageUrl: '/images/flashcards/synoviaal_typen_onder.png',
+    correctAnswer: 'Art. spheroidea (bolgewricht)',
+    acceptableAnswers: ['Art. spheroidea', 'spheroidea', 'bolgewricht', 'kogelgewricht', 'Art. spheroidea (bolgewricht)'],
+    options: [
+      'Art. spheroidea (bolgewricht)',
+      'Art. ellipsoidea (ellipsvormig gewricht)',
+      'Art. plana (vlakgewricht)',
+      'Art. ginglymus (scharniergewricht)',
+    ],
+    explanation: 'Midden onder staat het bolgewricht / kogelgewricht (art. spheroidea): 3 assen (o.a. art. coxae en art. humeri).',
+  },
+  {
+    id: 'lig-typ-6',
+    category: 'synovial_typen',
+    question: 'Welk type synoviaal gewricht staat rechts op de onderste rij (platte gewrichtsvlakken)?',
+    imageUrl: '/images/flashcards/synoviaal_typen_onder.png',
+    correctAnswer: 'Art. plana (vlakgewricht)',
+    acceptableAnswers: ['Art. plana', 'plana', 'vlakgewricht', 'vlak gewricht', 'Art. plana (vlakgewricht)'],
+    options: [
+      'Art. plana (vlakgewricht)',
+      'Art. trochoidea (rolgewricht)',
+      'Art. sellaris (zadelgewricht)',
+      'Art. ellipsoidea (ellipsvormig gewricht)',
+    ],
+    explanation: 'Rechts onder staat het vlakgewricht (art. plana), o.a. het AC-gewricht en de wervelgewrichten.',
+  },
+  {
+    id: 'lig-typ-ex-1',
+    category: 'synovial_typen',
+    question: 'Tot welk gewrichtstype behoort het schoudergewricht (art. humeri) en hoeveel assen heeft het?',
+    correctAnswer: 'Art. spheroidea (bolgewricht) — 3 assen',
+    acceptableAnswers: ['Art. spheroidea', 'bolgewricht', 'kogelgewricht', 'Art. spheroidea (bolgewricht) — 3 assen'],
+    options: [
+      'Art. spheroidea (bolgewricht) — 3 assen',
+      'Art. trocho-ginglymus — 2 assen',
+      'Art. sellaris (zadelgewricht) — 2 assen',
+      'Art. ginglymus (scharniergewricht) — 1 as',
+    ],
+    explanation: 'Zowel art. humeri als art. coxae zijn kogel-/bolgewrichten (art. spheroidea) met 3 assen.',
+  },
+  {
+    id: 'lig-typ-ex-2',
+    category: 'synovial_typen',
+    question: 'Tot welk samengesteld gewrichtstype behoren zowel art. genus (knie) als art. cubiti (elleboog)?',
+    correctAnswer: 'Art. trocho-ginglymus (draai-scharniergewricht) — 2 assen',
+    acceptableAnswers: [
+      'Art. trocho-ginglymus',
+      'trocho-ginglymus',
+      'trochoginglymus',
+      'draai-scharniergewricht',
+      'rol-scharniergewricht',
+    ],
+    options: [
+      'Art. trocho-ginglymus (draai-scharniergewricht) — 2 assen',
+      'Art. spheroidea (bolgewricht) — 3 assen',
+      'Art. plana (vlakgewricht) — 1 as',
+      'Art. sellaris (zadelgewricht) — 2 assen',
+    ],
+    explanation: 'Zowel art. genus als art. cubiti combineren scharnieren (flexie/extensie) en draaien (rotatie): art. trocho-ginglymus (2 assen).',
+  },
+];

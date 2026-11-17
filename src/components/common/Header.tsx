@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useMuscles } from '../../context/MuscleContext';
 import { BookOpen, GraduationCap, Edit3, ListChecks, Activity, Bone, Layers, HelpCircle } from 'lucide-react';
 import { useIsMobile } from '../../hooks/useIsMobile';
@@ -34,9 +34,77 @@ export const Header: React.FC = () => {
     }, 350);
   };
 
-  const handleHelpButtonClick = () => {
-    setIsHelpOpen(true);
+  // 3x klikken op '?' (Help-icoon of sneltoets) opent de verborgen Ligamenten & Synoviaal Gewricht tab
+  const helpTapCountRef = useRef(0);
+  const helpTapTimerRef = useRef<number | null>(null);
+
+  const openHiddenLigamentsTab = () => {
+    setIsHelpOpen(false);
+    setAppMode('ligaments');
   };
+
+  const handleHelpButtonClick = () => {
+    helpTapCountRef.current += 1;
+
+    if (helpTapTimerRef.current) {
+      window.clearTimeout(helpTapTimerRef.current);
+      helpTapTimerRef.current = null;
+    }
+
+    if (helpTapCountRef.current >= 3) {
+      helpTapCountRef.current = 0;
+      openHiddenLigamentsTab();
+      return;
+    }
+
+    helpTapTimerRef.current = window.setTimeout(() => {
+      if (helpTapCountRef.current > 0 && helpTapCountRef.current < 3) {
+        setIsHelpOpen(true);
+      }
+      helpTapCountRef.current = 0;
+      helpTapTimerRef.current = null;
+    }, 380);
+  };
+
+  // Ondersteun ook 3x op de '?' toets drukken op het toetsenbord (zolang gebruiker niet in een tekstveld typt)
+  const keyQuestionCountRef = useRef(0);
+  const keyQuestionTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)
+      ) {
+        return;
+      }
+      if (e.key === '?') {
+        keyQuestionCountRef.current += 1;
+        if (keyQuestionTimerRef.current) {
+          window.clearTimeout(keyQuestionTimerRef.current);
+          keyQuestionTimerRef.current = null;
+        }
+        if (keyQuestionCountRef.current >= 3) {
+          keyQuestionCountRef.current = 0;
+          setIsHelpOpen(false);
+          setAppMode('ligaments');
+          return;
+        }
+        keyQuestionTimerRef.current = window.setTimeout(() => {
+          keyQuestionCountRef.current = 0;
+          keyQuestionTimerRef.current = null;
+        }, 650);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      if (keyQuestionTimerRef.current) window.clearTimeout(keyQuestionTimerRef.current);
+      if (helpTapTimerRef.current) window.clearTimeout(helpTapTimerRef.current);
+      if (studyTapTimerRef.current) window.clearTimeout(studyTapTimerRef.current);
+    };
+  }, [setAppMode]);
 
   // Mobiele navigatie: Spieren, Botten, Bewegingen, Flashcards, Oefen, Test
   const mobileNavItems = [
@@ -209,7 +277,11 @@ export const Header: React.FC = () => {
       </header>
 
       {/* Interactief Hulpvenster */}
-      <HelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
+      <HelpModal
+        isOpen={isHelpOpen}
+        onClose={() => setIsHelpOpen(false)}
+        onSecretUnlock={openHiddenLigamentsTab}
+      />
     </>
   );
 };
