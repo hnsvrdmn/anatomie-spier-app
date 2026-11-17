@@ -183,7 +183,7 @@ export const LigamentsSynovialView: React.FC = () => {
             Ligamenten & Synoviaal Gewricht
           </h1>
           <p className="text-xs text-clinical-500">
-            Moduulboek & reader-overzicht (art. genus, art. pedis, opbouw 1–12 & typen)
+            Moduulboek & reader-overzicht (art. genus, art. pedis, synoviaal gewricht & vertebrae)
           </p>
         </div>
 
@@ -426,6 +426,7 @@ export const LigamentsSynovialView: React.FC = () => {
                   { id: 'pedis', label: 'Art. pedis' },
                   { id: 'synovial_opbouw', label: 'Opbouw (1–12)' },
                   { id: 'synovial_typen', label: 'Gewrichtstypen' },
+                  { id: 'vertebrae', label: 'Vertebrae (1–8)' },
                 ] as const
               ).map((cat) => (
                 <button
