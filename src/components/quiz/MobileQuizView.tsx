@@ -373,7 +373,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
             </div>
 
             {/* Rij 2: Partes knoppen voor Trapezius (altijd op een eigen rij, nooit overlap met navigator/zoom) */}
-            {muscle?.id === 'trapezius' && setActiveTrapeziusPart && (
+            {muscle?.id === 'trapezius' && type !== 'landmark' && setActiveTrapeziusPart && (
               <div className="flex items-center gap-1 bg-slate-950/80 backdrop-blur-md p-1 rounded-xl border border-slate-700/80 shadow-lg">
                 {(['descendens', 'transversa', 'ascendens'] as const).map((partKey) => {
                   const label =
@@ -440,7 +440,7 @@ export const MobileQuizView: React.FC<MobileQuizViewProps> = ({
               autoCenterMuscle={autoZoom && (shouldShowMuscle || !!jointFocusPoint || type === 'bone')}
               hideMuscleMarkers={!isEvaluated && isDrawingType}
               isFreeDrawMode={isFreeDrawMode}
-              activeTrapeziusPart={activeTrapeziusPart}
+              activeTrapeziusPart={type === 'landmark' ? undefined : activeTrapeziusPart}
             />
           );
         })()}

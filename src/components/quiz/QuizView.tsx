@@ -61,18 +61,50 @@ const cleanAttachmentText = (text?: string): string => {
     .trim();
 };
 
+// Canonicaliseer meerkeuze-opties zodat omgedraaide of anders gespelde equivalente antwoorden
+// (zoals "Adductie, Endorotatie" vs "Endorotatie, Adductie", of "Proximaal ventraal op humerus"
+// vs "proximaal ventraal op de humerus", of "Mediale voetrand" vs "mediale voetrand")
+// ALTIJD als identiek worden herkend en nooit samen als opties verschijnen.
+const getCanonicalOptionKey = (
+  text: string,
+  kind: 'muscle' | 'origin' | 'insertion' | 'function' | 'joint'
+): string => {
+  const normalized = text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\([^)]*\)/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (kind === 'function') {
+    const parts = normalized
+      .split(/[,;/+&]|\ben\b/)
+      .map((p) => p.trim())
+      .filter(Boolean)
+      .sort();
+    return Array.from(new Set(parts)).join('|');
+  }
+
+  if (kind === 'origin' || kind === 'insertion') {
+    return normalized
+      .replace(/\b(de|het|een|van|op|aan|via|ter|hoogte)\b/g, ' ')
+      .replace(/[^a-z0-9]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  return normalized.replace(/[^a-z0-9]+/g, ' ').trim();
+};
+
 // Selecteer afleiders bij voorkeur uit hetzelfde gewricht / dezelfde regio om de toets uitdagender te maken
-const getRelatedDistractorMuscles = (target: Muscle, pool: Muscle[], count = 3): Muscle[] => {
+const getRelatedDistractorMuscles = (target: Muscle, pool: Muscle[], count = pool.length): Muscle[] => {
   const targetJoints = target.jointCategories || [];
   const sameJointMuscles = pool.filter(
     (m) => m.id !== target.id && m.jointCategories && m.jointCategories.some((j) => targetJoints.includes(j))
   );
 
   const shuffledSameJoint = [...sameJointMuscles].sort(() => 0.5 - Math.random());
-  if (shuffledSameJoint.length >= count) {
-    return shuffledSameJoint.slice(0, count);
-  }
-
   const otherMuscles = pool.filter(
     (m) => m.id !== target.id && !shuffledSameJoint.some((sj) => sj.id === m.id)
   );
@@ -140,18 +172,6 @@ const SPECIFIC_OPEN_ORIGIN_LANDMARKS: Record<string, { display: string; acceptab
     display: 'Spina iliaca anterior inferior (SIAI)',
     acceptable: ['siai', 'spina iliaca anterior inferior', 'spina iliaca anterior inferior (siai)'],
   },
-  sartorius: {
-    display: 'Spina iliaca anterior superior (SIAS)',
-    acceptable: ['sias', 'spina iliaca anterior superior', 'spina iliaca anterior superior (sias)'],
-  },
-  tensor_fasciae_latae: {
-    display: 'Spina iliaca anterior superior (SIAS)',
-    acceptable: ['sias', 'spina iliaca anterior superior', 'spina iliaca anterior superior (sias)'],
-  },
-  gracilis: {
-    display: 'Os pubis',
-    acceptable: ['os pubis', 'schaambeen', 'onderste tak van het os pubis', 'ramus inferior ossis pubis'],
-  },
   semimembranosus: {
     display: 'Tuber ischiadicum',
     acceptable: ['tuber ischiadicum', 'zitbeenknobbel'],
@@ -172,35 +192,15 @@ const SPECIFIC_OPEN_ORIGIN_LANDMARKS: Record<string, { display: string; acceptab
 };
 
 const SPECIFIC_OPEN_INSERTION_LANDMARKS: Record<string, { display: string; acceptable: string[] }> = {
-  deltoideus: {
-    display: 'Tuberositas deltoidea',
-    acceptable: ['tuberositas deltoidea', 'tuberositas deltoidea humeri'],
-  },
   pectoralis_major: {
-    display: 'Crista tuberculi majoris (tuberculum majus)',
+    display: 'Tuberculum majus',
     acceptable: ['tuberculum majus', 'crista tuberculi majoris', 'tuberculum majus humeri'],
   },
   teres_minor: {
     display: 'Tuberculum majus',
     acceptable: ['tuberculum majus', 'tuberculum majus humeri'],
   },
-  subscapularis: {
-    display: 'Tuberculum minus',
-    acceptable: ['tuberculum minus', 'tuberculum minus humeri'],
-  },
-  supraspinatus: {
-    display: 'Tuberculum majus',
-    acceptable: ['tuberculum majus', 'tuberculum majus humeri'],
-  },
-  infraspinatus: {
-    display: 'Tuberculum majus',
-    acceptable: ['tuberculum majus', 'tuberculum majus humeri'],
-  },
   rhomboidei: {
-    display: 'Margo medialis scapula',
-    acceptable: ['margo medialis scapula', 'margo medialis scapulae', 'margo medialis'],
-  },
-  serratus_anterior: {
     display: 'Margo medialis scapula',
     acceptable: ['margo medialis scapula', 'margo medialis scapulae', 'margo medialis'],
   },
@@ -217,24 +217,12 @@ const SPECIFIC_OPEN_INSERTION_LANDMARKS: Record<string, { display: string; accep
     acceptable: ['olecranon', 'olecranon ulnae'],
   },
   rectus_abdominis: {
-    display: 'Os pubis (symphysis pubica)',
+    display: 'Os pubis',
     acceptable: ['os pubis', 'symphysis pubica', 'crista pubica', 'schaambeen'],
   },
   iliopsoas: {
     display: 'Trochanter minor',
     acceptable: ['trochanter minor', 'trochanter minor femoris'],
-  },
-  gluteus_medius: {
-    display: 'Trochanter major',
-    acceptable: ['trochanter major', 'trochanter major femoris'],
-  },
-  gluteus_minimus: {
-    display: 'Trochanter major',
-    acceptable: ['trochanter major', 'trochanter major femoris'],
-  },
-  piriformis: {
-    display: 'Trochanter major',
-    acceptable: ['trochanter major', 'trochanter major femoris'],
   },
   rectus_femoris: {
     display: 'Tuberositas tibiae',
@@ -261,16 +249,8 @@ const SPECIFIC_OPEN_INSERTION_LANDMARKS: Record<string, { display: string; accep
     acceptable: ['condylus medialis tibiae', 'mediale tibiacondyl'],
   },
   semitendinosus: {
-    display: 'Condylus medialis tibiae (pes anserinus)',
-    acceptable: ['condylus medialis tibiae', 'pes anserinus', 'tuberositas tibiae'],
-  },
-  sartorius: {
-    display: 'Condylus medialis tibiae (pes anserinus)',
-    acceptable: ['condylus medialis tibiae', 'pes anserinus', 'mediale zijde tuberositas tibiae'],
-  },
-  gracilis: {
-    display: 'Condylus medialis tibiae (pes anserinus)',
-    acceptable: ['condylus medialis tibiae', 'pes anserinus', 'mediale zijde tuberositas tibiae'],
+    display: 'Condylus medialis tibiae',
+    acceptable: ['condylus medialis tibiae', 'pes anserinus', 'mediale tibiacondyl'],
   },
   gastrocnemius: {
     display: 'Tuber calcanei (via achillespees)',
@@ -281,6 +261,46 @@ const SPECIFIC_OPEN_INSERTION_LANDMARKS: Record<string, { display: string; accep
     acceptable: ['tuber calcanei', 'via achillespees aan tuber calcanei', 'calcaneus', 'achillespees'],
   },
 };
+
+// Spieren waarvan de aanhechting niet als duidelijke punt/zone kan worden aangewezen in de tekentoets
+const EXCLUDED_FROM_ATTACHMENT_PLACEMENT = new Set<string>(['erector_spinae']);
+
+// Enkel specifieke, eenduidige anatomische landmarks voor de vraagsoort "Vind aanhechtingspunt" ('landmark').
+// Geen vage beschrijvingen ("proximaal lateraal aan..."), geen m. erector spinae, geen verkeerd aanzicht (bv. deltoideus/spina scapula op ventraal),
+// en geen meerledige wervel-/ribreeksen. Gebruik '—' i.p.v. haakjes voor SIAS/SIAI/SIPS zodat cleanAttachmentText niets wegstript.
+const SPECIFIC_PLACEMENT_LANDMARKS: Array<{
+  muscleId: string;
+  landmarkType: 'origin' | 'insertion';
+  targetLandmarkIndex: number;
+  displayText: string;
+}> = [
+  { muscleId: 'pectoralis_major', landmarkType: 'insertion', targetLandmarkIndex: 0, displayText: 'Tuberculum majus' },
+  { muscleId: 'teres_major', landmarkType: 'origin', targetLandmarkIndex: 0, displayText: 'Angulus inferior scapula' },
+  { muscleId: 'teres_minor', landmarkType: 'origin', targetLandmarkIndex: 0, displayText: 'Margo lateralis scapula' },
+  { muscleId: 'trapezius', landmarkType: 'insertion', targetLandmarkIndex: 1, displayText: 'Acromion' },
+  { muscleId: 'trapezius', landmarkType: 'insertion', targetLandmarkIndex: 2, displayText: 'Spina scapula' },
+  { muscleId: 'rhomboidei', landmarkType: 'insertion', targetLandmarkIndex: 0, displayText: 'Margo medialis scapula' },
+  { muscleId: 'biceps_brachii', landmarkType: 'origin', targetLandmarkIndex: 0, displayText: 'Processus coracoideus' },
+  { muscleId: 'biceps_brachii', landmarkType: 'insertion', targetLandmarkIndex: 0, displayText: 'Tuberositas radii' },
+  { muscleId: 'brachialis', landmarkType: 'insertion', targetLandmarkIndex: 0, displayText: 'Tuberositas ulnae' },
+  { muscleId: 'triceps_brachii', landmarkType: 'insertion', targetLandmarkIndex: 0, displayText: 'Olecranon' },
+  { muscleId: 'rectus_abdominis', landmarkType: 'origin', targetLandmarkIndex: 1, displayText: 'Processus xiphoideus' },
+  { muscleId: 'rectus_abdominis', landmarkType: 'insertion', targetLandmarkIndex: 0, displayText: 'Os pubis' },
+  { muscleId: 'obliquus_internus_abdominis', landmarkType: 'origin', targetLandmarkIndex: 0, displayText: 'Crista iliaca' },
+  { muscleId: 'obliquus_internus_abdominis', landmarkType: 'origin', targetLandmarkIndex: 1, displayText: 'SIAS — Spina iliaca anterior superior' },
+  { muscleId: 'iliopsoas', landmarkType: 'insertion', targetLandmarkIndex: 0, displayText: 'Trochanter minor' },
+  { muscleId: 'rectus_femoris', landmarkType: 'origin', targetLandmarkIndex: 0, displayText: 'SIAI — Spina iliaca anterior inferior' },
+  { muscleId: 'rectus_femoris', landmarkType: 'insertion', targetLandmarkIndex: 0, displayText: 'Tuberositas tibiae' },
+  { muscleId: 'biceps_femoris', landmarkType: 'origin', targetLandmarkIndex: 0, displayText: 'Tuber ischiadicum' },
+  { muscleId: 'biceps_femoris', landmarkType: 'insertion', targetLandmarkIndex: 0, displayText: 'Caput fibulae' },
+  { muscleId: 'semimembranosus', landmarkType: 'insertion', targetLandmarkIndex: 0, displayText: 'Condylus medialis tibiae' },
+  { muscleId: 'gluteus_maximus', landmarkType: 'origin', targetLandmarkIndex: 1, displayText: 'SIPS — Spina iliaca posterior superior' },
+  { muscleId: 'gluteus_maximus', landmarkType: 'origin', targetLandmarkIndex: 2, displayText: 'Os sacrum' },
+  { muscleId: 'gluteus_maximus', landmarkType: 'origin', targetLandmarkIndex: 3, displayText: 'Os coccygis' },
+  { muscleId: 'gastrocnemius', landmarkType: 'origin', targetLandmarkIndex: 0, displayText: 'Condylus lateralis femoris' },
+  { muscleId: 'gastrocnemius', landmarkType: 'origin', targetLandmarkIndex: 1, displayText: 'Condylus medialis femoris' },
+  { muscleId: 'gastrocnemius', landmarkType: 'insertion', targetLandmarkIndex: 0, displayText: 'Tuber calcanei' },
+];
 
 const BUGFIX_TEST_SCENARIOS: Array<{
   label: string;
@@ -302,17 +322,20 @@ const BUGFIX_TEST_SCENARIOS: Array<{
     type: 'full',
   },
   {
-    label: '3. m. erector spinae — Landmark insertie: "alle wervels en os sacrum"',
-    muscleId: 'erector_spinae',
+    label: '3. mm. rhomboidei — Specifiek landmark insertie: Margo medialis scapula',
+    muscleId: 'rhomboidei',
     type: 'landmark',
     landmarkType: 'insertion',
-    landmarkText: 'alle wervels en os sacrum',
+    landmarkText: 'Margo medialis scapula',
     targetLandmarkIndex: 0,
   },
   {
-    label: '4. m. erector spinae — Origo & Insertie (gehele wervelkolom + sacrum)',
-    muscleId: 'erector_spinae',
-    type: 'full',
+    label: '4. m. trapezius — Specifiek landmark insertie: Acromion',
+    muscleId: 'trapezius',
+    type: 'landmark',
+    landmarkType: 'insertion',
+    landmarkText: 'Acromion',
+    targetLandmarkIndex: 1,
   },
   {
     label: '5. m. trapezius — Origo & Insertie (3 partes: Descendens, Transversa, Ascendens)',
@@ -550,6 +573,7 @@ export const QuizView: React.FC = () => {
   const unaskedMuscleIdsRef = useRef<string[]>([]);
   const unaskedBoneMarkerKeysRef = useRef<string[]>([]);
   const unaskedJointIdsRef = useRef<string[]>([]);
+  const unaskedLandmarkIdxRef = useRef<number[]>([]);
 
   // Geschiedenis van geplaatste punten voor ongedaan maken (Undo)
   const pointHistoryRef = useRef<Array<'origin' | 'insertion'>>([]);
@@ -687,7 +711,7 @@ export const QuizView: React.FC = () => {
   }, [requireAllVertebrae]);
 
   useEffect(() => {
-    if (currentQuestion?.muscle?.id !== 'trapezius' || isEvaluated) {
+    if (currentQuestion?.muscle?.id !== 'trapezius' || currentQuestion?.type === 'landmark' || isEvaluated) {
       setHoppingButton(null);
       return;
     }
@@ -807,12 +831,12 @@ export const QuizView: React.FC = () => {
     return getJointCategory(selectedJointId) || JOINT_CATEGORIES[0];
   }, [selectedJointId, cleanMuscles]);
 
-  // Spieren behorend tot het actieve gewricht (met optionele shuffle)
+  // Spieren behorend tot het actieve gewricht (met optionele shuffle; sluit niet-plaatsbare spieren zoals erector_spinae uit)
   const jointMuscles = useMemo(() => {
     if (!activeJointCategory) return [];
     const base = activeJointCategory.muscleIds
       .map((id) => cleanMuscles.find((m) => m.id === id))
-      .filter((m): m is Muscle => m !== undefined && !isForbiddenMuscle(m));
+      .filter((m): m is Muscle => m !== undefined && !isForbiddenMuscle(m) && !EXCLUDED_FROM_ATTACHMENT_PLACEMENT.has(m.id));
 
     if (isShuffled || selectedJointId === 'all') {
       // Shuffled volgorde gebaseerd op Fisher-Yates shuffle
@@ -1059,6 +1083,24 @@ export const QuizView: React.FC = () => {
     return JOINT_QUIZ_ITEMS.find((item) => item.id === nextId) || JOINT_QUIZ_ITEMS[0];
   }, []);
 
+  // Haal het volgende specifieke aanhechtingspunt op via sampling without replacement
+  const getNextSpecificLandmark = useCallback(() => {
+    const validEntries = SPECIFIC_PLACEMENT_LANDMARKS.filter((entry) =>
+      cleanMuscles.some((m) => m.id === entry.muscleId)
+    );
+    if (validEntries.length === 0) return null;
+    if (unaskedLandmarkIdxRef.current.length === 0) {
+      const indices = validEntries.map((_, i) => i);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+      unaskedLandmarkIdxRef.current = indices;
+    }
+    const idx = unaskedLandmarkIdxRef.current.shift()!;
+    return validEntries[idx] || validEntries[0];
+  }, [cleanMuscles]);
+
   // Laad een specifiek scenario uit de 12 gefixte probleemvragen
   const loadBugfixScenario = useCallback((scenarioIdx: number) => {
     if (cleanMuscles.length === 0) return;
@@ -1289,6 +1331,14 @@ export const QuizView: React.FC = () => {
       type = targetType;
     }
 
+    // Sluit m. erector spinae (en eventueel andere uitgesloten spieren) uit van intekenvragen (origo/insertie plaatsen)
+    if ((type === 'full' || type === 'origins' || type === 'insertions') && EXCLUDED_FROM_ATTACHMENT_PLACEMENT.has(randMuscle.id)) {
+      const placeableMuscles = cleanMuscles.filter((m) => !EXCLUDED_FROM_ATTACHMENT_PLACEMENT.has(m.id));
+      if (placeableMuscles.length > 0) {
+        randMuscle = placeableMuscles[Math.floor(Math.random() * placeableMuscles.length)];
+      }
+    }
+
     let options: Muscle[] = [];
     let mcKind: 'muscle' | 'origin' | 'insertion' | 'function' | 'joint' | undefined;
     let mcSubtype: 'origin' | 'insertion' | undefined;
@@ -1301,63 +1351,48 @@ export const QuizView: React.FC = () => {
     if (type === 'multiple_choice') {
       const kinds: ('muscle' | 'origin' | 'insertion' | 'function' | 'joint')[] = ['muscle', 'origin', 'insertion', 'function', 'joint'];
       mcKind = kinds[Math.floor(Math.random() * kinds.length)];
-      const relatedDistractors = getRelatedDistractorMuscles(randMuscle, cleanMuscles, 3);
 
-      if (mcKind === 'muscle') {
-        correctMcText = cleanMuscleName(randMuscle.name);
-        const distractorNames = relatedDistractors.map((m) => cleanMuscleName(m.name));
-        const uniqueOthers = Array.from(new Set(distractorNames.filter((t) => t !== correctMcText)));
-        while (uniqueOthers.length < 3) {
-          const fallback = cleanMuscles[Math.floor(Math.random() * cleanMuscles.length)];
-          const cleanName = cleanMuscleName(fallback.name);
-          if (cleanName !== correctMcText && !uniqueOthers.includes(cleanName)) {
-            uniqueOthers.push(cleanName);
-          }
-        }
-        mcTextOptions = [correctMcText, ...uniqueOthers.slice(0, 3)].sort(() => 0.5 - Math.random());
-      } else if (mcKind === 'origin') {
-        mcSubtype = 'origin';
-        correctMcText = cleanAttachmentText(randMuscle.originText);
-        const distractorTexts = relatedDistractors.map((m) => cleanAttachmentText(m.originText));
-        const uniqueOthers = Array.from(new Set(distractorTexts.filter((t) => Boolean(t && t.trim() !== '' && t !== correctMcText))));
-        while (uniqueOthers.length < 3) {
-          const fallback = cleanMuscles[Math.floor(Math.random() * cleanMuscles.length)];
-          const cleaned = cleanAttachmentText(fallback.originText);
-          if (cleaned && cleaned !== correctMcText && !uniqueOthers.includes(cleaned)) {
-            uniqueOthers.push(cleaned);
-          }
-        }
-        mcTextOptions = [correctMcText, ...uniqueOthers.slice(0, 3)].sort(() => 0.5 - Math.random());
-      } else if (mcKind === 'insertion') {
-        mcSubtype = 'insertion';
-        correctMcText = cleanAttachmentText(randMuscle.insertionText);
-        const distractorTexts = relatedDistractors.map((m) => cleanAttachmentText(m.insertionText));
-        const uniqueOthers = Array.from(new Set(distractorTexts.filter((t) => Boolean(t && t.trim() !== '' && t !== correctMcText))));
-        while (uniqueOthers.length < 3) {
-          const fallback = cleanMuscles[Math.floor(Math.random() * cleanMuscles.length)];
-          const cleaned = cleanAttachmentText(fallback.insertionText);
-          if (cleaned && cleaned !== correctMcText && !uniqueOthers.includes(cleaned)) {
-            uniqueOthers.push(cleaned);
-          }
-        }
-        mcTextOptions = [correctMcText, ...uniqueOthers.slice(0, 3)].sort(() => 0.5 - Math.random());
-      } else if (mcKind === 'joint') {
+      // Voor uitgesloten spieren (zoals m. erector spinae) geen MC-vragen over specifieke origo/insertie stellen
+      if ((mcKind === 'origin' || mcKind === 'insertion') && EXCLUDED_FROM_ATTACHMENT_PLACEMENT.has(randMuscle.id)) {
+        mcKind = Math.random() < 0.5 ? 'muscle' : 'function';
+      }
+
+      if (mcKind === 'joint') {
         jointQuizItem = getRandomJointQuestion();
         correctMcText = jointQuizItem.correctAnswer;
         mcTextOptions = getJointMCOptions(jointQuizItem);
       } else {
-        // 'function': zuivere bewegingen zonder 'art.' en zonder spoilers tussen haakjes
-        correctMcText = cleanFunctionText(randMuscle.id, randMuscle.functionText);
-        const distractorTexts = relatedDistractors.map((m) => cleanFunctionText(m.id, m.functionText));
-        const uniqueOthers = Array.from(new Set(distractorTexts.filter((t) => Boolean(t && t.trim() !== '' && t !== correctMcText))));
-        while (uniqueOthers.length < 3) {
-          const fallback = cleanMuscles[Math.floor(Math.random() * cleanMuscles.length)];
-          const fText = cleanFunctionText(fallback.id, fallback.functionText);
-          if (fText && fText !== correctMcText && !uniqueOthers.includes(fText)) {
-            uniqueOthers.push(fText);
-          }
+        const extractMcText = (m: Muscle, kind: 'muscle' | 'origin' | 'insertion' | 'function'): string => {
+          if (kind === 'muscle') return cleanMuscleName(m.name);
+          if (kind === 'origin') return cleanAttachmentText(m.originText);
+          if (kind === 'insertion') return cleanAttachmentText(m.insertionText);
+          return cleanFunctionText(m.id, m.functionText);
+        };
+
+        if (mcKind === 'origin') mcSubtype = 'origin';
+        else if (mcKind === 'insertion') mcSubtype = 'insertion';
+
+        correctMcText = extractMcText(randMuscle, mcKind);
+        const orderedCandidates = getRelatedDistractorMuscles(randMuscle, cleanMuscles, cleanMuscles.length);
+        const seenKeys = new Set<string>([getCanonicalOptionKey(correctMcText, mcKind)]);
+        const uniqueOthers: string[] = [];
+
+        for (const cand of orderedCandidates) {
+          if (uniqueOthers.length >= 3) break;
+          const candidateText = extractMcText(cand, mcKind);
+          if (!candidateText || candidateText.trim() === '') continue;
+          const canonicalKey = getCanonicalOptionKey(candidateText, mcKind);
+          if (!canonicalKey || seenKeys.has(canonicalKey)) continue;
+          seenKeys.add(canonicalKey);
+          uniqueOthers.push(candidateText);
         }
-        mcTextOptions = [correctMcText, ...uniqueOthers.slice(0, 3)].sort(() => 0.5 - Math.random());
+
+        const rawOptions = [correctMcText, ...uniqueOthers.slice(0, 3)];
+        for (let i = rawOptions.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [rawOptions[i], rawOptions[j]] = [rawOptions[j], rawOptions[i]];
+        }
+        mcTextOptions = rawOptions;
       }
     }
 
@@ -1426,24 +1461,17 @@ export const QuizView: React.FC = () => {
     let targetLandmarkIndex: number | undefined;
 
     if (type === 'landmark') {
-      landmarkType = Math.random() < 0.5 ? 'origin' : 'insertion';
-      const pts = (randMuscle.visuals.right?.[landmarkType === 'origin' ? 'origins' : 'insertions'] ||
-                   randMuscle.visuals.left?.[landmarkType === 'origin' ? 'origins' : 'insertions'] || []);
-      if (pts.length > 0) {
-        // Kies eerlijk uit unieke anatomische aanhechtingsnamen
-        const uniqueIndices: number[] = [];
-        const seenNames = new Set<string>();
-        pts.forEach((p, idx) => {
-          const key = (p.name || '').trim().toLowerCase() || `__idx_${idx}`;
-          if (!seenNames.has(key)) {
-            seenNames.add(key);
-            uniqueIndices.push(idx);
-          }
-        });
-        targetLandmarkIndex = uniqueIndices[Math.floor(Math.random() * uniqueIndices.length)];
-        const chosen = pts[targetLandmarkIndex];
-        landmarkText = chosen.name || (landmarkType === 'origin' ? randMuscle.originText : randMuscle.insertionText);
+      const chosenLandmark = getNextSpecificLandmark();
+      if (chosenLandmark) {
+        const landmarkMuscle = cleanMuscles.find((m) => m.id === chosenLandmark.muscleId);
+        if (landmarkMuscle) {
+          randMuscle = landmarkMuscle;
+        }
+        landmarkType = chosenLandmark.landmarkType;
+        targetLandmarkIndex = chosenLandmark.targetLandmarkIndex;
+        landmarkText = chosenLandmark.displayText;
       } else {
+        landmarkType = Math.random() < 0.5 ? 'origin' : 'insertion';
         targetLandmarkIndex = 0;
         landmarkText = landmarkType === 'origin' ? randMuscle.originText : randMuscle.insertionText;
       }
@@ -1512,7 +1540,7 @@ export const QuizView: React.FC = () => {
         setCurrentView(randMuscle.view);
       }
     }
-  }, [cleanMuscles, freeQuizType, getMuscleFunctionDescription, setCurrentView, autoRotateView, bugfixQuestionIndex, loadBugfixScenario]);
+  }, [cleanMuscles, freeQuizType, getMuscleFunctionDescription, getNextSpecificLandmark, setCurrentView, autoRotateView, bugfixQuestionIndex, loadBugfixScenario]);
 
   // Initialisatie effect
   useEffect(() => {
@@ -1722,14 +1750,20 @@ export const QuizView: React.FC = () => {
         let targetLines = vis.attachmentLines || [];
         if (currentQuestion.type === 'landmark') {
           const chosenPt = targetOrigins[currentQuestion.targetLandmarkIndex ?? 0] || targetOrigins[0];
-          const askedKey = (currentQuestion.landmarkText || chosenPt?.name || '').trim().toLowerCase();
-          targetPts = askedKey
-            ? targetOrigins.filter((p) => (p.name || '').trim().toLowerCase() === askedKey)
+          const rawChosenKey = (chosenPt?.name || '').trim().toLowerCase();
+          const baseChosenKey = cleanAttachmentText(chosenPt?.name || currentQuestion.landmarkText || '').trim().toLowerCase();
+          targetPts = baseChosenKey
+            ? targetOrigins.filter((p) => {
+                const rawP = (p.name || '').trim().toLowerCase();
+                return rawP === rawChosenKey || cleanAttachmentText(p.name || '').trim().toLowerCase() === baseChosenKey;
+              })
             : [chosenPt].filter(Boolean);
           if (targetPts.length === 0 && chosenPt) targetPts = [chosenPt];
-          targetLines = (vis.attachmentLines || []).filter(
-            (l) => l.type === 'origin' && (l.name || '').trim().toLowerCase() === askedKey
-          );
+          targetLines = (vis.attachmentLines || []).filter((l) => {
+            if (l.type !== 'origin') return false;
+            const rawL = (l.name || '').trim().toLowerCase();
+            return rawL === rawChosenKey || (baseChosenKey !== '' && cleanAttachmentText(l.name || '').trim().toLowerCase() === baseChosenKey);
+          });
         }
         const res = evaluatePointSet(validOrigins, targetPts, 'origin', toleranceValue, targetLines, requireAllVertebrae);
         sideMatches = res.matches;
@@ -1742,14 +1776,20 @@ export const QuizView: React.FC = () => {
         let targetLines = vis.attachmentLines || [];
         if (currentQuestion.type === 'landmark') {
           const chosenPt = targetInsertions[currentQuestion.targetLandmarkIndex ?? 0] || targetInsertions[0];
-          const askedKey = (currentQuestion.landmarkText || chosenPt?.name || '').trim().toLowerCase();
-          targetPts = askedKey
-            ? targetInsertions.filter((p) => (p.name || '').trim().toLowerCase() === askedKey)
+          const rawChosenKey = (chosenPt?.name || '').trim().toLowerCase();
+          const baseChosenKey = cleanAttachmentText(chosenPt?.name || currentQuestion.landmarkText || '').trim().toLowerCase();
+          targetPts = baseChosenKey
+            ? targetInsertions.filter((p) => {
+                const rawP = (p.name || '').trim().toLowerCase();
+                return rawP === rawChosenKey || cleanAttachmentText(p.name || '').trim().toLowerCase() === baseChosenKey;
+              })
             : [chosenPt].filter(Boolean);
           if (targetPts.length === 0 && chosenPt) targetPts = [chosenPt];
-          targetLines = (vis.attachmentLines || []).filter(
-            (l) => l.type === 'insertion' && (l.name || '').trim().toLowerCase() === askedKey
-          );
+          targetLines = (vis.attachmentLines || []).filter((l) => {
+            if (l.type !== 'insertion') return false;
+            const rawL = (l.name || '').trim().toLowerCase();
+            return rawL === rawChosenKey || (baseChosenKey !== '' && cleanAttachmentText(l.name || '').trim().toLowerCase() === baseChosenKey);
+          });
         }
         const res = evaluatePointSet(validInsertions, targetPts, 'insertion', toleranceValue, targetLines, requireAllVertebrae);
         sideMatches = res.matches;
@@ -1923,7 +1963,7 @@ export const QuizView: React.FC = () => {
 
     // In Vrije Intekenmodus (standaard potloodmodus): plaats punten met één rustige kleur en verdeel automatisch op de achtergrond
     if (isFreeDrawMode) {
-      const isTrapezius = currentQuestion?.muscle?.id === 'trapezius';
+      const isTrapezius = currentQuestion?.muscle?.id === 'trapezius' && currentQuestion?.type !== 'landmark';
       const pointWithPart: Point2D = isTrapezius
         ? {
             ...point,
@@ -1956,7 +1996,7 @@ export const QuizView: React.FC = () => {
     let nextOrigins = userOrigins;
     let nextInsertions = userInsertions;
 
-    const isTrapezius = currentQuestion?.muscle?.id === 'trapezius';
+    const isTrapezius = currentQuestion?.muscle?.id === 'trapezius' && currentQuestion?.type !== 'landmark';
     const pointWithPart: Point2D = isTrapezius
       ? {
           ...point,
@@ -1974,7 +2014,7 @@ export const QuizView: React.FC = () => {
       setUserOrigins(nextOrigins);
       pointHistoryRef.current.push('origin');
     } else {
-      const isTrapeziusIns = currentQuestion?.muscle?.id === 'trapezius';
+      const isTrapeziusIns = currentQuestion?.muscle?.id === 'trapezius' && currentQuestion?.type !== 'landmark';
       const insWithPart: Point2D = isTrapeziusIns
         ? {
             ...point,
@@ -2482,10 +2522,10 @@ export const QuizView: React.FC = () => {
               )}
 
               {/* Regel 3: Bij de m. trapezius de pars tabs op een eigen regel eronder zodat ze nooit overlappen met de zoom-navigator */}
-              {muscle?.id === 'trapezius' && !isEvaluated && (
+              {muscle?.id === 'trapezius' && type !== 'landmark' && !isEvaluated && (
                 <div
                   className={`flex items-center gap-1 bg-white/95 backdrop-blur-xs p-1 rounded-xl border border-slate-200 shadow-md w-fit ${
-                    (isFreeDrawMode || type === 'landmark') && userOrigins.length === 0 && userInsertions.length === 0
+                    isFreeDrawMode && userOrigins.length === 0 && userInsertions.length === 0
                       ? 'mt-10'
                       : ''
                   }`}
@@ -2562,7 +2602,7 @@ export const QuizView: React.FC = () => {
                     autoCenterMuscle={autoZoom && (shouldShowMuscle || (jointFocusPoint?.view === 'ventral') || type === 'bone')}
                     hideMuscleMarkers={hideMuscleMarkers}
                     isFreeDrawMode={isFreeDrawMode}
-                    activeTrapeziusPart={activeTrapeziusPart}
+                    activeTrapeziusPart={type === 'landmark' ? undefined : activeTrapeziusPart}
                   />
                 </div>
 
@@ -2589,7 +2629,7 @@ export const QuizView: React.FC = () => {
                     autoCenterMuscle={autoZoom && (shouldShowMuscle || (jointFocusPoint?.view === 'dorsal') || type === 'bone')}
                     hideMuscleMarkers={hideMuscleMarkers}
                     isFreeDrawMode={isFreeDrawMode}
-                    activeTrapeziusPart={activeTrapeziusPart}
+                    activeTrapeziusPart={type === 'landmark' ? undefined : activeTrapeziusPart}
                   />
                 </div>
               </div>
@@ -2611,7 +2651,7 @@ export const QuizView: React.FC = () => {
                 autoCenterMuscle={autoZoom && (shouldShowMuscle || !!jointFocusPoint || type === 'bone')}
                 hideMuscleMarkers={hideMuscleMarkers}
                 isFreeDrawMode={isFreeDrawMode}
-                activeTrapeziusPart={activeTrapeziusPart}
+                activeTrapeziusPart={type === 'landmark' ? undefined : activeTrapeziusPart}
               />
             );
           })()}
