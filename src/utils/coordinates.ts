@@ -368,13 +368,13 @@ export function getDistinctTargets(
     const basePtName = getBaseAttachmentName(rawName);
     const matchedLinesForPt = rawName
       ? matchingLines.filter((l) => {
-        const lName = (l.name || '').trim().toLowerCase();
-        const baseLName = getBaseAttachmentName(l.name);
-        return (
-          lName === rawName.toLowerCase() ||
-          (basePtName.length > 0 && baseLName === basePtName)
-        );
-      })
+          const lName = (l.name || '').trim().toLowerCase();
+          const baseLName = getBaseAttachmentName(l.name);
+          return (
+            lName === rawName.toLowerCase() ||
+            (basePtName.length > 0 && baseLName === basePtName)
+          );
+        })
       : [];
     const matchedLine = matchedLinesForPt[0];
     const groupingKey = getAttachmentGroupingKey(pt, matchedLine?.name);
@@ -768,10 +768,10 @@ export function evaluatePointSet(
       const expectedCount = partKey === 'descendens'
         ? 5
         : partKey === 'transversa'
-          ? 3
-          : partKey === 'ascendens'
-            ? 7
-            : Math.max(2, Math.round(span / 0.024));
+        ? 3
+        : partKey === 'ascendens'
+        ? 7
+        : Math.max(2, Math.round(span / 0.024));
       if (matchedPts.length < expectedCount) {
         vertebraeConditionMet = false;
         satisfiedZones.delete(t.zoneId || t.key);
@@ -968,49 +968,6 @@ export function getMuscleConnections(origins: Point2D[], insertions: Point2D[]):
     return connections;
   }
 
-  // Anatomische koppeling voor mm. adductor:
-  // - 1-op-1 koppeling per adductor-kop (brevis, longus, magnus) zodat de 3 spierlijnen als waaier lopen en nooit kruisen
-  const adductorParts = ['adductor brevis', 'adductor longus', 'adductor magnus'] as const;
-  const hasNamedAdductorParts =
-    adductorParts.some((part) => origins.some((o) => (o.name || '').toLowerCase().includes(part))) &&
-    adductorParts.some((part) => insertions.some((i) => (i.name || '').toLowerCase().includes(part)));
-
-  if (hasNamedAdductorParts) {
-    const connections: MuscleConnection[] = [];
-    for (const part of adductorParts) {
-      const oIdx = origins.findIndex((o) => (o.name || '').toLowerCase().includes(part));
-      const iIdx = insertions.findIndex((i) => (i.name || '').toLowerCase().includes(part));
-      if (oIdx >= 0 && iIdx >= 0) {
-        connections.push({ orig: origins[oIdx], ins: insertions[iIdx], oIdx, iIdx });
-      }
-    }
-    if (connections.length > 0) return connections;
-  }
-
-  const hasAdductorOrigins =
-    origins.some((o) => (o.name || '').toLowerCase().includes('os pubis')) &&
-    origins.some((o) => (o.name || '').toLowerCase().includes('os ischii'));
-  const hasAdductorInsertions =
-    insertions.some((i) => (i.name || '').toLowerCase().includes('corpus femoris')) &&
-    insertions.some((i) => (i.name || '').toLowerCase().includes('condylus medialis'));
-
-  if (hasAdductorOrigins && hasAdductorInsertions) {
-    const connections: MuscleConnection[] = [];
-    const pubisIdx = origins.findIndex((o) => (o.name || '').toLowerCase().includes('os pubis'));
-    const ischiiIdx = origins.findIndex((o) => (o.name || '').toLowerCase().includes('os ischii'));
-
-    insertions.forEach((ins, iIdx) => {
-      const insLow = (ins.name || '').toLowerCase();
-      if (insLow.includes('condylus medialis') && ischiiIdx >= 0) {
-        connections.push({ orig: origins[ischiiIdx], ins, oIdx: ischiiIdx, iIdx });
-      } else if (pubisIdx >= 0) {
-        connections.push({ orig: origins[pubisIdx], ins, oIdx: pubisIdx, iIdx });
-      }
-    });
-
-    return connections;
-  }
-
   // Eenvoudige spieren met 1 origo of 1 insertie
   if (origins.length === 1) {
     return insertions.map((ins, iIdx) => ({ orig: origins[0], ins, oIdx: 0, iIdx }));
@@ -1197,8 +1154,8 @@ export function mirrorAttachmentLines(lines?: AttachmentLine[]): AttachmentLine[
     id: l.id.includes('-right')
       ? l.id.replace('-right', '-left')
       : l.id.includes('-left')
-        ? l.id.replace('-left', '-right')
-        : `${l.id}-mirrored`,
+      ? l.id.replace('-left', '-right')
+      : `${l.id}-mirrored`,
     points: mirrorPoints(l.points || []),
   }));
 }
