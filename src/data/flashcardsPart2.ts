@@ -199,7 +199,7 @@ export const FLASHCARDS_PART_2: FlashcardSet[] = [
         setId: 'art-coxae',
         categoryLabel: 'Spieren',
         question: 'Wat is de functie van de m. semimembranosus?',
-        answer: '• Art. coxae: retroflexie (en endorotatie)\n• Art. genus: flexie en endorotatie',
+        answer: '• Art. coxae: retroflexie\n• Art. genus: flexie en endorotatie',
       },
       {
         id: 'cox-26',
@@ -213,7 +213,7 @@ export const FLASHCARDS_PART_2: FlashcardSet[] = [
         setId: 'art-coxae',
         categoryLabel: 'Spieren',
         question: 'Wat is de functie van de m. semitendinosus?',
-        answer: '• Art. coxae: retroflexie (en endorotatie)\n• Art. genus: flexie en endorotatie',
+        answer: '• Art. coxae: retroflexie\n• Art. genus: flexie en endorotatie',
       },
       {
         id: 'cox-28',
@@ -241,7 +241,7 @@ export const FLASHCARDS_PART_2: FlashcardSet[] = [
         setId: 'art-coxae',
         categoryLabel: 'Spieren',
         question: 'Wat zijn de origo en insertie van de m. gluteus maximus?',
-        answer: '• Origo: crista iliaca, SIPS, os sacrum, os coccygis\n• Insertie: proximale laterale deel corpus femoris en tractus iliotibialis',
+        answer: '• Origo: crista iliaca, os ilium, os sacrum\n• Insertie: proximale laterale deel corpus femoris',
       },
       {
         id: 'cox-32',
@@ -307,8 +307,8 @@ export const FLASHCARDS_PART_2: FlashcardSet[] = [
         id: 'cox-40',
         setId: 'art-coxae',
         categoryLabel: 'Spieren per beweging',
-        question: 'Welke twee spieren zorgen voor exorotatie in art. coxae en welke twee voor endorotatie?',
-        answer: '• Exorotatie: m. gluteus maximus en m. iliopsoas\n• Endorotatie: m. semimembranosus en m. semitendinosus',
+        question: 'Welke twee spieren zorgen voor exorotatie in art. coxae?',
+        answer: '• M. gluteus maximus\n• M. iliopsoas',
       },
       {
         id: 'cox-41',

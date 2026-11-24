@@ -242,12 +242,17 @@ export function resolveZoneKey(name: string = '', lineName?: string, explicitZon
     text.includes('cervica') ||
     text.includes('thoraca') ||
     text.includes('lumba') ||
+    text.includes('c6') ||
+    text.includes('c7') ||
     text.includes('t1-') ||
     text.includes('t3-') ||
     text.includes('t7') ||
     text.includes('t12') ||
     text.includes('th1') ||
+    text.includes('th3') ||
+    text.includes('th4') ||
     text.includes('th7') ||
+    text.includes('th12') ||
     text.includes('l1-') ||
     text.includes('l5')
   ) {
@@ -1116,7 +1121,7 @@ export function isTrapeziusPointAccurate(
     if (!isMidline) return false;
     if (part === 'descendens') return pt.y >= 0.07 && pt.y <= 0.195;
     if (part === 'transversa') return pt.y >= 0.150 && pt.y <= 0.235;
-    if (part === 'ascendens') return pt.y >= 0.200 && pt.y <= 0.365;
+    if (part === 'ascendens') return pt.y >= 0.215 && pt.y <= 0.365;
     return false;
   } else {
     // Insertie ligt lateraal op clavicula, acromion of spina scapulae (links of rechts)

@@ -6,7 +6,6 @@ import { MuscleSearch } from './MuscleSearch';
 import { MuscleDetail } from './MuscleDetail';
 import { MobileStudyView } from './MobileStudyView';
 import { useIsMobile } from '../../hooks/useIsMobile';
-import { AlertTriangle } from 'lucide-react';
 
 export const StudyView: React.FC = () => {
   const isMobile = useIsMobile();
@@ -124,12 +123,6 @@ export const StudyView: React.FC = () => {
 
       {/* Rechter Zijpaneel: Zoeken & Spierdetails */}
       <div className="w-full lg:w-96 flex flex-col space-y-4 shrink-0">
-        <div className="w-full bg-amber-50 border border-amber-200/90 rounded-xl px-3 py-2 flex items-start gap-2 text-amber-900 text-xs font-medium shadow-2xs">
-          <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-          <span className="leading-snug">
-            <strong>Let op:</strong> De inconsistenties tussen het moduleboek, antwoord-PDF's en PowerPoint zitten er nog in.
-          </span>
-        </div>
         <MuscleSearch />
         <MuscleDetail />
       </div>

@@ -2,7 +2,12 @@ import React, { createContext, useContext, useState, useCallback, useMemo } from
 import { FLASHCARD_SETS, FlashcardItem, FlashcardSet } from '../data/flashcardsData';
 import customSavedSets from '../data/flashcardsCustom.json';
 
-const FLASHCARDS_STORAGE_KEY = 'pmt_anatomie_flashcards_custom_v8';
+const FLASHCARDS_STORAGE_KEY = 'pmt_anatomie_flashcards_custom_v9';
+
+// Ruim verouderde flashcard-caches op
+try {
+  localStorage.removeItem('pmt_anatomie_flashcards_custom_v8');
+} catch {}
 
 interface FlashcardContextType {
   flashcardSets: FlashcardSet[];

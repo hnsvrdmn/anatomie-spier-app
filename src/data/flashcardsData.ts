@@ -164,14 +164,6 @@ const ROMP_SET: FlashcardSet = {
         imageUrl: '/images/flashcards/romp_wervel_1_8.png',
       },
       {
-        id: 'romp-21',
-        setId: 'romp',
-        categoryLabel: 'Wervel',
-        question: 'Welke structuur is nummer 3?',
-        answer: 'Arcus vertebrae (wervelboog).',
-        imageUrl: '/images/flashcards/romp_wervel_1_8.png',
-      },
-      {
         id: 'romp-22',
         setId: 'romp',
         categoryLabel: 'Wervel',
@@ -216,7 +208,7 @@ const ROMP_SET: FlashcardSet = {
         setId: 'romp',
         categoryLabel: 'Spieren',
         question: 'Wat zijn de origo en insertie van de m. rectus abdominis?',
-        answer: '• Origo: Os pubis (schaambeen)\n• Insertie: Kraakbeen van de 5e–7e costa en het processus xiphoideus',
+        answer: '• Origo: kraakbeen van de 5e–7e costa en het processus xiphoideus\n• Insertie: os pubis (schaambeen)',
       },
       {
         id: 'romp-28',
@@ -230,7 +222,7 @@ const ROMP_SET: FlashcardSet = {
         setId: 'romp',
         categoryLabel: 'Spieren',
         question: 'Wat zijn de origo en insertie van de m. obliquus internus abdominis?',
-        answer: '• Origo: crista iliaca en SIAS\n• Insertie: kraakbeen laatste 3 costae en linea alba',
+        answer: '• Origo: crista iliaca\n• Insertie: laatste 3 costae en linea alba',
       },
       {
         id: 'romp-30',
@@ -258,7 +250,7 @@ const ROMP_SET: FlashcardSet = {
         setId: 'romp',
         categoryLabel: 'Spieren',
         question: 'Wat zijn de origo, insertie en functie van de m. erector spinae?',
-        answer: '• Origo en insertie: alle wervels en os sacrum\n• Functie: (hyper)extensie van de wervelkolom',
+        answer: '• Origo: processus spinosus en processus transversus van alle wervels, os sacrum\n• Insertie: processus spinosus en processus transversus van alle wervels\n• Functie: (hyper)extensie van de wervelkolom',
       },
       {
         id: 'romp-34',

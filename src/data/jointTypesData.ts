@@ -98,18 +98,13 @@ export const JOINTS_LEARNING_DATA: Record<string, JointDetail> = {
       },
       {
         movement: 'Retroflexie',
-        muscleIds: ['gluteus_maximus', 'biceps_femoris'],
+        muscleIds: ['gluteus_maximus', 'biceps_femoris', 'semimembranosus', 'semitendinosus'],
         note: 'Strekking naar achteren in de heup',
       },
       {
         movement: 'Adductie',
         muscleIds: ['adductores'],
         note: 'Naar binnen bewegen van het been',
-      },
-      {
-        movement: 'Endorotatie',
-        muscleIds: ['semimembranosus', 'semitendinosus'],
-        note: 'Binnenwaartse draaiing van het dijbeen in het art. coxae',
       },
       {
         movement: 'Exorotatie',

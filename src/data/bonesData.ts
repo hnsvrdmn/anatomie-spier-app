@@ -445,7 +445,7 @@ export const READER_BONES: Bone[] = [
     "category": "bovenste_extremiteit",
     "description": "S-vormig bot dat deel uitmaakt van de schoudergordel (cingulum pectorale) en het borstbeen met de schouder verbindt.",
     "structures": [
-      "Extremitas clavicularis (acromiaal uiteinde)",
+      "Extremitas acromialis (acromiaal uiteinde)",
       "Corpus claviculae (sleutelbeenschacht)",
       "Extremitas sternalis (borstbeenuiteinde)"
     ],

@@ -46,7 +46,7 @@ const GRID_PUZZLES: GridPuzzleDef[] = [
     colHeader: 'Insertie',
     pairs: [
       { rowLabel: 'm. latissimus dorsi', colLabel: 'Proximaal ventraal humerus' },
-      { rowLabel: 'm. pectoralis major', colLabel: 'Tuberculum majus' },
+      { rowLabel: 'm. teres minor', colLabel: 'Tuberculum majus' },
       { rowLabel: 'm. biceps brachii', colLabel: 'Tuberositas radii' },
       { rowLabel: 'm. brachialis', colLabel: 'Tuberositas ulnae' },
     ],
@@ -130,7 +130,7 @@ const GRID_PUZZLES: GridPuzzleDef[] = [
     colHeader: 'Vertaling / Functie (Romp PDF)',
     pairs: [
       { rowLabel: 'Corpus vertebra', colLabel: 'Wervellichaam' },
-      { rowLabel: 'Arcus vertebra', colLabel: 'Wervelboog' },
+      { rowLabel: 'Processus articularis', colLabel: 'Gewrichtsuitsteeksel' },
       { rowLabel: 'Processus spinosus', colLabel: 'Doornuitsteeksel' },
       { rowLabel: 'Processus transversus', colLabel: 'Dwarsuitsteeksel' },
     ],
@@ -150,11 +150,11 @@ const RANDOM_MUSCLE_POOL: GridPair[] = [
   { rowLabel: 'm. fibularis brevis', colLabel: 'Insertie: laterale voetrand (eversie)' },
   { rowLabel: 'm. fibularis longus', colLabel: 'Insertie: mediale voetrand (onder voet door)' },
   { rowLabel: 'm. soleus', colLabel: 'Origo: proximale deel tibia & fibula → calcaneus' },
-  { rowLabel: 'm. deltoideus', colLabel: 'Insertie: lateraal op humerus (1/3 deel corpus)' },
+  { rowLabel: 'm. deltoideus', colLabel: 'Insertie: lateraal op humerus (middelste 1/3 corpus)' },
   { rowLabel: 'm. teres major', colLabel: 'Origo: angulus inferior scapula (endorotatie)' },
   { rowLabel: 'm. teres minor', colLabel: 'Origo: margo lateralis scapula (exorotatie)' },
   { rowLabel: 'm. triceps brachii', colLabel: 'Insertie: olecranon (extensie art. cubiti)' },
-  { rowLabel: 'm. rectus abdominis', colLabel: 'Origo: 5e-7e costa & proc. xiphoideus → os pubis' },
+  { rowLabel: 'm. rectus abdominis', colLabel: 'Origo: kraakbeen 5e-7e costa & proc. xiphoideus → os pubis' },
   { rowLabel: 'm. obliquus externus', colLabel: 'Rotatie romp naar tegenovergestelde zijde' },
   { rowLabel: 'm. obliquus internus', colLabel: 'Rotatie romp naar dezelfde zijde' },
 ];

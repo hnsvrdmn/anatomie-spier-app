@@ -192,10 +192,6 @@ const SPECIFIC_OPEN_ORIGIN_LANDMARKS: Record<string, { display: string; acceptab
 };
 
 const SPECIFIC_OPEN_INSERTION_LANDMARKS: Record<string, { display: string; acceptable: string[] }> = {
-  pectoralis_major: {
-    display: 'Tuberculum majus',
-    acceptable: ['tuberculum majus', 'crista tuberculi majoris', 'tuberculum majus humeri'],
-  },
   teres_minor: {
     display: 'Tuberculum majus',
     acceptable: ['tuberculum majus', 'tuberculum majus humeri'],
@@ -274,7 +270,7 @@ const SPECIFIC_PLACEMENT_LANDMARKS: Array<{
   targetLandmarkIndex: number;
   displayText: string;
 }> = [
-  { muscleId: 'pectoralis_major', landmarkType: 'insertion', targetLandmarkIndex: 0, displayText: 'Tuberculum majus' },
+  { muscleId: 'teres_minor', landmarkType: 'insertion', targetLandmarkIndex: 0, displayText: 'Tuberculum majus' },
   { muscleId: 'teres_major', landmarkType: 'origin', targetLandmarkIndex: 0, displayText: 'Angulus inferior scapula' },
   { muscleId: 'teres_minor', landmarkType: 'origin', targetLandmarkIndex: 0, displayText: 'Margo lateralis scapula' },
   { muscleId: 'trapezius', landmarkType: 'insertion', targetLandmarkIndex: 1, displayText: 'Acromion' },
@@ -287,16 +283,13 @@ const SPECIFIC_PLACEMENT_LANDMARKS: Array<{
   { muscleId: 'rectus_abdominis', landmarkType: 'origin', targetLandmarkIndex: 1, displayText: 'Processus xiphoideus' },
   { muscleId: 'rectus_abdominis', landmarkType: 'insertion', targetLandmarkIndex: 0, displayText: 'Os pubis' },
   { muscleId: 'obliquus_internus_abdominis', landmarkType: 'origin', targetLandmarkIndex: 0, displayText: 'Crista iliaca' },
-  { muscleId: 'obliquus_internus_abdominis', landmarkType: 'origin', targetLandmarkIndex: 1, displayText: 'SIAS — Spina iliaca anterior superior' },
   { muscleId: 'iliopsoas', landmarkType: 'insertion', targetLandmarkIndex: 0, displayText: 'Trochanter minor' },
   { muscleId: 'rectus_femoris', landmarkType: 'origin', targetLandmarkIndex: 0, displayText: 'SIAI — Spina iliaca anterior inferior' },
   { muscleId: 'rectus_femoris', landmarkType: 'insertion', targetLandmarkIndex: 0, displayText: 'Tuberositas tibiae' },
   { muscleId: 'biceps_femoris', landmarkType: 'origin', targetLandmarkIndex: 0, displayText: 'Tuber ischiadicum' },
   { muscleId: 'biceps_femoris', landmarkType: 'insertion', targetLandmarkIndex: 0, displayText: 'Caput fibulae' },
   { muscleId: 'semimembranosus', landmarkType: 'insertion', targetLandmarkIndex: 0, displayText: 'Condylus medialis tibiae' },
-  { muscleId: 'gluteus_maximus', landmarkType: 'origin', targetLandmarkIndex: 1, displayText: 'SIPS — Spina iliaca posterior superior' },
   { muscleId: 'gluteus_maximus', landmarkType: 'origin', targetLandmarkIndex: 2, displayText: 'Os sacrum' },
-  { muscleId: 'gluteus_maximus', landmarkType: 'origin', targetLandmarkIndex: 3, displayText: 'Os coccygis' },
   { muscleId: 'gastrocnemius', landmarkType: 'origin', targetLandmarkIndex: 0, displayText: 'Condylus lateralis femoris' },
   { muscleId: 'gastrocnemius', landmarkType: 'origin', targetLandmarkIndex: 1, displayText: 'Condylus medialis femoris' },
   { muscleId: 'gastrocnemius', landmarkType: 'insertion', targetLandmarkIndex: 0, displayText: 'Tuber calcanei' },
@@ -372,7 +365,7 @@ const BUGFIX_TEST_SCENARIOS: Array<{
     type: 'full',
   },
   {
-    label: '10. m. pectoralis major — Origo & Insertie (clavicula + sternum/costae + tuberculum majus)',
+    label: '10. m. pectoralis major — Origo & Insertie (clavicula + sternum/costae + proximaal ventraal op humerus)',
     muscleId: 'pectoralis_major',
     type: 'full',
   },
@@ -661,7 +654,7 @@ export const QuizView: React.FC = () => {
     } else if (part === 'transversa') {
       return partOrigins.some(p => p.y <= 0.188) && partOrigins.some(p => p.y >= 0.198) && span >= 0.018;
     } else if (part === 'ascendens') {
-      return partOrigins.some(p => p.y <= 0.245) && partOrigins.some(p => p.y >= 0.295) && span >= 0.045;
+      return partOrigins.some(p => p.y <= 0.255) && partOrigins.some(p => p.y >= 0.295) && span >= 0.045;
     }
     return false;
   }, []);
@@ -699,9 +692,9 @@ export const QuizView: React.FC = () => {
       const minCount = requireAllVertebrae ? 3 : 2;
       return hasFirst && hasLast && span >= 0.018 && partOrigins.length >= minCount;
     } else if (part === 'ascendens') {
-      // Eerste: Th3 / Th4 (y <= 0.245)
+      // Eerste: Th4 (y <= 0.255)
       // Laatste: Th10 / Th11 / Th12 (y >= 0.295)
-      const hasFirst = partOrigins.some(p => p.y <= 0.245);
+      const hasFirst = partOrigins.some(p => p.y <= 0.255);
       const hasLast = partOrigins.some(p => p.y >= 0.295);
       const minCount = requireAllVertebrae ? 7 : 2;
       return hasFirst && hasLast && span >= 0.045 && partOrigins.length >= minCount;

@@ -234,7 +234,7 @@
       "humeri"
     ],
     "originText": "Pars clavicularis: laterale 1/3 deel clavicula | Pars acromialis: acromion | Pars spinalis: spina scapula",
-    "insertionText": "lateraal op humerus (op 1/3 deel van corpus)",
+    "insertionText": "lateraal op humerus (op middelste ⅓ deel van corpus)",
     "functionText": "Abductie, Anteflexie (pars clav.), Retroflexie (pars spin.)",
     "visuals": {
       "left": {
@@ -257,9 +257,9 @@
         ],
         "insertions": [
           {
-            "x": 0.7596,
-            "y": 0.2642,
-            "name": "lateraal op humerus (op 1/3 deel van corpus)"
+            "x": 0.757,
+            "y": 0.285,
+            "name": "lateraal op humerus (op middelste ⅓ deel van corpus)"
           }
         ],
         "musclePath": [
@@ -312,20 +312,20 @@
           },
           {
             "id": "line-delt-ins-left",
-            "name": "lateraal op humerus (op 1/3 deel van corpus)",
+            "name": "lateraal op humerus (op middelste ⅓ deel van corpus)",
             "type": "insertion",
             "points": [
               {
-                "x": 0.7596,
-                "y": 0.242
+                "x": 0.757,
+                "y": 0.26
               },
               {
-                "x": 0.7596,
-                "y": 0.2642
+                "x": 0.755,
+                "y": 0.285
               },
               {
-                "x": 0.7536,
-                "y": 0.29
+                "x": 0.751,
+                "y": 0.312
               }
             ],
             "tolerance": 0.022
@@ -352,9 +352,9 @@
         ],
         "insertions": [
           {
-            "x": 0.2404,
-            "y": 0.2642,
-            "name": "lateraal op humerus (op 1/3 deel van corpus)"
+            "x": 0.243,
+            "y": 0.285,
+            "name": "lateraal op humerus (op middelste ⅓ deel van corpus)"
           }
         ],
         "musclePath": [
@@ -378,7 +378,7 @@
       "humeri"
     ],
     "originText": "mediale ⅓ deel clavicula, sternum, kraakbeen van 2e-6e rib",
-    "insertionText": "tuberculum majus",
+    "insertionText": "Proximaal ventraal op het humerus",
     "functionText": "Adductie, Endorotatie",
     "visuals": {
       "right": {
@@ -411,9 +411,9 @@
         ],
         "insertions": [
           {
-            "x": 0.238,
-            "y": 0.236,
-            "name": "tuberculum majus"
+            "x": 0.258,
+            "y": 0.252,
+            "name": "Proximaal ventraal op het humerus"
           }
         ],
         "musclePath": [
@@ -454,9 +454,9 @@
         ],
         "insertions": [
           {
-            "x": 0.762,
-            "y": 0.236,
-            "name": "tuberculum majus"
+            "x": 0.742,
+            "y": 0.252,
+            "name": "Proximaal ventraal op het humerus"
           }
         ],
         "musclePath": [
@@ -598,7 +598,7 @@
       "humeri"
     ],
     "originText": "Margo lateralis scapula",
-    "insertionText": "Dorsale gedeelte tuberculum majus",
+    "insertionText": "Tuberculum majus",
     "functionText": "Exorotatie in het art. humeri",
     "visuals": {
       "left": {
@@ -613,7 +613,7 @@
           {
             "x": 0.2355,
             "y": 0.2342,
-            "name": "Dorsale gedeelte tuberculum majus"
+            "name": "Tuberculum majus"
           }
         ],
         "musclePath": [],
@@ -652,7 +652,7 @@
           {
             "x": 0.7645,
             "y": 0.2342,
-            "name": "Dorsale gedeelte tuberculum majus"
+            "name": "Tuberculum majus"
           }
         ],
         "musclePath": [],
@@ -691,7 +691,7 @@
     "jointCategories": [
       "cingulum"
     ],
-    "originText": "Pars descendens (dalend): dorsaal onderzijde schedel, processus spinosus van 1e tot 6e vertebra cervicales | Pars transversa (dwars): processus spinosus 7e vertebra cervicales en 1e tot 3e vertebra thoracales | Pars ascendens (stijgend): processus spinosus van de 3e tot 12e vertebra thoracales",
+    "originText": "Pars descendens: onderzijde schedel t/m processus spinosus C6 | Pars transversa: processus spinosus C7 t/m Th3 | Pars ascendens: processus spinosus Th4 t/m Th12",
     "insertionText": "Pars descendens: laterale 1/3 deel van clavicula | Pars transversa: acromion | Pars ascendens: spina scapula",
     "functionText": "Retractie, elevatie en depressie van de scapula",
     "visuals": {
@@ -700,32 +700,32 @@
           {
             "x": 0.4995,
             "y": 0.1136,
-            "name": "Pars descendens: proc. spinosus t-7"
+            "name": "Pars descendens: onderzijde schedel"
           },
           {
             "x": 0.4967,
             "y": 0.1791,
-            "name": "Pars transversa: proc. spinosus t-1"
+            "name": "Pars transversa: proc. spinosus C7"
           },
           {
             "x": 0.5033,
             "y": 0.3426,
-            "name": "Pars ascendens: proc. spinosus T12"
+            "name": "Pars ascendens: proc. spinosus Th12"
           },
           {
             "x": 0.5033,
-            "y": 0.2238,
-            "name": "Pars ascendens: proc. spinosus T3"
+            "y": 0.238,
+            "name": "Pars ascendens: proc. spinosus Th4"
           },
           {
             "x": 0.5015,
             "y": 0.1797,
-            "name": "Pars descendens: proc. spinosus t-1"
+            "name": "Pars descendens: proc. spinosus C6"
           },
           {
             "x": 0.5042,
             "y": 0.2221,
-            "name": "Pars transversa: proc. spinosus T3"
+            "name": "Pars transversa: proc. spinosus Th3"
           }
         ],
         "insertions": [
@@ -753,32 +753,32 @@
           {
             "x": 0.5005,
             "y": 0.1136,
-            "name": "Pars descendens: proc. spinosus t-7"
+            "name": "Pars descendens: onderzijde schedel"
           },
           {
             "x": 0.5033,
             "y": 0.1791,
-            "name": "Pars transversa: proc. spinosus t-1"
+            "name": "Pars transversa: proc. spinosus C7"
           },
           {
             "x": 0.4967,
             "y": 0.3426,
-            "name": "Pars ascendens: proc. spinosus T12"
+            "name": "Pars ascendens: proc. spinosus Th12"
           },
           {
             "x": 0.4967,
-            "y": 0.2238,
-            "name": "Pars ascendens: proc. spinosus T3"
+            "y": 0.238,
+            "name": "Pars ascendens: proc. spinosus Th4"
           },
           {
             "x": 0.4985,
             "y": 0.1797,
-            "name": "Pars descendens: proc. spinosus t-1"
+            "name": "Pars descendens: proc. spinosus C6"
           },
           {
             "x": 0.4958,
             "y": 0.2221,
-            "name": "Pars transversa: proc. spinosus T3"
+            "name": "Pars transversa: proc. spinosus Th3"
           }
         ],
         "insertions": [
@@ -1367,7 +1367,7 @@
     "jointCategories": [
       "romp"
     ],
-    "originText": "5e - 7e costa, processus xiphoideus",
+    "originText": "kraakbeen van de 5e - 7e costa, processus xiphoideus",
     "insertionText": "os pubis",
     "functionText": "Flexie van de wervelkolom",
     "visuals": {
@@ -1376,7 +1376,7 @@
           {
             "x": 0.5514,
             "y": 0.2746,
-            "name": "5-7 costa"
+            "name": "kraakbeen van de 5e - 7e costa"
           },
           {
             "x": 0.5122,
@@ -1400,7 +1400,7 @@
         "attachmentLines": [
           {
             "id": "line-rect-abd-ribs-left",
-            "name": "5-7 costa",
+            "name": "kraakbeen van de 5e - 7e costa",
             "type": "origin",
             "points": [
               {
@@ -1425,7 +1425,7 @@
           {
             "x": 0.4486,
             "y": 0.2746,
-            "name": "5-7 costa"
+            "name": "kraakbeen van de 5e - 7e costa"
           },
           {
             "x": 0.4878,
@@ -1449,7 +1449,7 @@
         "attachmentLines": [
           {
             "id": "line-rect-abd-ribs-right",
-            "name": "5-7 costa",
+            "name": "kraakbeen van de 5e - 7e costa",
             "type": "origin",
             "points": [
               {
@@ -1481,8 +1481,8 @@
     "jointCategories": [
       "romp"
     ],
-    "originText": "crista iliaca, SIAS",
-    "insertionText": "kraakbeen v.d. laatste 3 costae, linea alba",
+    "originText": "crista iliaca",
+    "insertionText": "laatste 3 costae, linea alba",
     "functionText": "Rotatie naar zelfde zijde, Lateroflexie van de wervelkolom",
     "visuals": {
       "left": {
@@ -1491,18 +1491,13 @@
             "x": 0.6136,
             "y": 0.3922,
             "name": "crista iliaca"
-          },
-          {
-            "x": 0.6575,
-            "y": 0.419,
-            "name": "SIAS"
           }
         ],
         "insertions": [
           {
             "x": 0.6325,
             "y": 0.3679,
-            "name": "kraakbeen v.d. laatste 3 costae"
+            "name": "laatste 3 costae"
           },
           {
             "x": 0.5019,
@@ -1517,7 +1512,7 @@
           {
             "x": 0.5467,
             "y": 0.2973,
-            "name": "kraakbeen v.d. laatste 3 costae"
+            "name": "laatste 3 costae"
           }
         ],
         "musclePath": [],
@@ -1548,7 +1543,7 @@
           },
           {
             "id": "line-obliq-int-ribs-left",
-            "name": "kraakbeen v.d. laatste 3 costae",
+            "name": "laatste 3 costae",
             "type": "insertion",
             "points": [
               {
@@ -1585,13 +1580,6 @@
               }
             ],
             "tolerance": 0.022
-          },
-          {
-            "id": "line-origin-1793725629013",
-            "type": "origin",
-            "name": "crista iliaca, SIAS",
-            "points": [],
-            "tolerance": 0.045
           }
         ]
       },
@@ -1601,18 +1589,13 @@
             "x": 0.3864,
             "y": 0.3922,
             "name": "crista iliaca"
-          },
-          {
-            "x": 0.3425,
-            "y": 0.419,
-            "name": "SIAS"
           }
         ],
         "insertions": [
           {
             "x": 0.3675,
             "y": 0.3679,
-            "name": "kraakbeen v.d. laatste 3 costae"
+            "name": "laatste 3 costae"
           },
           {
             "x": 0.4981,
@@ -1627,7 +1610,7 @@
           {
             "x": 0.4533,
             "y": 0.2973,
-            "name": "kraakbeen v.d. laatste 3 costae"
+            "name": "laatste 3 costae"
           }
         ],
         "musclePath": [],
@@ -1658,7 +1641,7 @@
           },
           {
             "id": "line-obliq-int-ribs-right",
-            "name": "kraakbeen v.d. laatste 3 costae",
+            "name": "laatste 3 costae",
             "type": "insertion",
             "points": [
               {
@@ -1695,13 +1678,6 @@
               }
             ],
             "tolerance": 0.022
-          },
-          {
-            "id": "line-origin-1793725629013-mirrored",
-            "type": "origin",
-            "name": "crista iliaca, SIAS",
-            "points": [],
-            "tolerance": 0.045
           }
         ]
       }
@@ -2043,8 +2019,8 @@
     "jointCategories": [
       "romp"
     ],
-    "originText": "alle wervels, os sacrum",
-    "insertionText": "alle wervels, os sacrum",
+    "originText": "Processus spinosus en processus transversus van alle wervels, os sacrum",
+    "insertionText": "Processus spinosus en processus transversus van alle wervels",
     "functionText": "(Hyper)extensie van de wervelkolom",
     "visuals": {
       "left": {
@@ -2063,8 +2039,8 @@
         "insertions": [
           {
             "x": 0.485,
-            "y": 0.47,
-            "name": "alle wervels en os sacrum"
+            "y": 0.385,
+            "name": "processus spinosus en processus transversus van alle wervels"
           }
         ],
         "musclePath": [],
@@ -2111,11 +2087,11 @@
           },
           {
             "id": "line-erector-ins-left",
-            "name": "alle wervels en os sacrum",
+            "name": "processus spinosus en processus transversus van alle wervels",
             "type": "insertion",
             "points": [
               {
-                "x": 0.4841,
+                "x": 0.485,
                 "y": 0.1244
               },
               {
@@ -2124,7 +2100,7 @@
               },
               {
                 "x": 0.485,
-                "y": 0.47
+                "y": 0.41
               }
             ],
             "tolerance": 0.028
@@ -2147,8 +2123,8 @@
         "insertions": [
           {
             "x": 0.515,
-            "y": 0.47,
-            "name": "alle wervels en os sacrum"
+            "y": 0.385,
+            "name": "processus spinosus en processus transversus van alle wervels"
           }
         ],
         "musclePath": [],
@@ -2195,11 +2171,11 @@
           },
           {
             "id": "line-erector-ins-right",
-            "name": "alle wervels en os sacrum",
+            "name": "processus spinosus en processus transversus van alle wervels",
             "type": "insertion",
             "points": [
               {
-                "x": 0.5159,
+                "x": 0.515,
                 "y": 0.1244
               },
               {
@@ -2208,7 +2184,7 @@
               },
               {
                 "x": 0.515,
-                "y": 0.47
+                "y": 0.41
               }
             ],
             "tolerance": 0.028
@@ -2691,7 +2667,7 @@
     ],
     "originText": "tuber ischiadicum",
     "insertionText": "condylus medialis tibiae",
-    "functionText": "Endorotatie in het art. coxae en flexie in het art. genus",
+    "functionText": "Retroflexie in het art. coxae, flexie en endorotatie in het art. genus",
     "visuals": {
       "right": {
         "origins": [
@@ -2755,7 +2731,7 @@
     ],
     "originText": "tuber ischiadicum",
     "insertionText": "condylus medialis tibiae",
-    "functionText": "Endorotatie in het art. coxae en flexie in het art. genus",
+    "functionText": "Retroflexie in het art. coxae, flexie en endorotatie in het art. genus",
     "visuals": {
       "right": {
         "origins": [
@@ -3003,7 +2979,7 @@
     "jointCategories": [
       "coxae"
     ],
-    "originText": "crista iliaca, SIPS, os sacrum, os coccygis",
+    "originText": "crista iliaca, os ilium, os sacrum",
     "insertionText": "proximale laterale deel van corpus femoris",
     "functionText": "Retroflexie art. coxae, Exorotatie art. coxae",
     "visuals": {
@@ -3015,19 +2991,14 @@
             "name": "crista iliaca"
           },
           {
-            "x": 0.4485,
-            "y": 0.4356,
-            "name": "SIPS"
+            "x": 0.405,
+            "y": 0.434,
+            "name": "os ilium"
           },
           {
             "x": 0.4955,
             "y": 0.4426,
             "name": "os sacrum"
-          },
-          {
-            "x": 0.494,
-            "y": 0.4853,
-            "name": "os coccygis"
           }
         ],
         "insertions": [
@@ -3105,19 +3076,14 @@
             "name": "crista iliaca"
           },
           {
-            "x": 0.5515,
-            "y": 0.4356,
-            "name": "SIPS"
+            "x": 0.595,
+            "y": 0.434,
+            "name": "os ilium"
           },
           {
             "x": 0.5045,
             "y": 0.4426,
             "name": "os sacrum"
-          },
-          {
-            "x": 0.506,
-            "y": 0.4853,
-            "name": "os coccygis"
           }
         ],
         "insertions": [

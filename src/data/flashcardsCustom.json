@@ -2090,7 +2090,7 @@
         "setId": "art-coxae",
         "categoryLabel": "Spieren",
         "question": "Wat is de functie van de m. semimembranosus?",
-        "answer": "• Art. coxae: retroflexie (en endorotatie)\n• Art. genus: flexie en endorotatie"
+        "answer": "• Art. coxae: retroflexie\n• Art. genus: flexie en endorotatie"
       },
       {
         "id": "cox-26",
@@ -2104,7 +2104,7 @@
         "setId": "art-coxae",
         "categoryLabel": "Spieren",
         "question": "Wat is de functie van de m. semitendinosus?",
-        "answer": "• Art. coxae: retroflexie (en endorotatie)\n• Art. genus: flexie en endorotatie"
+        "answer": "• Art. coxae: retroflexie\n• Art. genus: flexie en endorotatie"
       },
       {
         "id": "cox-28",
@@ -2132,7 +2132,7 @@
         "setId": "art-coxae",
         "categoryLabel": "Spieren",
         "question": "Wat zijn de origo en insertie van de m. gluteus maximus?",
-        "answer": "• Origo: crista iliaca, SIPS, os sacrum, os coccygis\n• Insertie: proximale laterale deel corpus femoris en tractus iliotibialis"
+        "answer": "• Origo: crista iliaca, os ilium, os sacrum\n• Insertie: proximale laterale deel corpus femoris"
       },
       {
         "id": "cox-32",
@@ -2198,8 +2198,8 @@
         "id": "cox-40",
         "setId": "art-coxae",
         "categoryLabel": "Spieren per beweging",
-        "question": "Welke twee spieren zorgen voor exorotatie in art. coxae en welke twee voor endorotatie?",
-        "answer": "• Exorotatie: m. gluteus maximus en m. iliopsoas\n• Endorotatie: m. semimembranosus en m. semitendinosus"
+        "question": "Welke twee spieren zorgen voor exorotatie in art. coxae?",
+        "answer": "• M. gluteus maximus\n• M. iliopsoas"
       },
       {
         "id": "cox-41",
@@ -3362,7 +3362,7 @@
         "setId": "art-humeri",
         "categoryLabel": "Spieren",
         "question": "Wat is de insertie van de m. deltoideus?",
-        "answer": "Lateraal op de humerus (op 1/3 deel van het corpus)."
+        "answer": "Lateraal op de humerus (op middelste 1/3 deel van het corpus)."
       },
       {
         "id": "hum-24",
@@ -3376,7 +3376,7 @@
         "setId": "art-humeri",
         "categoryLabel": "Spieren",
         "question": "Wat zijn de origo en insertie van de m. pectoralis major?",
-        "answer": "• Origo: mediale 1/3 deel clavicula, sternum, kraakbeen 2e–6e rib\n• Insertie: tuberculum majus (proximaal ventraal op humerus)"
+        "answer": "• Origo: mediale 1/3 deel clavicula, sternum, kraakbeen 2e–6e rib\n• Insertie: proximaal ventraal op het humerus"
       },
       {
         "id": "hum-26",
@@ -3404,7 +3404,7 @@
         "setId": "art-humeri",
         "categoryLabel": "Spieren",
         "question": "Wat zijn de origo en insertie van de m. teres minor?",
-        "answer": "• Origo: margo lateralis scapula\n• Insertie: dorsale gedeelte tuberculum majus"
+        "answer": "• Origo: margo lateralis scapula\n• Insertie: tuberculum majus"
       },
       {
         "id": "hum-30",
@@ -3655,7 +3655,7 @@
         "setId": "cingulum-pectorale",
         "categoryLabel": "Spieren",
         "question": "Wat zijn de origo en insertie van de m. trapezius pars descendens?",
-        "answer": "• Origo: dorsaal onderzijde schedel, proc. spinosus C1–C6\n• Insertie: laterale 1/3 deel clavicula"
+        "answer": "• Origo: onderzijde schedel t/m proc. spinosus C6\n• Insertie: laterale 1/3 deel clavicula"
       },
       {
         "id": "cin-17",
@@ -3669,7 +3669,7 @@
         "setId": "cingulum-pectorale",
         "categoryLabel": "Spieren",
         "question": "Wat zijn de origo en insertie van de m. trapezius pars transversa?",
-        "answer": "• Origo: proc. spinosus C7 en T1–T3\n• Insertie: acromion"
+        "answer": "• Origo: proc. spinosus C7 t/m Th3\n• Insertie: acromion"
       },
       {
         "id": "cin-19",
@@ -3683,7 +3683,7 @@
         "setId": "cingulum-pectorale",
         "categoryLabel": "Spieren",
         "question": "Wat zijn de origo en insertie van de m. trapezius pars ascendens?",
-        "answer": "• Origo: proc. spinosus T3–T12\n• Insertie: spina scapula"
+        "answer": "• Origo: proc. spinosus Th4 t/m Th12\n• Insertie: spina scapula"
       },
       {
         "id": "cin-21",
@@ -3957,14 +3957,6 @@
         "imageUrl": "/images/flashcards/romp_wervel_1_8.png"
       },
       {
-        "id": "romp-21",
-        "setId": "romp",
-        "categoryLabel": "Wervel",
-        "question": "Welke structuur is nummer 3?",
-        "answer": "Arcus vertebrae (wervelboog).",
-        "imageUrl": "/images/flashcards/romp_wervel_1_8.png"
-      },
-      {
         "id": "romp-22",
         "setId": "romp",
         "categoryLabel": "Wervel",
@@ -4009,7 +4001,7 @@
         "setId": "romp",
         "categoryLabel": "Spieren",
         "question": "Wat zijn de origo en insertie van de m. rectus abdominis?",
-        "answer": "• Origo: Os pubis (schaambeen)\n• Insertie: Kraakbeen van de 5e–7e costa en het processus xiphoideus"
+        "answer": "• Origo: kraakbeen van de 5e–7e costa en het processus xiphoideus\n• Insertie: os pubis (schaambeen)"
       },
       {
         "id": "romp-28",
@@ -4023,7 +4015,7 @@
         "setId": "romp",
         "categoryLabel": "Spieren",
         "question": "Wat zijn de origo en insertie van de m. obliquus internus abdominis?",
-        "answer": "• Origo: crista iliaca en SIAS\n• Insertie: kraakbeen laatste 3 costae en linea alba"
+        "answer": "• Origo: crista iliaca\n• Insertie: laatste 3 costae en linea alba"
       },
       {
         "id": "romp-30",
@@ -4051,7 +4043,7 @@
         "setId": "romp",
         "categoryLabel": "Spieren",
         "question": "Wat zijn de origo, insertie en functie van de m. erector spinae?",
-        "answer": "• Origo en insertie: alle wervels en os sacrum\n• Functie: (hyper)extensie van de wervelkolom"
+        "answer": "• Origo: processus spinosus en processus transversus van alle wervels, os sacrum\n• Insertie: processus spinosus en processus transversus van alle wervels\n• Functie: (hyper)extensie van de wervelkolom"
       },
       {
         "id": "romp-34",

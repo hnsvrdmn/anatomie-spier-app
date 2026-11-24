@@ -171,7 +171,7 @@ const ALL_GROUPS: ConnectionGroup[] = [
     tier: 1,
     items: [
       'Corpus vertebra',
-      'Arcus vertebra',
+      'Processus articularis',
       'Processus spinosus',
       'Processus transversus',
     ],

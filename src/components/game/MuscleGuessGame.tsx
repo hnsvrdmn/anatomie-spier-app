@@ -212,7 +212,7 @@ const MUSCLE_PROFILES: MuscleProfile[] = [
     joints: ['Art. humeri'],
     originBones: ['Os clavicula', 'Os sternum', 'Costae'],
     insertionBone: 'Os humerus',
-    insertionStructure: 'Tuberculum majus',
+    insertionStructure: 'Proximaal ventraal humerus',
     movements: ['Adductie', 'Endorotatie'],
   },
   {
@@ -234,7 +234,7 @@ const MUSCLE_PROFILES: MuscleProfile[] = [
     joints: ['Art. humeri'],
     originBones: ['Os scapula'],
     insertionBone: 'Os humerus',
-    insertionStructure: 'Tuberculum majus (dorsaal)',
+    insertionStructure: 'Tuberculum majus',
     movements: ['Exorotatie', 'Retroflexie'],
   },
   {
@@ -333,7 +333,7 @@ const MUSCLE_PROFILES: MuscleProfile[] = [
     joints: ['Columna'],
     originBones: ['Vertebrae', 'Os sacrum'],
     insertionBone: 'Vertebrae',
-    insertionStructure: 'Alle wervels & sacrum',
+    insertionStructure: 'Proc. spinosus & transversus',
     movements: ['Extensie'],
   },
 ];

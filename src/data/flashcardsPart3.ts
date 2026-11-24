@@ -501,7 +501,7 @@ export const FLASHCARDS_PART_3: FlashcardSet[] = [
         setId: 'art-humeri',
         categoryLabel: 'Spieren',
         question: 'Wat is de insertie van de m. deltoideus?',
-        answer: 'Lateraal op de humerus (op 1/3 deel van het corpus).',
+        answer: 'Lateraal op de humerus (op middelste 1/3 deel van het corpus).',
       },
       {
         id: 'hum-24',
@@ -515,7 +515,7 @@ export const FLASHCARDS_PART_3: FlashcardSet[] = [
         setId: 'art-humeri',
         categoryLabel: 'Spieren',
         question: 'Wat zijn de origo en insertie van de m. pectoralis major?',
-        answer: '• Origo: mediale 1/3 deel clavicula, sternum, kraakbeen 2e–6e rib\n• Insertie: tuberculum majus (proximaal ventraal op humerus)',
+        answer: '• Origo: mediale 1/3 deel clavicula, sternum, kraakbeen 2e–6e rib\n• Insertie: proximaal ventraal op het humerus',
       },
       {
         id: 'hum-26',
@@ -543,7 +543,7 @@ export const FLASHCARDS_PART_3: FlashcardSet[] = [
         setId: 'art-humeri',
         categoryLabel: 'Spieren',
         question: 'Wat zijn de origo en insertie van de m. teres minor?',
-        answer: '• Origo: margo lateralis scapula\n• Insertie: dorsale gedeelte tuberculum majus',
+        answer: '• Origo: margo lateralis scapula\n• Insertie: tuberculum majus',
       },
       {
         id: 'hum-30',
@@ -798,7 +798,7 @@ export const FLASHCARDS_PART_3: FlashcardSet[] = [
         setId: 'cingulum-pectorale',
         categoryLabel: 'Spieren',
         question: 'Wat zijn de origo en insertie van de m. trapezius pars descendens?',
-        answer: '• Origo: dorsaal onderzijde schedel, proc. spinosus C1–C6\n• Insertie: laterale 1/3 deel clavicula',
+        answer: '• Origo: onderzijde schedel t/m proc. spinosus C6\n• Insertie: laterale 1/3 deel clavicula',
       },
       {
         id: 'cin-17',
@@ -812,7 +812,7 @@ export const FLASHCARDS_PART_3: FlashcardSet[] = [
         setId: 'cingulum-pectorale',
         categoryLabel: 'Spieren',
         question: 'Wat zijn de origo en insertie van de m. trapezius pars transversa?',
-        answer: '• Origo: proc. spinosus C7 en T1–T3\n• Insertie: acromion',
+        answer: '• Origo: proc. spinosus C7 t/m Th3\n• Insertie: acromion',
       },
       {
         id: 'cin-19',
@@ -826,7 +826,7 @@ export const FLASHCARDS_PART_3: FlashcardSet[] = [
         setId: 'cingulum-pectorale',
         categoryLabel: 'Spieren',
         question: 'Wat zijn de origo en insertie van de m. trapezius pars ascendens?',
-        answer: '• Origo: proc. spinosus T3–T12\n• Insertie: spina scapula',
+        answer: '• Origo: proc. spinosus Th4 t/m Th12\n• Insertie: spina scapula',
       },
       {
         id: 'cin-21',

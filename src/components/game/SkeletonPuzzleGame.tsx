@@ -173,13 +173,10 @@ function canonicalizeLandmark(rawName?: string): { key: string; label: string } 
       label: 'processus transversus van bovenste 4 vertebra cervicales',
     };
   }
-  if (low.includes('dorsale gedeelte tuberculum majus')) {
-    return { key: 'tuberculum_majus_dorsaal', label: 'dorsale gedeelte tuberculum majus' };
-  }
   if (low.includes('tuberculum majus')) {
     return { key: 'tuberculum_majus', label: 'tuberculum majus' };
   }
-  if (low.includes('proximaal ventraal op de humerus') || low.includes('tuberculum minus')) {
+  if (low.includes('proximaal ventraal') && low.includes('humerus')) {
     return { key: 'proximaal_ventraal_humerus', label: 'proximaal ventraal humerus' };
   }
   if (low.includes('mediale voetrand')) {

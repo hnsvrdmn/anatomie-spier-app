@@ -22,7 +22,7 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'gluteus_maximus',
         muscleName: 'm. gluteus maximus',
-        location: 'crista iliaca, SIPS',
+        location: 'crista iliaca, os ilium',
       },
       {
         muscleId: 'rectus_femoris',
@@ -59,7 +59,7 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'obliquus_internus_abdominis',
         muscleName: 'm. obliquus internus abdominis',
-        location: 'crista iliaca, SIAS',
+        location: 'crista iliaca',
       },
     ],
     insertions: [
@@ -271,12 +271,12 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'deltoideus',
         muscleName: 'm. deltoideus',
-        location: 'lateraal op humerus (op 1/3 deel van corpus)',
+        location: 'lateraal op humerus (op middelste ⅓ deel van corpus)',
       },
       {
         muscleId: 'pectoralis_major',
         muscleName: 'm. pectoralis major',
-        location: 'tuberculum majus',
+        location: 'proximaal ventraal op het humerus',
       },
       {
         muscleId: 'latissimus_dorsi',
@@ -291,7 +291,7 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'teres_minor',
         muscleName: 'm. teres minor',
-        location: 'dorsale gedeelte tuberculum majus',
+        location: 'tuberculum majus',
       },
     ],
   },
@@ -422,23 +422,11 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
         location: 'os sacrum',
       },
     ],
-    insertions: [
-      {
-        muscleId: 'erector_spinae',
-        muscleName: 'm. erector spinae',
-        location: 'os sacrum',
-      },
-    ],
+    insertions: [],
   },
 
   os_coccygis: {
-    origins: [
-      {
-        muscleId: 'gluteus_maximus',
-        muscleName: 'm. gluteus maximus',
-        location: 'os coccygis',
-      },
-    ],
+    origins: [],
     insertions: [],
   },
 
@@ -457,14 +445,14 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'rectus_abdominis',
         muscleName: 'm. rectus abdominis',
-        location: '5e - 7e costa',
+        location: 'kraakbeen van de 5e - 7e costa',
       },
     ],
     insertions: [
       {
         muscleId: 'obliquus_internus_abdominis',
         muscleName: 'm. obliquus internus abdominis',
-        location: 'kraakbeen v.d. laatste 3 costae',
+        location: 'laatste 3 costae',
       },
     ],
   },
@@ -474,7 +462,7 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'trapezius',
         muscleName: 'm. trapezius',
-        location: 'dorsaal onderzijde schedel, processus spinosus van 1e tot 6e vertebra cervicales (descendens) | processus spinosus 7e vertebra cervicales en 1e tot 3e vertebra thoracales (transversa) | processus spinosus van de 3e tot 12e vertebra thoracales (ascendens)',
+        location: 'onderzijde schedel t/m processus spinosus C6 (descendens) | processus spinosus C7 t/m Th3 (transversa) | processus spinosus Th4 t/m Th12 (ascendens)',
       },
       {
         muscleId: 'latissimus_dorsi',
@@ -494,14 +482,14 @@ export const BONE_ATTACHMENTS: Record<string, BoneAttachmentsData> = {
       {
         muscleId: 'erector_spinae',
         muscleName: 'm. erector spinae',
-        location: 'alle wervels',
+        location: 'processus spinosus en processus transversus van alle wervels',
       },
     ],
     insertions: [
       {
         muscleId: 'erector_spinae',
         muscleName: 'm. erector spinae',
-        location: 'alle wervels',
+        location: 'processus spinosus en processus transversus van alle wervels',
       },
     ],
   },

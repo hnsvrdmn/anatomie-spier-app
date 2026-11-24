@@ -307,15 +307,15 @@ export const LIGAMENT_SECTIONS: LigamentSection[] = [
   },
   {
     id: 'vertebrae',
-    title: 'Vertebrae — Opbouw van een Wervel (1–8)',
-    shortTitle: 'Vertebrae (1–8)',
-    subtitle: 'Onderdelen van een wervel (Moduulboek p. 62, ANTWOORDEN romp p. 2)',
+    title: 'Vertebrae — Opbouw van een Wervel',
+    shortTitle: 'Vertebrae',
+    subtitle: 'Onderdelen van een wervel (Moduulboek p. 9 & 64)',
     generalInfo:
-      'Een wervel (vertebra) bestaat uit een dragend wervellichaam (corpus) en een dorsale wervelboog (arcus) met verschillende uitsteeksels (processus). Tussen twee wervellichamen ligt de kraakbenige tussenwervelschijf (discus intervertebralis).',
+      'Een wervel (vertebra) bestaat uit een dragend wervellichaam (corpus) met verschillende uitsteeksels (processus). Tussen twee wervellichamen ligt de kraakbenige tussenwervelschijf (discus intervertebralis).',
     images: [
       {
         imageUrl: '/images/flashcards/romp_wervel_1_8.png',
-        caption: 'Opbouw van een wervel en tussenwervelschijf (nr. 1 t/m 8)',
+        caption: 'Opbouw van een wervel en tussenwervelschijf (nr. 1, 2 & 4–8)',
         numbersRange: '1–8',
       },
       {
@@ -337,13 +337,6 @@ export const LIGAMENT_SECTIONS: LigamentSection[] = [
         altName: 'Corpus vertebra (wervellichaam)',
         location: 'Ventraal deel van de wervel',
         functionText: 'Het massieve, cilindervormige dragende deel van de wervel.',
-      },
-      {
-        number: 3,
-        name: 'Arcus vertebrae',
-        altName: 'Arcus vertebra (wervelboog)',
-        location: 'Dorsale zijde van de wervel',
-        functionText: 'De benige boog aan de achterzijde die het wervelgat (wervelkanaal) omsluit.',
       },
       {
         number: 4,
@@ -1449,7 +1442,7 @@ export const LIGAMENT_SYNOVIAL_QUESTIONS: LigamentSynovialQuestion[] = [
     explanation: 'Zowel art. genus als art. cubiti combineren scharnieren (flexie/extensie) en draaien (rotatie): art. trocho-ginglymus (2 assen).',
   },
 
-  // ======================== VERTEBRAE 1–8 (10 vragen) ========================
+  // ======================== VERTEBRAE (9 vragen) ========================
   {
     id: 'lig-vert-1',
     category: 'vertebrae',
@@ -1458,7 +1451,7 @@ export const LIGAMENT_SYNOVIAL_QUESTIONS: LigamentSynovialQuestion[] = [
     highlightNumber: 1,
     correctAnswer: 'Vertebra',
     acceptableAnswers: ['Vertebra', 'Vertebrae', 'Wervel'],
-    options: ['Vertebra', 'Corpus vertebrae', 'Arcus vertebrae', 'Discus intervertebralis'],
+    options: ['Vertebra', 'Corpus vertebrae', 'Processus transversus', 'Discus intervertebralis'],
     explanation: 'Nummer 1 omcirkelt het gehele botstuk: een wervel (vertebra / vertebrae).',
   },
   {
@@ -1469,19 +1462,8 @@ export const LIGAMENT_SYNOVIAL_QUESTIONS: LigamentSynovialQuestion[] = [
     highlightNumber: 2,
     correctAnswer: 'Corpus vertebrae',
     acceptableAnswers: ['Corpus vertebrae', 'Corpus vertebra', 'Wervellichaam'],
-    options: ['Corpus vertebrae', 'Arcus vertebrae', 'Processus spinosus', 'Discus intervertebralis'],
+    options: ['Corpus vertebrae', 'Processus articularis superior', 'Processus spinosus', 'Discus intervertebralis'],
     explanation: 'Nummer 2 is het corpus vertebrae (wervellichaam).',
-  },
-  {
-    id: 'lig-vert-3',
-    category: 'vertebrae',
-    question: 'Welk onderdeel van de wervel is nummer 3 (de boog aan de dorsale zijde)?',
-    imageUrl: '/images/flashcards/romp_wervel_1_8.png',
-    highlightNumber: 3,
-    correctAnswer: 'Arcus vertebrae',
-    acceptableAnswers: ['Arcus vertebrae', 'Arcus vertebra', 'Wervelboog'],
-    options: ['Arcus vertebrae', 'Corpus vertebrae', 'Processus transversus', 'Processus articularis superior'],
-    explanation: 'Nummer 3 is de arcus vertebrae (wervelboog).',
   },
   {
     id: 'lig-vert-4',
@@ -1491,7 +1473,7 @@ export const LIGAMENT_SYNOVIAL_QUESTIONS: LigamentSynovialQuestion[] = [
     highlightNumber: 4,
     correctAnswer: 'Discus intervertebralis',
     acceptableAnswers: ['Discus intervertebralis', 'Discus', 'Tussenwervelschijf'],
-    options: ['Discus intervertebralis', 'Corpus vertebrae', 'Arcus vertebrae', 'Ligamentum'],
+    options: ['Discus intervertebralis', 'Corpus vertebrae', 'Processus spinosus', 'Ligamentum'],
     explanation: 'Nummer 4 is de discus intervertebralis (tussenwervelschijf).',
   },
   {
@@ -1561,7 +1543,7 @@ export const LIGAMENT_SYNOVIAL_QUESTIONS: LigamentSynovialQuestion[] = [
     options: [
       'Processus spinosus',
       'Processus transversus',
-      'Arcus vertebrae',
+      'Corpus vertebrae',
       'Processus articularis inferior',
     ],
     explanation: 'Nummer 8 is de processus spinosus (doornuitsteeksel aan de rugzijde).',
