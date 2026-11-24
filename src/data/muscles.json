@@ -2564,8 +2564,8 @@
             "name": "tuber ischiadicum (caput longum)"
           },
           {
-            "x": 0.6323,
-            "y": 0.5931,
+            "x": 0.6459,
+            "y": 0.5915,
             "name": "middelste derde dorsale deel van femur (caput brevis)"
           }
         ],
@@ -2612,8 +2612,8 @@
             "name": "tuber ischiadicum (caput longum)"
           },
           {
-            "x": 0.3677,
-            "y": 0.5931,
+            "x": 0.3541,
+            "y": 0.5915,
             "name": "middelste derde dorsale deel van femur (caput brevis)"
           }
         ],
@@ -2812,8 +2812,13 @@
         ],
         "insertions": [
           {
-            "x": 0.609,
-            "y": 0.6154,
+            "x": 0.6136,
+            "y": 0.5906,
+            "name": "mediale zijde corpus femoris"
+          },
+          {
+            "x": 0.5939,
+            "y": 0.6371,
             "name": "mediale zijde corpus femoris"
           },
           {
@@ -2897,8 +2902,13 @@
         ],
         "insertions": [
           {
-            "x": 0.391,
-            "y": 0.6154,
+            "x": 0.3864,
+            "y": 0.5906,
+            "name": "mediale zijde corpus femoris"
+          },
+          {
+            "x": 0.4061,
+            "y": 0.6371,
             "name": "mediale zijde corpus femoris"
           },
           {

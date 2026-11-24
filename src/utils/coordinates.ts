@@ -968,6 +968,33 @@ export function getMuscleConnections(origins: Point2D[], insertions: Point2D[]):
     return connections;
   }
 
+  // Anatomische koppeling voor mm. adductor:
+  // - os pubis -> mediale zijde corpus femoris (m. adductor brevis & longus: 2 lijnen)
+  // - os ischii -> condylus medialis (m. adductor magnus: 1 lijn)
+  const hasAdductorOrigins =
+    origins.some((o) => (o.name || '').toLowerCase().includes('os pubis')) &&
+    origins.some((o) => (o.name || '').toLowerCase().includes('os ischii'));
+  const hasAdductorInsertions =
+    insertions.some((i) => (i.name || '').toLowerCase().includes('corpus femoris')) &&
+    insertions.some((i) => (i.name || '').toLowerCase().includes('condylus medialis'));
+
+  if (hasAdductorOrigins && hasAdductorInsertions) {
+    const connections: MuscleConnection[] = [];
+    const pubisIdx = origins.findIndex((o) => (o.name || '').toLowerCase().includes('os pubis'));
+    const ischiiIdx = origins.findIndex((o) => (o.name || '').toLowerCase().includes('os ischii'));
+
+    insertions.forEach((ins, iIdx) => {
+      const insLow = (ins.name || '').toLowerCase();
+      if (insLow.includes('condylus medialis') && ischiiIdx >= 0) {
+        connections.push({ orig: origins[ischiiIdx], ins, oIdx: ischiiIdx, iIdx });
+      } else if (pubisIdx >= 0) {
+        connections.push({ orig: origins[pubisIdx], ins, oIdx: pubisIdx, iIdx });
+      }
+    });
+
+    return connections;
+  }
+
   // Eenvoudige spieren met 1 origo of 1 insertie
   if (origins.length === 1) {
     return insertions.map((ins, iIdx) => ({ orig: origins[0], ins, oIdx: 0, iIdx }));
