@@ -2800,51 +2800,56 @@
       "left": {
         "origins": [
           {
-            "x": 0.5242,
-            "y": 0.4879,
-            "name": "os pubis (m. adductor longus & brevis)"
+            "x": 0.52,
+            "y": 0.477,
+            "name": "os pubis (m. adductor brevis)"
           },
           {
-            "x": 0.5757,
-            "y": 0.5019,
+            "x": 0.533,
+            "y": 0.503,
+            "name": "os pubis (m. adductor longus)"
+          },
+          {
+            "x": 0.52,
+            "y": 0.503,
             "name": "os ischii (m. adductor magnus)"
           }
         ],
         "insertions": [
           {
-            "x": 0.6136,
-            "y": 0.5906,
-            "name": "mediale zijde corpus femoris"
+            "x": 0.614,
+            "y": 0.588,
+            "name": "mediale zijde corpus femoris (m. adductor brevis)"
           },
           {
-            "x": 0.5939,
-            "y": 0.6371,
-            "name": "mediale zijde corpus femoris"
+            "x": 0.594,
+            "y": 0.637,
+            "name": "mediale zijde corpus femoris (m. adductor longus)"
           },
           {
             "x": 0.5651,
             "y": 0.6779,
-            "name": "condylus medialis"
+            "name": "condylus medialis (m. adductor magnus)"
           }
         ],
         "musclePath": [],
         "attachmentLines": [
           {
             "id": "line-adductores-pub-left",
-            "name": "os pubis (m. adductor longus & brevis)",
+            "name": "os pubis",
             "type": "origin",
             "points": [
               {
                 "x": 0.5182,
-                "y": 0.479
+                "y": 0.477
               },
               {
-                "x": 0.5182,
-                "y": 0.4879
+                "x": 0.52,
+                "y": 0.488
               },
               {
-                "x": 0.5288,
-                "y": 0.5
+                "x": 0.533,
+                "y": 0.503
               }
             ],
             "tolerance": 0.022
@@ -2855,28 +2860,32 @@
             "type": "insertion",
             "points": [
               {
-                "x": 0.6136,
-                "y": 0.5906
+                "x": 0.614,
+                "y": 0.588
               },
               {
-                "x": 0.609,
-                "y": 0.6154
+                "x": 0.605,
+                "y": 0.613
               },
               {
-                "x": 0.5939,
-                "y": 0.6371
+                "x": 0.594,
+                "y": 0.637
               }
             ],
             "tolerance": 0.024
           },
           {
             "id": "line-origin-1793728781229",
+            "name": "os ischii",
             "type": "origin",
-            "name": " os ischii",
             "points": [
               {
+                "x": 0.52,
+                "y": 0.503
+              },
+              {
                 "x": 0.556,
-                "y": 0.5038
+                "y": 0.504
               },
               {
                 "x": 0.5984,
@@ -2890,51 +2899,56 @@
       "right": {
         "origins": [
           {
-            "x": 0.4758,
-            "y": 0.4879,
-            "name": "os pubis (m. adductor longus & brevis)"
+            "x": 0.48,
+            "y": 0.477,
+            "name": "os pubis (m. adductor brevis)"
           },
           {
-            "x": 0.4243,
-            "y": 0.5019,
+            "x": 0.467,
+            "y": 0.503,
+            "name": "os pubis (m. adductor longus)"
+          },
+          {
+            "x": 0.48,
+            "y": 0.503,
             "name": "os ischii (m. adductor magnus)"
           }
         ],
         "insertions": [
           {
-            "x": 0.3864,
-            "y": 0.5906,
-            "name": "mediale zijde corpus femoris"
+            "x": 0.386,
+            "y": 0.588,
+            "name": "mediale zijde corpus femoris (m. adductor brevis)"
           },
           {
-            "x": 0.4061,
-            "y": 0.6371,
-            "name": "mediale zijde corpus femoris"
+            "x": 0.406,
+            "y": 0.637,
+            "name": "mediale zijde corpus femoris (m. adductor longus)"
           },
           {
             "x": 0.4349,
             "y": 0.6779,
-            "name": "condylus medialis"
+            "name": "condylus medialis (m. adductor magnus)"
           }
         ],
         "musclePath": [],
         "attachmentLines": [
           {
             "id": "line-adductores-pub-right",
-            "name": "os pubis (m. adductor longus & brevis)",
+            "name": "os pubis",
             "type": "origin",
             "points": [
               {
                 "x": 0.4818,
-                "y": 0.479
+                "y": 0.477
               },
               {
-                "x": 0.4818,
-                "y": 0.4879
+                "x": 0.48,
+                "y": 0.488
               },
               {
-                "x": 0.4712,
-                "y": 0.5
+                "x": 0.467,
+                "y": 0.503
               }
             ],
             "tolerance": 0.022
@@ -2945,28 +2959,32 @@
             "type": "insertion",
             "points": [
               {
-                "x": 0.3864,
-                "y": 0.5906
+                "x": 0.386,
+                "y": 0.588
               },
               {
-                "x": 0.391,
-                "y": 0.6154
+                "x": 0.395,
+                "y": 0.613
               },
               {
-                "x": 0.4061,
-                "y": 0.6371
+                "x": 0.406,
+                "y": 0.637
               }
             ],
             "tolerance": 0.024
           },
           {
             "id": "line-origin-1793728781229-mirrored",
+            "name": "os ischii",
             "type": "origin",
-            "name": " os ischii",
             "points": [
               {
+                "x": 0.48,
+                "y": 0.503
+              },
+              {
                 "x": 0.444,
-                "y": 0.5038
+                "y": 0.504
               },
               {
                 "x": 0.4016,
